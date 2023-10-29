@@ -258,8 +258,8 @@ class _EbuildFetcherProcess(ForkProcess):
     def _get_manifest(self):
         if self._manifest is None:
             pkgdir = os.path.dirname(self._get_ebuild_path())
-            self._manifest = (self.pkg.root_config.settings.repositories.get_repo_for_location(
-                os.path.dirname(os.path.dirname(pkgdir))).load_manifest(pkgdir, None))
+            self._manifest = self.pkg.root_config.settings.repositories.get_repo_for_location(
+                os.path.dirname(os.path.dirname(pkgdir))).load_manifest(pkgdir, None)
         return self._manifest
 
     def _get_digests(self):

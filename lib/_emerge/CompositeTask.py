@@ -118,4 +118,4 @@ class CompositeTask(AsynchronousTask):
         self._current_task = task
 
     def _task_queued_wait(self):
-        return (self._current_task is not self._TASK_QUEUED or self.cancelled or self.returncode is not None)
+        return self._current_task is not self._TASK_QUEUED or self.cancelled or self.returncode is not None

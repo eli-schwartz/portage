@@ -187,8 +187,8 @@ if os.path.exists(PRELINK_BINARY):
 def is_prelinkable_elf(filename):
     with _open_file(filename) as f:
         magic = f.read(17)
-    return (len(magic) == 17 and magic.startswith(b"\x7fELF")
-            and magic[16:17] in (b"\x02", b"\x03"))  # 2=ET_EXEC, 3=ET_DYN
+    return len(magic) == 17 and magic.startswith(b"\x7fELF") and magic[16:17] in (b"\x02", b"\x03"
+                                                                                  )  # 2=ET_EXEC, 3=ET_DYN
 
 
 def perform_md5(x, calc_prelink=0):

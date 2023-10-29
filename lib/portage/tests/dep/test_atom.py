@@ -268,15 +268,13 @@ class TestAtom(TestCase):
             validator = use_flag_validator(iuse)
             violated_atom = a.violated_conditionals(other_use, validator.is_valid_flag, parent_use)
             if parent_use is None:
-                fail_msg = (
-                    "Atom: %s, other_use: %s, iuse: %s, parent_use: %s, got: %s, expected: %s" %
-                    (atom, " ".join(other_use), " ".join(iuse), "None", str(violated_atom), expected_violated_atom,
-                     ))
+                fail_msg = "Atom: %s, other_use: %s, iuse: %s, parent_use: %s, got: %s, expected: %s" % (
+                    atom, " ".join(other_use), " ".join(iuse), "None", str(violated_atom), expected_violated_atom,
+                )
             else:
-                fail_msg = ("Atom: %s, other_use: %s, iuse: %s, parent_use: %s, got: %s, expected: %s" %
-                            (atom, " ".join(other_use), " ".join(iuse), " ".join(parent_use), str(violated_atom),
-                             expected_violated_atom,
-                             ))
+                fail_msg = "Atom: %s, other_use: %s, iuse: %s, parent_use: %s, got: %s, expected: %s" % (atom, " ".join(
+                    other_use), " ".join(iuse), " ".join(parent_use), str(violated_atom), expected_violated_atom,
+                                                                                                         )
             self.assertEqual(str(violated_atom), expected_violated_atom, fail_msg)
 
         for atom, other_use, iuse, parent_use in test_cases_xfail:

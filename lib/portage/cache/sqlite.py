@@ -69,13 +69,13 @@ class database(fs_template.FsBased):
 
     @property
     def _db_cursor(self):
-        if (self._db_connection_info is None or self._db_connection_info.pid != portage.getpid()):
+        if self._db_connection_info is None or self._db_connection_info.pid != portage.getpid():
             self._db_init_connection()
         return self._db_connection_info.cursor
 
     @property
     def _db_connection(self):
-        if (self._db_connection_info is None or self._db_connection_info.pid != portage.getpid()):
+        if self._db_connection_info is None or self._db_connection_info.pid != portage.getpid():
             self._db_init_connection()
         return self._db_connection_info.connection
 

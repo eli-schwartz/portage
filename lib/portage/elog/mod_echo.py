@@ -15,7 +15,7 @@ def process(mysettings, key, logentries, fulltext):
     logfile = None
     # output logfile explicitly only if it isn't in tempdir, otherwise
     # it will be removed anyway
-    if (key == mysettings.mycpv and "PORTAGE_LOGDIR" in mysettings and "PORTAGE_LOG_FILE" in mysettings):
+    if key == mysettings.mycpv and "PORTAGE_LOGDIR" in mysettings and "PORTAGE_LOG_FILE" in mysettings:
         logfile = mysettings["PORTAGE_LOG_FILE"]
 
     try:

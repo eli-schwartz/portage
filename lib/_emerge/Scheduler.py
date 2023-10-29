@@ -336,7 +336,7 @@ class Scheduler(PollScheduler):
         self._blocker_db = {}
         depgraph_params = create_depgraph_params(self.myopts, None)
         dynamic_deps = "dynamic_deps" in depgraph_params
-        ignore_built_slot_operator_deps = (self.myopts.get("--ignore-built-slot-operator-deps", "n") == "y")
+        ignore_built_slot_operator_deps = self.myopts.get("--ignore-built-slot-operator-deps", "n") == "y"
         for root in self.trees:
             if graph_config is None:
                 fake_vartree = FakeVartree(self.trees[root]["root_config"],
@@ -406,7 +406,7 @@ class Scheduler(PollScheduler):
                                    )
         self._status_display.quiet = not background or ("--quiet" in self.myopts and "--verbose" not in self.myopts)
 
-        self._logger.xterm_titles = ("notitles" not in self.settings.features and self._status_display.quiet)
+        self._logger.xterm_titles = "notitles" not in self.settings.features and self._status_display.quiet
 
         return background
 
@@ -491,8 +491,8 @@ class Scheduler(PollScheduler):
         removed_nodes = set()
         while True:
             for node in graph.root_nodes():
-                if (not isinstance(node, Package) or (node.installed and node.operation == "nomerge") or node.onlydeps
-                        or node in completed_tasks):
+                if not isinstance(node, Package) or (node.installed and node.operation
+                                                     == "nomerge") or node.onlydeps or node in completed_tasks:
                     removed_nodes.add(node)
             if removed_nodes:
                 graph.difference_update(removed_nodes)
@@ -556,7 +556,7 @@ class Scheduler(PollScheduler):
         Schedule a setup phase on the merge queue, in order to
         serialize unsandboxed access to the live filesystem.
         """
-        if (self._task_queues.merge.max_jobs > 1 and "ebuild-locks" in self.settings.features):
+        if self._task_queues.merge.max_jobs > 1 and "ebuild-locks" in self.settings.features:
             # Use a separate queue for ebuild-locks when the merge
             # queue allows more than 1 job (due to parallel-install),
             # since the portage.locks module does not behave as desired
@@ -622,7 +622,7 @@ class Scheduler(PollScheduler):
             return os.EX_OK
 
         for x in self._mergelist:
-            if (not isinstance(x, Package) or x.type_name != "ebuild" or x.operation != "merge"):
+            if not isinstance(x, Package) or x.type_name != "ebuild" or x.operation != "merge":
                 continue
             pkgsettings = self.pkgsettings[x.root]
             if pkgsettings.mycpv is not None:
@@ -648,7 +648,7 @@ class Scheduler(PollScheduler):
     def _check_manifests(self):
         # Verify all the manifests now so that the user is notified of failure
         # as soon as possible.
-        if ("strict" not in self.settings.features or "--fetchonly" in self.myopts or "--fetch-all-uri" in self.myopts):
+        if "strict" not in self.settings.features or "--fetchonly" in self.myopts or "--fetch-all-uri" in self.myopts:
             return os.EX_OK
 
         shown_verifying_msg = False
@@ -729,8 +729,8 @@ class Scheduler(PollScheduler):
                                        scheduler=self._sched_iface,
                                        )
 
-        elif (pkg.type_name == "binary" and "--getbinpkg" in self.myopts
-              and pkg.root_config.trees["bintree"].isremote(pkg.cpv)):
+        elif pkg.type_name == "binary" and "--getbinpkg" in self.myopts and pkg.root_config.trees["bintree"].isremote(
+                pkg.cpv):
             prefetcher = BinpkgPrefetcher(background=True, pkg=pkg, scheduler=self._sched_iface)
 
         return prefetcher
@@ -1071,7 +1071,7 @@ class Scheduler(PollScheduler):
         printer = portage.output.EOutput()
         background = self._background
         failure_log_shown = False
-        if (background and len(self._failed_pkgs_all) == 1 and self.myopts.get("--quiet-fail", "n") != "y"):
+        if background and len(self._failed_pkgs_all) == 1 and self.myopts.get("--quiet-fail", "n") != "y":
             # If only one package failed then just show it's
             # whole log for easy viewing.
             failed_pkg = self._failed_pkgs_all[-1]
@@ -1106,8 +1106,7 @@ class Scheduler(PollScheduler):
         # later, from being swept away by the mod_echo output.
         mod_echo_output = _flush_elog_mod_echo()
 
-        if (background and not failure_log_shown and self._failed_pkgs_all and self._failed_pkgs_die_msgs
-                and not mod_echo_output):
+        if background and not failure_log_shown and self._failed_pkgs_all and self._failed_pkgs_die_msgs and not mod_echo_output:
             failed_pkg_map = {}
             for pkg in self._failed_pkgs_all:
                 failed_pkg_map[(pkg.cpv, pkg.root)] = pkg
@@ -1137,10 +1136,9 @@ class Scheduler(PollScheduler):
 
         if len(self._failed_pkgs_all) > 1 or (self._failed_pkgs_all and keep_going):
             if len(self._failed_pkgs_all) > 1:
-                msg = (f"The following {len(self._failed_pkgs_all)} packages have " +
-                       "failed to build, install, or execute postinst:")
+                msg = f"The following {len(self._failed_pkgs_all)} packages have " + "failed to build, install, or execute postinst:"
             else:
-                msg = ("The following package has " + "failed to build, install, or execute postinst:")
+                msg = "The following package has " + "failed to build, install, or execute postinst:"
 
             printer.eerror("")
             for line in textwrap.wrap(msg, 72):
@@ -1219,8 +1217,8 @@ class Scheduler(PollScheduler):
             """
             Ignore non-runtime and satisfied runtime priorities.
             """
-            if (isinstance(priority, DepPriority) and not priority.satisfied
-                    and (priority.runtime or priority.runtime_post)):
+            if isinstance(priority, DepPriority) and not priority.satisfied and (priority.runtime
+                                                                                 or priority.runtime_post):
                 return False
             return True
 
@@ -1311,7 +1309,7 @@ class Scheduler(PollScheduler):
             self.curval += 1
             merge = PackageMerge(merge=build, scheduler=self._sched_iface)
             self._running_tasks[id(merge)] = merge
-            if (not build.build_opts.buildpkgonly and build.pkg in self._deep_system_deps):
+            if not build.build_opts.buildpkgonly and build.pkg in self._deep_system_deps:
                 # Since dependencies on system packages are frequently
                 # unspecified, merge them only when no builds are executing.
                 self._merge_wait_queue.append(merge)
@@ -1349,8 +1347,8 @@ class Scheduler(PollScheduler):
     def _main_loop(self):
         self._main_exit = self._event_loop.create_future()
 
-        if (self._max_load is not None and self._loadavg_latency is not None
-                and (self._max_jobs is True or self._max_jobs > 1)):
+        if self._max_load is not None and self._loadavg_latency is not None and (self._max_jobs is True
+                                                                                 or self._max_jobs > 1):
             # We have to schedule periodically, in case the load
             # average has changed since the last call.
             self._main_loadavg_handle = self._event_loop.call_later(self._loadavg_latency, self._schedule)
@@ -1562,7 +1560,7 @@ class Scheduler(PollScheduler):
             # special packages and we want to ensure that
             # parallel-install does not cause more than one of
             # them to install at the same time.
-            if (self._merge_wait_queue and not self._jobs and not self._task_queues.merge):
+            if self._merge_wait_queue and not self._jobs and not self._task_queues.merge:
                 task = self._merge_wait_queue.popleft()
                 task.scheduler = self._sched_iface
                 self._merge_wait_scheduled.append(task)
@@ -1578,8 +1576,8 @@ class Scheduler(PollScheduler):
 
             # Cancel prefetchers if they're the only reason
             # the main poll loop is still running.
-            if (self._failed_pkgs and not self._build_opts.fetchonly and not self._is_work_scheduled()
-                    and self._task_queues.fetch):
+            if self._failed_pkgs and not self._build_opts.fetchonly and not self._is_work_scheduled(
+            ) and self._task_queues.fetch:
                 # Since this happens asynchronously, it doesn't count in
                 # state_change (counting it triggers an infinite loop).
                 self._task_queues.fetch.clear()
@@ -1671,8 +1669,8 @@ class Scheduler(PollScheduler):
             if not self._keep_scheduling():
                 return bool(state_change)
 
-            if (self._choose_pkg_return_early or self._merge_wait_scheduled
-                    or (self._jobs and self._unsatisfied_system_deps) or not self._can_add_job() or self._job_delay()):
+            if self._choose_pkg_return_early or self._merge_wait_scheduled or (
+                    self._jobs and self._unsatisfied_system_deps) or not self._can_add_job() or self._job_delay():
                 return bool(state_change)
 
             pkg = self._choose_pkg()
@@ -1872,10 +1870,7 @@ class Scheduler(PollScheduler):
                         out.eerror(indent + str(dep.atom) + " pulled in by:")
                         out.eerror(2 * indent + str(dep.parent))
                         out.eerror("")
-                msg = ("The resume list contains packages " + "that are either masked or have " +
-                       "unsatisfied dependencies. " + "Please restart/continue " +
-                       "the operation manually, or use --skipfirst " + "to skip the first package in the list and " +
-                       "any other packages that may be " + "masked or have missing dependencies.")
+                msg = "The resume list contains packages " + "that are either masked or have " + "unsatisfied dependencies. " + "Please restart/continue " + "the operation manually, or use --skipfirst " + "to skip the first package in the list and " + "any other packages that may be " + "masked or have missing dependencies."
                 for line in textwrap.wrap(msg, 72):
                     out.eerror(line)
 

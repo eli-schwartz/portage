@@ -10,8 +10,7 @@ class PackageMerge(CompositeTask):
     __slots__ = ("merge", "postinst_failure")
 
     def _should_show_status(self):
-        return (not self.merge.build_opts.fetchonly and not self.merge.build_opts.pretend
-                and not self.merge.build_opts.buildpkgonly)
+        return not self.merge.build_opts.fetchonly and not self.merge.build_opts.pretend and not self.merge.build_opts.buildpkgonly
 
     def _make_msg(self, pkg, action_desc, preposition, counter_str):
         pkg_color = "PKG_MERGE"

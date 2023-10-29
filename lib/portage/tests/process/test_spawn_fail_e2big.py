@@ -21,5 +21,5 @@ def test_spawnE2big(capsys, tmp_path):
 
     with open(logfile) as f:
         logfile_content = f.read()
-        assert ("Largest environment variable: VERY_LARGE_ENV_VAR (262164 bytes)" in logfile_content)
+        assert "Largest environment variable: VERY_LARGE_ENV_VAR (262164 bytes)" in logfile_content
     assert retval == 1

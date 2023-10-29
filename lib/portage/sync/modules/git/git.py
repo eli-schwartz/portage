@@ -77,7 +77,7 @@ class GitSync(NewBase):
             git_cmd_opts += " --depth 1"
 
         if self.repo.module_specific_options.get("sync-git-clone-extra-opts"):
-            git_cmd_opts += (f" {self.repo.module_specific_options['sync-git-clone-extra-opts']}")
+            git_cmd_opts += f" {self.repo.module_specific_options['sync-git-clone-extra-opts']}"
         git_cmd = "{} clone{} {} .".format(self.bin_command, git_cmd_opts, portage._shell_quote(sync_uri), )
         writemsg_level(git_cmd + "\n")
 
@@ -223,7 +223,7 @@ class GitSync(NewBase):
             shallow = True
 
         if self.repo.module_specific_options.get("sync-git-pull-extra-opts"):
-            git_cmd_opts += (f" {self.repo.module_specific_options['sync-git-pull-extra-opts']}")
+            git_cmd_opts += f" {self.repo.module_specific_options['sync-git-pull-extra-opts']}"
 
         self.add_safe_directory()
 

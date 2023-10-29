@@ -41,11 +41,11 @@ class TestExtractAffectingUSE(TestCase):
         for dep, atom, expected in test_cases:
             expected = set(expected)
             result = extract_affecting_use(dep, atom, eapi="0")
-            fail_msg = ("dep: " + dep + ", atom: " + atom + ", got: " + " ".join(sorted(result)) + ", expected: " +
-                        " ".join(sorted(expected)))
+            fail_msg = "dep: " + dep + ", atom: " + atom + ", got: " + " ".join(
+                sorted(result)) + ", expected: " + " ".join(sorted(expected))
             self.assertEqual(result, expected, fail_msg)
 
         for dep, atom in test_cases_xfail:
-            fail_msg = ("dep: " + dep + ", atom: " + atom + ", got: " + " ".join(sorted(result)) + ", expected: " +
-                        " ".join(sorted(expected)))
+            fail_msg = "dep: " + dep + ", atom: " + atom + ", got: " + " ".join(
+                sorted(result)) + ", expected: " + " ".join(sorted(expected))
             self.assertRaisesMsg(fail_msg, InvalidDependString, extract_affecting_use, dep, atom, eapi="0", )

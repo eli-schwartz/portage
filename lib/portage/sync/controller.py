@@ -291,8 +291,8 @@ class SyncManager:
             portage.util.ensure_dirs(repo.location, **perms)
             st = os.stat(repo.location)
 
-        if (repo.sync_user is None and "usersync" in self.settings.features and portage.data.secpass >= 2 and
-            (st.st_uid != os.getuid() and st.st_mode & 0o700 or st.st_gid != os.getgid() and st.st_mode & 0o070)):
+        if repo.sync_user is None and "usersync" in self.settings.features and portage.data.secpass >= 2 and (
+                st.st_uid != os.getuid() and st.st_mode & 0o700 or st.st_gid != os.getgid() and st.st_mode & 0o070):
             try:
                 pw = pwd.getpwuid(st.st_uid)
             except KeyError:

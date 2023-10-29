@@ -64,9 +64,7 @@ class OptionItem:
 def usage(module_controller):
     _usage = "usage: emaint [options] COMMAND"
 
-    desc = ("The emaint program provides an interface to system health " +
-            "checks and maintenance. See the emaint(1) man page " +
-            "for additional information about the following commands:")
+    desc = "The emaint program provides an interface to system health " + "checks and maintenance. See the emaint(1) man page " + "for additional information about the following commands:"
 
     _usage += "\n\n"
     for line in textwrap.wrap(desc, 65):

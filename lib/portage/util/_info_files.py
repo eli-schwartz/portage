@@ -89,7 +89,7 @@ def chk_updated_info_files(root, infodirs, prev_mtimes):
                         if re.search(existsstr, myso):
                             # Already exists... Don't increment the count for this.
                             pass
-                        elif (myso[:44] == "install-info: warning: no info dir entry in "):
+                        elif myso[:44] == "install-info: warning: no info dir entry in ":
                             # This info file doesn't contain a DIR-header: install-info produces this
                             # (harmless) warning (the --quiet switch doesn't seem to work).
                             # Don't increment the count for this.

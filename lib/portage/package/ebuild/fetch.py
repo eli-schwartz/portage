@@ -62,7 +62,7 @@ def _want_userfetch(settings):
     @type settings: portage.package.ebuild.config.config
     @return: True if desirable, False otherwise
     """
-    return ("userfetch" in settings.features and portage.data.secpass >= 2 and os.getuid() == 0)
+    return "userfetch" in settings.features and portage.data.secpass >= 2 and os.getuid() == 0
 
 
 def _drop_privs_userfetch(settings):
@@ -102,8 +102,8 @@ def _spawn_fetch(settings, args, **kwargs):
         }
 
     logname = None
-    if ("userfetch" in settings.features and os.getuid() == 0 and portage_gid and portage_uid
-            and hasattr(os, "setgroups")):
+    if "userfetch" in settings.features and os.getuid() == 0 and portage_gid and portage_uid and hasattr(
+            os, "setgroups"):
         kwargs.update(_userpriv_spawn_kwargs)
         logname = portage.data._portage_username
 
@@ -136,7 +136,7 @@ def _spawn_fetch(settings, args, **kwargs):
 
 
 _userpriv_test_write_file_cache = {}
-_userpriv_test_write_cmd_script = (">> %(file_path)s 2>/dev/null ; rval=$? ; " + "rm -f  %(file_path)s ; exit $rval")
+_userpriv_test_write_cmd_script = ">> %(file_path)s 2>/dev/null ; rval=$? ; " + "rm -f  %(file_path)s ; exit $rval"
 
 
 def _userpriv_test_write_file(settings, file_path):
@@ -781,7 +781,7 @@ def fetch(myuris,
     if fetch_resume_size is None:
         fetch_resume_size = fetch_resume_size_default
         match = _fetch_resume_size_re.match(fetch_resume_size)
-    fetch_resume_size = (int(match.group(1)) * 2**_size_suffix_map[match.group(2).upper()])
+    fetch_resume_size = int(match.group(1)) * 2**_size_suffix_map[match.group(2).upper()]
 
     # Behave like the package has RESTRICT="primaryuri" after a
     # couple of checksum failures, to increase the probablility
@@ -848,8 +848,8 @@ def fetch(myuris,
         allow_missing_digests = True
     pkgdir = mysettings.get("O")
     if digests is None and not (pkgdir is None or skip_manifest):
-        mydigests = (mysettings.repositories.get_repo_for_location(os.path.dirname(
-            os.path.dirname(pkgdir))).load_manifest(pkgdir, mysettings["DISTDIR"]).getTypeDigests("DIST"))
+        mydigests = mysettings.repositories.get_repo_for_location(os.path.dirname(
+            os.path.dirname(pkgdir))).load_manifest(pkgdir, mysettings["DISTDIR"]).getTypeDigests("DIST")
     elif digests is None or skip_manifest:
         # no digests because fetch was not called for a specific package
         mydigests = {}
@@ -932,7 +932,7 @@ def fetch(myuris,
                     filedict[myfile].extend(uris)
                     thirdpartymirror_uris.setdefault(myfile, []).extend(uris)
 
-                if (mirrorname not in custommirrors and mirrorname not in thirdpartymirrors):
+                if mirrorname not in custommirrors and mirrorname not in thirdpartymirrors:
                     writemsg(_("!!! No known mirror by the name: %s\n") % (mirrorname))
             else:
                 writemsg(_("Invalid mirror definition in SRC_URI:\n"), noiselevel=-1)
@@ -1271,10 +1271,10 @@ def fetch(myuris,
                             # download has not been explicitly forced.
                             fetched = 1
                     else:
-                        if (mydigests[myfile].get("size") is not None and mystat.st_size < mydigests[myfile]["size"]
-                                and not restrict_fetch):
+                        if mydigests[myfile].get("size") is not None and mystat.st_size < mydigests[myfile][
+                                "size"] and not restrict_fetch:
                             fetched = 1  # Try to resume this download.
-                        elif (parallel_fetchonly and mystat.st_size == mydigests[myfile]["size"]):
+                        elif parallel_fetchonly and mystat.st_size == mydigests[myfile]["size"]:
                             eout = EOutput()
                             eout.quiet = mysettings.get("PORTAGE_QUIET") == "1"
                             eout.ebegin(f"{myfile} size ;-)")
@@ -1308,7 +1308,7 @@ def fetch(myuris,
                                 if not fetch_to_ro:
                                     _movefile(download_path, myfile_path, mysettings=mysettings, )
                                 eout = EOutput()
-                                eout.quiet = (mysettings.get("PORTAGE_QUIET", None) == "1")
+                                eout.quiet = mysettings.get("PORTAGE_QUIET", None) == "1"
                                 if digests:
                                     digests = list(digests)
                                     digests.sort()
@@ -1533,10 +1533,10 @@ def fetch(myuris,
                             # case we don't want to attempt to resume. Show a
                             # digest verification failure to that the user gets
                             # a clue about what just happened.
-                            if (myret != os.EX_OK and mystat.st_size < mydigests[myfile]["size"]):
+                            if myret != os.EX_OK and mystat.st_size < mydigests[myfile]["size"]:
                                 # Fetch failed... Try the next one... Kill 404 files though.
-                                if ((mystat[stat.ST_SIZE] < 100000) and (len(myfile) > 4)
-                                        and not ((myfile[-5:] == ".html") or (myfile[-4:] == ".htm"))):
+                                if (mystat[stat.ST_SIZE] < 100000) and (len(myfile) > 4) and not (
+                                    (myfile[-5:] == ".html") or (myfile[-4:] == ".htm")):
                                     html404 = re.compile("<title>.*(not found|404).*</title>", re.I | re.M, )
                                     with open(_unicode_encode(download_path,
                                                               encoding=_encodings["fs"],
@@ -1584,20 +1584,20 @@ def fetch(myuris,
                                                         )
                                     fetched = 0
                                     checksum_failure_count += 1
-                                    if (checksum_failure_count == checksum_failure_primaryuri):
+                                    if checksum_failure_count == checksum_failure_primaryuri:
                                         # Switch to "primaryuri" mode in order
                                         # to increase the probablility of
                                         # of success.
                                         primaryuris = primaryuri_dict.get(myfile)
                                         if primaryuris:
                                             uri_list.extend(reversed(primaryuris))
-                                    if (checksum_failure_count >= checksum_failure_max_tries):
+                                    if checksum_failure_count >= checksum_failure_max_tries:
                                         break
                                 else:
                                     if not fetch_to_ro:
                                         _movefile(download_path, myfile_path, mysettings=mysettings, )
                                     eout = EOutput()
-                                    eout.quiet = (mysettings.get("PORTAGE_QUIET", None) == "1")
+                                    eout.quiet = mysettings.get("PORTAGE_QUIET", None) == "1"
                                     if digests:
                                         eout.ebegin(f"{myfile} {' '.join(sorted(digests))} ;-)")
                                         eout.eend(0)

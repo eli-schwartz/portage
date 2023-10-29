@@ -46,7 +46,7 @@ _vr = _v + "(-r(" + _rev + "))?"
 
 _cp = "(" + _cat + "/" + _pkg + "(-" + _vr + ")?)"
 _cpv = "(" + _cp + "-" + _vr + ")"
-_pv = ("(?P<pn>" + _pkg + "(?P<pn_inval>-" + _vr + ")?)" + "-(?P<ver>" + _v + ")(-r(?P<rev>" + _rev + "))?")
+_pv = "(?P<pn>" + _pkg + "(?P<pn_inval>-" + _vr + ")?)" + "-(?P<ver>" + _v + ")(-r(?P<rev>" + _rev + "))?"
 
 ver_regexp = re.compile("^" + _vr + "$")
 suffix_regexp = re.compile("^(alpha|beta|rc|pre|p)(\\d*)$")

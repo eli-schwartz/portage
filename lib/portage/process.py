@@ -779,7 +779,7 @@ def _exec(binary, mycommand, opt_name, fd_pipes, env, gid, groups, uid, umask, c
                                 if hasattr(socket, "sethostname"):
                                     socket.sethostname(new_hostname)
                                 else:
-                                    if (libc.sethostname(new_hostname, len(new_hostname)) != 0):
+                                    if libc.sethostname(new_hostname, len(new_hostname)) != 0:
                                         errno_value = ctypes.get_errno()
                                         raise OSError(errno_value, os.strerror(errno_value))
                             except Exception as e:

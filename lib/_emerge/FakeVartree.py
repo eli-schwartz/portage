@@ -155,7 +155,7 @@ class FakeVartree(vartree):
 
             # preserve built slot/sub-slot := operator deps
             built_slot_operator_atoms = None
-            if (not self._ignore_built_slot_operator_deps and _get_eapi_attrs(pkg.eapi).slot_operator):
+            if not self._ignore_built_slot_operator_deps and _get_eapi_attrs(pkg.eapi).slot_operator:
                 try:
                     built_slot_operator_atoms = find_built_slot_operator_atoms(pkg)
                 except InvalidDependString:

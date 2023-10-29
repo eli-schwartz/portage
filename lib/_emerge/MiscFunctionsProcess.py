@@ -21,7 +21,7 @@ class MiscFunctionsProcess(AbstractEbuildProcess):
         misc_sh_binary = os.path.join(portage_bin_path, os.path.basename(portage.const.MISC_SH_BINARY))
 
         self.args = [portage._shell_quote(misc_sh_binary)] + self.commands
-        if (self.logfile is None and self.settings.get("PORTAGE_BACKGROUND") != "subprocess"):
+        if self.logfile is None and self.settings.get("PORTAGE_BACKGROUND") != "subprocess":
             self.logfile = settings.get("PORTAGE_LOG_FILE")
 
         AbstractEbuildProcess._start(self)

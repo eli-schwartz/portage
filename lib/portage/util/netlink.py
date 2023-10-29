@@ -29,7 +29,7 @@ ifaddrmsg = Struct("BBBBi")
 
 def create_nlmsg(nlmsg_type, nlmsg_flags, nlmsg_seq, nlmsg_pid, data):
     nlmsg_len = nlmsghdr.size + len(data)
-    return (nlmsghdr.pack(nlmsg_len, nlmsg_type, nlmsg_flags, nlmsg_seq, nlmsg_pid) + data)
+    return nlmsghdr.pack(nlmsg_len, nlmsg_type, nlmsg_flags, nlmsg_seq, nlmsg_pid) + data
 
 
 def create_rtattr(rta_type, data):

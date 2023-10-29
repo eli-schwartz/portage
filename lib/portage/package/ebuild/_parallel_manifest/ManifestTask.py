@@ -68,7 +68,7 @@ class ManifestTask(CompositeTask):
 
         if not modified and sign:
             sign = self._need_signature()
-            if (not sign and self.force_sign_key is not None and os.path.exists(self._manifest_path)):
+            if not sign and self.force_sign_key is not None and os.path.exists(self._manifest_path):
                 self._check_sig_key()
                 return
 

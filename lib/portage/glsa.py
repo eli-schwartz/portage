@@ -414,9 +414,11 @@ def getMinUpgrade(vulnerableList, unaffectedList, portdbapi, vardbapi, minimize=
         update = ""
         for c in avail_updates:
             c_pv = portage.catpkgsplit(c)
-            if (vercmp(c.version, vuln.version) > 0
-                    and (update == "" or (minimize ^ (vercmp(c.version, update.version) > 0)))
-                    and portdbapi._pkg_str(c, None).slot == vardbapi._pkg_str(vuln, None).slot):
+            if vercmp(
+                    c.version, vuln.version) > 0 and (update == "" or
+                                                      (minimize ^
+                                                       (vercmp(c.version, update.version) > 0))) and portdbapi._pkg_str(
+                                                           c, None).slot == vardbapi._pkg_str(vuln, None).slot:
                 update = f"{c_pv[0]}/{c_pv[1]}-{c_pv[2]}"
                 if c_pv[3] != "r0":  # we don't like -r0 for display
                     update = f"{update}-{c_pv[3]}"

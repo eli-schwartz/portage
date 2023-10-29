@@ -445,7 +445,7 @@ class config:
             if self.modules["user"] is None:
                 self.modules["user"] = {}
             user_auxdbmodule = self.modules["user"].get("portdbapi.auxdbmodule")
-            if (user_auxdbmodule is not None and user_auxdbmodule in self._module_aliases):
+            if user_auxdbmodule is not None and user_auxdbmodule in self._module_aliases:
                 warnings.warn(f"'{user_auxdbmodule}' is deprecated: {modules_file}")
 
             self.modules["default"] = {"portdbapi.auxdbmodule": "portage.cache.flat_hash.mtime_md5_database", }
@@ -637,7 +637,7 @@ class config:
             mygcfg = {k: v for k, v in mygcfg.items() if not k.startswith("__")}
 
             # Don't allow the user to override certain variables in make.conf
-            profile_only_variables = (self.configdict["defaults"].get("PROFILE_ONLY_VARIABLES", "").split())
+            profile_only_variables = self.configdict["defaults"].get("PROFILE_ONLY_VARIABLES", "").split()
             profile_only_variables = stack_lists([profile_only_variables])
             non_user_variables = set()
             non_user_variables.update(profile_only_variables)
@@ -1011,13 +1011,13 @@ class config:
         broot_env_d_path = os.path.join(broot or "/", "etc", "profile.env")
         eroot_env_d_path = os.path.join(eroot or "/", "etc", "profile.env")
 
-        if (os.path.exists(broot_env_d_path) and os.path.exists(eroot_env_d_path)
-                and os.path.samefile(broot_env_d_path, eroot_env_d_path)):
-            broot_env_d = (getconfig(broot_env_d_path, tolerant=tolerant, expand=False) or {})
+        if os.path.exists(broot_env_d_path) and os.path.exists(eroot_env_d_path) and os.path.samefile(
+                broot_env_d_path, eroot_env_d_path):
+            broot_env_d = getconfig(broot_env_d_path, tolerant=tolerant, expand=False) or {}
             eroot_env_d = broot_env_d
         else:
-            broot_env_d = (getconfig(broot_env_d_path, tolerant=tolerant, expand=False) or {})
-            eroot_env_d = (getconfig(eroot_env_d_path, tolerant=tolerant, expand=False) or {})
+            broot_env_d = getconfig(broot_env_d_path, tolerant=tolerant, expand=False) or {}
+            eroot_env_d = getconfig(eroot_env_d_path, tolerant=tolerant, expand=False) or {}
 
         env_d = {}
 
@@ -1181,8 +1181,8 @@ class config:
                      )
         else:
             for group in groups:
-                if (group not in archlist and not (group.startswith("-") and group[1:] in archlist)
-                        and group not in ("*", "~*", "**")):
+                if group not in archlist and not (group.startswith("-")
+                                                  and group[1:] in archlist) and group not in ("*", "~*", "**"):
                     writemsg(_("!!! INVALID ACCEPT_KEYWORDS: %s\n") % str(group), noiselevel=-1, )
 
         profile_broken = False
@@ -1284,7 +1284,7 @@ class config:
                          noiselevel=-1,
                          )
             else:
-                if (self.get(f"BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}", None) is not None):
+                if self.get(f"BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}", None) is not None:
                     compression["compress"] = compression["compress"].replace(
                         "${BINPKG_COMPRESS_FLAGS}", f"${{BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}}}",
                     )
@@ -1771,8 +1771,8 @@ class config:
                 pass
             else:
                 allow_test = self.get("ALLOW_TEST", "").split()
-                restrict_test = ("test" in restrict and not "all" in allow_test
-                                 and not ("test_network" in properties and "network" in allow_test))
+                restrict_test = "test" in restrict and not "all" in allow_test and not ("test_network" in properties
+                                                                                        and "network" in allow_test)
 
         if restrict_test and "test" in self.features:
             # Handle it like IUSE="-test", since features USE is
@@ -2667,7 +2667,7 @@ class config:
             return self._getitem(key)
         except KeyError:
             if portage._internal_caller:
-                stack = (traceback.format_stack()[:-1] + traceback.format_exception(*sys.exc_info())[1:])
+                stack = traceback.format_stack()[:-1] + traceback.format_exception(*sys.exc_info())[1:]
                 try:
                     # Ensure that output is written to terminal.
                     with open("/dev/tty", "w") as f:
@@ -2802,8 +2802,8 @@ class config:
         phase = self.get("EBUILD_PHASE")
         emerge_from = self.get("EMERGE_FROM")
         filter_calling_env = False
-        if (self.mycpv is not None and not (emerge_from == "ebuild" and phase == "setup")
-                and phase not in ("clean", "cleanrm", "depend", "fetch")):
+        if self.mycpv is not None and not (emerge_from == "ebuild" and phase == "setup") and phase not in (
+                "clean", "cleanrm", "depend", "fetch"):
             temp_dir = self.get("T")
             if temp_dir is not None and os.path.exists(os.path.join(temp_dir, "environment")):
                 filter_calling_env = True
@@ -2815,7 +2815,7 @@ class config:
             if not isinstance(myvalue, str):
                 writemsg(_("!!! Non-string value in config: %s=%s\n") % (x, myvalue), noiselevel=-1, )
                 continue
-            if (filter_calling_env and x not in environ_whitelist and not self._environ_whitelist_re.match(x)):
+            if filter_calling_env and x not in environ_whitelist and not self._environ_whitelist_re.match(x):
                 # Do not allow anything to leak into the ebuild
                 # environment unless it is explicitly whitelisted.
                 # This ensures that variables unset by the ebuild

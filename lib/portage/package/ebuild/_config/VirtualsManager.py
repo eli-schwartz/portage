@@ -20,7 +20,7 @@ class VirtualsManager:
             return
 
         assert len(args) == 1, "VirtualsManager.__init__ takes one positional argument"
-        assert not kwargs, ("unknown keyword argument(s) '%s' passed to VirtualsManager.__init__" % ", ".join(kwargs))
+        assert not kwargs, "unknown keyword argument(s) '%s' passed to VirtualsManager.__init__" % ", ".join(kwargs)
 
         profiles = args[0]
         self._virtuals = None
@@ -122,8 +122,7 @@ class VirtualsManager:
         3. profile only
         """
 
-        assert self._treeVirtuals is not None, ("_populate_treeVirtuals() must be called before " +
-                                                "any query about virtuals")
+        assert self._treeVirtuals is not None, "_populate_treeVirtuals() must be called before " + "any query about virtuals"
 
         # Virtuals by profile+tree preferences.
         ptVirtuals = {}

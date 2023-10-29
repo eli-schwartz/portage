@@ -58,9 +58,9 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
                 writemsg(f"!!! Error loading '{self._cache_filename}': {str(e)}\n", noiselevel=-1, )
             del e
 
-        cache_valid = (self._cache_data and isinstance(self._cache_data, dict)
-                       and self._cache_data.get("version") == self._cache_version
-                       and isinstance(self._cache_data.get("blockers"), dict))
+        cache_valid = self._cache_data and isinstance(
+            self._cache_data, dict) and self._cache_data.get("version") == self._cache_version and isinstance(
+                self._cache_data.get("blockers"), dict)
         if cache_valid:
             # Validate all the atoms and counters so that
             # corruption is detected as soon as possible.

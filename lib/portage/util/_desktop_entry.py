@@ -56,8 +56,7 @@ def validate_desktop_entry(path):
             # "hint:" output is new in desktop-file-utils-0.21
             if msg.startswith("hint: ") or msg in _ignored_errors:
                 continue
-            if ('for key "NotShowIn" in group "Desktop Entry"' in msg
-                    or 'for key "OnlyShowIn" in group "Desktop Entry"' in msg):
+            if 'for key "NotShowIn" in group "Desktop Entry"' in msg or 'for key "OnlyShowIn" in group "Desktop Entry"' in msg:
                 exempt = False
                 for s in _ShowIn_exemptions:
                     if s in msg:

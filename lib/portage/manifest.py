@@ -100,8 +100,9 @@ class Manifest2Entry(ManifestEntry):
         return f"{myline} {with_hashes}"
 
     def __eq__(self, other):
-        return (isinstance(other, Manifest2Entry) and self.type == other.type and self.name == other.name
-                and self.hashes == other.hashes)
+        return isinstance(
+            other,
+            Manifest2Entry) and self.type == other.type and self.name == other.name and self.hashes == other.hashes
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -502,10 +503,10 @@ class Manifest:
                 mystat = os.stat(fname)
             except OSError:
                 pass
-            if (f in distfilehashes and not required_hash_types.difference(distfilehashes[f]) and
-                ((assumeDistHashesSometimes and mystat is None) or (assumeDistHashesAlways and mystat is None) or
-                 (assumeDistHashesAlways and mystat is not None and set(distfilehashes[f]) == set(self.hashes)
-                  and distfilehashes[f]["size"] == mystat.st_size))):
+            if f in distfilehashes and not required_hash_types.difference(distfilehashes[f]) and (
+                (assumeDistHashesSometimes and mystat is None) or (assumeDistHashesAlways and mystat is None) or
+                (assumeDistHashesAlways and mystat is not None and set(distfilehashes[f]) == set(self.hashes)
+                 and distfilehashes[f]["size"] == mystat.st_size)):
                 self.fhashdict["DIST"][f] = distfilehashes[f]
             else:
                 try:

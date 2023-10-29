@@ -246,8 +246,7 @@ class SyncLocalTestCase(TestCase):
         if hg_binary is None:
             mercurial_tests = ()
         else:
-            mercurial_tests = (delete_sync_repo + delete_git_dir + hg_repo_create + sync_type_mercurial + rename_repo +
-                               sync_cmds + upstream_hg_commit + sync_cmds)
+            mercurial_tests = delete_sync_repo + delete_git_dir + hg_repo_create + sync_type_mercurial + rename_repo + sync_cmds + upstream_hg_commit + sync_cmds
 
         pythonpath = os.environ.get("PYTHONPATH")
         if pythonpath is not None and not pythonpath.strip():
@@ -297,13 +296,7 @@ class SyncLocalTestCase(TestCase):
                 # triggered by python -Wd will be visible.
                 stdout = subprocess.PIPE
 
-            for cwd, cmd in (rename_repo + sync_cmds_auto_sync + sync_cmds + rsync_opts_repos +
-                             rsync_opts_repos_default + rsync_opts_repos_default_ovr + rsync_opts_repos_default_cancel +
-                             bump_timestamp_cmds + sync_rsync_rcu + sync_cmds + delete_rcu_store_dir + sync_cmds +
-                             revert_rcu_layout + delete_repo_location + sync_cmds + sync_cmds + bump_timestamp_cmds +
-                             sync_cmds + revert_rcu_layout + delete_sync_repo + git_repo_create + sync_type_git +
-                             rename_repo + sync_cmds + upstream_git_commit + sync_cmds + sync_type_git_shallow +
-                             upstream_git_commit + sync_cmds + mercurial_tests):
+            for cwd, cmd in rename_repo + sync_cmds_auto_sync + sync_cmds + rsync_opts_repos + rsync_opts_repos_default + rsync_opts_repos_default_ovr + rsync_opts_repos_default_cancel + bump_timestamp_cmds + sync_rsync_rcu + sync_cmds + delete_rcu_store_dir + sync_cmds + revert_rcu_layout + delete_repo_location + sync_cmds + sync_cmds + bump_timestamp_cmds + sync_cmds + revert_rcu_layout + delete_sync_repo + git_repo_create + sync_type_git + rename_repo + sync_cmds + upstream_git_commit + sync_cmds + sync_type_git_shallow + upstream_git_commit + sync_cmds + mercurial_tests:
                 if hasattr(cmd, "__call__"):
                     cmd()
                     continue

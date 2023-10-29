@@ -265,8 +265,8 @@ def xtermTitleReset():
         if prompt_command == "":
             default_xterm_title = ""
         elif prompt_command is not None:
-            if (dotitles and "TERM" in os.environ and _legal_terms_re.match(os.environ["TERM"]) is not None
-                    and sys.__stderr__.isatty()):
+            if dotitles and "TERM" in os.environ and _legal_terms_re.match(
+                    os.environ["TERM"]) is not None and sys.__stderr__.isatty():
                 from portage.process import find_binary, spawn
 
                 shell = os.environ.get("SHELL")
@@ -532,9 +532,9 @@ class EOutput:
 
     def __eend(self, caller, errno, msg):
         if errno == 0:
-            status_brackets = (colorize("BRACKET", "[ ") + colorize("GOOD", "ok") + colorize("BRACKET", " ]"))
+            status_brackets = colorize("BRACKET", "[ ") + colorize("GOOD", "ok") + colorize("BRACKET", " ]")
         else:
-            status_brackets = (colorize("BRACKET", "[ ") + colorize("BAD", "!!") + colorize("BRACKET", " ]"))
+            status_brackets = colorize("BRACKET", "[ ") + colorize("BAD", "!!") + colorize("BRACKET", " ]")
             if msg:
                 if caller == "eend":
                     self.eerror(msg[0])
@@ -823,7 +823,7 @@ class TermProgressBar(ProgressBar):
             return image
         offset = curval / maxval
         bar_width = int(offset * max_bar_width)
-        image = (image + "[" + (bar_width * "=") + ">" + ((max_bar_width - bar_width) * " ") + "]")
+        image = image + "[" + (bar_width * "=") + ">" + ((max_bar_width - bar_width) * " ") + "]"
         return image
 
 

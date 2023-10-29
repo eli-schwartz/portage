@@ -1144,7 +1144,7 @@ def apply_permissions(filename, uid=-1, gid=-1, mode=-1, mask=-1, stat_cached=No
 
     # The chown system call may clear S_ISUID and S_ISGID
     # bits, so those bits are restored if necessary.
-    if (modified and new_mode == -1 and (st_mode & stat.S_ISUID or st_mode & stat.S_ISGID)):
+    if modified and new_mode == -1 and (st_mode & stat.S_ISUID or st_mode & stat.S_ISGID):
         if mode == -1:
             new_mode = st_mode
         else:
@@ -1800,9 +1800,9 @@ def find_updated_config_files(target_root, config_protect):
                     pass
 
             if stat.S_ISDIR(mymode):
-                mycommand = (f"find '{x}' -name '.*' -type d -prune -o -name '._cfg????_*'")
+                mycommand = f"find '{x}' -name '.*' -type d -prune -o -name '._cfg????_*'"
             else:
-                mycommand = ("find '%s' -maxdepth 1 -name '._cfg????_%s'" % os.path.split(x.rstrip(os.path.sep)))
+                mycommand = "find '%s' -maxdepth 1 -name '._cfg????_%s'" % os.path.split(x.rstrip(os.path.sep))
             mycommand += " ! -name '.*~' ! -iname '.*.bak' -print0"
             cmd = shlex_split(mycommand)
 

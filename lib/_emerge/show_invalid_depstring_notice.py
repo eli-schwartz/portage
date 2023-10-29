@@ -9,7 +9,7 @@ from portage.util import writemsg_level
 
 
 def show_invalid_depstring_notice(parent_node, error_msg):
-    msg1 = ("\n\n!!! Invalid or corrupt dependency specification: " + f"\n\n{error_msg}\n\n{parent_node}\n\n")
+    msg1 = "\n\n!!! Invalid or corrupt dependency specification: " + f"\n\n{error_msg}\n\n{parent_node}\n\n"
     p_key = parent_node.cpv
     p_status = parent_node.operation
     msg = []

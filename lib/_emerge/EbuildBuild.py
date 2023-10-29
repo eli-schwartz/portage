@@ -291,8 +291,8 @@ class EbuildBuild(CompositeTask):
         system_set = pkg.root_config.sets["system"]
 
         # buildsyspkg: Check if we need to _force_ binary package creation
-        self._issyspkg = ("buildsyspkg" in features and system_set.findAtomForPackage(pkg)
-                          and "buildpkg" not in features and opts.buildpkg != "n")
+        self._issyspkg = "buildsyspkg" in features and system_set.findAtomForPackage(
+            pkg) and "buildpkg" not in features and opts.buildpkg != "n"
 
         # Do not build binary cache for packages from volatile sources.
         # For volatile sources (eg., git), the PROPERTIES parameter in
@@ -307,8 +307,8 @@ class EbuildBuild(CompositeTask):
         live_ebuild = "live" in self.settings.get("PROPERTIES", "").split()
         buildpkg_live_disabled = live_ebuild and not buildpkg_live
 
-        if (("buildpkg" in features or self._issyspkg) and not buildpkg_live_disabled
-                and not self.opts.buildpkg_exclude.findAtomForPackage(pkg)):
+        if ("buildpkg" in features or self._issyspkg
+            ) and not buildpkg_live_disabled and not self.opts.buildpkg_exclude.findAtomForPackage(pkg):
             self._buildpkg = True
 
             msg = " === ({} of {}) Compiling/Packaging ({}::{})".format(pkg_count.curval, pkg_count.maxval, pkg.cpv,
@@ -334,7 +334,7 @@ class EbuildBuild(CompositeTask):
         # to be displayed for problematic packages even though they do
         # not set RESTRICT=fetch (bug #336499).
 
-        if ("fetch" not in self.pkg.restrict and "nofetch" not in self.pkg.defined_phases):
+        if "fetch" not in self.pkg.restrict and "nofetch" not in self.pkg.defined_phases:
             self._async_unlock_builddir(returncode=self.returncode)
             return
 

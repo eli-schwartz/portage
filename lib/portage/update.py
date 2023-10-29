@@ -54,8 +54,8 @@ def update_dbentry(update_cmd, mycontent, eapi=None, parent=None):
                 new_atom = Atom(token.replace(old_value, new_value, 1), eapi=eapi)
 
                 # Avoid creating self-blockers for bug #367215.
-                if (new_atom.blocker and parent is not None and parent.cp == new_atom.cp
-                        and match_from_list(new_atom, [parent])):
+                if new_atom.blocker and parent is not None and parent.cp == new_atom.cp and match_from_list(
+                        new_atom, [parent]):
                     continue
 
                 split_content[i] = str(new_atom)

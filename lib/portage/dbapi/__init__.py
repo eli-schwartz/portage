@@ -415,7 +415,7 @@ class dbapi:
             if repo_match is not None and not repo_match(mycpv.repo):
                 continue
             moves += 1
-            if ("/" not in newslot and mycpv.sub_slot and mycpv.sub_slot not in (mycpv.slot, newslot)):
+            if "/" not in newslot and mycpv.sub_slot and mycpv.sub_slot not in (mycpv.slot, newslot):
                 newslot = f"{newslot}/{mycpv.sub_slot}"
             mydata = {"SLOT": newslot + "\n"}
             self.aux_update(mycpv, mydata)

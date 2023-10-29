@@ -22,8 +22,7 @@ class test_gpkg_path_case(TestCase):
 
         try:
             settings = playground.settings
-            path_name = ("aaaabbbb/ccccdddd/eeeeffff/gggghhhh/iiiijjjj/kkkkllll/"
-                         "mmmmnnnn/oooopppp/qqqqrrrr/sssstttt/")
+            path_name = "aaaabbbb/ccccdddd/eeeeffff/gggghhhh/iiiijjjj/kkkkllll/" "mmmmnnnn/oooopppp/qqqqrrrr/sssstttt/"
             orig_full_path = os.path.join(tmpdir, "orig/" + path_name)
             os.makedirs(orig_full_path)
             with open(os.path.join(orig_full_path, "test"), "wb") as test_file:
@@ -66,12 +65,7 @@ class test_gpkg_path_case(TestCase):
         try:
             settings = playground.settings
 
-            path_name = ("aaaabbbb/ccccdddd/eeeeffff/gggghhhh/iiiijjjj/kkkkllll/"
-                         "mmmmnnnn/oooopppp/qqqqrrrr/sssstttt/uuuuvvvv/wwwwxxxx/"
-                         "yyyyzzzz/00001111/22223333/44445555/66667777/88889999/"
-                         "aaaabbbb/ccccdddd/eeeeffff/gggghhhh/iiiijjjj/kkkkllll/"
-                         "mmmmnnnn/oooopppp/qqqqrrrr/sssstttt/uuuuvvvv/wwwwxxxx/"
-                         "yyyyzzzz/00001111/22223333/44445555/66667777/88889999/")
+            path_name = "aaaabbbb/ccccdddd/eeeeffff/gggghhhh/iiiijjjj/kkkkllll/" "mmmmnnnn/oooopppp/qqqqrrrr/sssstttt/uuuuvvvv/wwwwxxxx/" "yyyyzzzz/00001111/22223333/44445555/66667777/88889999/" "aaaabbbb/ccccdddd/eeeeffff/gggghhhh/iiiijjjj/kkkkllll/" "mmmmnnnn/oooopppp/qqqqrrrr/sssstttt/uuuuvvvv/wwwwxxxx/" "yyyyzzzz/00001111/22223333/44445555/66667777/88889999/"
             orig_full_path = os.path.join(tmpdir, "orig/" + path_name)
             os.makedirs(orig_full_path)
             with open(os.path.join(orig_full_path, "test"), "wb") as test_file:
@@ -203,11 +197,8 @@ class test_gpkg_path_case(TestCase):
         try:
             settings = playground.settings
 
-            path_name = ("aaaabbbb/ccccdddd/eeeeffff/gggghhhh/iiiijjjj/kkkkllll/"
-                         "mmmmnnnn/oooopppp/qqqqrrrr/sssstttt/uuuuvvvv/wwwwxxxx/")
-            file_name = ("test-A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z"
-                         "A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z"
-                         "A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z")
+            path_name = "aaaabbbb/ccccdddd/eeeeffff/gggghhhh/iiiijjjj/kkkkllll/" "mmmmnnnn/oooopppp/qqqqrrrr/sssstttt/uuuuvvvv/wwwwxxxx/"
+            file_name = "test-A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z" "A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z" "A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z"
             orig_full_path = os.path.join(tmpdir, "orig", path_name)
             os.makedirs(orig_full_path)
             with open(os.path.join(orig_full_path, "test"), "wb") as test_file:
@@ -251,10 +242,7 @@ class test_gpkg_path_case(TestCase):
         try:
             settings = playground.settings
             path_name = "aaaabbbb/ccccdddd/eeeeffff/gggghhhh/iiiijjjj/kkkkllll/"
-            file_name = ("test1234567890"
-                         "A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z"
-                         "A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z"
-                         "A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z")
+            file_name = "test1234567890" "A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z" "A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z" "A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z"
 
             orig_full_path = os.path.join(tmpdir, "orig/" + path_name)
             os.makedirs(orig_full_path)

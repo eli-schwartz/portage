@@ -21,7 +21,7 @@ __all__ = [
 
 class EverythingSet(PackageSet):
     _operations = ["merge"]
-    description = ("Package set which contains SLOT " + "atoms to match all installed packages")
+    description = "Package set which contains SLOT " + "atoms to match all installed packages"
     _filter = None
 
     def __init__(self, vdbapi, **kwargs):
@@ -57,7 +57,7 @@ class EverythingSet(PackageSet):
 class OwnerSet(PackageSet):
     _operations = ["merge", "unmerge"]
 
-    description = ("Package set which contains all packages " + "that own one or more files.")
+    description = "Package set which contains all packages " + "that own one or more files."
 
     def __init__(self, vardb=None, exclude_files=None, files=None):
         super().__init__()
@@ -129,7 +129,7 @@ class OwnerSet(PackageSet):
 class VariableSet(EverythingSet):
     _operations = ["merge", "unmerge"]
 
-    description = ("Package set which contains all packages " + "that match specified values of a specified variable.")
+    description = "Package set which contains all packages " + "that match specified values of a specified variable."
 
     def __init__(self, vardb, metadatadb=None, variable=None, includes=None, excludes=None):
         super().__init__(vardb)
@@ -196,9 +196,7 @@ class VariableSet(EverythingSet):
 class SubslotChangedSet(PackageSet):
     _operations = ["merge", "unmerge"]
 
-    description = ("Package set which contains all packages " +
-                   "for which the subslot of the highest visible ebuild is " +
-                   "different than the currently installed version.")
+    description = "Package set which contains all packages " + "for which the subslot of the highest visible ebuild is " + "different than the currently installed version."
 
     def __init__(self, portdb=None, vardb=None):
         super().__init__()
@@ -230,8 +228,7 @@ class SubslotChangedSet(PackageSet):
 class DowngradeSet(PackageSet):
     _operations = ["merge", "unmerge"]
 
-    description = ("Package set which contains all packages " +
-                   "for which the highest visible ebuild version is lower than " + "the currently installed version.")
+    description = "Package set which contains all packages " + "for which the highest visible ebuild version is lower than " + "the currently installed version."
 
     def __init__(self, portdb=None, vardb=None):
         super().__init__()
@@ -265,8 +262,7 @@ class DowngradeSet(PackageSet):
 class UnavailableSet(EverythingSet):
     _operations = ["unmerge"]
 
-    description = ("Package set which contains all installed " + "packages for which there are no visible ebuilds " +
-                   "corresponding to the same $CATEGORY/$PN:$SLOT.")
+    description = "Package set which contains all installed " + "packages for which there are no visible ebuilds " + "corresponding to the same $CATEGORY/$PN:$SLOT."
 
     def __init__(self, vardb, metadatadb=None):
         super().__init__(vardb)
@@ -289,8 +285,7 @@ class UnavailableSet(EverythingSet):
 class UnavailableBinaries(EverythingSet):
     _operations = ("merge", "unmerge", )
 
-    description = ("Package set which contains all installed " + "packages for which corresponding binary packages " +
-                   "are not available.")
+    description = "Package set which contains all installed " + "packages for which corresponding binary packages " + "are not available."
 
     def __init__(self, vardb, metadatadb=None):
         super().__init__(vardb)
@@ -528,9 +523,7 @@ class RebuiltBinaries(EverythingSet):
 class ChangedDepsSet(PackageSet):
     _operations = ["merge", "unmerge"]
 
-    description = ("Package set which contains all installed " +
-                   "packages for which the vdb *DEPEND entries are outdated " +
-                   "compared to corresponding portdb entries.")
+    description = "Package set which contains all installed " + "packages for which the vdb *DEPEND entries are outdated " + "compared to corresponding portdb entries."
 
     def __init__(self, portdb=None, vardb=None):
         super().__init__()

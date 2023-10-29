@@ -163,7 +163,7 @@ class EbuildPhase(CompositeTask):
         self._start_lock()
 
     def _start_lock(self):
-        if (self.phase in self._locked_phases and "ebuild-locks" in self.settings.features):
+        if self.phase in self._locked_phases and "ebuild-locks" in self.settings.features:
             eroot = self.settings["EROOT"]
             lock_path = os.path.join(eroot, portage.VDB_PATH + "-ebuild")
             if os.access(os.path.dirname(lock_path), os.W_OK):
@@ -184,7 +184,7 @@ class EbuildPhase(CompositeTask):
         # open file can result in an nfs lock on $T/build.log which
         # prevents the clean phase from removing $T.
         logfile = None
-        if (self.phase not in ("clean", "cleanrm") and self.settings.get("PORTAGE_BACKGROUND") != "subprocess"):
+        if self.phase not in ("clean", "cleanrm") and self.settings.get("PORTAGE_BACKGROUND") != "subprocess":
             logfile = self.settings.get("PORTAGE_LOG_FILE")
         return logfile
 
@@ -385,8 +385,7 @@ class EbuildPhase(CompositeTask):
         self._start_task(die_hooks, self._die_hooks_exit)
 
     def _die_hooks_exit(self, die_hooks):
-        if (self.phase != "clean" and "noclean" not in self.settings.features
-                and "fail-clean" in self.settings.features):
+        if self.phase != "clean" and "noclean" not in self.settings.features and "fail-clean" in self.settings.features:
             self._default_exit(die_hooks)
             self._fail_clean()
             return

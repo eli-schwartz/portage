@@ -48,13 +48,7 @@ def _check_locale(silent):
         if silent:
             return False
 
-        msg = ("WARNING: The LC_CTYPE variable is set to a locale " +
-               "that specifies transformation between lowercase " +
-               "and uppercase ASCII characters that is different than " +
-               "the one specified by POSIX locale. This can break " +
-               "ebuilds and cause issues in programs that rely on " + "the common character conversion scheme. " +
-               "Please consider enabling another locale (such as " + "en_US.UTF-8) in /etc/locale.gen and setting it " +
-               "as LC_CTYPE in make.conf.")
+        msg = "WARNING: The LC_CTYPE variable is set to a locale " + "that specifies transformation between lowercase " + "and uppercase ASCII characters that is different than " + "the one specified by POSIX locale. This can break " + "ebuilds and cause issues in programs that rely on " + "the common character conversion scheme. " + "Please consider enabling another locale (such as " + "en_US.UTF-8) in /etc/locale.gen and setting it " + "as LC_CTYPE in make.conf."
         msg = [l for l in textwrap.wrap(msg, 70)]
         msg.append("")
         chars = lambda l: "".join(_unicode_decode(chr(x)) for x in l)

@@ -42,7 +42,7 @@ class BlockerDB:
         for inst_pkg in installed_pkgs:
             stale_cache.discard(inst_pkg.cpv)
             cached_blockers = blocker_cache.get(inst_pkg.cpv)
-            if (cached_blockers is not None and cached_blockers.counter != inst_pkg.counter):
+            if cached_blockers is not None and cached_blockers.counter != inst_pkg.counter:
                 cached_blockers = None
             if cached_blockers is not None:
                 blocker_atoms = cached_blockers.atoms

@@ -22,7 +22,7 @@ def iter_iuse_vars(env):
 
     use_expand_implicit = frozenset(env.get("USE_EXPAND_IMPLICIT", "").split())
 
-    for v in (env.get("USE_EXPAND_UNPREFIXED", "").split() + env.get("USE_EXPAND", "").split()):
+    for v in env.get("USE_EXPAND_UNPREFIXED", "").split() + env.get("USE_EXPAND", "").split():
         if v in use_expand_implicit:
             k = "USE_EXPAND_VALUES_" + v
             v = env.get(k)

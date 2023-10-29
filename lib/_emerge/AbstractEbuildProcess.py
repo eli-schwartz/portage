@@ -37,7 +37,7 @@ class AbstractEbuildProcess(SpawnProcess):
 
     # The EbuildIpcDaemon support is well tested, but this variable
     # is left so we can temporarily disable it if any issues arise.
-    _enable_ipc_daemon = (installation.TYPE == installation.TYPES.SOURCE or "@IPC@" == "True")
+    _enable_ipc_daemon = installation.TYPE == installation.TYPES.SOURCE or "@IPC@" == "True"
 
     def __init__(self, **kwargs):
         SpawnProcess.__init__(self, **kwargs)
@@ -54,8 +54,7 @@ class AbstractEbuildProcess(SpawnProcess):
         # die_hooks for some reason, and PORTAGE_BUILDDIR
         # doesn't exist yet.
         if need_builddir and not os.path.isdir(self.settings["PORTAGE_BUILDDIR"]):
-            msg = (f"The ebuild phase '{self.phase}' has been aborted since "
-                   f"PORTAGE_BUILDDIR does not exist: '{self.settings['PORTAGE_BUILDDIR']}'")
+            msg = f"The ebuild phase '{self.phase}' has been aborted since " f"PORTAGE_BUILDDIR does not exist: '{self.settings['PORTAGE_BUILDDIR']}'"
             self._eerror(textwrap.wrap(msg, 72))
             self.returncode = 1
             self._async_wait()
@@ -120,8 +119,8 @@ class AbstractEbuildProcess(SpawnProcess):
         if self.fd_pipes is None:
             self.fd_pipes = {}
         null_fd = None
-        if (0 not in self.fd_pipes and self.phase not in self._phases_interactive_whitelist
-                and "interactive" not in self.settings.get("PROPERTIES", "").split()):
+        if 0 not in self.fd_pipes and self.phase not in self._phases_interactive_whitelist and "interactive" not in self.settings.get(
+                "PROPERTIES", "").split():
             null_fd = os.open("/dev/null", os.O_RDONLY)
             self.fd_pipes[0] = null_fd
 
@@ -200,8 +199,7 @@ class AbstractEbuildProcess(SpawnProcess):
     def _orphan_process_warn(self):
         phase = self.phase
 
-        msg = (f"The ebuild phase '{phase}' with pid {self.pid} appears "
-               "to have left an orphan process running in the background.")
+        msg = f"The ebuild phase '{phase}' with pid {self.pid} appears " "to have left an orphan process running in the background."
 
         self._eerror(textwrap.wrap(msg, 72))
 

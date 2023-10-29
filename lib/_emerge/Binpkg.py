@@ -471,8 +471,8 @@ class Binpkg(CompositeTask):
                 EbuildBuildDir.async_unlock() task
         """
         self.settings.pop("PORTAGE_BINPKG_FILE", None)
-        if (task.returncode == os.EX_OK and "binpkg-logs" not in self.settings.features
-                and self.settings.get("PORTAGE_LOG_FILE")):
+        if task.returncode == os.EX_OK and "binpkg-logs" not in self.settings.features and self.settings.get(
+                "PORTAGE_LOG_FILE"):
             try:
                 os.unlink(self.settings["PORTAGE_LOG_FILE"])
             except OSError:

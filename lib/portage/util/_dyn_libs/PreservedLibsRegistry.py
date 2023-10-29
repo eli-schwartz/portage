@@ -96,7 +96,7 @@ class PreservedLibsRegistry:
             self._data = {}
         else:
             for k, v in self._data.items():
-                if (isinstance(v, (list, tuple)) and len(v) == 3 and isinstance(v[2], set)):
+                if isinstance(v, (list, tuple)) and len(v) == 3 and isinstance(v[2], set):
                     # convert set to list, for write with JSONEncoder
                     self._data[k] = (v[0], v[1], list(v[2]))
 
@@ -157,8 +157,8 @@ class PreservedLibsRegistry:
         cp = cpv_getkey(cpv)
         cps = cp + ":" + slot
         counter = self._normalize_counter(counter)
-        if (len(paths) == 0 and cps in self._data and self._data[cps][0] == cpv
-                and self._normalize_counter(self._data[cps][1]) == counter):
+        if len(paths) == 0 and cps in self._data and self._data[cps][0] == cpv and self._normalize_counter(
+                self._data[cps][1]) == counter:
             del self._data[cps]
         elif len(paths) > 0:
             if isinstance(paths, set):

@@ -559,7 +559,7 @@ class LinkageMapELF:
                         # A valid library has been found, so there is no need to
                         # continue.
                         break
-                    if (debug and cachedArch == arch and cachedKey in self._obj_properties):
+                    if debug and cachedArch == arch and cachedKey in self._obj_properties:
                         writemsg_level(
                             (_("Broken symlink or missing/bad soname: " + "%(dir_soname)s -> %(cachedKey)s " +
                                "with soname %(cachedSoname)s but expecting %(soname)s") % {
@@ -644,7 +644,7 @@ class LinkageMapELF:
             raise KeyError(f"{obj_key} ({obj}) not in object list")
         basename = os.path.basename(obj)
         soname = self._obj_properties[obj_key].soname
-        return (len(basename) < len(soname) and basename.endswith(".so") and soname.startswith(basename[:-3]))
+        return len(basename) < len(soname) and basename.endswith(".so") and soname.startswith(basename[:-3])
 
     def listLibraryObjects(self):
         """

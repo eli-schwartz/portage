@@ -97,5 +97,5 @@ def create_portage_wrapper(f):
 
 
 for f in os.listdir(os.path.join(bindir, "ebuild-helpers")):
-    if (f.startswith("do") or f.startswith("new") or f.startswith("prep") or f in ("fowners", "fperms")):
+    if f.startswith("do") or f.startswith("new") or f.startswith("prep") or f in ("fowners", "fperms"):
         globals()[f] = create_portage_wrapper(os.path.join(bindir, "ebuild-helpers", f))

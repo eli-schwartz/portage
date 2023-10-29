@@ -152,8 +152,8 @@ class VdbMetadataDelta:
 
                 removed = False
                 for cpv, delta in deltas.items():
-                    if (cached_cpv.startswith(delta["package"]) and metadata.get("SLOT") == delta["slot"]
-                            and cpv_getkey(cached_cpv) == delta["package"]):
+                    if cached_cpv.startswith(delta["package"]) and metadata.get("SLOT") == delta["slot"] and cpv_getkey(
+                            cached_cpv) == delta["package"]:
                         removed = True
                         break
 

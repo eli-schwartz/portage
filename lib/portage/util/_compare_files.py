@@ -43,18 +43,18 @@ def compare_files(file1, file2, skipped_types=()):
         differences.append("owner")
     if "group" not in skipped_types and file1_stat.st_gid != file2_stat.st_gid:
         differences.append("group")
-    if ("device_number" not in skipped_types and file1_stat.st_rdev != file2_stat.st_rdev):
+    if "device_number" not in skipped_types and file1_stat.st_rdev != file2_stat.st_rdev:
         differences.append("device_number")
 
-    if (XATTRS_WORKS and "xattr" not in skipped_types
-            and sorted(xattr.get_all(file1, nofollow=True)) != sorted(xattr.get_all(file2, nofollow=True))):
+    if XATTRS_WORKS and "xattr" not in skipped_types and sorted(xattr.get_all(file1, nofollow=True)) != sorted(
+            xattr.get_all(file2, nofollow=True)):
         differences.append("xattr")
 
-    if ("atime" not in skipped_types and file1_stat.st_atime_ns != file2_stat.st_atime_ns):
+    if "atime" not in skipped_types and file1_stat.st_atime_ns != file2_stat.st_atime_ns:
         differences.append("atime")
-    if ("mtime" not in skipped_types and file1_stat.st_mtime_ns != file2_stat.st_mtime_ns):
+    if "mtime" not in skipped_types and file1_stat.st_mtime_ns != file2_stat.st_mtime_ns:
         differences.append("mtime")
-    if ("ctime" not in skipped_types and file1_stat.st_ctime_ns != file2_stat.st_ctime_ns):
+    if "ctime" not in skipped_types and file1_stat.st_ctime_ns != file2_stat.st_ctime_ns:
         differences.append("ctime")
 
     if "type" in differences:

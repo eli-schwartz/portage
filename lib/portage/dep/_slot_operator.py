@@ -95,8 +95,8 @@ def _eval_deps(dep_struct, vardbs):
                 if best_version:
                     best_version = best_version[-1]
                     try:
-                        best_version = (best_version if hasattr(best_version, "slot") else vardb._pkg_str(
-                            best_version, None))
+                        best_version = best_version if hasattr(best_version, "slot") else vardb._pkg_str(
+                            best_version, None)
                     except (KeyError, InvalidData):
                         pass
                     else:

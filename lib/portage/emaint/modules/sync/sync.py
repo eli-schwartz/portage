@@ -63,7 +63,7 @@ class SyncRepos:
         self.emerge_config = emerge_config
         if emerge_logging:
             _emerge.emergelog._disable = False
-        self.xterm_titles = ("notitles" not in self.emerge_config.target_config.settings.features)
+        self.xterm_titles = "notitles" not in self.emerge_config.target_config.settings.features
         emergelog(self.xterm_titles, " === sync")
 
     def auto_sync(self, **kwargs):
@@ -199,8 +199,8 @@ class SyncRepos:
 
         sync_manager = SyncManager(self.emerge_config.target_config.settings, emergelog)
 
-        max_jobs = (self.emerge_config.opts.get("--jobs", 1)
-                    if "parallel-fetch" in self.emerge_config.target_config.settings.features else 1)
+        max_jobs = self.emerge_config.opts.get(
+            "--jobs", 1) if "parallel-fetch" in self.emerge_config.target_config.settings.features else 1
         sync_scheduler = SyncScheduler(emerge_config=self.emerge_config,
                                        selected_repos=selected_repos,
                                        sync_manager=sync_manager,
@@ -259,7 +259,7 @@ class SyncRepos:
         mypvs = portage.best(self.emerge_config.target_config.trees["vartree"].dbapi.match(
             portage.const.PORTAGE_PACKAGE_ATOM))
         try:
-            old_use = (self.emerge_config.target_config.trees["vartree"].dbapi.aux_get(mypvs, ["USE"])[0].split())
+            old_use = self.emerge_config.target_config.trees["vartree"].dbapi.aux_get(mypvs, ["USE"])[0].split()
         except KeyError:
             old_use = ()
 
@@ -269,7 +269,7 @@ class SyncRepos:
         )
 
         msgs = []
-        if (not (mybestpv and mypvs) or mybestpv == mypvs or "--quiet" in self.emerge_config.opts):
+        if not (mybestpv and mypvs) or mybestpv == mypvs or "--quiet" in self.emerge_config.opts:
             return msgs
 
         # Suggest to update to the latest available version of portage.

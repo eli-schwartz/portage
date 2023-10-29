@@ -50,16 +50,7 @@ class BacktrackParameter:
         return result
 
     def __eq__(self, other):
-        return (self.circular_dependency == other.circular_dependency
-                and self.needed_unstable_keywords == other.needed_unstable_keywords
-                and self.needed_p_mask_changes == other.needed_p_mask_changes
-                and self.runtime_pkg_mask == other.runtime_pkg_mask
-                and self.needed_use_config_changes == other.needed_use_config_changes
-                and self.needed_license_changes == other.needed_license_changes
-                and self.rebuild_list == other.rebuild_list and self.reinstall_list == other.reinstall_list
-                and self.slot_operator_replace_installed == other.slot_operator_replace_installed
-                and self.slot_operator_mask_built == other.slot_operator_mask_built
-                and self.prune_rebuilds == other.prune_rebuilds)
+        return self.circular_dependency == other.circular_dependency and self.needed_unstable_keywords == other.needed_unstable_keywords and self.needed_p_mask_changes == other.needed_p_mask_changes and self.runtime_pkg_mask == other.runtime_pkg_mask and self.needed_use_config_changes == other.needed_use_config_changes and self.needed_license_changes == other.needed_license_changes and self.rebuild_list == other.rebuild_list and self.reinstall_list == other.reinstall_list and self.slot_operator_replace_installed == other.slot_operator_replace_installed and self.slot_operator_mask_built == other.slot_operator_mask_built and self.prune_rebuilds == other.prune_rebuilds
 
 
 class _BacktrackNode:
@@ -120,7 +111,7 @@ class Backtracker:
         """
 
         for pkg, mask_info in runtime_pkg_mask.items():
-            if ("missing dependency" in mask_info or "slot_operator_mask_built" in mask_info):
+            if "missing dependency" in mask_info or "slot_operator_mask_built" in mask_info:
                 continue
 
             entry_is_valid = False
@@ -225,7 +216,7 @@ class Backtracker:
         """
         Takes information from the depgraph and computes new backtrack parameters to try.
         """
-        assert (self._current_node is not None), "call feedback() only after get() was called"
+        assert self._current_node is not None, "call feedback() only after get() was called"
 
         # Not all config changes require a restart, that's why they can appear together
         # with other conflicts.

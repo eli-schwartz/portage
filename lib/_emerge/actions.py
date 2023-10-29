@@ -114,8 +114,8 @@ def action_build(emerge_config,
         os.path.abspath(
             emerge_config.opts.get("--quickpkg-direct-root", emerge_config.running_config.settings["ROOT"],
                                    ))).rstrip(os.path.sep) + os.path.sep)
-    quickpkg_direct = ("--usepkg" in emerge_config.opts and emerge_config.opts.get("--quickpkg-direct", "n") == "y"
-                       and emerge_config.target_config.settings["ROOT"] != quickpkg_root)
+    quickpkg_direct = "--usepkg" in emerge_config.opts and emerge_config.opts.get(
+        "--quickpkg-direct", "n") == "y" and emerge_config.target_config.settings["ROOT"] != quickpkg_root
     if "--getbinpkg" in emerge_config.opts or quickpkg_direct:
         kwargs = {}
         if quickpkg_direct:
@@ -231,8 +231,7 @@ def action_build(emerge_config,
         else:
             msg = "The FEATURES=digest setting"
 
-        msg += (" can prevent corruption from being" + " noticed. The `repoman manifest` command is the preferred" +
-                " way to generate manifests and it is capable of doing an" + " entire repository or category at once.")
+        msg += " can prevent corruption from being" + " noticed. The `repoman manifest` command is the preferred" + " way to generate manifests and it is capable of doing an" + " entire repository or category at once."
         prefix = bad(" * ")
         writemsg(prefix + "\n")
         for line in textwrap.wrap(msg, 72):
@@ -290,17 +289,13 @@ def action_build(emerge_config,
                         out.eerror(indent + str(dep.atom) + " pulled in by:")
                         out.eerror(2 * indent + str(dep.parent))
                         out.eerror("")
-                msg = ("The resume list contains packages " + "that are either masked or have " +
-                       "unsatisfied dependencies. " + "Please restart/continue " +
-                       "the operation manually, or use --skipfirst " + "to skip the first package in the list and " +
-                       "any other packages that may be " + "masked or have missing dependencies.")
+                msg = "The resume list contains packages " + "that are either masked or have " + "unsatisfied dependencies. " + "Please restart/continue " + "the operation manually, or use --skipfirst " + "to skip the first package in the list and " + "any other packages that may be " + "masked or have missing dependencies."
                 for line in textwrap.wrap(msg, 72):
                     out.eerror(line)
             elif isinstance(e, portage.exception.PackageNotFound):
                 out.eerror("An expected package is " + f"not available: {str(e)}")
                 out.eerror("")
-                msg = ("The resume list contains one or more " + "packages that are no longer " +
-                       "available. Please restart/continue " + "the operation manually.")
+                msg = "The resume list contains one or more " + "packages that are no longer " + "available. Please restart/continue " + "the operation manually."
                 for line in textwrap.wrap(msg, 72):
                     out.eerror(line)
 
@@ -372,8 +367,8 @@ def action_build(emerge_config,
             return 1
 
     mergecount = None
-    if ("--pretend" not in myopts and ("--ask" in myopts or "--tree" in myopts or "--verbose" in myopts)
-            and not ("--quiet" in myopts and "--ask" not in myopts)):
+    if "--pretend" not in myopts and ("--ask" in myopts or "--tree" in myopts
+                                      or "--verbose" in myopts) and not ("--quiet" in myopts and "--ask" not in myopts):
         if "--resume" in myopts:
             mymergelist = mydepgraph.altlist()
             if len(mymergelist) == 0:
@@ -424,7 +419,7 @@ def action_build(emerge_config,
                 prompt = "Would you like to merge these packages?"
         print()
         uq = UserQuery(myopts)
-        if (prompt is not None and "--ask" in myopts and uq.query(prompt, enter_invalid) == "No"):
+        if prompt is not None and "--ask" in myopts and uq.query(prompt, enter_invalid) == "No":
             print()
             print("Quitting.")
             print()
@@ -484,10 +479,10 @@ def action_build(emerge_config,
                                    )
                     return 1
 
-                if (need_write_bindb and eroot in ebuild_eroots
-                        and ("buildpkg" in trees[eroot]["root_config"].settings.features
-                             or "buildsyspkg" in trees[eroot]["root_config"].settings.features)
-                        and not trees[eroot]["bintree"].dbapi.writable):
+                if need_write_bindb and eroot in ebuild_eroots and (
+                        "buildpkg" in trees[eroot]["root_config"].settings.features
+                        or "buildsyspkg" in trees[eroot]["root_config"].settings.features
+                ) and not trees[eroot]["bintree"].dbapi.writable:
                     writemsg_level(f"!!! Read-only file system: {trees[eroot]['bintree'].pkgdir}\n",
                                    level=logging.ERROR,
                                    noiselevel=-1,
@@ -495,8 +490,8 @@ def action_build(emerge_config,
                     return 1
 
                 # unlock GPG if needed
-                if (need_write_bindb and (eroot in ebuild_eroots)
-                        and ("binpkg-signing" in trees[eroot]["root_config"].settings.features)):
+                if need_write_bindb and (eroot in ebuild_eroots) and ("binpkg-signing"
+                                                                      in trees[eroot]["root_config"].settings.features):
                     for binpkg_gpg_config in ("BINPKG_GPG_SIGNING_GPG_HOME", "BINPKG_GPG_SIGNING_KEY", ):
                         if not trees[eroot]["root_config"].settings.get(binpkg_gpg_config):
                             writemsg_level(colorize("BAD", f"!!! {binpkg_gpg_config} is not set\n"),
@@ -518,7 +513,7 @@ def action_build(emerge_config,
             favorites = mtimedb["resume"]["favorites"]
 
         else:
-            if ("resume" in mtimedb and "mergelist" in mtimedb["resume"] and len(mtimedb["resume"]["mergelist"]) > 1):
+            if "resume" in mtimedb and "mergelist" in mtimedb["resume"] and len(mtimedb["resume"]["mergelist"]) > 1:
                 mtimedb["resume_backup"] = mtimedb["resume"]
                 del mtimedb["resume"]
                 mtimedb.commit()
@@ -640,8 +635,8 @@ def action_depclean(settings, trees, ldpath_mtimes, myopts, action, myfiles, spi
         settings.lock()
 
     msg = []
-    if ("preserve-libs" not in settings.features
-            and not myopts.get("--depclean-lib-check", _DEPCLEAN_LIB_CHECK_DEFAULT) != "n"):
+    if "preserve-libs" not in settings.features and not myopts.get("--depclean-lib-check",
+                                                                   _DEPCLEAN_LIB_CHECK_DEFAULT) != "n":
         msg.append("Depclean may break link level dependencies. Thus, it is\n")
         msg.append("recommended to use a tool such as " + good("`revdep-rebuild`") + " (from\n")
         msg.append("app-portage/gentoolkit) in order to detect such breakage.\n")
@@ -966,7 +961,7 @@ def _calc_depclean(settings, trees, ldpath_mtimes, myopts, action, args_set, spi
                 # since Atom(str(atom)) may still contain some
                 # USE dependencies that remain after evaluation of
                 # conditionals.
-                if (atom.package and atom != atom.unevaluated_atom and vardb.match(Atom(str(atom)))):
+                if atom.package and atom != atom.unevaluated_atom and vardb.match(Atom(str(atom))):
                     msg.append(f"  {atom.unevaluated_atom} ({atom}) pulled in by:")
                 else:
                     msg.append(f"  {atom} pulled in by:")
@@ -1101,8 +1096,8 @@ def _calc_depclean(settings, trees, ldpath_mtimes, myopts, action, args_set, spi
     cleanlist = create_cleanlist()
     clean_set = set(cleanlist)
 
-    depclean_lib_check = (cleanlist and real_vardb._linkmap is not None
-                          and myopts.get("--depclean-lib-check", _DEPCLEAN_LIB_CHECK_DEFAULT) != "n")
+    depclean_lib_check = cleanlist and real_vardb._linkmap is not None and myopts.get(
+        "--depclean-lib-check", _DEPCLEAN_LIB_CHECK_DEFAULT) != "n"
     preserve_libs = "preserve-libs" in settings.features
     preserve_libs_restrict = False
 
@@ -1243,9 +1238,7 @@ def _calc_depclean(settings, trees, ldpath_mtimes, myopts, action, args_set, spi
         if consumer_map:
             # TODO: Implement a package set for rebuilding consumer packages.
 
-            msg = ("In order to avoid breakage of link level " +
-                   "dependencies, one or more packages will not be removed. " + "This can be solved by rebuilding " +
-                   "the packages that pulled them in.")
+            msg = "In order to avoid breakage of link level " + "dependencies, one or more packages will not be removed. " + "This can be solved by rebuilding " + "the packages that pulled them in."
 
             prefix = bad(" * ")
             writemsg_level("".join(prefix + f"{line}\n" for line in textwrap.wrap(msg, 70)),
@@ -1474,8 +1467,8 @@ def action_deselect(settings, trees, opts, atoms):
                         discard_atoms.add(atom)
                         break
                 else:
-                    if (not atom.startswith(SETPREFIX) and arg_atom.intersects(atom)
-                            and not (arg_atom.slot and not atom.slot) and not (arg_atom.repo and not atom.repo)):
+                    if not atom.startswith(SETPREFIX) and arg_atom.intersects(atom) and not (
+                            arg_atom.slot and not atom.slot) and not (arg_atom.repo and not atom.repo):
                         discard_atoms.add(atom)
                         break
         if discard_atoms:
@@ -1497,7 +1490,7 @@ def action_deselect(settings, trees, opts, atoms):
                 )
 
             if "--ask" in opts:
-                prompt = ("Would you like to remove these " + "packages from your world favorites?")
+                prompt = "Would you like to remove these " + "packages from your world favorites?"
                 uq = UserQuery(opts)
                 if uq.query(prompt, enter_invalid) == "No":
                     return 128 + signal.SIGINT
@@ -1572,7 +1565,7 @@ def action_info(settings, trees, myopts, myfiles):
                         continue
                 auxkeys = ["EAPI", "DEFINED_PHASES"]
                 metadata = dict(zip(auxkeys, db.aux_get(match, auxkeys)))
-                if (metadata["EAPI"] not in ("0", "1", "2", "3") and "info" in metadata["DEFINED_PHASES"].split()):
+                if metadata["EAPI"] not in ("0", "1", "2", "3") and "info" in metadata["DEFINED_PHASES"].split():
                     mypkgs.append((match, pkg_type))
                     break
 
@@ -2080,8 +2073,7 @@ def action_uninstall(settings, trees, ldpath_mtimes, opts, action, files, spinne
             try:
                 atom = dep_expand(x, mydb=vardb, settings=settings)
             except portage.exception.AmbiguousPackageName as e:
-                msg = ('The short ebuild name "' + x + '" is ambiguous.  Please specify ' + "one of the following " +
-                       "fully-qualified ebuild names instead:")
+                msg = 'The short ebuild name "' + x + '" is ambiguous.  Please specify ' + "one of the following " + "fully-qualified ebuild names instead:"
                 for line in textwrap.wrap(msg, 70):
                     writemsg_level(f"!!! {line}\n", level=logging.ERROR, noiselevel=-1)
                 for i in e.args[0]:
@@ -2181,9 +2173,8 @@ def action_uninstall(settings, trees, ldpath_mtimes, opts, action, files, spinne
     if files and not valid_atoms:
         return 1
 
-    if (action == "unmerge" and "--quiet" not in opts and "--quiet-unmerge-warn" not in opts):
-        msg = ("This action can remove important packages! " + "In order to be safer, use " +
-               "`emerge -pv --depclean <atom>` to check for " + "reverse dependencies before removing packages.")
+    if action == "unmerge" and "--quiet" not in opts and "--quiet-unmerge-warn" not in opts:
+        msg = "This action can remove important packages! " + "In order to be safer, use " + "`emerge -pv --depclean <atom>` to check for " + "reverse dependencies before removing packages."
         out = portage.output.EOutput()
         for line in textwrap.wrap(msg, 72):
             out.ewarn(line)
@@ -2195,7 +2186,7 @@ def action_uninstall(settings, trees, ldpath_mtimes, opts, action, files, spinne
     # of ebuild pkg_prerm/postrm phase output to logs as appropriate
     # for options such as --jobs, --quiet and --quiet-build.
     max_jobs = opts.get("--jobs", 1)
-    background = (max_jobs is True or max_jobs > 1 or "--quiet" in opts or opts.get("--quiet-build") == "y")
+    background = max_jobs is True or max_jobs > 1 or "--quiet" in opts or opts.get("--quiet-build") == "y"
     sched_iface = SchedulerInterface(global_event_loop(), is_background=lambda: background)
 
     if background:
@@ -2421,12 +2412,7 @@ def get_profile_version(portdir: str, profile: str, vardb: portage.dbapi.vartree
 
 
 def getportageversion(portdir: str, profile: str, chost: str, vardb: portage.dbapi.vartree.vardbapi, ) -> str:
-    pythonver = ("python"
-                 f" {sys.version_info[0]}"
-                 f".{sys.version_info[1]}"
-                 f".{sys.version_info[2]}"
-                 f"-{sys.version_info[3]}"
-                 f"-{sys.version_info[4]}")
+    pythonver = "python" f" {sys.version_info[0]}" f".{sys.version_info[1]}" f".{sys.version_info[2]}" f"-{sys.version_info[3]}" f"-{sys.version_info[4]}"
 
     profilever = get_profile_version(portdir, profile, vardb)
     libcver = get_libc_version(vardb)
@@ -2554,8 +2540,7 @@ def validate_ebuild_environment(trees):
         features_warn.update(_emerge_features_warn.intersection(settings.features))
 
     if features_warn:
-        msg = ("WARNING: The FEATURES variable contains one " + "or more values that should be disabled under " +
-               f"normal circumstances: {' '.join(features_warn)}")
+        msg = "WARNING: The FEATURES variable contains one " + "or more values that should be disabled under " + f"normal circumstances: {' '.join(features_warn)}"
         out = portage.output.EOutput()
         for line in textwrap.wrap(msg, 65):
             out.ewarn(line)
@@ -2775,10 +2760,7 @@ def expand_set_arguments(myfiles, myaction, root_config):
                 display_missing_pkg_set(root_config, s)
                 return (None, 1)
             if s == "installed":
-                msg = ("The @installed set is not recommended when "
-                       "updating packages because it will often "
-                       "introduce unsolved blocker conflicts. Please "
-                       "refer to bug #387059 for details.")
+                msg = "The @installed set is not recommended when " "updating packages because it will often " "introduce unsolved blocker conflicts. Please " "refer to bug #387059 for details."
                 out = portage.output.EOutput()
                 for line in textwrap.wrap(msg, 57):
                     out.ewarn(line)
@@ -2798,7 +2780,7 @@ def expand_set_arguments(myfiles, myaction, root_config):
                                level=logging.ERROR,
                                noiselevel=-1,
                                )
-                if (s in ("world", "selected") and SETPREFIX + e.value in sets["selected"]):
+                if s in ("world", "selected") and SETPREFIX + e.value in sets["selected"]:
                     writemsg_level((f"Use `emerge --deselect {SETPREFIX}{e}` to "
                                     "remove this set from world_sets.\n"),
                                    level=logging.ERROR,
@@ -2943,9 +2925,8 @@ def run_action(emerge_config):
     if emerge_config.action in ("search", None) and "--usepkg" in emerge_config.opts:
         for mytrees in emerge_config.trees.values():
             kwargs = {}
-            if (mytrees is emerge_config.target_config.trees
-                    and emerge_config.target_config is not emerge_config.running_config
-                    and emerge_config.opts.get("--quickpkg-direct", "n") == "y"):
+            if mytrees is emerge_config.target_config.trees and emerge_config.target_config is not emerge_config.running_config and emerge_config.opts.get(
+                    "--quickpkg-direct", "n") == "y":
                 kwargs["add_repos"] = (emerge_config.running_config.trees["vartree"].dbapi, )
 
             try:
@@ -2964,7 +2945,7 @@ def run_action(emerge_config):
 
     apply_priorities(emerge_config.target_config.settings)
 
-    if ("--autounmask-continue" in emerge_config.opts and emerge_config.opts.get("--autounmask") == "n"):
+    if "--autounmask-continue" in emerge_config.opts and emerge_config.opts.get("--autounmask") == "n":
         writemsg_level(f" {warn('*')} --autounmask-continue has been disabled by --autounmask=n\n",
                        level=logging.WARNING,
                        noiselevel=-1,
@@ -3032,7 +3013,7 @@ def run_action(emerge_config):
 
     ensure_required_sets(emerge_config.trees)
 
-    if (emerge_config.action is None and "--resume" in emerge_config.opts and emerge_config.args):
+    if emerge_config.action is None and "--resume" in emerge_config.opts and emerge_config.args:
         writemsg(f"emerge: unexpected argument(s) for --resume: {' '.join(emerge_config.args)}\n", noiselevel=-1, )
         return 1
 
@@ -3089,20 +3070,20 @@ def run_action(emerge_config):
             portage.debug.set_trace(True)
 
     if not "--quiet" in emerge_config.opts:
-        if ("--nospinner" in emerge_config.opts or emerge_config.target_config.settings.get("TERM") == "dumb"
-                or not sys.stdout.isatty()):
+        if "--nospinner" in emerge_config.opts or emerge_config.target_config.settings.get(
+                "TERM") == "dumb" or not sys.stdout.isatty():
             spinner.update = spinner.update_basic
 
     if "--debug" in emerge_config.opts:
         print("myaction", emerge_config.action)
         print("myopts", emerge_config.opts)
 
-    if (not emerge_config.action and not emerge_config.args and "--resume" not in emerge_config.opts):
+    if not emerge_config.action and not emerge_config.args and "--resume" not in emerge_config.opts:
         emerge_help()
         return 1
 
     pretend = "--pretend" in emerge_config.opts
-    fetchonly = ("--fetchonly" in emerge_config.opts or "--fetch-all-uri" in emerge_config.opts)
+    fetchonly = "--fetchonly" in emerge_config.opts or "--fetch-all-uri" in emerge_config.opts
     buildpkgonly = "--buildpkgonly" in emerge_config.opts
 
     # check if root user is the current user for the actions where emerge needs this
@@ -3285,14 +3266,13 @@ def run_action(emerge_config):
                     if valid_atom.cp.split("/")[0] == "null":
                         valid_atom = dep_expand(x, mydb=portdb)
 
-                    if (valid_atom.cp.split("/")[0] == "null" and "--usepkg" in emerge_config.opts):
+                    if valid_atom.cp.split("/")[0] == "null" and "--usepkg" in emerge_config.opts:
                         valid_atom = dep_expand(x, mydb=bindb)
 
                     valid_atoms.append(valid_atom)
 
                 except portage.exception.AmbiguousPackageName as e:
-                    msg = ('The short ebuild name "' + x + '" is ambiguous.  Please specify ' +
-                           "one of the following " + "fully-qualified ebuild names instead:")
+                    msg = 'The short ebuild name "' + x + '" is ambiguous.  Please specify ' + "one of the following " + "fully-qualified ebuild names instead:"
                     for line in textwrap.wrap(msg, 70):
                         writemsg_level(f"!!! {line}\n", level=logging.ERROR, noiselevel=-1)
                     for i in e.args[0]:

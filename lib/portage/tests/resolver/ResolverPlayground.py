@@ -791,7 +791,7 @@ class ResolverPlaygroundTestCase:
                 got = set(got)
                 expected = set(expected)
 
-            elif (key == "slot_collision_solutions" and self.ambiguous_slot_collision_solutions):
+            elif key == "slot_collision_solutions" and self.ambiguous_slot_collision_solutions:
                 # Tests that use all_permutations can have multiple
                 # outcomes here.
                 for x in expected:

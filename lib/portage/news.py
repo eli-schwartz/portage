@@ -349,9 +349,8 @@ class DisplayProfileRestriction(DisplayRestriction):
         self.format = news_format
 
     def isValid(self) -> bool:
-        return (not fnmatch.fnmatch(self.format, "1.*")
-                or "*" not in self.profile and not fnmatch.fnmatch(self.format, "2.*")
-                or _valid_profile_RE.match(self.profile))
+        return not fnmatch.fnmatch(self.format, "1.*") or "*" not in self.profile and not fnmatch.fnmatch(
+            self.format, "2.*") or _valid_profile_RE.match(self.profile)
 
     def checkRestriction(self, **kwargs) -> bool:
         if fnmatch.fnmatch(self.format, "2.*") and self.profile.endswith("/*"):

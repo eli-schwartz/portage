@@ -76,7 +76,7 @@ class SecuritySet(PackageSet):
 
 class NewGlsaSet(SecuritySet):
     _skip_applied = True
-    description = ("Package set that includes all packages possibly affected by an unapplied GLSA")
+    description = "Package set that includes all packages possibly affected by an unapplied GLSA"
 
 
 class AffectedSet(SecuritySet):

@@ -56,7 +56,7 @@ class MercurialSync(NewBase):
         if self.settings.get("PORTAGE_QUIET") == "1":
             hg_cmd_opts += " --quiet"
         if self.repo.module_specific_options.get("sync-mercurial-clone-extra-opts"):
-            hg_cmd_opts += (" %s" % self.repo.module_specific_options["sync-mercurial-clone-extra-opts"])
+            hg_cmd_opts += " %s" % self.repo.module_specific_options["sync-mercurial-clone-extra-opts"]
         hg_cmd = "{} clone{} {} .".format(self.bin_command, hg_cmd_opts, portage._shell_quote(sync_uri), )
         writemsg_level(hg_cmd + "\n")
 
@@ -92,7 +92,7 @@ class MercurialSync(NewBase):
         if self.settings.get("PORTAGE_QUIET") == "1":
             hg_cmd_opts += " --quiet"
         if self.repo.module_specific_options.get("sync-mercurial-pull-extra-opts"):
-            hg_cmd_opts += (" %s" % self.repo.module_specific_options["sync-mercurial-pull-extra-opts"])
+            hg_cmd_opts += " %s" % self.repo.module_specific_options["sync-mercurial-pull-extra-opts"]
         hg_cmd = f"{self.bin_command} pull -u{hg_cmd_opts}"
         writemsg_level(hg_cmd + "\n")
 

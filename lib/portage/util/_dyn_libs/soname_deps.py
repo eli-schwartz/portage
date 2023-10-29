@@ -73,7 +73,7 @@ class SonameDepsProcessor:
                     normalize_path(varexpand(x, expand, error_leader=lambda: f"{entry.filename}: DT_RUNPATH: ",
                                              )) for x in entry.runpaths)
             for x in entry.needed:
-                if (self._requires_exclude is None or self._requires_exclude.match(x) is None):
+                if self._requires_exclude is None or self._requires_exclude.match(x) is None:
                     self._requires_map[multilib_cat][x].add(runpaths)
 
         if entry.soname:

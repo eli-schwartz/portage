@@ -30,7 +30,7 @@ class SQLDatabase(template.database):
     SCHEMA_VALUES_CREATE = ("CREATE TABLE %s ( pkgid integer references %s (pkgid) on delete cascade, \
 		key varchar(255), value text, UNIQUE(pkgid, key))" % (SCHEMA_VALUES_NAME, SCHEMA_PACKAGE_NAME))
     SCHEMA_VALUES_DROP = f"DROP TABLE {SCHEMA_VALUES_NAME}"
-    SCHEMA_INSERT_CPV_INTO_PACKAGE = ("INSERT INTO %s (label, cpv) VALUES(%%s, %%s)" % SCHEMA_PACKAGE_NAME)
+    SCHEMA_INSERT_CPV_INTO_PACKAGE = "INSERT INTO %s (label, cpv) VALUES(%%s, %%s)" % SCHEMA_PACKAGE_NAME
 
     _BaseError = ()
     _dbClass = None

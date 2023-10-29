@@ -256,7 +256,7 @@ def _safe_loop():
                 _real_asyncio.set_event_loop(_loop)
             loop = _thread_weakrefs.loops[thread_key] = _AsyncioEventLoop(loop=_loop)
 
-    if (_thread_weakrefs.mainloop is None and threading.current_thread() is threading.main_thread()):
+    if _thread_weakrefs.mainloop is None and threading.current_thread() is threading.main_thread():
         _thread_weakrefs.mainloop = loop
 
     return loop

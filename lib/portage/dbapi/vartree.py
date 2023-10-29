@@ -572,9 +572,9 @@ class vardbapi(dbapi):
         superuser privileges (since that's required to obtain a lock), but all
         users have read access and benefit from faster metadata lookups (as
         long as at least part of the cache is still valid)."""
-        if (self._flush_cache_enabled and self._aux_cache is not None and secpass >= 2
-                and (len(self._aux_cache["modified"]) >= self._aux_cache_threshold
-                     or not os.path.exists(self._cache_delta_filename))):
+        if self._flush_cache_enabled and self._aux_cache is not None and secpass >= 2 and (
+                len(self._aux_cache["modified"]) >= self._aux_cache_threshold
+                or not os.path.exists(self._cache_delta_filename)):
             ensure_dirs(os.path.dirname(self._aux_cache_filename))
 
             self._owners.populate()  # index any unindexed contents
@@ -626,8 +626,8 @@ class vardbapi(dbapi):
                 writemsg(_("!!! Error loading '%s': %s\n") % (self._aux_cache_filename, e), noiselevel=-1, )
             del e
 
-        if (not aux_cache or not isinstance(aux_cache, dict) or aux_cache.get("version") != self._aux_cache_version
-                or not aux_cache.get("packages")):
+        if not aux_cache or not isinstance(aux_cache, dict) or aux_cache.get(
+                "version") != self._aux_cache_version or not aux_cache.get("packages"):
             aux_cache = {"version": self._aux_cache_version}
             aux_cache["packages"] = {}
 
@@ -771,7 +771,7 @@ class vardbapi(dbapi):
                           ) as f:
                     myd = f.read()
             except OSError:
-                if (x not in self._aux_cache_keys and self._aux_cache_keys_re.match(x) is None):
+                if x not in self._aux_cache_keys and self._aux_cache_keys_re.match(x) is None:
                     env_keys.append(x)
                     continue
                 myd = ""
@@ -1364,7 +1364,7 @@ class vardbapi(dbapi):
                 if pkgs is not None:
                     try:
                         for hash_value in pkgs:
-                            if (not isinstance(hash_value, tuple) or len(hash_value) != 3):
+                            if not isinstance(hash_value, tuple) or len(hash_value) != 3:
                                 continue
                             cpv, counter, mtime = hash_value
                             if not isinstance(cpv, str):
@@ -2127,7 +2127,7 @@ class dblink:
                     write_atomic(os.path.join(self.dbdir, "PF"), self.pkg + "\n")
                 break
 
-        if (self.mycpv != self.settings.mycpv or "EAPI" not in self.settings.configdict["pkg"]):
+        if self.mycpv != self.settings.mycpv or "EAPI" not in self.settings.configdict["pkg"]:
             # We avoid a redundant setcpv call here when
             # the caller has already taken care of it.
             self.settings.setcpv(self.mycpv, mydb=self.vartree.dbapi)
@@ -2138,7 +2138,7 @@ class dblink:
         except UnsupportedAPIException as e:
             eapi_unsupported = e
 
-        if (self._preserve_libs and "preserve-libs" in self.settings["PORTAGE_RESTRICT"].split()):
+        if self._preserve_libs and "preserve-libs" in self.settings["PORTAGE_RESTRICT"].split():
             self._preserve_libs = False
 
         builddir_lock = None
@@ -2539,8 +2539,8 @@ class dblink:
                             is_owned = True
                             break
 
-                    if (is_owned and islink and file_type in ("sym", "dir") and statobj
-                            and stat.S_ISDIR(statobj.st_mode)):
+                    if is_owned and islink and file_type in ("sym", "dir") and statobj and stat.S_ISDIR(
+                            statobj.st_mode):
                         # A new instance of this package claims the file, so
                         # don't unmerge it. If the file is symlink to a
                         # directory and the unmerging package installed it as
@@ -2570,8 +2570,8 @@ class dblink:
 
                 # Don't unlink symlinks to directories here since that can
                 # remove /lib and /usr/lib symlinks.
-                if (unmerge_orphans and lstatobj and not stat.S_ISDIR(lstatobj.st_mode)
-                        and not (islink and statobj and stat.S_ISDIR(statobj.st_mode)) and not self.isprotected(obj)):
+                if unmerge_orphans and lstatobj and not stat.S_ISDIR(lstatobj.st_mode) and not (
+                        islink and statobj and stat.S_ISDIR(statobj.st_mode)) and not self.isprotected(obj):
                     try:
                         unlink(obj, lstatobj)
                     except OSError as e:
@@ -2602,7 +2602,7 @@ class dblink:
                     # (see bug #326685).
                     # TODO: Resolving a symlink to a directory will require
                     # simulation if $ROOT != / and the link is not relative.
-                    if (islink and statobj and stat.S_ISDIR(statobj.st_mode) and obj.startswith(real_root)):
+                    if islink and statobj and stat.S_ISDIR(statobj.st_mode) and obj.startswith(real_root):
                         relative_path = obj[real_root_len:]
                         try:
                             target_dir_contents = os.listdir(obj)
@@ -2694,11 +2694,7 @@ class dblink:
                                              )
 
         if protected_symlinks:
-            msg = ("One or more symlinks to directories have been " +
-                   "preserved in order to ensure that files installed " + "via these symlinks remain accessible. " +
-                   "This indicates that the mentioned symlink(s) may " +
-                   "be obsolete remnants of an old install, and it " +
-                   "may be appropriate to replace a given symlink " + "with the directory that it points to.")
+            msg = "One or more symlinks to directories have been " + "preserved in order to ensure that files installed " + "via these symlinks remain accessible. " + "This indicates that the mentioned symlink(s) may " + "be obsolete remnants of an old install, and it " + "may be appropriate to replace a given symlink " + "with the directory that it points to."
             lines = textwrap.wrap(msg, 72)
             lines.append("")
             flat_list = set()
@@ -3089,8 +3085,8 @@ class dblink:
         scanelf binary. Also, return early if preserve-libs is disabled
         and the preserve-libs registry is empty.
         """
-        if (self._linkmap_broken or self.vartree.dbapi._linkmap is None or self.vartree.dbapi._plib_registry is None or
-            ("preserve-libs" not in self.settings.features and not self.vartree.dbapi._plib_registry.hasEntries())):
+        if self._linkmap_broken or self.vartree.dbapi._linkmap is None or self.vartree.dbapi._plib_registry is None or (
+                "preserve-libs" not in self.settings.features and not self.vartree.dbapi._plib_registry.hasEntries()):
             return
         try:
             self.vartree.dbapi._linkmap.rebuild(**kwargs)
@@ -3109,8 +3105,8 @@ class dblink:
         self._installed_instance. Otherwise, paths are selected from
         self.
         """
-        if (self._linkmap_broken or self.vartree.dbapi._linkmap is None or self.vartree.dbapi._plib_registry is None
-                or (not unmerge and self._installed_instance is None) or not self._preserve_libs):
+        if self._linkmap_broken or self.vartree.dbapi._linkmap is None or self.vartree.dbapi._plib_registry is None or (
+                not unmerge and self._installed_instance is None) or not self._preserve_libs:
             return set()
 
         os = _os_merge
@@ -3171,7 +3167,7 @@ class dblink:
         for provider_node, consumers in consumer_map.items():
             for c in consumers:
                 consumer_node = path_to_node(c)
-                if (installed_instance.isowner(c) and consumer_node not in provider_nodes):
+                if installed_instance.isowner(c) and consumer_node not in provider_nodes:
                     # This is not a provider, so it will be uninstalled.
                     continue
                 lib_graph.add(provider_node, consumer_node)
@@ -3280,8 +3276,8 @@ class dblink:
         Find preserved libraries that don't have any consumers left.
         """
 
-        if (self._linkmap_broken or self.vartree.dbapi._linkmap is None or self.vartree.dbapi._plib_registry is None
-                or not self.vartree.dbapi._plib_registry.hasEntries()):
+        if self._linkmap_broken or self.vartree.dbapi._linkmap is None or self.vartree.dbapi._plib_registry is None or not self.vartree.dbapi._plib_registry.hasEntries(
+        ):
             return {}
 
         # Since preserved libraries can be consumers of other preserved
@@ -3905,7 +3901,7 @@ class dblink:
                 # of variables which should not be shared.
                 settings_clone.reset()
                 settings_clone.setcpv(cur_cpv, mydb=self.vartree.dbapi)
-                if (self._preserve_libs and "preserve-libs" in settings_clone["PORTAGE_RESTRICT"].split()):
+                if self._preserve_libs and "preserve-libs" in settings_clone["PORTAGE_RESTRICT"].split():
                     self._preserve_libs = False
                 others_in_slot.append(
                     dblink(self.cat,
@@ -4083,8 +4079,7 @@ class dblink:
 
         # If there are no files to merge, and an installed package in the same
         # slot has files, it probably means that something went wrong.
-        if (self.settings.get("PORTAGE_PACKAGE_EMPTY_ABORT") == "1" and not filelist and not linklist
-                and others_in_slot):
+        if self.settings.get("PORTAGE_PACKAGE_EMPTY_ABORT") == "1" and not filelist and not linklist and others_in_slot:
             installed_files = None
             for other_dblink in others_in_slot:
                 installed_files = other_dblink.getcontents()
@@ -4155,7 +4150,7 @@ class dblink:
             msg.append("")
             self._elog("eerror", "preinst", msg)
 
-            msg = (_("Package '%s' NOT merged due to read-only file systems.") % self.settings.mycpv)
+            msg = _("Package '%s' NOT merged due to read-only file systems.") % self.settings.mycpv
             msg += _(" If necessary, refer to your elog "
                      "messages for the whole content of the above message.")
             msg = textwrap.wrap(msg, 70)
@@ -4163,10 +4158,10 @@ class dblink:
             return 1
 
         if internal_collisions:
-            msg = (_("Package '%s' has internal collisions between non-identical files "
-                     "(located in separate directories in the installation image (${D}) "
-                     "corresponding to merged directories in the target "
-                     "filesystem (${ROOT})):") % self.settings.mycpv)
+            msg = _("Package '%s' has internal collisions between non-identical files "
+                    "(located in separate directories in the installation image (${D}) "
+                    "corresponding to merged directories in the target "
+                    "filesystem (${ROOT})):") % self.settings.mycpv
             msg = textwrap.wrap(msg, 70)
             msg.append("")
             for k, v in sorted(internal_collisions.items(), key=operator.itemgetter(0)):
@@ -4178,8 +4173,8 @@ class dblink:
                     msg.append("")
             self._elog("eerror", "preinst", msg)
 
-            msg = (_("Package '%s' NOT merged due to internal collisions "
-                     "between non-identical files.") % self.settings.mycpv)
+            msg = _("Package '%s' NOT merged due to internal collisions "
+                    "between non-identical files.") % self.settings.mycpv
             msg += _(" If necessary, refer to your elog messages for the whole "
                      "content of the above message.")
             eerror(textwrap.wrap(msg, 70))
@@ -4308,12 +4303,12 @@ class dblink:
                 msg = symlink_abort_msg % (self.settings.mycpv, )
             elif collision_protect:
                 abort = True
-                msg = (_("Package '%s' NOT merged due to file collisions.") % self.settings.mycpv)
+                msg = _("Package '%s' NOT merged due to file collisions.") % self.settings.mycpv
             elif protect_owned and owners:
                 abort = True
-                msg = (_("Package '%s' NOT merged due to file collisions.") % self.settings.mycpv)
+                msg = _("Package '%s' NOT merged due to file collisions.") % self.settings.mycpv
             else:
-                msg = (_("Package '%s' merged despite file collisions.") % self.settings.mycpv)
+                msg = _("Package '%s' merged despite file collisions.") % self.settings.mycpv
             msg += _(" If necessary, refer to your elog "
                      "messages for the whole content of the above message.")
 
@@ -4337,8 +4332,8 @@ class dblink:
         ensure_dirs(self.dbtmpdir)
 
         downgrade = False
-        if (self._installed_instance is not None
-                and vercmp(self.mycpv.version, self._installed_instance.mycpv.version) < 0):
+        if self._installed_instance is not None and vercmp(self.mycpv.version,
+                                                           self._installed_instance.mycpv.version) < 0:
             downgrade = True
 
         if self._installed_instance is not None:
@@ -4758,8 +4753,7 @@ class dblink:
         destroot = normalize_path(destroot).rstrip(sep) + sep
         calc_prelink = "prelink-checksums" in self.settings.features
 
-        protect_if_modified = ("config-protect-if-modified" in self.settings.features
-                               and self._installed_instance is not None)
+        protect_if_modified = "config-protect-if-modified" in self.settings.features and self._installed_instance is not None
 
         # this is supposed to merge a list of files.  There will be 2 forms of argument passing.
         if isinstance(stufftomerge, str):
@@ -4805,7 +4799,7 @@ class dblink:
             if stat.S_ISLNK(mymode) or stat.S_ISREG(mymode):
                 protected = self.isprotected(mydest)
 
-                if (stat.S_ISREG(mymode) and mystat.st_size == 0 and os.path.basename(mydest).startswith(".keep")):
+                if stat.S_ISREG(mymode) and mystat.st_size == 0 and os.path.basename(mydest).startswith(".keep"):
                     protected = False
 
             destmd5 = None
@@ -5152,7 +5146,7 @@ class dblink:
                 # --noconfmem.
                 move_me = protected = bool(cfgfiledict["IGNORE"])
 
-            if (protected and (dest_link is not None or src_link is not None) and dest_link != src_link):
+            if protected and (dest_link is not None or src_link is not None) and dest_link != src_link:
                 # If either one is a symlink, and they are not
                 # identical symlinks, then force config protection.
                 force = True
@@ -5182,7 +5176,7 @@ class dblink:
 
     def _merged_path(self, path, lstatobj, exists=True):
         previous_path = self._device_path_map.get(lstatobj.st_dev)
-        if (previous_path is None or previous_path is False or (exists and len(path) < len(previous_path))):
+        if previous_path is None or previous_path is False or (exists and len(path) < len(previous_path)):
             if exists:
                 self._device_path_map[lstatobj.st_dev] = path
             else:
@@ -5272,8 +5266,8 @@ class dblink:
                 self._elog_process()
 
                 # Keep the build dir around if postinst fails (bug #704866)
-                if (not self._postinst_failure and "noclean" not in self.settings.features
-                        and (retval == os.EX_OK or "fail-clean" in self.settings.features)):
+                if not self._postinst_failure and "noclean" not in self.settings.features and (
+                        retval == os.EX_OK or "fail-clean" in self.settings.features):
                     if myebuild is None:
                         myebuild = os.path.join(inforoot, self.pkg + ".ebuild")
 
@@ -5601,7 +5595,7 @@ def tar_contents(contents, root, tar, protect=None, onProgress=None, xattrs=Fals
         else:
             raise ValueError(f"invalid root argument: '{root}'")
         live_path = path
-        if ("dir" == contents_type and not stat.S_ISDIR(lst.st_mode) and os.path.isdir(live_path)):
+        if "dir" == contents_type and not stat.S_ISDIR(lst.st_mode) and os.path.isdir(live_path):
             # Even though this was a directory in the original ${D}, it exists
             # as a symlink to a directory in the live filesystem.  It must be
             # recorded as a real directory in the tar file to ensure that tar
@@ -5628,7 +5622,7 @@ def tar_contents(contents, root, tar, protect=None, onProgress=None, xattrs=Fals
         tarinfo.linkname = ""
         if stat.S_ISREG(lst.st_mode):
             inode = (lst.st_ino, lst.st_dev)
-            if (lst.st_nlink > 1 and inode in tar.inodes and arcname != tar.inodes[inode]):
+            if lst.st_nlink > 1 and inode in tar.inodes and arcname != tar.inodes[inode]:
                 tarinfo.type = tarfile.LNKTYPE
                 tarinfo.linkname = tar.inodes[inode]
             else:

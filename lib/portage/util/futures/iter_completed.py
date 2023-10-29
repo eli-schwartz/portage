@@ -163,7 +163,7 @@ def iter_gather(futures, max_jobs=None, max_load=None, loop=None):
         handle_result.current_task.add_done_callback(handle_result)
 
     def cancel_callback(result):
-        if (result.cancelled() and handle_result.current_task is not None and not handle_result.current_task.done()):
+        if result.cancelled() and handle_result.current_task is not None and not handle_result.current_task.done():
             handle_result.current_task.cancel()
 
     result.add_done_callback(cancel_callback)

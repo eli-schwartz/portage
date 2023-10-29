@@ -321,14 +321,10 @@ def _unmerge_display(root_config,
             if unmerge_action != "clean" and root_config.root == "/":
                 skip_pkg = False
                 if portage.match_from_list(portage.const.PORTAGE_PACKAGE_ATOM, [pkg]):
-                    msg = (f"Not unmerging package {pkg.cpv} "
-                           "since there is no valid reason for Portage to "
-                           f"{unmerge_action} itself.")
+                    msg = f"Not unmerging package {pkg.cpv} " "since there is no valid reason for Portage to " f"{unmerge_action} itself."
                     skip_pkg = True
                 elif vartree.dbapi._dblink(cpv).isowner(portage._python_interpreter):
-                    msg = (f"Not unmerging package {pkg.cpv} since there is no valid "
-                           f"reason for Portage to {unmerge_action} currently used Python "
-                           "interpreter.")
+                    msg = f"Not unmerging package {pkg.cpv} since there is no valid " f"reason for Portage to {unmerge_action} currently used Python " "interpreter."
                     skip_pkg = True
                 if skip_pkg:
                     for line in textwrap.wrap(msg, 75):
@@ -431,8 +427,8 @@ def _unmerge_display(root_config,
             mylist.difference_update(all_selected)
         cp = portage.cpv_getkey(next(iter(selected)))
         for y in vartree.dep_match(cp):
-            if (y not in pkgmap[x]["omitted"] and y not in pkgmap[x]["selected"] and y not in pkgmap[x]["protected"]
-                    and y not in all_selected):
+            if y not in pkgmap[x]["omitted"] and y not in pkgmap[x]["selected"] and y not in pkgmap[x][
+                    "protected"] and y not in all_selected:
                 pkgmap[x]["omitted"].add(y)
         if global_unmerge and not pkgmap[x]["selected"]:
             # avoid cluttering the preview printout with stuff that isn't getting unmerged
@@ -581,7 +577,7 @@ def unmerge(root_config,
                     raise UninstallFailure(retval)
                 sys.exit(retval)
             else:
-                if (clean_world and hasattr(sets["selected"], "cleanPackage") and hasattr(sets["selected"], "lock")):
+                if clean_world and hasattr(sets["selected"], "cleanPackage") and hasattr(sets["selected"], "lock"):
                     sets["selected"].lock()
                     if hasattr(sets["selected"], "load"):
                         sets["selected"].load()
@@ -589,7 +585,7 @@ def unmerge(root_config,
                     sets["selected"].unlock()
                 emergelog(xterm_titles, " >>> unmerge success: " + y)
 
-    if (clean_world and hasattr(sets["selected"], "remove") and hasattr(sets["selected"], "lock")):
+    if clean_world and hasattr(sets["selected"], "remove") and hasattr(sets["selected"], "lock"):
         sets["selected"].lock()
         # load is called inside remove()
         for s in root_config.setconfig.active:

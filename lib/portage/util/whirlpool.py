@@ -668,10 +668,10 @@ def WhirlpoolFinalize(ctx):
 
 
 def CDo(buf, a0, a1, a2, a3, a4, a5, a6, a7):
-    return (C0[((buf[a0] >> 56) % 0x100000000) & 0xFF] ^ C1[((buf[a1] >> 48) % 0x100000000) & 0xFF]
-            ^ C2[((buf[a2] >> 40) % 0x100000000) & 0xFF] ^ C3[((buf[a3] >> 32) % 0x100000000) & 0xFF]
-            ^ C4[((buf[a4] >> 24) % 0x100000000) & 0xFF] ^ C5[((buf[a5] >> 16) % 0x100000000) & 0xFF]
-            ^ C6[((buf[a6] >> 8) % 0x100000000) & 0xFF] ^ C7[((buf[a7] >> 0) % 0x100000000) & 0xFF])
+    return C0[((buf[a0] >> 56) % 0x100000000) & 0xFF] ^ C1[((buf[a1] >> 48) % 0x100000000) & 0xFF] ^ C2[(
+        (buf[a2] >> 40) % 0x100000000) & 0xFF] ^ C3[((buf[a3] >> 32) % 0x100000000) & 0xFF] ^ C4[(
+            (buf[a4] >> 24) % 0x100000000) & 0xFF] ^ C5[((buf[a5] >> 16) % 0x100000000) & 0xFF] ^ C6[(
+                (buf[a6] >> 8) % 0x100000000) & 0xFF] ^ C7[((buf[a7] >> 0) % 0x100000000) & 0xFF]
 
 
 def processBuffer(ctx):
@@ -684,10 +684,10 @@ def processBuffer(ctx):
 
     buf_cnt = 0
     for i in range(8):
-        block[i] = (((buffr[buf_cnt + 0] & 0xFF) << 56) ^ ((buffr[buf_cnt + 1] & 0xFF) << 48) ^
-                    ((buffr[buf_cnt + 2] & 0xFF) << 40) ^ ((buffr[buf_cnt + 3] & 0xFF) << 32) ^
-                    ((buffr[buf_cnt + 4] & 0xFF) << 24) ^ ((buffr[buf_cnt + 5] & 0xFF) << 16) ^
-                    ((buffr[buf_cnt + 6] & 0xFF) << 8) ^ ((buffr[buf_cnt + 7] & 0xFF) << 0))
+        block[i] = ((buffr[buf_cnt + 0] & 0xFF) << 56) ^ ((buffr[buf_cnt + 1] & 0xFF) << 48) ^ (
+            (buffr[buf_cnt + 2] & 0xFF) << 40) ^ ((buffr[buf_cnt + 3] & 0xFF) << 32) ^ (
+                (buffr[buf_cnt + 4] & 0xFF) << 24) ^ ((buffr[buf_cnt + 5] & 0xFF) << 16) ^ (
+                    (buffr[buf_cnt + 6] & 0xFF) << 8) ^ ((buffr[buf_cnt + 7] & 0xFF) << 0)
         buf_cnt += 8
     for i in range(8):
         K[i] = ctx.hash[i]

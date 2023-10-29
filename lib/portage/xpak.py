@@ -132,11 +132,11 @@ def xpak_mem(mydata):
     datapos = 0
     for x, newglob in mydata.items():
         mydatasize = len(newglob)
-        indexglob = (indexglob + encodeint(len(x)) + x + encodeint(datapos) + encodeint(mydatasize))
+        indexglob = indexglob + encodeint(len(x)) + x + encodeint(datapos) + encodeint(mydatasize)
         indexpos = indexpos + 4 + len(x) + 4 + 4
         dataglob = dataglob + newglob
         datapos = datapos + mydatasize
-    return (b"XPAKPACK" + encodeint(len(indexglob)) + encodeint(len(dataglob)) + indexglob + dataglob + b"XPAKSTOP")
+    return b"XPAKPACK" + encodeint(len(indexglob)) + encodeint(len(dataglob)) + indexglob + dataglob + b"XPAKSTOP"
 
 
 def xsplit(infile):
@@ -364,8 +364,7 @@ class tbz2:
             mystat = os.stat(self.file)
             if self.filestat:
                 changed = 0
-                if (mystat.st_size != self.filestat.st_size or mystat.st_mtime != self.filestat.st_mtime
-                        or mystat.st_ctime != self.filestat.st_ctime):
+                if mystat.st_size != self.filestat.st_size or mystat.st_mtime != self.filestat.st_mtime or mystat.st_ctime != self.filestat.st_ctime:
                     changed = True
                 if not changed:
                     return 1

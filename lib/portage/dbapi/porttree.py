@@ -267,8 +267,8 @@ class portdbapi(dbapi):
         cache_kwargs = {}
 
         depcachedir_unshared = False
-        if (portage.data.secpass < 1 and depcachedir_w_ok and depcachedir_st is not None
-                and os.getuid() == depcachedir_st.st_uid and os.getgid() == depcachedir_st.st_gid):
+        if portage.data.secpass < 1 and depcachedir_w_ok and depcachedir_st is not None and os.getuid(
+        ) == depcachedir_st.st_uid and os.getgid() == depcachedir_st.st_gid:
             # If this user owns depcachedir and is not in the
             # portage group, then don't bother to set permissions
             # on cache entries. This makes it possible to run
@@ -502,13 +502,13 @@ class portdbapi(dbapi):
         encoding = _encodings["fs"]
         errors = "strict"
 
-        relative_path = (mysplit[0] + _os.sep + psplit[0] + _os.sep + mysplit[1] + ".ebuild")
+        relative_path = mysplit[0] + _os.sep + psplit[0] + _os.sep + mysplit[1] + ".ebuild"
 
         # There is no need to access the filesystem when the package
         # comes from this db and the package repo attribute corresponds
         # to the desired repo, since the file was previously found by
         # the cp_list method.
-        if (myrepo is not None and myrepo == getattr(mycpv, "repo", None) and self is getattr(mycpv, "_db", None)):
+        if myrepo is not None and myrepo == getattr(mycpv, "repo", None) and self is getattr(mycpv, "_db", None):
             return (mytree + _os.sep + relative_path, mytree)
 
         for x in mytrees:
@@ -638,7 +638,7 @@ class portdbapi(dbapi):
                 future.set_exception(PortageKeyError(myrepo))
                 return future
 
-        if (mytree is not None and len(self.porttrees) == 1 and mytree == self.porttrees[0]):
+        if mytree is not None and len(self.porttrees) == 1 and mytree == self.porttrees[0]:
             # mytree matches our only tree, so it's safe to
             # ignore mytree and cache the result
             mytree = None
@@ -953,7 +953,7 @@ class portdbapi(dbapi):
     def cp_list(self, mycp, use_cache=1, mytree=None):
         # NOTE: Cache can be safely shared with the match cache, since the
         # match cache uses the result from dep_expand for the cache_key.
-        if (self.frozen and mytree is not None and len(self.porttrees) == 1 and mytree == self.porttrees[0]):
+        if self.frozen and mytree is not None and len(self.porttrees) == 1 and mytree == self.porttrees[0]:
             # mytree matches our only tree, so it's safe to
             # ignore mytree and cache the result
             mytree = None
@@ -1478,7 +1478,7 @@ def _async_manifest_fetchlist(portdb, repo_config, cp, cpv_list=None, max_jobs=N
     """
     loop = asyncio._wrap_loop(loop)
     result = loop.create_future()
-    cpv_list = (portdb.cp_list(cp, mytree=repo_config.location) if cpv_list is None else cpv_list)
+    cpv_list = portdb.cp_list(cp, mytree=repo_config.location) if cpv_list is None else cpv_list
 
     def gather_done(gather_result):
         # All exceptions must be consumed from gather_result before this
@@ -1487,7 +1487,7 @@ def _async_manifest_fetchlist(portdb, repo_config, cp, cpv_list=None, max_jobs=N
         e = None
         if not gather_result.cancelled():
             for future in gather_result.result():
-                if (future.done() and not future.cancelled() and future.exception() is not None):
+                if future.done() and not future.cancelled() and future.exception() is not None:
                     e = future.exception()
 
         if result.cancelled():

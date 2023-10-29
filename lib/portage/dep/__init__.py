@@ -251,7 +251,7 @@ def paren_reduce(mystr, _deprecation_warn=True):
                     return k >= 0 and stack[k] and stack[k][-1] == "||"
 
                 def ends_in_operator(k):
-                    return (k >= 0 and stack[k] and (stack[k][-1] == "||" or stack[k][-1][-1] == "?"))
+                    return k >= 0 and stack[k] and (stack[k][-1] == "||" or stack[k][-1][-1] == "?")
 
                 def special_append():
                     """
@@ -277,7 +277,7 @@ def paren_reduce(mystr, _deprecation_warn=True):
                         # Optimize: || ( A ) -> A
                         stack[level].pop()
                         special_append()
-                    elif (len(l) == 2 and (l[0] == "||" or l[0][-1] == "?") and stack[level][-1] in (l[0], "||")):
+                    elif len(l) == 2 and (l[0] == "||" or l[0][-1] == "?") and stack[level][-1] in (l[0], "||"):
                         # Optimize: 	|| ( || ( ... ) ) -> || ( ... )
                         # 			foo? ( foo? ( ... ) ) -> foo? ( ... )
                         # 			|| ( foo? ( ... ) ) -> foo? ( ... )
@@ -509,8 +509,8 @@ def _use_reduce_cached(depstr, uselist, masklist, matchall, excludeall, is_src_u
                 level -= 1
                 l = stack.pop()
 
-                is_single = (len(l) == 1 or (opconvert and l and l[0] == "||")
-                             or (not opconvert and len(l) == 2 and l[0] == "||"))
+                is_single = len(l) == 1 or (opconvert and l and l[0] == "||") or (not opconvert and len(l) == 2
+                                                                                  and l[0] == "||")
                 ignore = False
 
                 if flat:
@@ -579,7 +579,7 @@ def _use_reduce_cached(depstr, uselist, masklist, matchall, excludeall, is_src_u
                             # l = [[...]]
                             last = last_any_of_operator_level(level - 1)
                             if last == -1:
-                                if (opconvert and isinstance(l[0], list) and l[0] and l[0][0] == "||"):
+                                if opconvert and isinstance(l[0], list) and l[0] and l[0][0] == "||":
                                     stack[level].append(l[0])
                                 else:
                                     stack[level].extend(l[0])
@@ -653,7 +653,7 @@ def _use_reduce_cached(depstr, uselist, masklist, matchall, excludeall, is_src_u
             else:
                 need_simple_token = False
                 if is_src_uri:
-                    if (not eapi_attrs.selective_src_uri_restriction and token.startswith(("fetch+", "mirror+"))):
+                    if not eapi_attrs.selective_src_uri_restriction and token.startswith(("fetch+", "mirror+")):
                         raise InvalidDependString(
                             _("Selective fetch/mirror restriction not allowed "
                               "in EAPI %s: token %s") % (eapi, pos + 1))
@@ -1471,9 +1471,10 @@ class Atom(str):
                         conditional_type, flag = invalid_flag
                         conditional_str = _use_dep._conditional_strings[conditional_type]
                         msg = _("USE flag '%s' referenced in " +
-                                "conditional '%s' in atom '%s' is not in IUSE") % (flag, conditional_str % flag, self)
+                                "conditional '%s' in atom '%s' is not in IUSE") % (flag, conditional_str % flag, self,
+                                                                                   )
                         raise InvalidAtom(msg, category="IUSE.missing")
-            if (self.blocker and self.blocker.overlap.forbid and not eapi_attrs.strong_blocks):
+            if self.blocker and self.blocker.overlap.forbid and not eapi_attrs.strong_blocks:
                 raise InvalidAtom(_("Strong blocks are not allowed in EAPI %s: '%s'") % (eapi, self),
                                   category="EAPI.incompatible",
                                   )
@@ -1547,7 +1548,7 @@ class Atom(str):
         if self == other:
             return True
 
-        if (self.cp != other.cp or self.use != other.use or self.operator != other.operator or self.cpv != other.cpv):
+        if self.cp != other.cp or self.use != other.use or self.operator != other.operator or self.cpv != other.cpv:
             return False
 
         if self.slot is None or other.slot is None or self.slot == other.slot:
@@ -1750,8 +1751,7 @@ class ExtendedAtomDict(portage.cache.mappings.MutableMapping):
             self._normal[cp] = val
 
     def __eq__(self, other):
-        return (self._value_class == other._value_class and self._extended == other._extended
-                and self._normal == other._normal)
+        return self._value_class == other._value_class and self._extended == other._extended and self._normal == other._normal
 
     def clear(self):
         self._extended.clear()
@@ -2284,7 +2284,7 @@ def match_from_list(mydep, candidate_list):
                 # =* glob matches only on boundaries between version parts,
                 # so 1* does not match 10 (bug 560466).
                 next_char = xcpv[len(mycpv_cmp):len(mycpv_cmp) + 1]
-                if (not next_char or next_char in "._-" or mycpv_cmp[-1].isdigit() != next_char.isdigit()):
+                if not next_char or next_char in "._-" or mycpv_cmp[-1].isdigit() != next_char.isdigit():
                     mylist.append(x)
 
     elif operator == "~":  # version, any revision, match
@@ -2412,7 +2412,7 @@ def match_from_list(mydep, candidate_list):
 
 
 def human_readable_required_use(required_use):
-    return (required_use.replace("^^", "exactly-one-of").replace("||", "any-of").replace("??", "at-most-one-of"))
+    return required_use.replace("^^", "exactly-one-of").replace("||", "any-of").replace("??", "at-most-one-of")
 
 
 def get_required_use_flags(required_use, eapi=None):
@@ -2631,7 +2631,7 @@ def check_required_use(required_use, use, iuse_match, eapi=None):
                         stack[level].append(satisfied)
                         node._satisfied = satisfied
 
-                    elif (not isinstance(stack[level][-1], bool) and stack[level][-1][-1] == "?"):
+                    elif not isinstance(stack[level][-1], bool) and stack[level][-1][-1] == "?":
                         op = stack[level].pop()
                         if is_active(op[:-1]):
                             satisfied = is_satisfied(op, l)
@@ -2651,7 +2651,7 @@ def check_required_use(required_use, use, iuse_match, eapi=None):
                     if l:
                         stack[level].append(satisfied)
 
-                    if (len(node._children) <= 1 or node._parent._operator not in valid_operators):
+                    if len(node._children) <= 1 or node._parent._operator not in valid_operators:
                         last_node = node._parent._children.pop()
                         if last_node is not node:
                             raise AssertionError("node is not last child of parent")
@@ -2673,7 +2673,7 @@ def check_required_use(required_use, use, iuse_match, eapi=None):
                     if isinstance(node._children[0], _RequiredUseBranch):
                         node._children[0]._parent = node._parent
                         node = node._children[0]
-                        if (node._operator is None and node._parent._operator not in valid_operators):
+                        if node._operator is None and node._parent._operator not in valid_operators:
                             last_node = node._parent._children.pop()
                             if last_node is not node:
                                 raise AssertionError("node is not last child of parent")
@@ -2767,7 +2767,7 @@ def extract_affecting_use(mystr, atom, eapi=None):
                     return k >= 0 and stack[k] and stack[k][-1] == "||"
 
                 def ends_in_operator(k):
-                    return (k >= 0 and stack[k] and (stack[k][-1] == "||" or stack[k][-1][-1] == "?"))
+                    return k >= 0 and stack[k] and (stack[k][-1] == "||" or stack[k][-1][-1] == "?")
 
                 def special_append():
                     """
@@ -2793,7 +2793,7 @@ def extract_affecting_use(mystr, atom, eapi=None):
                         # Optimize: || ( A ) -> A
                         stack[level].pop()
                         special_append()
-                    elif (len(l) == 2 and (l[0] == "||" or l[0][-1] == "?") and stack[level][-1] in (l[0], "||")):
+                    elif len(l) == 2 and (l[0] == "||" or l[0][-1] == "?") and stack[level][-1] in (l[0], "||"):
                         # Optimize: 	|| ( || ( ... ) ) -> || ( ... )
                         # 			foo? ( foo? ( ... ) ) -> foo? ( ... )
                         # 			|| ( foo? ( ... ) ) -> foo? ( ... )

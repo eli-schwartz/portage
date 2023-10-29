@@ -251,7 +251,7 @@ def _lockfile_iteration(mypath, wantnewlockfile=False, unlinkfile=False, waiting
 
             if not preexisting:
                 try:
-                    if (portage.data.secpass >= 1 and os.stat(lockfilename).st_gid != portage_gid):
+                    if portage.data.secpass >= 1 and os.stat(lockfilename).st_gid != portage_gid:
                         os.chown(lockfilename, -1, portage_gid)
                 except OSError as e:
                     if e.errno in (errno.ENOENT, errno.ESTALE):
@@ -313,11 +313,11 @@ def _lockfile_iteration(mypath, wantnewlockfile=False, unlinkfile=False, waiting
                         if not enolock_msg_shown:
                             enolock_msg_shown = True
                             if isinstance(mypath, int):
-                                context_desc = (_("Error while waiting "
-                                                  "to lock fd %i") % myfd)
+                                context_desc = _("Error while waiting "
+                                                 "to lock fd %i") % myfd
                             else:
-                                context_desc = (_("Error while waiting "
-                                                  "to lock '%s'") % lockfilename)
+                                context_desc = _("Error while waiting "
+                                                 "to lock '%s'") % lockfilename
                             writemsg(f"\n!!! {context_desc}: {e}\n", noiselevel=-1)
 
                         time.sleep(_HARDLINK_POLL_LATENCY)
@@ -412,7 +412,7 @@ def _lockfile_was_removed(lock_fd, lock_path):
             return (True, None)
 
         hardlink_stat = os.stat(hardlink_path)
-        if (hardlink_stat.st_ino != fstat_st.st_ino or hardlink_stat.st_dev != fstat_st.st_dev):
+        if hardlink_stat.st_ino != fstat_st.st_ino or hardlink_stat.st_dev != fstat_st.st_dev:
             # Create another hardlink in order to detect whether or not
             # hardlink inode numbers are expected to match. For example,
             # inode numbers are not expected to match for sshfs.
@@ -724,7 +724,7 @@ def hardlock_cleanup(path, remove_all_locks=False):
     for x in mylist:
         if myhost in mylist[x] or remove_all_locks:
             mylockname = hardlock_name(path + "/" + x)
-            if (hardlink_is_mine(mylockname, path + "/" + x) or not os.path.exists(path + "/" + x) or remove_all_locks):
+            if hardlink_is_mine(mylockname, path + "/" + x) or not os.path.exists(path + "/" + x) or remove_all_locks:
                 for y in mylist[x]:
                     for z in mylist[x][y]:
                         filename = path + "/." + x + ".hardlock-" + y + "-" + z

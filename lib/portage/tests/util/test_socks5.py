@@ -77,8 +77,7 @@ class AsyncHTTPServerTestCase(TestCase):
     def _fetch_directly(host, port, path):
         # NOTE: python2.7 does not have context manager support here
         try:
-            f = urlopen("http://{host}:{port}{path}".format(  # nosec
-                host=host, port=port, path=path))
+            f = urlopen("http://{host}:{port}{path}".format(host=host, port=port, path=path))  # nosec
             return f.read()
         finally:
             if f is not None:

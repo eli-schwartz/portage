@@ -88,7 +88,7 @@ class _PackageCounters:
         self.binary = 0
 
     def __str__(self):
-        total_installs = (self.upgrades + self.downgrades + self.newslot + self.new + self.reinst)
+        total_installs = self.upgrades + self.downgrades + self.newslot + self.new + self.reinst
         myoutput = []
         details = []
         myoutput.append(f"Total: {total_installs} package")
@@ -156,15 +156,15 @@ class _DisplayConfig:
         self.verbosity = verbosity
 
         if self.verbosity is None:
-            self.verbosity = ("--quiet" in frozen_config.myopts and 1 or "--verbose" in frozen_config.myopts and 3 or 2)
+            self.verbosity = "--quiet" in frozen_config.myopts and 1 or "--verbose" in frozen_config.myopts and 3 or 2
 
-        self.oneshot = ("--oneshot" in frozen_config.myopts or "--onlydeps" in frozen_config.myopts)
+        self.oneshot = "--oneshot" in frozen_config.myopts or "--onlydeps" in frozen_config.myopts
         self.columns = "--columns" in frozen_config.myopts
         self.tree_display = "--tree" in frozen_config.myopts
         self.alphabetical = "--alphabetical" in frozen_config.myopts
         self.quiet = "--quiet" in frozen_config.myopts
         self.all_flags = self.verbosity == 3 or self.quiet
-        self.print_use_string = (self.verbosity != 1 or "--verbose" in frozen_config.myopts)
+        self.print_use_string = self.verbosity != 1 or "--verbose" in frozen_config.myopts
         self.edebug = frozen_config.edebug
         self.unordered_display = "--unordered-display" in frozen_config.myopts
 
@@ -266,7 +266,7 @@ def _create_use_string(conf, name, cur_iuse, iuse_forced, cur_use, old_iuse, old
                 removed.append(flag_str)
             continue
         else:
-            if (is_new or flag in old_iuse and flag not in old_use and (conf.all_flags or reinst_flag)):
+            if is_new or flag in old_iuse and flag not in old_use and (conf.all_flags or reinst_flag):
                 flag_str = blue("-" + flag)
             elif flag not in old_iuse:
                 flag_str = yellow("-" + flag)
@@ -445,15 +445,15 @@ def _prune_tree_display(display_list):
     last_merge_depth = 0
     for i in range(len(display_list) - 1, -1, -1):
         node, depth, ordered = display_list[i]
-        if (not ordered and depth == 0 and i > 0 and node == display_list[i - 1][0] and display_list[i - 1][1] == 0):
+        if not ordered and depth == 0 and i > 0 and node == display_list[i - 1][0] and display_list[i - 1][1] == 0:
             # An ordered node got a consecutive duplicate
             # when the tree was being filled in.
             del display_list[i]
             continue
-        if (ordered and isinstance(node, Package) and node.operation in ("merge", "uninstall")):
+        if ordered and isinstance(node, Package) and node.operation in ("merge", "uninstall"):
             last_merge_depth = depth
             continue
-        if (depth >= last_merge_depth or i < len(display_list) - 1 and depth >= display_list[i + 1][1]):
+        if depth >= last_merge_depth or i < len(display_list) - 1 and depth >= display_list[i + 1][1]:
             del display_list[i]
 
 

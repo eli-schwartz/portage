@@ -61,7 +61,7 @@ def eqawarn(lines):
 
 skipped_directories = []
 skipped_files = []
-warn_on_skipped_files = (os.environ.get("PORTAGE_DOHTML_WARN_ON_SKIPPED_FILES") is not None)
+warn_on_skipped_files = os.environ.get("PORTAGE_DOHTML_WARN_ON_SKIPPED_FILES") is not None
 unwarned_skipped_extensions = os.environ.get("PORTAGE_DOHTML_UNWARNED_SKIPPED_EXTENSIONS", "").split()
 unwarned_skipped_files = os.environ.get("PORTAGE_DOHTML_UNWARNED_SKIPPED_FILES", "").split()
 
@@ -90,10 +90,9 @@ def install(basename, dirname, options, prefix=""):
         if ext in options.allowed_exts or basename in options.allowed_files:
             dodir(destdir)
             dofile(fullpath, os.path.join(destdir, basename))
-        elif (warn_on_skipped_files and ext not in unwarned_skipped_extensions
-              and basename not in unwarned_skipped_files):
+        elif warn_on_skipped_files and ext not in unwarned_skipped_extensions and basename not in unwarned_skipped_files:
             skipped_files.append(fullpath)
-    elif (options.recurse and os.path.isdir(fullpath) and basename not in options.disallowed_dirs):
+    elif options.recurse and os.path.isdir(fullpath) and basename not in options.disallowed_dirs:
         for i in _os.listdir(_unicode_encode(fullpath)):
             try:
                 i = _unicode_decode(i, errors="strict")

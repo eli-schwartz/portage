@@ -979,7 +979,7 @@ class binarytree:
 
                     if multi_instance:
                         name_split = catpkgsplit(f"{mycat}/{mypf}")
-                        if (name_split is None or tuple(catsplit(mydir)) != name_split[:2]):
+                        if name_split is None or tuple(catsplit(mydir)) != name_split[:2]:
                             continue
                     elif mycat != mydir and mydir != "All":
                         continue
@@ -1142,7 +1142,7 @@ class binarytree:
                 except ValueError:
                     pass
                 else:
-                    if (download_timestamp and ttl and download_timestamp + ttl > time.time()):
+                    if download_timestamp and ttl and download_timestamp + ttl > time.time():
                         raise UseCachedCopyOfRemoteIndex()
 
                 # Set proxy settings for _urlopen -> urllib_request
@@ -1160,7 +1160,7 @@ class binarytree:
                         if hasattr(f, "headers") and f.headers.get("timestamp", ""):
                             remote_timestamp = f.headers.get("timestamp")
                     except OSError as err:
-                        if (hasattr(err, "code") and err.code == 304):  # not modified (since local_timestamp)
+                        if hasattr(err, "code") and err.code == 304:  # not modified (since local_timestamp)
                             raise UseCachedCopyOfRemoteIndex()
 
                         if parsed_url.scheme in ("ftp", "http", "https"):
@@ -1223,7 +1223,7 @@ class binarytree:
                 f_dec = codecs.iterdecode(f, _encodings["repo.content"], errors="replace")
                 try:
                     rmt_idx.readHeader(f_dec)
-                    if (not remote_timestamp):  # in case it had not been read from HTTP header
+                    if not remote_timestamp:  # in case it had not been read from HTTP header
                         remote_timestamp = rmt_idx.header.get("TIMESTAMP", None)
                     if not remote_timestamp:
                         # no timestamp in the header, something's wrong
@@ -1691,8 +1691,8 @@ class binarytree:
             header["URI"] = base_uri
         else:
             header.pop("URI", None)
-        for k in (list(self._pkgindex_header_keys) + self.settings.get("USE_EXPAND_IMPLICIT", "").split() +
-                  self.settings.get("USE_EXPAND_UNPREFIXED", "").split()):
+        for k in list(self._pkgindex_header_keys) + self.settings.get(
+                "USE_EXPAND_IMPLICIT", "").split() + self.settings.get("USE_EXPAND_UNPREFIXED", "").split():
             v = self.settings.get(k, None)
             if v:
                 header[k] = v
@@ -1885,7 +1885,7 @@ class binarytree:
             raise InvalidBinaryPackageFormat(binpkg_format)
 
         while True:
-            filename = (f"{os.path.join(self.pkgdir, cpv.cp, pf)}-{build_id}.{binpkg_suffix}")
+            filename = f"{os.path.join(self.pkgdir, cpv.cp, pf)}-{build_id}.{binpkg_suffix}"
             if os.path.exists(filename):
                 build_id += 1
             else:
@@ -2004,7 +2004,7 @@ class binarytree:
         _instance_key = self.dbapi._instance_key
         instance_key = _instance_key(cpv)
         digests = {}
-        metadata = (None if self._remotepkgs is None else self._remotepkgs.get(instance_key))
+        metadata = None if self._remotepkgs is None else self._remotepkgs.get(instance_key)
         if metadata is None:
             for d in self._load_pkgindex().packages:
                 if d["CPV"] == cpv and instance_key == _instance_key(

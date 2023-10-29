@@ -339,8 +339,7 @@ class Display:
                             key += "/" + old_pkg.sub_slot
                     elif any(x.slot + "/" + x.sub_slot != "0/0" for x in myoldbest + [pkg]):
                         key += _slot_separator + old_pkg.slot
-                        if (old_pkg.slot != old_pkg.sub_slot
-                                or old_pkg.slot == pkg.slot and old_pkg.sub_slot != pkg.sub_slot):
+                        if old_pkg.slot != old_pkg.sub_slot or old_pkg.slot == pkg.slot and old_pkg.sub_slot != pkg.sub_slot:
                             key += "/" + old_pkg.sub_slot
                     if not self.quiet_repo_display:
                         key += _repo_separator + old_pkg.repo
@@ -403,7 +402,7 @@ class Display:
             ver_str = self._append_slot(ver_str, pkg, pkg_info)
             ver_str = self._append_repository(ver_str, pkg, pkg_info)
         if self.conf.quiet:
-            myprint = (str(pkg_info.attr_display) + " " + self.indent + self.pkgprint(pkg_info.cp, pkg_info))
+            myprint = str(pkg_info.attr_display) + " " + self.indent + self.pkgprint(pkg_info.cp, pkg_info)
             myprint = myprint + darkblue(" " + ver_str) + " "
             myprint = myprint + pkg_info.oldbest
             myprint = myprint + darkgreen("to " + pkg.root)
@@ -439,7 +438,7 @@ class Display:
             ver_str = self._append_slot(ver_str, pkg, pkg_info)
             ver_str = self._append_repository(ver_str, pkg, pkg_info)
         if self.conf.quiet:
-            myprint = (str(pkg_info.attr_display) + " " + self.indent + self.pkgprint(pkg_info.cp, pkg_info))
+            myprint = str(pkg_info.attr_display) + " " + self.indent + self.pkgprint(pkg_info.cp, pkg_info)
             myprint = myprint + " " + green(ver_str) + " "
             myprint = myprint + pkg_info.oldbest
             self.verboseadd = None
@@ -621,8 +620,9 @@ class Display:
         try:
             system = system_set.findAtomForPackage(pkg, modified_use=self.conf.pkg_use_enabled(pkg))
             world = world_set.findAtomForPackage(pkg, modified_use=self.conf.pkg_use_enabled(pkg))
-            if (not (self.conf.oneshot or world) and pkg.root == self.conf.target_root
-                    and self.conf.favorites.findAtomForPackage(pkg, modified_use=self.conf.pkg_use_enabled(pkg))):
+            if not (self.conf.oneshot
+                    or world) and pkg.root == self.conf.target_root and self.conf.favorites.findAtomForPackage(
+                        pkg, modified_use=self.conf.pkg_use_enabled(pkg)):
                 # Maybe it will be added to world now.
                 if create_world_atom(pkg, self.conf.favorites, root_config):
                     world = True
@@ -660,8 +660,7 @@ class Display:
         if self.vardb.cpv_exists(pkg.cpv):
             pkg_info.attr_display.replace = True
             installed_version = pkg_info.previous_pkg
-            if (installed_version.slot != pkg.slot or installed_version.sub_slot != pkg.sub_slot
-                    or not self.quiet_repo_display and installed_version.repo != pkg.repo):
+            if installed_version.slot != pkg.slot or installed_version.sub_slot != pkg.sub_slot or not self.quiet_repo_display and installed_version.repo != pkg.repo:
                 myoldbest = [installed_version]
             if pkg_info.ordered:
                 if pkg_info.merge:
@@ -717,7 +716,7 @@ class Display:
         # in size display (verbose mode)
         self.myfetchlist = set()
 
-        self.quiet_repo_display = ("--quiet-repo-display" in depgraph._frozen_config.myopts)
+        self.quiet_repo_display = "--quiet-repo-display" in depgraph._frozen_config.myopts
         if self.quiet_repo_display:
             # Use this set to detect when all the "repoadd" strings are "[0]"
             # and disable the entire repo display in this case.
@@ -780,8 +779,8 @@ class Display:
                             myprint = "[{}{}] ".format(self.pkgprint(pkg_info.operation.ljust(13), pkg_info), addl, )
                         else:
                             myprint = "[{} {}] ".format(self.pkgprint(pkg.type_name, pkg_info), pkg_info.attr_display, )
-                        myprint += (self.indent + self.pkgprint(pkg_str, pkg_info) + " " + pkg_info.oldbest +
-                                    darkgreen("to " + pkg.root))
+                        myprint += self.indent + self.pkgprint(
+                            pkg_str, pkg_info) + " " + pkg_info.oldbest + darkgreen("to " + pkg.root)
                 else:
                     if self.conf.columns:
                         myprint = self._set_root_columns(pkg, pkg_info)

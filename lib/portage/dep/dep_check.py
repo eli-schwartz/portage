@@ -76,9 +76,9 @@ def _expand_new_virtuals(mysplit,
         elif isinstance(x, list):
             assert x, f"Normalization error, empty conjunction found in {mysplit}"
             if is_disjunction:
-                assert (x[0] != "||"), f"Normalization error, nested disjunction found in {mysplit}"
+                assert x[0] != "||", f"Normalization error, nested disjunction found in {mysplit}"
             else:
-                assert (x[0] == "||"), f"Normalization error, nested conjunction found in {mysplit}"
+                assert x[0] == "||", f"Normalization error, nested conjunction found in {mysplit}"
             x_exp = _expand_new_virtuals(x,
                                          edebug,
                                          mydbapi,
@@ -96,7 +96,7 @@ def _expand_new_virtuals(mysplit,
                         # Due to normalization, a conjunction must not be
                         # nested directly in another conjunction, so this
                         # must be a disjunction.
-                        assert (x and x[0] == "||"), f"Normalization error, nested conjunction found in {x_exp}"
+                        assert x and x[0] == "||", f"Normalization error, nested conjunction found in {x_exp}"
                         newsplit.extend(x[1:])
                     else:
                         newsplit.append(x)
@@ -411,7 +411,7 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
                 continue
 
             # It's not a downgrade if parent is replacing child.
-            replacing = (parent and graph_interface and graph_interface.will_replace_child(parent, myroot, atom))
+            replacing = parent and graph_interface and graph_interface.will_replace_child(parent, myroot, atom)
             # Ignore USE dependencies here since we don't want USE
             # settings to adversely affect || preference evaluation.
             avail_pkg = mydbapi_match_pkgs(atom.without_use)
@@ -427,7 +427,7 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
 
             if not replacing and graph_db is not None and downgrade_probe is not None:
                 slot_matches = graph_db.match_pkgs(avail_slot)
-                if (len(slot_matches) > 1 and avail_pkg < slot_matches[-1] and not downgrade_probe(avail_pkg)):
+                if len(slot_matches) > 1 and avail_pkg < slot_matches[-1] and not downgrade_probe(avail_pkg):
                     # If a downgrade is not desirable, then avoid a
                     # choice that pulls in a lower version involved
                     # in a slot conflict (bug #531656).
@@ -458,7 +458,7 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
                                     break
                             else:
                                 for flag in violated_atom.use.disabled:
-                                    if (flag in avail_pkg.use.force and flag not in avail_pkg.use.mask):
+                                    if flag in avail_pkg.use.force and flag not in avail_pkg.use.mask:
                                         all_use_unmasked = False
                                         break
                 else:
@@ -471,8 +471,8 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
             if not replacing and downgrade_probe is not None and graph is not None:
                 highest_in_slot = mydbapi_match_pkgs(avail_slot)
                 highest_in_slot = highest_in_slot[-1] if highest_in_slot else None
-                if (avail_pkg and highest_in_slot and avail_pkg < highest_in_slot and not downgrade_probe(avail_pkg)
-                        and (highest_in_slot.installed or highest_in_slot in graph)):
+                if avail_pkg and highest_in_slot and avail_pkg < highest_in_slot and not downgrade_probe(
+                        avail_pkg) and (highest_in_slot.installed or highest_in_slot in graph):
                     installed_downgrade = True
 
             slot_map[avail_slot] = avail_pkg
@@ -494,7 +494,7 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
                 if all_match_previous and not all_match_current:
                     continue
 
-            current_higher = (highest_cpv is None or vercmp(avail_pkg.version, highest_cpv.version) > 0)
+            current_higher = highest_cpv is None or vercmp(avail_pkg.version, highest_cpv.version) > 0
 
             if current_higher or (all_match_current and not all_match_previous):
                 cp_map[avail_pkg.cp] = avail_pkg
@@ -684,7 +684,7 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
                 if choice_1 is choice_2:
                     # choice_1 will not be promoted, so move on
                     break
-                if (choice_1.all_installed_slots and not choice_2.all_installed_slots and not choice_2.want_update):
+                if choice_1.all_installed_slots and not choice_2.all_installed_slots and not choice_2.want_update:
                     # promote choice_1 in front of choice_2
                     choices.remove(choice_1)
                     index_2 = choices.index(choice_2)
@@ -893,7 +893,7 @@ def _overlap_dnf(dep_struct):
     result = []
     for i, x in enumerate(dep_struct):
         if isinstance(x, list):
-            assert (x and x[0] == "||"), f"Normalization error, nested conjunction found in {dep_struct}"
+            assert x and x[0] == "||", f"Normalization error, nested conjunction found in {dep_struct}"
             order_map[id(x)] = i
             prev_cp = None
             for atom in _iter_flatten(x):
@@ -959,8 +959,8 @@ def dep_wordreduce(mydeplist, mysettings, mydbapi, mode, use_cache=1):
             deplist[mypos] = False
         else:
             mykey = deplist[mypos].cp
-            if (mysettings and mykey in mysettings.pprovideddict
-                    and match_from_list(deplist[mypos], mysettings.pprovideddict[mykey])):
+            if mysettings and mykey in mysettings.pprovideddict and match_from_list(deplist[mypos],
+                                                                                    mysettings.pprovideddict[mykey]):
                 deplist[mypos] = True
             elif mydbapi is None:
                 # Assume nothing is satisfied.  This forces dep_zapdeps to

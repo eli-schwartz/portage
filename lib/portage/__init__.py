@@ -294,7 +294,7 @@ except (ImportError, OSError) as e:
 # END OF IMPORTS -- END OF IMPORTS -- END OF IMPORTS -- END OF IMPORTS -- END
 # ===========================================================================
 
-_python_interpreter = (sys.executable if os.environ.get("VIRTUAL_ENV") else os.path.realpath(sys.executable))
+_python_interpreter = sys.executable if os.environ.get("VIRTUAL_ENV") else os.path.realpath(sys.executable)
 _bin_path = PORTAGE_BIN_PATH
 _pym_path = PORTAGE_PYM_PATH
 _not_installed = os.path.isfile(os.path.join(PORTAGE_BASE_PATH, ".portage_not_installed"))
@@ -477,8 +477,8 @@ class _trees_dict(dict):
 
 def create_trees(config_root=None, target_root=None, trees=None, env=None, sysroot=None, eprefix=None):
     if utf8_mode:
-        config_root = (os.fsdecode(config_root) if isinstance(config_root, bytes) else config_root)
-        target_root = (os.fsdecode(target_root) if isinstance(target_root, bytes) else target_root)
+        config_root = os.fsdecode(config_root) if isinstance(config_root, bytes) else config_root
+        target_root = os.fsdecode(target_root) if isinstance(target_root, bytes) else target_root
         sysroot = os.fsdecode(sysroot) if isinstance(sysroot, bytes) else sysroot
         eprefix = os.fsdecode(eprefix) if isinstance(eprefix, bytes) else eprefix
 
@@ -576,7 +576,7 @@ if installation.TYPE == installation.TYPES.SOURCE:
                                     except ValueError:
                                         pass
                                 timestamp = int(time.time())
-                                if (head_timestamp is not None and timestamp > head_timestamp):
+                                if head_timestamp is not None and timestamp > head_timestamp:
                                     timestamp = timestamp - head_timestamp
                                 if not patchlevel:
                                     VERSION = f"{VERSION}_p0"

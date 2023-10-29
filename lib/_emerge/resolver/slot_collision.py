@@ -330,14 +330,7 @@ class slot_conflict_handler:
                                         # Something like bug #453400 caused the
                                         # above findAtomForPackage call to
                                         # return None unexpectedly.
-                                        msg = ("\n\n!!! BUG: Detected "
-                                               "USE dep match inconsistency:\n"
-                                               f"\tppkg: {ppkg}\n"
-                                               f"\tviolated_atom: {violated_atom}\n"
-                                               f"\tatom: {atom} unevaluated: {atom.unevaluated_atom}\n"
-                                               f"\tother_pkg: {other_pkg} "
-                                               f"IUSE: {sorted(other_pkg.iuse.all)} "
-                                               f"USE: {sorted(_pkg_use_enabled(other_pkg))}\n")
+                                        msg = "\n\n!!! BUG: Detected " "USE dep match inconsistency:\n" f"\tppkg: {ppkg}\n" f"\tviolated_atom: {violated_atom}\n" f"\tatom: {atom} unevaluated: {atom.unevaluated_atom}\n" f"\tother_pkg: {other_pkg} " f"IUSE: {sorted(other_pkg.iuse.all)} " f"USE: {sorted(_pkg_use_enabled(other_pkg))}\n"
                                         writemsg(msg, noiselevel=-2)
                                         raise AssertionError("BUG: USE dep match inconsistency")
                                     for flag in violated_atom.use.enabled.union(violated_atom.use.disabled):
@@ -368,8 +361,9 @@ class slot_conflict_handler:
                                     cmp = vercmp(cpv_getversion(atom.cpv), cpv_getversion(best_matches[atom.cp][1].cpv),
                                                  )
 
-                                    if ((sub_type == "ge" and cmp > 0) or (sub_type == "le" and cmp < 0)
-                                            or (sub_type == "eq" and cmp > 0)):
+                                    if (sub_type == "ge" and cmp > 0) or (sub_type == "le"
+                                                                          and cmp < 0) or (sub_type == "eq"
+                                                                                           and cmp > 0):
                                         best_matches[atom.cp] = (ppkg, atom)
                                 else:
                                     best_matches[atom.cp] = (ppkg, atom)
@@ -420,11 +414,11 @@ class slot_conflict_handler:
                                     parent_use = None
                                     if isinstance(ppkg, Package):
                                         parent_use = _pkg_use_enabled(ppkg)
-                                    violated_atom = (atom.unevaluated_atom.violated_conditionals(
+                                    violated_atom = atom.unevaluated_atom.violated_conditionals(
                                         _pkg_use_enabled(other_pkg),
                                         other_pkg.iuse.is_valid_flag,
                                         parent_use=parent_use,
-                                    ))
+                                    )
                                     # It's possible for autounmask to change
                                     # parent_use such that the unevaluated form
                                     # of the atom now matches, even though the
@@ -439,7 +433,7 @@ class slot_conflict_handler:
                                     # the necessary USE change to the user.
                                     if violated_atom.use is None:
                                         continue
-                                    if (use in violated_atom.use.enabled or use in violated_atom.use.disabled):
+                                    if use in violated_atom.use.enabled or use in violated_atom.use.disabled:
                                         unconditional_use_deps.add((ppkg, atom))
                                 # When USE flags are removed, it can be
                                 # essential to see all broken reverse
@@ -496,7 +490,7 @@ class slot_conflict_handler:
                             if ver is not None:
                                 start = atom_str.rfind(ver)
                                 end = start + len(ver)
-                                atom_str = (atom_str[:start] + colorize("BAD", ver) + atom_str[end:])
+                                atom_str = atom_str[:start] + colorize("BAD", ver) + atom_str[end:]
 
                             if slot_str:
                                 atom_str = atom_str.replace(slot_str, colorize("BAD", slot_str), 1)
@@ -534,8 +528,8 @@ class slot_conflict_handler:
                                     new_tokens.append(token)
                                 ii += 1 + len(token)
 
-                            atom_str = (atom_str[:use_part_start] + f"[{','.join(new_tokens)}]" +
-                                        atom_str[use_part_end + 1:])
+                            atom_str = atom_str[:use_part_start] + f"[{','.join(new_tokens)}]" + atom_str[use_part_end +
+                                                                                                          1:]
 
                         return atom_str, colored_idx
 
@@ -672,7 +666,7 @@ class slot_conflict_handler:
                         changes.append(colorize("red", "+" + flag))
                     else:
                         changes.append(colorize("blue", "-" + flag))
-                mymsg += (indent + "- " + pkg.cpv + f" (Change USE: {' '.join(changes)}" + ")\n")
+                mymsg += indent + "- " + pkg.cpv + f" (Change USE: {' '.join(changes)}" + ")\n"
             mymsg += "\n"
             return mymsg
 

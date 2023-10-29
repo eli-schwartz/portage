@@ -58,7 +58,7 @@ def create_depgraph_params(myopts, myaction):
 
     autounmask = myopts.get("--autounmask")
     autounmask_license = myopts.get("--autounmask-license", "y" if autounmask is True else "n")
-    autounmask_use = ("n" if myparams.get("binpkg_respect_use") == "y" else myopts.get("--autounmask-use"))
+    autounmask_use = "n" if myparams.get("binpkg_respect_use") == "y" else myopts.get("--autounmask-use")
     if autounmask == "n":
         autounmask = False
     else:
@@ -80,8 +80,8 @@ def create_depgraph_params(myopts, myaction):
     myparams["autounmask"] = autounmask
     myparams["autounmask_keep_use"] = True if autounmask_use == "n" else False
     myparams["autounmask_keep_license"] = False if autounmask_license == "y" else True
-    myparams["autounmask_keep_keywords"] = (False if autounmask_keep_keywords in (None, "n") else True)
-    myparams["autounmask_keep_masks"] = (False if autounmask_keep_masks in (None, "n") else True)
+    myparams["autounmask_keep_keywords"] = False if autounmask_keep_keywords in (None, "n") else True
+    myparams["autounmask_keep_masks"] = False if autounmask_keep_masks in (None, "n") else True
 
     bdeps = myopts.get("--with-bdeps")
     if bdeps is not None:
@@ -95,8 +95,8 @@ def create_depgraph_params(myopts, myaction):
 
     myparams["ignore_soname_deps"] = myopts.get("--ignore-soname-deps", "y")
 
-    dyn_deps_def = ("y" if installation.TYPE == installation.TYPES.SOURCE else "@DYN_DEPS_DEFAULT@")
-    dynamic_deps = (myopts.get("--dynamic-deps", dyn_deps_def) != "n" and "--nodeps" not in myopts)
+    dyn_deps_def = "y" if installation.TYPE == installation.TYPES.SOURCE else "@DYN_DEPS_DEFAULT@"
+    dynamic_deps = myopts.get("--dynamic-deps", dyn_deps_def) != "n" and "--nodeps" not in myopts
     if dynamic_deps:
         myparams["dynamic_deps"] = True
 
@@ -125,9 +125,8 @@ def create_depgraph_params(myopts, myaction):
         myparams["update_if_installed"] = update_if_installed
         myopts["--update"] = True
 
-    if ("--update" in myopts or "--newrepo" in myopts or "--newuse" in myopts or "--reinstall" in myopts
-            or "--noreplace" in myopts or myopts.get("--changed-deps", "n") != "n" or changed_slot
-            or myopts.get("--selective", "n") != "n"):
+    if "--update" in myopts or "--newrepo" in myopts or "--newuse" in myopts or "--reinstall" in myopts or "--noreplace" in myopts or myopts.get(
+            "--changed-deps", "n") != "n" or changed_slot or myopts.get("--selective", "n") != "n":
         myparams["selective"] = True
 
     deep = myopts.get("--deep")
@@ -142,8 +141,7 @@ def create_depgraph_params(myopts, myaction):
     if complete_if_new_ver is not None:
         myparams["complete_if_new_ver"] = complete_if_new_ver
 
-    if ("--complete-graph" in myopts or "--rebuild-if-new-rev" in myopts or "--rebuild-if-new-ver" in myopts
-            or "--rebuild-if-unbuilt" in myopts):
+    if "--complete-graph" in myopts or "--rebuild-if-new-rev" in myopts or "--rebuild-if-new-ver" in myopts or "--rebuild-if-unbuilt" in myopts:
         myparams["complete"] = True
     if "--emptytree" in myopts:
         myparams["empty"] = True
@@ -156,8 +154,8 @@ def create_depgraph_params(myopts, myaction):
         myparams.pop("complete", None)
 
     rebuilt_binaries = myopts.get("--rebuilt-binaries")
-    if (rebuilt_binaries is True or rebuilt_binaries != "n" and "--usepkgonly" in myopts
-            and myopts.get("--deep") is True and "--update" in myopts):
+    if rebuilt_binaries is True or rebuilt_binaries != "n" and "--usepkgonly" in myopts and myopts.get(
+            "--deep") is True and "--update" in myopts:
         myparams["rebuilt_binaries"] = True
 
     binpkg_changed_deps = myopts.get("--binpkg-changed-deps")

@@ -175,7 +175,7 @@ def _prepare_features_dirs(mysettings):
     filemode = 0o60
     modemask = 0o2
     restrict = mysettings.get("PORTAGE_RESTRICT", "").split()
-    droppriv = (secpass >= 2 and "userpriv" in mysettings.features and "userpriv" not in restrict)
+    droppriv = secpass >= 2 and "userpriv" in mysettings.features and "userpriv" not in restrict
     for myfeature, kwargs in features_dirs.items():
         if myfeature in mysettings.features:
             failure = False

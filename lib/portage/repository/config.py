@@ -185,7 +185,7 @@ class RepoConfig:
 
         self.sync_allow_hardlinks = repo_opts.get("sync-allow-hardlinks", "true").lower() in ("true", "yes")
 
-        self.sync_openpgp_keyserver = (repo_opts.get("sync-openpgp-keyserver", "").strip().lower() or None)
+        self.sync_openpgp_keyserver = repo_opts.get("sync-openpgp-keyserver", "").strip().lower() or None
 
         self.sync_openpgp_key_path = repo_opts.get("sync-openpgp-key-path", None)
 
@@ -343,11 +343,10 @@ class RepoConfig:
 
             eapi = read_corresponding_eapi_file(os.path.join(self.location, REPO_NAME_LOC), default=self.eapi)
 
-            self.portage1_profiles = (eapi_allows_directories_on_profile_level_and_repository_level(eapi)
-                                      or any(x in _portage1_profiles_allow_directories
-                                             for x in layout_data["profile-formats"]))
-            self.portage1_profiles_compat = (not eapi_allows_directories_on_profile_level_and_repository_level(eapi)
-                                             and layout_data["profile-formats"] == ("portage-1-compat", ))
+            self.portage1_profiles = eapi_allows_directories_on_profile_level_and_repository_level(eapi) or any(
+                x in _portage1_profiles_allow_directories for x in layout_data["profile-formats"])
+            self.portage1_profiles_compat = not eapi_allows_directories_on_profile_level_and_repository_level(
+                eapi) and layout_data["profile-formats"] == ("portage-1-compat", )
 
             self._eapis_banned = frozenset(layout_data["eapis-banned"])
             self._eapis_deprecated = frozenset(layout_data["eapis-deprecated"])
@@ -512,9 +511,9 @@ class RepoConfig:
         return "\n".join(repo_msg)
 
     def __repr__(self):
-        return ("<portage.repository.config.RepoConfig(name={!r}, location={!r})>".format(
+        return "<portage.repository.config.RepoConfig(name={!r}, location={!r})>".format(
             self.name, _unicode_decode(self.location),
-        ))
+        )
 
     def __str__(self):
         d = {}
@@ -604,8 +603,8 @@ class RepoConfigLoader:
                         # Silently ignore when PORTDIR overrides the location
                         # setting from the default repos.conf (bug #478544).
                         old_location = prepos[repo.name].location
-                        if (old_location is not None and old_location != repo.location
-                                and not (base_priority == 0 and old_location == default_portdir)):
+                        if old_location is not None and old_location != repo.location and not (
+                                base_priority == 0 and old_location == default_portdir):
                             ignored_map.setdefault(repo.name, []).append(old_location)
                             if old_location == portdir:
                                 portdir = repo.location
@@ -921,8 +920,8 @@ class RepoConfigLoader:
             if repo_name == "DEFAULT":
                 continue
 
-            if (repo._masters_orig is None and self.mainRepo() and repo.name != self.mainRepo().name
-                    and not portage._sync_mode):
+            if repo._masters_orig is None and self.mainRepo() and repo.name != self.mainRepo(
+            ).name and not portage._sync_mode:
                 # TODO: Delete masters code in lib/portage/tests/resolver/ResolverPlayground.py when deleting this warning.
                 writemsg_level(
                     "!!! %s\n" % _("Repository '%s' is missing masters attribute in '%s'") %
@@ -1218,7 +1217,7 @@ def parse_layout_conf(repo_location, repo_name=None):
     data["manifest-hashes"] = manifest_hashes
     data["manifest-required-hashes"] = manifest_required_hashes
 
-    data["update-changelog"] = (layout_data.get("update-changelog", "false").lower() == "true")
+    data["update-changelog"] = layout_data.get("update-changelog", "false").lower() == "true"
 
     raw_formats = layout_data.get("profile-formats")
     if raw_formats is None:

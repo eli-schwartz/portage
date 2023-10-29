@@ -94,7 +94,7 @@ class circular_dependency_handler:
         return pkg.use.mask, pkg.use.force
 
     def _get_autounmask_changes(self, pkg):
-        needed_use_config_change = (self.depgraph._dynamic_config._needed_use_config_changes.get(pkg))
+        needed_use_config_change = self.depgraph._dynamic_config._needed_use_config_changes.get(pkg)
         if needed_use_config_change is None:
             return frozenset()
 
@@ -252,7 +252,7 @@ class circular_dependency_handler:
                         changes.append(colorize("blue", "-" + flag))
                 msg = f"- {parent.cpv} (Change USE: {' '.join(changes)})\n"
                 if followup_change:
-                    msg += (" (This change might require USE changes on parent packages.)")
+                    msg += " (This change might require USE changes on parent packages.)"
                 suggestions.append(msg)
                 final_solutions.setdefault(pkg, set()).add(solution)
 

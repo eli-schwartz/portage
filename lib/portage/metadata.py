@@ -60,7 +60,7 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
             eclass_db.update_eclasses()
             porttrees_data.append(TreeData(portdb.auxdb[path], eclass_db, path, src_db))
 
-    quiet = (settings.get("TERM") == "dumb" or "--quiet" in myopts or not sys.stdout.isatty())
+    quiet = settings.get("TERM") == "dumb" or "--quiet" in myopts or not sys.stdout.isatty()
 
     onProgress = None
     if not quiet:

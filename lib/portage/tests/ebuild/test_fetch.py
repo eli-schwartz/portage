@@ -393,9 +393,10 @@ class EbuildFetchTestCase(TestCase):
                     os.unlink(os.path.join(settings["DISTDIR"], k))
                 try:
                     os.chmod(settings["DISTDIR"], 0o555)
-                    settings["FETCHCOMMAND"] = (
-                        '"%s" -c "chmod ug+w \\"${DISTDIR}\\"; %s; status=\\$?; chmod a-w \\"${DISTDIR}\\"; exit \\$status"'
-                        % (BASH_BINARY, orig_fetchcommand.replace('"', '\\"')))
+                    settings[
+                        "FETCHCOMMAND"] = '"%s" -c "chmod ug+w \\"${DISTDIR}\\"; %s; status=\\$?; chmod a-w \\"${DISTDIR}\\"; exit \\$status"' % (
+                            BASH_BINARY, orig_fetchcommand.replace('"', '\\"'),
+                        )
                     settings.features.add("skiprocheck")
                     settings.features.remove("distlocks")
                     self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)

@@ -1112,7 +1112,7 @@ class gpkg:
                     else:
                         raise ValueError(f"invalid root argument: '{root_dir}'")
                     live_path = path
-                    if ("dir" == contents_type and not stat.S_ISDIR(lst.st_mode) and os.path.isdir(live_path)):
+                    if "dir" == contents_type and not stat.S_ISDIR(lst.st_mode) and os.path.isdir(live_path):
                         # Even though this was a directory in the original ${D}, it exists
                         # as a symlink to a directory in the live filesystem.  It must be
                         # recorded as a real directory in the tar file to ensure that tar
@@ -1138,7 +1138,7 @@ class gpkg:
                     tarinfo.linkname = ""
                     if stat.S_ISREG(lst.st_mode):
                         inode = (lst.st_ino, lst.st_dev)
-                        if (lst.st_nlink > 1 and inode in image_tar.inodes and arcname != image_tar.inodes[inode]):
+                        if lst.st_nlink > 1 and inode in image_tar.inodes and arcname != image_tar.inodes[inode]:
                             tarinfo.type = tarfile.LNKTYPE
                             tarinfo.linkname = image_tar.inodes[inode]
                         else:
@@ -1418,7 +1418,7 @@ class gpkg:
 
                 # Verify current file signature if needed
                 # binpkg-ignore-signature can override this.
-                if ((self.request_signature or signature_exist) and self.verify_signature and f_signature):
+                if (self.request_signature or signature_exist) and self.verify_signature and f_signature:
                     if f_signature in unverified_files:
                         signature_file = container.extractfile(f_signature)
                         signature = signature_file.read()
@@ -1450,8 +1450,8 @@ class gpkg:
                 verified_hash_count = 0
                 for c in checksum_info.libs:
                     try:
-                        if (checksum_info.libs[c].hexdigest().lower() == manifest_record[manifest_record.index(c) +
-                                                                                         1].lower()):
+                        if checksum_info.libs[c].hexdigest().lower() == manifest_record[manifest_record.index(c) +
+                                                                                        1].lower():
                             verified_hash_count += 1
                         else:
                             raise DigestException(f"{f} checksum mismatched in {self.gpkg_file}")
@@ -1638,8 +1638,8 @@ class gpkg:
                     raise
 
                 d = os.path.join(parent, d)
-                prefix_length = (len(_unicode_encode(d, encoding=_encodings["fs"], errors="strict")) - root_dir_length +
-                                 image_prefix_length)
+                prefix_length = len(_unicode_encode(d, encoding=_encodings["fs"],
+                                                    errors="strict")) - root_dir_length + image_prefix_length
 
                 if os.path.islink(d):
                     path_link = os.readlink(d)
@@ -1659,8 +1659,8 @@ class gpkg:
                 image_max_name_length = max(image_max_name_length, filename_length)
 
                 f = os.path.join(parent, f)
-                path_length = (len(_unicode_encode(f, encoding=_encodings["fs"], errors="strict")) - root_dir_length +
-                               image_prefix_length)
+                path_length = len(_unicode_encode(f, encoding=_encodings["fs"],
+                                                  errors="strict")) - root_dir_length + image_prefix_length
 
                 file_stat = os.lstat(f)
 
@@ -1717,15 +1717,15 @@ class gpkg:
 
             d, f = os.path.split(path)
 
-            prefix_length = (len(_unicode_encode(d, encoding=_encodings["fs"], errors="strict")) - root_dir_length +
-                             image_prefix_length)
+            prefix_length = len(_unicode_encode(d, encoding=_encodings["fs"],
+                                                errors="strict")) - root_dir_length + image_prefix_length
             image_max_prefix_length = max(image_max_prefix_length, prefix_length)
 
             filename_length = len(_unicode_encode(f, encoding=_encodings["fs"], errors="strict"))
             image_max_name_length = max(image_max_name_length, filename_length)
 
-            path_length = (len(_unicode_encode(path, encoding=_encodings["fs"], errors="strict")) - root_dir_length +
-                           image_prefix_length)
+            path_length = len(_unicode_encode(path, encoding=_encodings["fs"],
+                                              errors="strict")) - root_dir_length + image_prefix_length
 
             if not os.path.exists(path):
                 if ignore_missing:

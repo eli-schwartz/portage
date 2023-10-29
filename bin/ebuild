@@ -161,8 +161,7 @@ def main():
 
     with open(_unicode_encode(ebuild, encoding=_encodings["fs"], errors="strict"),
               encoding=_encodings["repo.content"],
-              errors="replace",
-              ) as f:
+              errors="replace") as f:
         eapi = portage._parse_eapi_ebuild_head(f)[0]
     if eapi is None:
         eapi = "0"

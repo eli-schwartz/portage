@@ -48,7 +48,7 @@ def diffstatusoutput(cmd, file1, file2):
 def diff_mixed(func, file1, file2):
     tempdir = None
     try:
-        if (os.path.islink(file1) and not os.path.islink(file2) and os.path.isfile(file1) and os.path.isfile(file2)):
+        if os.path.islink(file1) and not os.path.islink(file2) and os.path.isfile(file1) and os.path.isfile(file2):
             # If a regular file replaces a symlink to a regular
             # file, then show the diff between the regular files
             # (bug #330221).
@@ -210,7 +210,7 @@ def rcs_archive(archive, curconf, newconf, mrgconf):
 
         _archive_copy(mystat, newconf, archive)
 
-        if (has_branch and mrgconf and os.path.isfile(archive) and os.path.isfile(mrgconf)):
+        if has_branch and mrgconf and os.path.isfile(archive) and os.path.isfile(mrgconf):
             # This puts the results of the merge into mrgconf.
             ret = os.system(f"rcsmerge -p -r{RCS_BRANCH} '{archive}' > '{mrgconf}'")
             os.chmod(mrgconf, mystat.st_mode)
@@ -302,7 +302,7 @@ def file_archive(archive, curconf, newconf, mrgconf):
     _file_archive_ensure_dir(os.path.dirname(archive))
 
     # Archive the current config file if it isn't already saved
-    if (os.path.lexists(archive) and len(diffstatusoutput_mixed("diff -aq '%s' '%s'", curconf, archive)[1]) != 0):
+    if os.path.lexists(archive) and len(diffstatusoutput_mixed("diff -aq '%s' '%s'", curconf, archive)[1]) != 0:
         _file_archive_rotate(archive)
 
     try:
@@ -328,7 +328,7 @@ def file_archive(archive, curconf, newconf, mrgconf):
         _archive_copy(mystat, newconf, newconf_archive)
 
         ret = 0
-        if (mrgconf and os.path.isfile(curconf) and os.path.isfile(newconf) and os.path.isfile(f"{archive}.dist")):
+        if mrgconf and os.path.isfile(curconf) and os.path.isfile(newconf) and os.path.isfile(f"{archive}.dist"):
             # This puts the results of the merge into mrgconf.
             ret = os.system(f"diff3 -mE '{curconf}' '{archive}.dist' '{newconf}' > '{mrgconf}'")
             os.chmod(mrgconf, mystat.st_mode)

@@ -103,7 +103,7 @@ def portage_group_warning():
 
 
 def _unprivileged_mode(eroot, eroot_st):
-    return (os.getuid() != 0 and os.access(eroot, os.W_OK) and not eroot_st.st_mode & 0o0002)
+    return os.getuid() != 0 and os.access(eroot, os.W_OK) and not eroot_st.st_mode & 0o0002
 
 
 uid = os.getuid()
@@ -278,7 +278,7 @@ def _init(settings):
     initialize global variables. This allows settings to come from make.conf
     instead of requiring them to be set in the calling environment.
     """
-    if ("_portage_grpname" not in _initialized_globals and "_portage_username" not in _initialized_globals):
+    if "_portage_grpname" not in _initialized_globals and "_portage_username" not in _initialized_globals:
         # Prevents "TypeError: expected string" errors
         # from grp.getgrnam() with PyPy
         native_string = platform.python_implementation() == "PyPy"

@@ -373,7 +373,7 @@ class RsyncSync(NewBase):
                         ts = m.find_timestamp()
                         if ts is None:
                             raise RuntimeError("Timestamp not found in Manifest")
-                        if (self.max_age != 0 and (datetime.datetime.utcnow() - ts.ts).days > self.max_age):
+                        if self.max_age != 0 and (datetime.datetime.utcnow() - ts.ts).days > self.max_age:
                             out.quiet = False
                             out.ewarn("Manifest is over %d days old, this is suspicious!" % (self.max_age, ))
                             out.ewarn("You may want to try using another mirror and/or reporting this one:")

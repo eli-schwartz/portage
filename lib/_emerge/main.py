@@ -1073,14 +1073,11 @@ def profile_check(trees, myaction):
     if myaction in ("help", "info", "search", "sync", "version"):
         return os.EX_OK
     for root_trees in trees.values():
-        if (root_trees["root_config"].settings.profiles and "ARCH" in root_trees["root_config"].settings):
+        if root_trees["root_config"].settings.profiles and "ARCH" in root_trees["root_config"].settings:
             continue
         # generate some profile related warning messages
         validate_ebuild_environment(trees)
-        msg = ("Your current profile is invalid. If you have just changed "
-               "your profile configuration, you should revert back to the "
-               "previous configuration. Allowed actions are limited to "
-               "--help, --info, --search, --sync, and --version.")
+        msg = "Your current profile is invalid. If you have just changed " "your profile configuration, you should revert back to the " "previous configuration. Allowed actions are limited to " "--help, --info, --search, --sync, and --version."
         writemsg_level("".join(f"!!! {l}\n" for l in textwrap.wrap(msg, 70)), level=logging.ERROR, noiselevel=-1, )
         return 1
     return os.EX_OK

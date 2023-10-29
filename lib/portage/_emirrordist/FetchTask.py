@@ -33,11 +33,11 @@ class FetchTask(CompositeTask):
                  )
 
     def _start(self):
-        if (self.config.options.fetch_log_dir is not None and not self.config.options.dry_run):
+        if self.config.options.fetch_log_dir is not None and not self.config.options.dry_run:
             self._log_path = os.path.join(self.config.options.fetch_log_dir, self.distfile + ".log")
 
         self._previously_added = True
-        if (self.config.distfiles_db is not None and self.distfile not in self.config.distfiles_db):
+        if self.config.distfiles_db is not None and self.distfile not in self.config.distfiles_db:
             self._previously_added = False
             # Convert _pkg_str to str in order to prevent pickle problems.
             self.config.distfiles_db[self.distfile] = str(self.cpv)
@@ -541,7 +541,7 @@ class FetchTask(CompositeTask):
         if default_hash_name in self.digests:
             return default_hash_name
         for hash_name in self.digests:
-            if (hash_name != "size" and hash_name in portage.checksum.get_valid_checksum_keys()):
+            if hash_name != "size" and hash_name in portage.checksum.get_valid_checksum_keys():
                 return hash_name
 
         return None

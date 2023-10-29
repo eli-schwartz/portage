@@ -109,11 +109,11 @@ class database(flat_hash.database):
                 pass
             else:
                 existing_mtime = existing_st[stat.ST_MTIME]
-                if (values["_mtime_"] == existing_mtime and existing_content == new_content):
+                if values["_mtime_"] == existing_mtime and existing_content == new_content:
                     return
 
-                if (self.raise_stat_collision and values["_mtime_"] == existing_mtime
-                        and len(new_content) == existing_st.st_size):
+                if self.raise_stat_collision and values["_mtime_"] == existing_mtime and len(
+                        new_content) == existing_st.st_size:
                     raise cache_errors.StatCollision(cpv, new_fp, existing_mtime, existing_st.st_size)
 
         s = cpv.rfind("/")

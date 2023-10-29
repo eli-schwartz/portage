@@ -50,7 +50,7 @@ class LocationsManager:
         if self.config_root is None:
             self.config_root = portage.const.EPREFIX + os.sep
 
-        self.config_root = (normalize_path(os.path.abspath(self.config_root or os.sep)).rstrip(os.sep) + os.sep)
+        self.config_root = normalize_path(os.path.abspath(self.config_root or os.sep)).rstrip(os.sep) + os.sep
 
         self._check_var_directory("PORTAGE_CONFIGROOT", self.config_root)
         self.abs_user_config = os.path.join(self.config_root, USER_CONFIG_PATH)
@@ -59,7 +59,7 @@ class LocationsManager:
         if self.sysroot is None:
             self.sysroot = "/"
         else:
-            self.sysroot = (normalize_path(os.path.abspath(self.sysroot or os.sep)).rstrip(os.sep) + os.sep)
+            self.sysroot = normalize_path(os.path.abspath(self.sysroot or os.sep)).rstrip(os.sep) + os.sep
 
         # TODO: Set this via the constructor using
         # PORTAGE_OVERRIDE_EPREFIX.
@@ -187,11 +187,10 @@ class LocationsManager:
                 f.close()
 
         if intersecting_repos:
-            allow_directories = (eapi_allows_directories_on_profile_level_and_repository_level(eapi)
-                                 or any(x in _portage1_profiles_allow_directories
-                                        for x in layout_data["profile-formats"]))
-            compat_mode = (not eapi_allows_directories_on_profile_level_and_repository_level(eapi)
-                           and layout_data["profile-formats"] == ("portage-1-compat", ))
+            allow_directories = eapi_allows_directories_on_profile_level_and_repository_level(eapi) or any(
+                x in _portage1_profiles_allow_directories for x in layout_data["profile-formats"])
+            compat_mode = not eapi_allows_directories_on_profile_level_and_repository_level(
+                eapi) and layout_data["profile-formats"] == ("portage-1-compat", )
             allow_parent_colon = any(x in _allow_parent_colon for x in layout_data["profile-formats"])
             current_formats = tuple(layout_data["profile-formats"])
 
@@ -233,7 +232,7 @@ class LocationsManager:
                 # currentPath if parentPath is already absolute.
                 parentPath = normalize_path(os.path.join(currentPath, parentPath))
 
-                if (abs_parent or repo_loc is None or not parentPath.startswith(repo_loc)):
+                if abs_parent or repo_loc is None or not parentPath.startswith(repo_loc):
                     # It seems that this parent may point outside
                     # of the current repo, so realpath it.
                     parentPath = os.path.realpath(parentPath)
@@ -284,7 +283,7 @@ class LocationsManager:
                 self.target_root = None
         self.target_root = self.target_root or os.sep
 
-        self.target_root = (normalize_path(os.path.abspath(self.target_root)).rstrip(os.path.sep) + os.path.sep)
+        self.target_root = normalize_path(os.path.abspath(self.target_root)).rstrip(os.path.sep) + os.path.sep
 
         if self.sysroot != "/" and self.target_root == "/":
             writemsg(_("!!! Error: SYSROOT (currently %s) must "

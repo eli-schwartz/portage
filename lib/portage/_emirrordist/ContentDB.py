@@ -149,7 +149,7 @@ class ContentDB:
                     pass
                 else:
                     for revision_key in content_revisions:
-                        if (digest_item in revision_key and revision_key not in matched_revisions[distfile_str]):
+                        if digest_item in revision_key and revision_key not in matched_revisions[distfile_str]:
                             matched_revisions[distfile_str].add(revision_key)
                             yield DistfileName(distfile_str, digests=dict(revision_key))
 

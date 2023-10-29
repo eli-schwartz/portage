@@ -265,8 +265,7 @@ class search:
             match_category = 1
         fuzzy = False
 
-        if (self.regex_auto and not regexsearch
-                and re.search(r"[\^\$\*\[\]\{\}\|\?]|\.\+", self.searchkey) is not None):
+        if self.regex_auto and not regexsearch and re.search(r"[\^\$\*\[\]\{\}\|\?]|\.\+", self.searchkey) is not None:
             try:
                 re.compile(self.searchkey, re.I)
             except Exception:
@@ -302,8 +301,8 @@ class search:
 
                 def fuzzy_search_part(seq_match, match_string):
                     seq_match.set_seq1(match_string.lower())
-                    return (seq_match.real_quick_ratio() >= cutoff and seq_match.quick_ratio() >= cutoff
-                            and seq_match.ratio() >= cutoff)
+                    return seq_match.real_quick_ratio() >= cutoff and seq_match.quick_ratio(
+                    ) >= cutoff and seq_match.ratio() >= cutoff
 
                 def fuzzy_search(match_string):
                     return all(
