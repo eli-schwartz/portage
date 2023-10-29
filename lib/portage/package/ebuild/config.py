@@ -422,6 +422,8 @@ class config:
                     make_conf_count += 1
 
             if make_conf_count == 2:
+                # FIXME: warn if deprecated /etc/make.conf used
+                # FIXME x2: how many APIs for issuing a deprecation warning....
                 writemsg(
                     "!!! %s\n"
                     % _("Found 2 make.conf files, using both '%s' and '%s'")
