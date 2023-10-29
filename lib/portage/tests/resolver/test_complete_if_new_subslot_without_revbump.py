@@ -13,9 +13,13 @@ from portage.output import colorize
 
 
 class CompeteIfNewSubSlotWithoutRevBumpTestCase(TestCase):
+
     def testCompeteIfNewSubSlotWithoutRevBump(self):
         ebuilds = {
-            "media-libs/libpng-1.5.14": {"EAPI": "5", "SLOT": "0"},
+            "media-libs/libpng-1.5.14": {
+                "EAPI": "5",
+                "SLOT": "0"
+            },
             "x11-libs/gdk-pixbuf-2.26.5": {
                 "EAPI": "5",
                 "DEPEND": ">=media-libs/libpng-1.4:=",
@@ -32,7 +36,10 @@ class CompeteIfNewSubSlotWithoutRevBumpTestCase(TestCase):
         }
 
         installed = {
-            "media-libs/libpng-1.5.14": {"EAPI": "5", "SLOT": "0/15"},
+            "media-libs/libpng-1.5.14": {
+                "EAPI": "5",
+                "SLOT": "0/15"
+            },
             "x11-libs/gdk-pixbuf-2.26.5": {
                 "EAPI": "5",
                 "DEPEND": ">=media-libs/libpng-1.4:0/15=",
@@ -55,8 +62,7 @@ class CompeteIfNewSubSlotWithoutRevBumpTestCase(TestCase):
                 },
                 success=True,
                 mergelist=["media-libs/libpng-1.5.14", "x11-libs/gdk-pixbuf-2.26.5"],
-            ),
-        )
+            ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -69,14 +75,12 @@ class CompeteIfNewSubSlotWithoutRevBumpTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.cleanup()

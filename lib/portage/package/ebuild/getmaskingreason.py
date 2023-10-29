@@ -14,9 +14,7 @@ from portage.util import grablines
 from portage.versions import catpkgsplit, _pkg_str
 
 
-def getmaskingreason(
-    mycpv, metadata=None, settings=None, portdb=None, return_location=False, myrepo=None
-):
+def getmaskingreason(mycpv, metadata=None, settings=None, portdb=None, return_location=False, myrepo=None):
     """
     If specified, the myrepo argument is assumed to be valid. This
     should be a safe assumption since portdbapi methods always
@@ -69,9 +67,7 @@ def getmaskingreason(
 
     locations = []
     if pkg.repo in settings.repositories:
-        for repo in settings.repositories[pkg.repo].masters + (
-            settings.repositories[pkg.repo],
-        ):
+        for repo in settings.repositories[pkg.repo].masters + (settings.repositories[pkg.repo], ):
             locations.append(os.path.join(repo.location, "profiles"))
     locations.extend(settings.profiles)
     locations.append(os.path.join(settings["PORTAGE_CONFIGROOT"], USER_CONFIG_PATH))
@@ -80,9 +76,7 @@ def getmaskingreason(
     for profile in locations:
         pmask_filename = os.path.join(profile, "package.mask")
         node = None
-        for l, recursive_filename in grablines(
-            pmask_filename, recursive=1, remember_source_file=True
-        ):
+        for l, recursive_filename in grablines(pmask_filename, recursive=1, remember_source_file=True):
             if node is None or node[0] != recursive_filename:
                 node = (recursive_filename, [])
                 pmasklists.append(node)
@@ -100,9 +94,7 @@ def getmaskingreason(
                     for i in range(len(pmask[1])):
                         l = pmask[1][i].strip()
                         try:
-                            l_atom = Atom(
-                                l, allow_repo=True, allow_wildcard=True
-                            ).without_repo
+                            l_atom = Atom(l, allow_repo=True, allow_wildcard=True).without_repo
                         except InvalidAtom:
                             l_atom = None
                         if l == "":

@@ -1,7 +1,6 @@
 # Copyright 2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-
 from portage import (
     _encodings,
     _unicode_encode,
@@ -29,7 +28,7 @@ def _get_all_provides(vardb):
 
     for cpv in vardb.cpv_all():
         try:
-            (provides,) = vardb.aux_get(cpv, ["PROVIDES"])
+            (provides, ) = vardb.aux_get(cpv, ["PROVIDES"])
         except KeyError:
             # Since we don't hold a lock, assume this is due to a
             # concurrent unmerge, and PROVIDES from the unmerged package
@@ -60,13 +59,13 @@ def _get_unresolved_soname_deps(metadata_dir, all_provides):
     """
     try:
         with open(
-            _unicode_encode(
-                os.path.join(metadata_dir, "REQUIRES"),
-                encoding=_encodings["fs"],
+                _unicode_encode(
+                    os.path.join(metadata_dir, "REQUIRES"),
+                    encoding=_encodings["fs"],
+                    errors="strict",
+                ),
+                encoding=_encodings["repo.content"],
                 errors="strict",
-            ),
-            encoding=_encodings["repo.content"],
-            errors="strict",
         ) as f:
             requires = frozenset(parse_soname_deps(f.read()))
     except OSError:
@@ -75,15 +74,13 @@ def _get_unresolved_soname_deps(metadata_dir, all_provides):
     unresolved_by_category = {}
     for atom in requires:
         if atom not in all_provides:
-            unresolved_by_category.setdefault(atom.multilib_category, set()).add(
-                atom.soname
-            )
+            unresolved_by_category.setdefault(atom.multilib_category, set()).add(atom.soname)
 
     needed_filename = os.path.join(metadata_dir, "NEEDED.ELF.2")
     with open(
-        _unicode_encode(needed_filename, encoding=_encodings["fs"], errors="strict"),
-        encoding=_encodings["repo.content"],
-        errors="strict",
+            _unicode_encode(needed_filename, encoding=_encodings["fs"], errors="strict"),
+            encoding=_encodings["repo.content"],
+            errors="strict",
     ) as f:
         needed = f.readlines()
 

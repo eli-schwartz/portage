@@ -4,7 +4,6 @@
 doc = """Check and fix problems in the world file."""
 __doc__ = doc
 
-
 module_spec = {
     "name": "world",
     "description": doc,

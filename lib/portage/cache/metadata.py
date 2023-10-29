@@ -16,7 +16,6 @@ import portage.eclass_cache
 from portage.cache.template import reconstruct_eclasses
 from portage.cache.mappings import ProtectedDict
 
-
 # this is the old cache format, flat_list.  count maintained here.
 magic_line_count = 22
 
@@ -83,9 +82,7 @@ class database(flat_hash.database):
                 getter = attrgetter(self.validation_chf)
                 try:
                     ec_data = self.ec.get_eclass_data(d["INHERITED"].split())
-                    d["_eclasses_"] = {
-                        k: (v.eclass_dir, getter(v)) for k, v in ec_data.items()
-                    }
+                    d["_eclasses_"] = {k: (v.eclass_dir, getter(v)) for k, v in ec_data.items()}
                 except KeyError as e:
                     # INHERITED contains a non-existent eclass.
                     raise cache_errors.CacheCorruption(cpv, e)
@@ -110,9 +107,7 @@ class database(flat_hash.database):
         for i in range(magic_line_count - len(self.auxdbkey_order)):
             new_content.append("\n")
         new_content = "".join(new_content)
-        new_content = _unicode_encode(
-            new_content, _encodings["repo.content"], errors="backslashreplace"
-        )
+        new_content = _unicode_encode(new_content, _encodings["repo.content"], errors="backslashreplace")
 
         new_fp = os.path.join(self.location, cpv)
         try:
@@ -133,29 +128,17 @@ class database(flat_hash.database):
                 pass
             else:
                 existing_mtime = existing_st[stat.ST_MTIME]
-                if (
-                    values["_mtime_"] == existing_mtime
-                    and existing_content == new_content
-                ):
+                if (values["_mtime_"] == existing_mtime and existing_content == new_content):
                     return
 
-                if (
-                    self.raise_stat_collision
-                    and values["_mtime_"] == existing_mtime
-                    and len(new_content) == existing_st.st_size
-                ):
-                    raise cache_errors.StatCollision(
-                        cpv, new_fp, existing_mtime, existing_st.st_size
-                    )
+                if (self.raise_stat_collision and values["_mtime_"] == existing_mtime
+                        and len(new_content) == existing_st.st_size):
+                    raise cache_errors.StatCollision(cpv, new_fp, existing_mtime, existing_st.st_size)
 
         s = cpv.rfind("/")
-        fp = os.path.join(
-            self.location, cpv[:s], ".update.%i.%s" % (portage.getpid(), cpv[s + 1 :])
-        )
+        fp = os.path.join(self.location, cpv[:s], ".update.%i.%s" % (portage.getpid(), cpv[s + 1:]))
         try:
-            myf = open(
-                _unicode_encode(fp, encoding=_encodings["fs"], errors="strict"), "wb"
-            )
+            myf = open(_unicode_encode(fp, encoding=_encodings["fs"], errors="strict"), "wb")
         except OSError as e:
             if errno.ENOENT == e.errno:
                 try:

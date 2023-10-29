@@ -8,6 +8,7 @@ from portage.util import unique_array
 
 
 class UniqueArrayTestCase(TestCase):
+
     def testUniqueArrayPass(self):
         """
         test portage.util.uniqueArray()

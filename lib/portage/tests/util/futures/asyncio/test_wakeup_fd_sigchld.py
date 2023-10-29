@@ -10,6 +10,7 @@ from portage.tests import TestCase
 
 
 class WakeupFdSigchldTestCase(TestCase):
+
     def testWakeupFdSigchld(self):
         """
         This is expected to trigger a bunch of messages like the following
@@ -67,10 +68,7 @@ sys.exit(os.EX_OK)
             self.assertEqual(out[:100], b"success")
         except Exception:
             portage.writemsg(
-                "".join(
-                    f"{line}\n"
-                    for line in out.decode(errors="replace").splitlines()[:50]
-                ),
+                "".join(f"{line}\n" for line in out.decode(errors="replace").splitlines()[:50]),
                 noiselevel=-1,
             )
             raise

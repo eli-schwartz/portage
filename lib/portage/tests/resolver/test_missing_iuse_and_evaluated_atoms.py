@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class MissingIUSEandEvaluatedAtomsTestCase(TestCase):
+
     def testMissingIUSEandEvaluatedAtoms(self):
         ebuilds = {
             "dev-libs/A-1": {
@@ -21,7 +22,9 @@ class MissingIUSEandEvaluatedAtomsTestCase(TestCase):
                 "IUSE": "foo bar",
                 "EAPI": 2,
             },
-            "dev-libs/B-1": {"IUSE": "bar"},
+            "dev-libs/B-1": {
+                "IUSE": "bar"
+            },
         }
 
         test_cases = (

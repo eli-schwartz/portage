@@ -15,6 +15,7 @@ from portage.util import ensure_dirs
 
 
 class PortdbCacheTestCase(TestCase):
+
     def testPortdbCache(self):
         debug = False
 
@@ -32,9 +33,9 @@ class PortdbCacheTestCase(TestCase):
         # The convoluted structure here is to test accumulation
         # of IDEPEND across eclasses (bug #870295).
         eclasses = {
-            "foo": ("inherit bar",),
-            "bar": ("IDEPEND=dev-libs/A",),
-            "baz": ("IDEPEND=",),
+            "foo": ("inherit bar", ),
+            "bar": ("IDEPEND=dev-libs/A", ),
+            "baz": ("IDEPEND=", ),
         }
 
         playground = ResolverPlayground(ebuilds=ebuilds, eclasses=eclasses, debug=debug)
@@ -63,151 +64,95 @@ class PortdbCacheTestCase(TestCase):
         python_cmd = (portage_python, "-b", "-Wd", "-c")
 
         test_commands = (
-            (lambda: not os.path.exists(pms_cache_dir),),
-            (lambda: not os.path.exists(md5_cache_dir),),
-            python_cmd
-            + (
-                textwrap.dedent(
-                    """
+            (lambda: not os.path.exists(pms_cache_dir), ),
+            (lambda: not os.path.exists(md5_cache_dir), ),
+            python_cmd + (textwrap.dedent("""
 				import os, sys, portage
 				if portage.portdb.repositories['test_repo'].location in portage.portdb._pregen_auxdb:
 					sys.exit(1)
-			"""
-                ),
-            ),
-            egencache_cmd + ("--update",),
-            (lambda: not os.path.exists(pms_cache_dir),),
-            (lambda: os.path.exists(md5_cache_dir),),
-            python_cmd
-            + (
-                textwrap.dedent(
-                    """
+			"""), ),
+            egencache_cmd + ("--update", ),
+            (lambda: not os.path.exists(pms_cache_dir), ),
+            (lambda: os.path.exists(md5_cache_dir), ),
+            python_cmd + (textwrap.dedent("""
 				import os, sys, portage
 				if portage.portdb.repositories['test_repo'].location not in portage.portdb._pregen_auxdb:
 					sys.exit(1)
-			"""
-                ),
-            ),
-            python_cmd
-            + (
-                textwrap.dedent(
-                    """
+			"""), ),
+            python_cmd + (textwrap.dedent("""
 				import os, sys, portage
 				from portage.cache.flat_hash import md5_database
 				if not isinstance(portage.portdb._pregen_auxdb[portage.portdb.repositories['test_repo'].location], md5_database):
 					sys.exit(1)
-			"""
-                ),
-            ),
+			"""), ),
             (
                 BASH_BINARY,
                 "-c",
-                "echo %s > %s"
-                % tuple(
-                    map(
-                        portage._shell_quote,
-                        (
-                            "cache-formats = md5-dict pms",
-                            layout_conf_path,
-                        ),
-                    )
-                ),
+                "echo %s > %s" % tuple(map(
+                    portage._shell_quote,
+                    (
+                        "cache-formats = md5-dict pms",
+                        layout_conf_path,
+                    ),
+                )),
             ),
-            egencache_cmd + ("--update",),
-            (lambda: os.path.exists(md5_cache_dir),),
-            python_cmd
-            + (
-                textwrap.dedent(
-                    """
+            egencache_cmd + ("--update", ),
+            (lambda: os.path.exists(md5_cache_dir), ),
+            python_cmd + (textwrap.dedent("""
 				import os, sys, portage
 				if portage.portdb.repositories['test_repo'].location not in portage.portdb._pregen_auxdb:
 					sys.exit(1)
-			"""
-                ),
-            ),
-            python_cmd
-            + (
-                textwrap.dedent(
-                    """
+			"""), ),
+            python_cmd + (textwrap.dedent("""
 				import os, sys, portage
 				from portage.cache.flat_hash import md5_database
 				if not isinstance(portage.portdb._pregen_auxdb[portage.portdb.repositories['test_repo'].location], md5_database):
 					sys.exit(1)
-			"""
-                ),
-            ),
+			"""), ),
             # Disable DeprecationWarnings, since the pms format triggers them
             # in portdbapi._create_pregen_cache().
             (
                 BASH_BINARY,
                 "-c",
-                "echo %s > %s"
-                % tuple(
-                    map(
-                        portage._shell_quote,
-                        (
-                            "cache-formats = pms md5-dict",
-                            layout_conf_path,
-                        ),
-                    )
-                ),
+                "echo %s > %s" % tuple(map(
+                    portage._shell_quote,
+                    (
+                        "cache-formats = pms md5-dict",
+                        layout_conf_path,
+                    ),
+                )),
             ),
-            (portage_python, "-b", "-Wd", "-Wi::DeprecationWarning", "-c")
-            + (
-                textwrap.dedent(
-                    """
+            (portage_python, "-b", "-Wd", "-Wi::DeprecationWarning", "-c") + (textwrap.dedent("""
 				import os, sys, portage
 				if portage.portdb.repositories['test_repo'].location not in portage.portdb._pregen_auxdb:
 					sys.exit(1)
-			"""
-                ),
-            ),
-            (portage_python, "-b", "-Wd", "-Wi::DeprecationWarning", "-c")
-            + (
-                textwrap.dedent(
-                    """
+			"""), ),
+            (portage_python, "-b", "-Wd", "-Wi::DeprecationWarning", "-c") + (textwrap.dedent("""
 				import os, sys, portage
 				from portage.cache.metadata import database as pms_database
 				if not isinstance(portage.portdb._pregen_auxdb[portage.portdb.repositories['test_repo'].location], pms_database):
 					sys.exit(1)
-			"""
-                ),
-            ),
-            (portage_python, "-b", "-Wd", "-Wi::DeprecationWarning", "-c")
-            + (
-                textwrap.dedent(
-                    """
+			"""), ),
+            (portage_python, "-b", "-Wd", "-Wi::DeprecationWarning", "-c") + (textwrap.dedent("""
 				import os, sys, portage
 				location = portage.portdb.repositories['test_repo'].location
 				if not portage.portdb._pregen_auxdb[location]["sys-apps/C-1"]['IDEPEND']:
 					sys.exit(1)
-			"""
-                ),
-            ),
+			"""), ),
             # Test auto-detection and preference for md5-cache when both
             # cache formats are available but layout.conf is absent.
             (BASH_BINARY, "-c", f"rm {portage._shell_quote(layout_conf_path)}"),
-            python_cmd
-            + (
-                textwrap.dedent(
-                    """
+            python_cmd + (textwrap.dedent("""
 				import os, sys, portage
 				if portage.portdb.repositories['test_repo'].location not in portage.portdb._pregen_auxdb:
 					sys.exit(1)
-			"""
-                ),
-            ),
-            python_cmd
-            + (
-                textwrap.dedent(
-                    """
+			"""), ),
+            python_cmd + (textwrap.dedent("""
 				import os, sys, portage
 				from portage.cache.flat_hash import md5_database
 				if not isinstance(portage.portdb._pregen_auxdb[portage.portdb.repositories['test_repo'].location], md5_database):
 					sys.exit(1)
-			"""
-                ),
-            ),
+			"""), ),
         )
 
         pythonpath = os.environ.get("PYTHONPATH")
@@ -232,9 +177,7 @@ class PortdbCacheTestCase(TestCase):
         }
 
         if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
-            env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ[
-                "__PORTAGE_TEST_HARDLINK_LOCKS"
-            ]
+            env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
 
         dirs = [user_config_dir]
 
@@ -271,8 +214,7 @@ class PortdbCacheTestCase(TestCase):
                 self.assertEqual(
                     os.EX_OK,
                     proc.returncode,
-                    "command %d failed with args %s"
-                    % (
+                    "command %d failed with args %s" % (
                         i,
                         args,
                     ),

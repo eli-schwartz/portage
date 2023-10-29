@@ -13,6 +13,7 @@ from portage.output import colorize
 
 
 class AutounmaskBinpkgUseTestCase(TestCase):
+
     def testAutounmaskBinpkgUse(self):
         ebuilds = {
             "dev-libs/A-1": {
@@ -55,9 +56,10 @@ class AutounmaskBinpkgUseTestCase(TestCase):
                     "[binary]dev-libs/B-1",
                     "[binary]dev-libs/A-1",
                 ],
-                use_changes={"dev-libs/B-1": {"foo": True}},
-            ),
-        )
+                use_changes={"dev-libs/B-1": {
+                    "foo": True
+                }},
+            ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -69,16 +71,14 @@ class AutounmaskBinpkgUseTestCase(TestCase):
                     installed=installed,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.debug = False
                     playground.cleanup()

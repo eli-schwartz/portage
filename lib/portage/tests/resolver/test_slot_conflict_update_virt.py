@@ -9,10 +9,17 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotConflictUpdateVirtTestCase(TestCase):
+
     def testSlotConflictUpdateVirt(self):
         ebuilds = {
-            "dev-db/mysql-connector-c-6.1.11-r2": {"EAPI": "7", "SLOT": "0/18"},
-            "dev-db/mysql-connector-c-8.0.17-r3": {"EAPI": "7", "SLOT": "0/21"},
+            "dev-db/mysql-connector-c-6.1.11-r2": {
+                "EAPI": "7",
+                "SLOT": "0/18"
+            },
+            "dev-db/mysql-connector-c-8.0.17-r3": {
+                "EAPI": "7",
+                "SLOT": "0/21"
+            },
             "virtual/libmysqlclient-18-r1": {
                 "EAPI": "7",
                 "SLOT": "0/18",
@@ -30,7 +37,10 @@ class SlotConflictUpdateVirtTestCase(TestCase):
         }
 
         installed = {
-            "dev-db/mysql-connector-c-6.1.11-r2": {"EAPI": "7", "SLOT": "0/18"},
+            "dev-db/mysql-connector-c-6.1.11-r2": {
+                "EAPI": "7",
+                "SLOT": "0/18"
+            },
             "virtual/libmysqlclient-18-r1": {
                 "EAPI": "7",
                 "SLOT": "0/18",
@@ -49,19 +59,19 @@ class SlotConflictUpdateVirtTestCase(TestCase):
             # masking a package matched by all parent atoms.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=[
                     "dev-db/mysql-connector-c-8.0.17-r3",
                     "virtual/libmysqlclient-21",
                     "dev-perl/DBD-mysql-4.44.0",
                 ],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

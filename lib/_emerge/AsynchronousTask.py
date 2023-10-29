@@ -41,15 +41,9 @@ class AsynchronousTask(SlotObject):
         @returns: Future, result is self.returncode
         """
         waiter = self.scheduler.create_future()
-        exit_listener = lambda self: waiter.cancelled() or waiter.set_result(
-            self.returncode
-        )
+        exit_listener = lambda self: waiter.cancelled() or waiter.set_result(self.returncode)
         self.addExitListener(exit_listener)
-        waiter.add_done_callback(
-            lambda waiter: self.removeExitListener(exit_listener)
-            if waiter.cancelled()
-            else None
-        )
+        waiter.add_done_callback(lambda waiter: self.removeExitListener(exit_listener) if waiter.cancelled() else None)
         if self.returncode is not None:
             # If the returncode is not None, it means the exit event has already
             # happened, so use _async_wait() to guarantee that the exit_listener
@@ -200,9 +194,7 @@ class AsynchronousTask(SlotObject):
 
             for listener in listeners:
                 if listener not in self._exit_listener_handles:
-                    self._exit_listener_handles[listener] = self.scheduler.call_soon(
-                        self._exit_listener_cb, listener
-                    )
+                    self._exit_listener_handles[listener] = self.scheduler.call_soon(self._exit_listener_cb, listener)
 
     def _exit_listener_cb(self, listener):
         del self._exit_listener_handles[listener]

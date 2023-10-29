@@ -15,13 +15,22 @@ from portage.util import ensure_dirs
 
 
 class SlotAbiEmergeTestCase(TestCase):
+
     def testSlotAbiEmerge(self):
         debug = False
 
         ebuilds = {
-            "dev-libs/glib-1.2.10": {"SLOT": "1"},
-            "dev-libs/glib-2.30.2": {"EAPI": "5", "SLOT": "2/2.30"},
-            "dev-libs/glib-2.32.3": {"EAPI": "5", "SLOT": "2/2.32"},
+            "dev-libs/glib-1.2.10": {
+                "SLOT": "1"
+            },
+            "dev-libs/glib-2.30.2": {
+                "EAPI": "5",
+                "SLOT": "2/2.30"
+            },
+            "dev-libs/glib-2.32.3": {
+                "EAPI": "5",
+                "SLOT": "2/2.32"
+            },
             "dev-libs/dbus-glib-0.98": {
                 "EAPI": "5",
                 "DEPEND": "dev-libs/glib:2=",
@@ -29,8 +38,14 @@ class SlotAbiEmergeTestCase(TestCase):
             },
         }
         installed = {
-            "dev-libs/glib-1.2.10": {"EAPI": "5", "SLOT": "1"},
-            "dev-libs/glib-2.30.2": {"EAPI": "5", "SLOT": "2/2.30"},
+            "dev-libs/glib-1.2.10": {
+                "EAPI": "5",
+                "SLOT": "1"
+            },
+            "dev-libs/glib-2.30.2": {
+                "EAPI": "5",
+                "SLOT": "2/2.30"
+            },
             "dev-libs/dbus-glib-0.98": {
                 "EAPI": "5",
                 "DEPEND": "dev-libs/glib:2/2.30=",
@@ -40,9 +55,7 @@ class SlotAbiEmergeTestCase(TestCase):
 
         world = ["dev-libs/glib:1", "dev-libs/dbus-glib"]
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=debug
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=debug)
         settings = playground.settings
         eprefix = settings["EPREFIX"]
         eroot = settings["EROOT"]
@@ -71,38 +84,27 @@ class SlotAbiEmergeTestCase(TestCase):
         self.assertFalse(test_ebuild is None)
 
         test_commands = (
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "--oneshot",
                 "dev-libs/glib",
             ),
-            (
-                lambda: "dev-libs/glib:2/2.32="
-                in vardb.aux_get("dev-libs/dbus-glib-0.98", ["RDEPEND"])[0],
-            ),
+            (lambda: "dev-libs/glib:2/2.32=" in vardb.aux_get("dev-libs/dbus-glib-0.98", ["RDEPEND"])[0], ),
             (
                 BASH_BINARY,
                 "-c",
-                "echo %s >> %s"
-                % tuple(
-                    map(
-                        portage._shell_quote,
-                        (
-                            ">=dev-libs/glib-2.32",
-                            package_mask_path,
-                        ),
-                    )
-                ),
+                "echo %s >> %s" % tuple(map(
+                    portage._shell_quote,
+                    (
+                        ">=dev-libs/glib-2.32",
+                        package_mask_path,
+                    ),
+                )),
             ),
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "--oneshot",
                 "dev-libs/glib",
             ),
-            (
-                lambda: "dev-libs/glib:2/2.30="
-                in vardb.aux_get("dev-libs/dbus-glib-0.98", ["RDEPEND"])[0],
-            ),
+            (lambda: "dev-libs/glib:2/2.30=" in vardb.aux_get("dev-libs/dbus-glib-0.98", ["RDEPEND"])[0], ),
         )
 
         distdir = playground.distdir
@@ -144,9 +146,7 @@ class SlotAbiEmergeTestCase(TestCase):
         }
 
         if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
-            env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ[
-                "__PORTAGE_TEST_HARDLINK_LOCKS"
-            ]
+            env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
 
         dirs = [distdir, fake_bin, portage_tmpdir, user_config_dir, var_cache_edb]
         true_symlinks = ["chown", "chgrp"]
@@ -189,8 +189,6 @@ class SlotAbiEmergeTestCase(TestCase):
                         for line in output:
                             sys.stderr.write(_unicode_decode(line))
 
-                self.assertEqual(
-                    os.EX_OK, proc.returncode, f"emerge failed with args {args}"
-                )
+                self.assertEqual(os.EX_OK, proc.returncode, f"emerge failed with args {args}")
         finally:
             playground.cleanup()

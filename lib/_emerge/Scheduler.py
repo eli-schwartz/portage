@@ -70,15 +70,11 @@ class Scheduler(PollScheduler):
     # max time between display status updates (seconds)
     _max_display_latency = 3
 
-    _opts_ignore_blockers = frozenset(
-        ["--buildpkgonly", "--fetchonly", "--fetch-all-uri", "--nodeps", "--pretend"]
-    )
+    _opts_ignore_blockers = frozenset(["--buildpkgonly", "--fetchonly", "--fetch-all-uri", "--nodeps", "--pretend"])
 
     _opts_no_background = frozenset(["--pretend", "--fetchonly", "--fetch-all-uri"])
 
-    _opts_no_self_update = frozenset(
-        ["--buildpkgonly", "--fetchonly", "--fetch-all-uri", "--pretend"]
-    )
+    _opts_no_self_update = frozenset(["--buildpkgonly", "--fetchonly", "--fetch-all-uri", "--pretend"])
 
     class _iface_class(SchedulerInterface):
         __slots__ = ("fetch", "scheduleSetup", "scheduleUnpack")
@@ -86,9 +82,7 @@ class Scheduler(PollScheduler):
     class _fetch_iface_class(SlotObject):
         __slots__ = ("log_file", "schedule")
 
-    _task_queues_class = slot_dict_class(
-        ("merge", "jobs", "ebuild_locks", "fetch", "unpack"), prefix=""
-    )
+    _task_queues_class = slot_dict_class(("merge", "jobs", "ebuild_locks", "fetch", "unpack"), prefix="")
 
     class _build_opts_class(SlotObject):
         __slots__ = (
@@ -107,7 +101,7 @@ class Scheduler(PollScheduler):
         __slots__ = ("curval", "maxval")
 
     class _emerge_log_class(SlotObject):
-        __slots__ = ("xterm_titles",)
+        __slots__ = ("xterm_titles", )
 
         def log(self, *pargs, **kwargs):
             if not self.xterm_titles:
@@ -161,9 +155,8 @@ class Scheduler(PollScheduler):
 
         if mergelist is not None:
             warnings.warn(
-                "The mergelist parameter of the "
-                + "_emerge.Scheduler constructor is now unused. Use "
-                + "the graph_config parameter instead.",
+                "The mergelist parameter of the " + "_emerge.Scheduler constructor is now unused. Use " +
+                "the graph_config parameter instead.",
                 DeprecationWarning,
                 stacklevel=2,
             )
@@ -221,9 +214,7 @@ class Scheduler(PollScheduler):
         # being in a fragile state. For example, see bug #259954.
         self._unsatisfied_system_deps = set()
 
-        self._status_display = JobStatusDisplay(
-            xterm_titles=("notitles" not in settings.features)
-        )
+        self._status_display = JobStatusDisplay(xterm_titles=("notitles" not in settings.features))
         self._max_load = myopts.get("--load-average")
         max_jobs = myopts.get("--jobs")
         if max_jobs is None:
@@ -238,12 +229,8 @@ class Scheduler(PollScheduler):
         for root in self.trees:
             self._config_pool[root] = []
 
-        self._fetch_log = os.path.join(
-            _emerge.emergelog._emerge_log_dir, "emerge-fetch.log"
-        )
-        fetch_iface = self._fetch_iface_class(
-            log_file=self._fetch_log, schedule=self._schedule_fetch
-        )
+        self._fetch_log = os.path.join(_emerge.emergelog._emerge_log_dir, "emerge-fetch.log")
+        fetch_iface = self._fetch_iface_class(log_file=self._fetch_log, schedule=self._schedule_fetch)
         self._sched_iface = self._iface_class(
             self._event_loop,
             is_background=self._is_background,
@@ -267,13 +254,7 @@ class Scheduler(PollScheduler):
         self._post_mod_echo_msgs = []
         self._parallel_fetch = False
         self._init_graph(graph_config)
-        merge_count = len(
-            [
-                x
-                for x in self._mergelist
-                if isinstance(x, Package) and x.operation == "merge"
-            ]
-        )
+        merge_count = len([x for x in self._mergelist if isinstance(x, Package) and x.operation == "merge"])
         self._pkg_count = self._pkg_count_class(curval=0, maxval=merge_count)
         self._status_display.maxval = self._pkg_count.maxval
 
@@ -296,25 +277,16 @@ class Scheduler(PollScheduler):
         self._choose_pkg_return_early = False
 
         features = self.settings.features
-        if "parallel-fetch" in features and not (
-            "--pretend" in self.myopts
-            or "--fetch-all-uri" in self.myopts
-            or "--fetchonly" in self.myopts
-        ):
+        if "parallel-fetch" in features and not ("--pretend" in self.myopts or "--fetch-all-uri" in self.myopts
+                                                 or "--fetchonly" in self.myopts):
             if "distlocks" not in features:
                 portage.writemsg(red("!!!") + "\n", noiselevel=-1)
                 portage.writemsg(
-                    red("!!!")
-                    + " parallel-fetching "
-                    + "requires the distlocks feature enabled"
-                    + "\n",
+                    red("!!!") + " parallel-fetching " + "requires the distlocks feature enabled" + "\n",
                     noiselevel=-1,
                 )
                 portage.writemsg(
-                    red("!!!")
-                    + " you have it disabled, "
-                    + "thus parallel-fetching is being disabled"
-                    + "\n",
+                    red("!!!") + " you have it disabled, " + "thus parallel-fetching is being disabled" + "\n",
                     noiselevel=-1,
                 )
                 portage.writemsg(red("!!!") + "\n", noiselevel=-1)
@@ -329,14 +301,10 @@ class Scheduler(PollScheduler):
                 pass
 
         self._running_portage = None
-        portage_match = self._running_root.trees["vartree"].dbapi.match(
-            portage.const.PORTAGE_PACKAGE_ATOM
-        )
+        portage_match = self._running_root.trees["vartree"].dbapi.match(portage.const.PORTAGE_PACKAGE_ATOM)
         if portage_match:
             cpv = portage_match.pop()
-            self._running_portage = self._pkg(
-                cpv, "installed", self._running_root, installed=True
-            )
+            self._running_portage = self._pkg(cpv, "installed", self._running_root, installed=True)
 
     def _handle_self_update(self):
         if self._opts_no_self_update.intersection(self.myopts):
@@ -388,9 +356,7 @@ class Scheduler(PollScheduler):
         self._blocker_db = {}
         depgraph_params = create_depgraph_params(self.myopts, None)
         dynamic_deps = "dynamic_deps" in depgraph_params
-        ignore_built_slot_operator_deps = (
-            self.myopts.get("--ignore-built-slot-operator-deps", "n") == "y"
-        )
+        ignore_built_slot_operator_deps = (self.myopts.get("--ignore-built-slot-operator-deps", "n") == "y")
         for root in self.trees:
             if graph_config is None:
                 fake_vartree = FakeVartree(
@@ -428,20 +394,16 @@ class Scheduler(PollScheduler):
         @rtype: bool
         @return: True if background mode is enabled, False otherwise.
         """
-        background = (
-            self._max_jobs is True
-            or self._max_jobs > 1
-            or "--quiet" in self.myopts
-            or self.myopts.get("--quiet-build") == "y"
-        ) and not bool(self._opts_no_background.intersection(self.myopts))
+        background = (self._max_jobs is True or self._max_jobs > 1 or "--quiet" in self.myopts
+                      or self.myopts.get("--quiet-build")
+                      == "y") and not bool(self._opts_no_background.intersection(self.myopts))
 
         if background:
             interactive_tasks = self._get_interactive_tasks()
             if interactive_tasks:
                 background = False
                 writemsg_level(
-                    ">>> Sending package output to stdio due "
-                    + "to interactive package(s):\n",
+                    ">>> Sending package output to stdio due " + "to interactive package(s):\n",
                     level=logging.INFO,
                     noiselevel=-1,
                 )
@@ -460,25 +422,19 @@ class Scheduler(PollScheduler):
                 if self._max_jobs is True or self._max_jobs > 1:
                     self._set_max_jobs(1)
                     writemsg_level(
-                        ">>> Setting --jobs=1 due "
-                        + "to the above interactive package(s)\n",
+                        ">>> Setting --jobs=1 due " + "to the above interactive package(s)\n",
                         level=logging.INFO,
                         noiselevel=-1,
                     )
                     writemsg_level(
-                        ">>> In order to temporarily mask "
-                        + "interactive updates, you may\n"
-                        + ">>> specify --accept-properties=-interactive\n",
+                        ">>> In order to temporarily mask " + "interactive updates, you may\n" +
+                        ">>> specify --accept-properties=-interactive\n",
                         level=logging.INFO,
                         noiselevel=-1,
                     )
-        self._status_display.quiet = not background or (
-            "--quiet" in self.myopts and "--verbose" not in self.myopts
-        )
+        self._status_display.quiet = not background or ("--quiet" in self.myopts and "--verbose" not in self.myopts)
 
-        self._logger.xterm_titles = (
-            "notitles" not in self.settings.features and self._status_display.quiet
-        )
+        self._logger.xterm_titles = ("notitles" not in self.settings.features and self._status_display.quiet)
 
         return background
 
@@ -513,15 +469,11 @@ class Scheduler(PollScheduler):
         for pkg in self._mergelist:
             if getattr(pkg, "operation", None) != "merge":
                 continue
-            atom = create_world_atom(
-                pkg, self._args_set, pkg.root_config, before_install=True
-            )
+            atom = create_world_atom(pkg, self._args_set, pkg.root_config, before_install=True)
             if atom is not None:
                 self._world_atoms[pkg] = atom
 
-        if "--nodeps" in self.myopts or (
-            self._max_jobs is not True and self._max_jobs < 2
-        ):
+        if "--nodeps" in self.myopts or (self._max_jobs is not True and self._max_jobs < 2):
             # save some memory
             self._digraph = None
             graph_config.graph = None
@@ -555,9 +507,7 @@ class Scheduler(PollScheduler):
         deep_system_deps = self._deep_system_deps
         deep_system_deps.clear()
         deep_system_deps.update(_find_deep_system_runtime_deps(self._digraph))
-        deep_system_deps.difference_update(
-            [pkg for pkg in deep_system_deps if pkg.operation != "merge"]
-        )
+        deep_system_deps.difference_update([pkg for pkg in deep_system_deps if pkg.operation != "merge"])
 
     def _prune_digraph(self):
         """
@@ -569,12 +519,8 @@ class Scheduler(PollScheduler):
         removed_nodes = set()
         while True:
             for node in graph.root_nodes():
-                if (
-                    not isinstance(node, Package)
-                    or (node.installed and node.operation == "nomerge")
-                    or node.onlydeps
-                    or node in completed_tasks
-                ):
+                if (not isinstance(node, Package) or (node.installed and node.operation == "nomerge") or node.onlydeps
+                        or node in completed_tasks):
                     removed_nodes.add(node)
             if removed_nodes:
                 graph.difference_update(removed_nodes)
@@ -601,9 +547,7 @@ class Scheduler(PollScheduler):
                 cpv_map[pkg.cpv] = [pkg]
                 continue
             for earlier_pkg in cpv_map[pkg.cpv]:
-                self._digraph.add(
-                    earlier_pkg, pkg, priority=DepPriority(buildtime=True)
-                )
+                self._digraph.add(earlier_pkg, pkg, priority=DepPriority(buildtime=True))
             cpv_map[pkg.cpv].append(pkg)
 
     class _pkg_failure(portage.exception.PortageException):
@@ -640,10 +584,7 @@ class Scheduler(PollScheduler):
         Schedule a setup phase on the merge queue, in order to
         serialize unsandboxed access to the live filesystem.
         """
-        if (
-            self._task_queues.merge.max_jobs > 1
-            and "ebuild-locks" in self.settings.features
-        ):
+        if (self._task_queues.merge.max_jobs > 1 and "ebuild-locks" in self.settings.features):
             # Use a separate queue for ebuild-locks when the merge
             # queue allows more than 1 job (due to parallel-install),
             # since the portage.locks module does not behave as desired
@@ -709,11 +650,7 @@ class Scheduler(PollScheduler):
             return os.EX_OK
 
         for x in self._mergelist:
-            if (
-                not isinstance(x, Package)
-                or x.type_name != "ebuild"
-                or x.operation != "merge"
-            ):
+            if (not isinstance(x, Package) or x.type_name != "ebuild" or x.operation != "merge"):
                 continue
             pkgsettings = self.pkgsettings[x.root]
             if pkgsettings.mycpv is not None:
@@ -740,11 +677,7 @@ class Scheduler(PollScheduler):
     def _check_manifests(self):
         # Verify all the manifests now so that the user is notified of failure
         # as soon as possible.
-        if (
-            "strict" not in self.settings.features
-            or "--fetchonly" in self.myopts
-            or "--fetch-all-uri" in self.myopts
-        ):
+        if ("strict" not in self.settings.features or "--fetchonly" in self.myopts or "--fetch-all-uri" in self.myopts):
             return os.EX_OK
 
         shown_verifying_msg = False
@@ -816,9 +749,7 @@ class Scheduler(PollScheduler):
         elif pkg.type_name == "ebuild":
             prefetcher = EbuildFetcher(
                 background=True,
-                config_pool=self._ConfigPool(
-                    pkg.root, self._allocate_config, self._deallocate_config
-                ),
+                config_pool=self._ConfigPool(pkg.root, self._allocate_config, self._deallocate_config),
                 fetchonly=1,
                 fetchall=self._build_opts.fetch_all_uri,
                 logfile=self._fetch_log,
@@ -827,14 +758,9 @@ class Scheduler(PollScheduler):
                 scheduler=self._sched_iface,
             )
 
-        elif (
-            pkg.type_name == "binary"
-            and "--getbinpkg" in self.myopts
-            and pkg.root_config.trees["bintree"].isremote(pkg.cpv)
-        ):
-            prefetcher = BinpkgPrefetcher(
-                background=True, pkg=pkg, scheduler=self._sched_iface
-            )
+        elif (pkg.type_name == "binary" and "--getbinpkg" in self.myopts
+              and pkg.root_config.trees["bintree"].isremote(pkg.cpv)):
+            prefetcher = BinpkgPrefetcher(background=True, pkg=pkg, scheduler=self._sched_iface)
 
         return prefetcher
 
@@ -876,9 +802,9 @@ class Scheduler(PollScheduler):
                 # Get required SRC_URI metadata (it's not cached in x.metadata
                 # because some packages have an extremely large SRC_URI value).
                 portdb = root_config.trees["porttree"].dbapi
-                (settings.configdict["pkg"]["SRC_URI"],) = await portdb.async_aux_get(
-                    x.cpv, ["SRC_URI"], myrepo=x.repo, loop=loop
-                )
+                (settings.configdict["pkg"]["SRC_URI"], ) = await portdb.async_aux_get(x.cpv, ["SRC_URI"],
+                                                                                       myrepo=x.repo,
+                                                                                       loop=loop)
 
             # setcpv/package.env allows for per-package PORTAGE_TMPDIR so we
             # have to validate it for each package
@@ -957,9 +883,7 @@ class Scheduler(PollScheduler):
                         filename = bintree.getname(x.cpv)
                     else:
                         filename = fetched
-                    verifier = BinpkgVerifier(
-                        pkg=x, scheduler=sched_iface, _pkg_path=filename
-                    )
+                    verifier = BinpkgVerifier(pkg=x, scheduler=sched_iface, _pkg_path=filename)
                     current_task = verifier
                     verifier.start()
                     if await verifier.async_wait() != os.EX_OK:
@@ -1003,15 +927,11 @@ class Scheduler(PollScheduler):
                 prepare_build_dirs(root_config.root, settings, cleanup=0)
 
                 vardb = root_config.trees["vartree"].dbapi
-                settings["REPLACING_VERSIONS"] = " ".join(
-                    {
-                        portage.versions.cpv_getversion(match)
-                        for match in vardb.match(x.slot_atom) + vardb.match("=" + x.cpv)
-                    }
-                )
-                pretend_phase = EbuildPhase(
-                    phase="pretend", scheduler=sched_iface, settings=settings
-                )
+                settings["REPLACING_VERSIONS"] = " ".join({
+                    portage.versions.cpv_getversion(match)
+                    for match in vardb.match(x.slot_atom) + vardb.match("=" + x.cpv)
+                })
+                pretend_phase = EbuildPhase(phase="pretend", scheduler=sched_iface, settings=settings)
 
                 current_task = pretend_phase
                 pretend_phase.start()
@@ -1051,8 +971,7 @@ class Scheduler(PollScheduler):
                 build_log=settings.get("PORTAGE_LOG_FILE"),
                 pkg=pkg,
                 returncode=ret,
-            )
-        )
+            ))
         if not self._terminated_tasks:
             self._failed_pkg_msg(self._failed_pkgs[-1], "emerge", "for")
             self._status_display.failed = len(self._failed_pkgs)
@@ -1060,9 +979,7 @@ class Scheduler(PollScheduler):
     def merge(self):
         if "--resume" in self.myopts:
             # We're resuming.
-            portage.writemsg_stdout(
-                colorize("GOOD", "*** Resuming merge...\n"), noiselevel=-1
-            )
+            portage.writemsg_stdout(colorize("GOOD", "*** Resuming merge...\n"), noiselevel=-1)
             self._logger.log(" *** Resuming merge...")
 
         self._save_resume_list()
@@ -1129,9 +1046,7 @@ class Scheduler(PollScheduler):
 
             earlier_sigint_handler = signal.signal(signal.SIGINT, sighandler)
             earlier_sigterm_handler = signal.signal(signal.SIGTERM, sighandler)
-            earlier_sigcont_handler = signal.signal(
-                signal.SIGCONT, self._sigcont_handler
-            )
+            earlier_sigcont_handler = signal.signal(signal.SIGCONT, self._sigcont_handler)
             signal.siginterrupt(signal.SIGCONT, False)
 
             try:
@@ -1185,12 +1100,7 @@ class Scheduler(PollScheduler):
             self._save_resume_list()
             self._pkg_count.curval = 0
             self._pkg_count.maxval = len(
-                [
-                    x
-                    for x in self._mergelist
-                    if isinstance(x, Package) and x.operation == "merge"
-                ]
-            )
+                [x for x in self._mergelist if isinstance(x, Package) and x.operation == "merge"])
             self._status_display.maxval = self._pkg_count.maxval
 
         # Cleanup any callbacks that have been registered with the global
@@ -1206,11 +1116,7 @@ class Scheduler(PollScheduler):
         printer = portage.output.EOutput()
         background = self._background
         failure_log_shown = False
-        if (
-            background
-            and len(self._failed_pkgs_all) == 1
-            and self.myopts.get("--quiet-fail", "n") != "y"
-        ):
+        if (background and len(self._failed_pkgs_all) == 1 and self.myopts.get("--quiet-fail", "n") != "y"):
             # If only one package failed then just show it's
             # whole log for easy viewing.
             failed_pkg = self._failed_pkgs_all[-1]
@@ -1221,9 +1127,7 @@ class Scheduler(PollScheduler):
             if log_path is not None:
                 try:
                     log_file = open(
-                        _unicode_encode(
-                            log_path, encoding=_encodings["fs"], errors="strict"
-                        ),
+                        _unicode_encode(log_path, encoding=_encodings["fs"], errors="strict"),
                         mode="rb",
                     )
                 except OSError:
@@ -1231,9 +1135,7 @@ class Scheduler(PollScheduler):
                 else:
                     if log_path.endswith(".gz"):
                         log_file_real = log_file
-                        log_file = gzip.GzipFile(
-                            filename="", mode="rb", fileobj=log_file
-                        )
+                        log_file = gzip.GzipFile(filename="", mode="rb", fileobj=log_file)
 
             if log_file is not None:
                 try:
@@ -1252,13 +1154,8 @@ class Scheduler(PollScheduler):
         # later, from being swept away by the mod_echo output.
         mod_echo_output = _flush_elog_mod_echo()
 
-        if (
-            background
-            and not failure_log_shown
-            and self._failed_pkgs_all
-            and self._failed_pkgs_die_msgs
-            and not mod_echo_output
-        ):
+        if (background and not failure_log_shown and self._failed_pkgs_all and self._failed_pkgs_die_msgs
+                and not mod_echo_output):
             failed_pkg_map = {}
             for pkg in self._failed_pkgs_all:
                 failed_pkg_map[(pkg.cpv, pkg.root)] = pkg
@@ -1271,9 +1168,7 @@ class Scheduler(PollScheduler):
                 if mysettings["ROOT"] != "/":
                     root_msg = f" merged to {mysettings['ROOT']}"
                 print()
-                printer.einfo(
-                    f"Error messages for package {colorize(color, key)}{root_msg}:"
-                )
+                printer.einfo(f"Error messages for package {colorize(color, key)}{root_msg}:")
                 print()
                 for phase in portage.const.EBUILD_PHASES:
                     if phase not in logentries:
@@ -1290,15 +1185,10 @@ class Scheduler(PollScheduler):
 
         if len(self._failed_pkgs_all) > 1 or (self._failed_pkgs_all and keep_going):
             if len(self._failed_pkgs_all) > 1:
-                msg = (
-                    f"The following {len(self._failed_pkgs_all)} packages have "
-                    + "failed to build, install, or execute postinst:"
-                )
+                msg = (f"The following {len(self._failed_pkgs_all)} packages have " +
+                       "failed to build, install, or execute postinst:")
             else:
-                msg = (
-                    "The following package has "
-                    + "failed to build, install, or execute postinst:"
-                )
+                msg = ("The following package has " + "failed to build, install, or execute postinst:")
 
             printer.eerror("")
             for line in textwrap.wrap(msg, 72):
@@ -1377,20 +1267,15 @@ class Scheduler(PollScheduler):
             """
             Ignore non-runtime and satisfied runtime priorities.
             """
-            if (
-                isinstance(priority, DepPriority)
-                and not priority.satisfied
-                and (priority.runtime or priority.runtime_post)
-            ):
+            if (isinstance(priority, DepPriority) and not priority.satisfied
+                    and (priority.runtime or priority.runtime_post)):
                 return False
             return True
 
         # When checking for unsatisfied runtime deps, only check
         # direct deps since indirect deps are checked when the
         # corresponding parent is merged.
-        for child in graph.child_nodes(
-            pkg, ignore_priority=ignore_non_runtime_or_satisfied
-        ):
+        for child in graph.child_nodes(pkg, ignore_priority=ignore_non_runtime_or_satisfied):
             if not isinstance(child, Package) or child.operation == "uninstall":
                 continue
             if child is pkg:
@@ -1424,8 +1309,7 @@ class Scheduler(PollScheduler):
                     build_log=build_log,
                     pkg=pkg,
                     returncode=merge.returncode,
-                )
-            )
+                ))
             if not self._terminated_tasks:
                 self._failed_pkg_msg(self._failed_pkgs[-1], "install", "to")
                 self._status_display.failed = len(self._failed_pkgs)
@@ -1440,11 +1324,8 @@ class Scheduler(PollScheduler):
                     pkg=pkg,
                     postinst_failure=True,
                     returncode=merge.returncode,
-                )
-            )
-            self._failed_pkg_msg(
-                self._failed_pkgs_all[-1], "execute postinst for", "for"
-            )
+                ))
+            self._failed_pkg_msg(self._failed_pkgs_all[-1], "execute postinst for", "for")
 
         self._task_complete(pkg)
         pkg_to_replace = merge.merge.pkg_to_replace
@@ -1483,10 +1364,7 @@ class Scheduler(PollScheduler):
             self.curval += 1
             merge = PackageMerge(merge=build, scheduler=self._sched_iface)
             self._running_tasks[id(merge)] = merge
-            if (
-                not build.build_opts.buildpkgonly
-                and build.pkg in self._deep_system_deps
-            ):
+            if (not build.build_opts.buildpkgonly and build.pkg in self._deep_system_deps):
                 # Since dependencies on system packages are frequently
                 # unspecified, merge them only when no builds are executing.
                 self._merge_wait_queue.append(merge)
@@ -1506,8 +1384,7 @@ class Scheduler(PollScheduler):
                     build_log=build_log,
                     pkg=build.pkg,
                     returncode=build.returncode,
-                )
-            )
+                ))
             if not self._terminated_tasks:
                 self._failed_pkg_msg(self._failed_pkgs[-1], "emerge", "for")
                 self._status_display.failed = len(self._failed_pkgs)
@@ -1529,16 +1406,11 @@ class Scheduler(PollScheduler):
     def _main_loop(self):
         self._main_exit = self._event_loop.create_future()
 
-        if (
-            self._max_load is not None
-            and self._loadavg_latency is not None
-            and (self._max_jobs is True or self._max_jobs > 1)
-        ):
+        if (self._max_load is not None and self._loadavg_latency is not None
+                and (self._max_jobs is True or self._max_jobs > 1)):
             # We have to schedule periodically, in case the load
             # average has changed since the last call.
-            self._main_loadavg_handle = self._event_loop.call_later(
-                self._loadavg_latency, self._schedule
-            )
+            self._main_loadavg_handle = self._event_loop.call_later(self._loadavg_latency, self._schedule)
 
         self._schedule()
         self._event_loop.run_until_complete(self._main_exit)
@@ -1553,9 +1425,7 @@ class Scheduler(PollScheduler):
 
         def display_callback():
             self._status_display.display()
-            display_callback.handle = self._event_loop.call_later(
-                self._max_display_latency, display_callback
-            )
+            display_callback.handle = self._event_loop.call_later(self._max_display_latency, display_callback)
 
         display_callback.handle = None
 
@@ -1574,9 +1444,7 @@ class Scheduler(PollScheduler):
                 status_quiet = self._status_display.quiet
                 self._status_display.quiet = True
                 try:
-                    rval = self._sched_iface.run_until_complete(
-                        self._run_pkg_pretend(loop=self._sched_iface)
-                    )
+                    rval = self._sched_iface.run_until_complete(self._run_pkg_pretend(loop=self._sched_iface))
                 except asyncio.CancelledError:
                     self.terminate()
                 finally:
@@ -1632,10 +1500,8 @@ class Scheduler(PollScheduler):
             return None
 
         if self._digraph is None:
-            if self._is_work_scheduled() and not (
-                "--nodeps" in self.myopts
-                and (self._max_jobs is True or self._max_jobs > 1)
-            ):
+            if self._is_work_scheduled() and not ("--nodeps" in self.myopts and
+                                                  (self._max_jobs is True or self._max_jobs > 1)):
                 self._choose_pkg_return_early = True
                 return None
             return self._pkg_queue.pop(0)
@@ -1701,12 +1567,9 @@ class Scheduler(PollScheduler):
             if node in traversed_nodes:
                 continue
             traversed_nodes.add(node)
-            if not (
-                (node.installed and node.operation == "nomerge")
-                or (node.operation == "uninstall" and node not in direct_deps)
-                or node in completed_tasks
-                or node in later
-            ):
+            if not ((node.installed and node.operation == "nomerge") or
+                    (node.operation == "uninstall" and node not in direct_deps) or node in completed_tasks
+                    or node in later):
                 dependent = True
                 break
 
@@ -1737,11 +1600,8 @@ class Scheduler(PollScheduler):
         self._config_pool[settings["EROOT"]].append(settings)
 
     def _keep_scheduling(self):
-        return bool(
-            not self._terminated.is_set()
-            and self._pkg_queue
-            and not (self._failed_pkgs and not self._build_opts.fetchonly)
-        )
+        return bool(not self._terminated.is_set() and self._pkg_queue
+                    and not (self._failed_pkgs and not self._build_opts.fetchonly))
 
     def _is_work_scheduled(self):
         return bool(self._running_tasks)
@@ -1759,11 +1619,7 @@ class Scheduler(PollScheduler):
             # special packages and we want to ensure that
             # parallel-install does not cause more than one of
             # them to install at the same time.
-            if (
-                self._merge_wait_queue
-                and not self._jobs
-                and not self._task_queues.merge
-            ):
+            if (self._merge_wait_queue and not self._jobs and not self._task_queues.merge):
                 task = self._merge_wait_queue.popleft()
                 task.scheduler = self._sched_iface
                 self._merge_wait_scheduled.append(task)
@@ -1779,37 +1635,20 @@ class Scheduler(PollScheduler):
 
             # Cancel prefetchers if they're the only reason
             # the main poll loop is still running.
-            if (
-                self._failed_pkgs
-                and not self._build_opts.fetchonly
-                and not self._is_work_scheduled()
-                and self._task_queues.fetch
-            ):
+            if (self._failed_pkgs and not self._build_opts.fetchonly and not self._is_work_scheduled()
+                    and self._task_queues.fetch):
                 # Since this happens asynchronously, it doesn't count in
                 # state_change (counting it triggers an infinite loop).
                 self._task_queues.fetch.clear()
 
-            if not (
-                state_change
-                or (
-                    self._merge_wait_queue
-                    and not self._jobs
-                    and not self._task_queues.merge
-                )
-            ):
+            if not (state_change or (self._merge_wait_queue and not self._jobs and not self._task_queues.merge)):
                 break
 
-        if not (
-            self._is_work_scheduled()
-            or self._keep_scheduling()
-            or self._main_exit.done()
-        ):
+        if not (self._is_work_scheduled() or self._keep_scheduling() or self._main_exit.done()):
             self._main_exit.set_result(None)
         elif self._main_loadavg_handle is not None:
             self._main_loadavg_handle.cancel()
-            self._main_loadavg_handle = self._event_loop.call_later(
-                self._loadavg_latency, self._schedule
-            )
+            self._main_loadavg_handle = self._event_loop.call_later(self._loadavg_latency, self._schedule)
 
         # Failure to schedule *after* self._task_queues.merge becomes
         # empty will cause the scheduler to hang as in bug 711322.
@@ -1817,17 +1656,13 @@ class Scheduler(PollScheduler):
         # method, since the order of callback invocation may cause
         # self._task_queues.merge to appear non-empty when it is
         # about to become empty.
-        if self._task_queues.merge and (
-            self._schedule_merge_wakeup_task is None
-            or self._schedule_merge_wakeup_task.done()
-        ):
+        if self._task_queues.merge and (self._schedule_merge_wakeup_task is None
+                                        or self._schedule_merge_wakeup_task.done()):
             self._schedule_merge_wakeup_task = asyncio.ensure_future(
                 self._task_queues.merge.wait(loop=self._event_loop),
                 loop=self._event_loop,
             )
-            self._schedule_merge_wakeup_task.add_done_callback(
-                self._schedule_merge_wakeup
-            )
+            self._schedule_merge_wakeup_task.add_done_callback(self._schedule_merge_wakeup)
 
     def _schedule_merge_wakeup(self, future):
         if not future.cancelled():
@@ -1854,9 +1689,8 @@ class Scheduler(PollScheduler):
                     if self._job_delay_timeout_id is not None:
                         self._job_delay_timeout_id.cancel()
 
-                    self._job_delay_timeout_id = self._event_loop.call_later(
-                        self._sigcont_delay - elapsed_seconds, self._schedule
-                    )
+                    self._job_delay_timeout_id = self._event_loop.call_later(self._sigcont_delay - elapsed_seconds,
+                                                                             self._schedule)
                     return True
 
                 # Only set this to None after the delay has expired,
@@ -1878,9 +1712,7 @@ class Scheduler(PollScheduler):
                 if self._job_delay_timeout_id is not None:
                     self._job_delay_timeout_id.cancel()
 
-                self._job_delay_timeout_id = self._event_loop.call_later(
-                    delay - elapsed_seconds, self._schedule
-                )
+                self._job_delay_timeout_id = self._event_loop.call_later(delay - elapsed_seconds, self._schedule)
                 return True
 
         return False
@@ -1897,13 +1729,8 @@ class Scheduler(PollScheduler):
             if not self._keep_scheduling():
                 return bool(state_change)
 
-            if (
-                self._choose_pkg_return_early
-                or self._merge_wait_scheduled
-                or (self._jobs and self._unsatisfied_system_deps)
-                or not self._can_add_job()
-                or self._job_delay()
-            ):
+            if (self._choose_pkg_return_early or self._merge_wait_scheduled
+                    or (self._jobs and self._unsatisfied_system_deps) or not self._can_add_job() or self._job_delay()):
                 return bool(state_change)
 
             pkg = self._choose_pkg()
@@ -1964,9 +1791,7 @@ class Scheduler(PollScheduler):
         pkg_to_replace = None
         if pkg.operation != "uninstall":
             vardb = pkg.root_config.trees["vartree"].dbapi
-            previous_cpv = [
-                x for x in vardb.match(pkg.slot_atom) if portage.cpv_getkey(x) == pkg.cp
-            ]
+            previous_cpv = [x for x in vardb.match(pkg.slot_atom) if portage.cpv_getkey(x) == pkg.cp]
             if not previous_cpv and vardb.cpv_exists(pkg.cpv):
                 # same cpv, different SLOT
                 previous_cpv = [pkg.cpv]
@@ -1987,9 +1812,7 @@ class Scheduler(PollScheduler):
             background=self._background,
             binpkg_opts=self._binpkg_opts,
             build_opts=self._build_opts,
-            config_pool=self._ConfigPool(
-                pkg.root, self._allocate_config, self._deallocate_config
-            ),
+            config_pool=self._ConfigPool(pkg.root, self._allocate_config, self._deallocate_config),
             emerge_opts=self.myopts,
             find_blockers=self._find_blockers(pkg),
             logger=self._logger,
@@ -2055,9 +1878,7 @@ class Scheduler(PollScheduler):
         # Convert Atom instances to plain str.
         mtimedb["resume"]["favorites"] = [str(x) for x in self._favorites]
         mtimedb["resume"]["mergelist"] = [
-            list(x)
-            for x in self._mergelist
-            if isinstance(x, Package) and x.operation == "merge"
+            list(x) for x in self._mergelist if isinstance(x, Package) and x.operation == "merge"
         ]
 
         mtimedb.commit()
@@ -2100,10 +1921,7 @@ class Scheduler(PollScheduler):
             def unsatisfied_resume_dep_msg():
                 mydepgraph.display_problems()
                 out = portage.output.EOutput()
-                out.eerror(
-                    "One or more packages are either masked or "
-                    + "have missing dependencies:"
-                )
+                out.eerror("One or more packages are either masked or " + "have missing dependencies:")
                 out.eerror("")
                 indent = "  "
                 show_parents = set()
@@ -2119,16 +1937,10 @@ class Scheduler(PollScheduler):
                         out.eerror(indent + str(dep.atom) + " pulled in by:")
                         out.eerror(2 * indent + str(dep.parent))
                         out.eerror("")
-                msg = (
-                    "The resume list contains packages "
-                    + "that are either masked or have "
-                    + "unsatisfied dependencies. "
-                    + "Please restart/continue "
-                    + "the operation manually, or use --skipfirst "
-                    + "to skip the first package in the list and "
-                    + "any other packages that may be "
-                    + "masked or have missing dependencies."
-                )
+                msg = ("The resume list contains packages " + "that are either masked or have " +
+                       "unsatisfied dependencies. " + "Please restart/continue " +
+                       "the operation manually, or use --skipfirst " + "to skip the first package in the list and " +
+                       "any other packages that may be " + "masked or have missing dependencies.")
                 for line in textwrap.wrap(msg, 72):
                     out.eerror(line)
 
@@ -2170,9 +1982,7 @@ class Scheduler(PollScheduler):
 
     def _show_list(self):
         myopts = self.myopts
-        if "--quiet" not in myopts and (
-            "--ask" in myopts or "--tree" in myopts or "--verbose" in myopts
-        ):
+        if "--quiet" not in myopts and ("--ask" in myopts or "--tree" in myopts or "--verbose" in myopts):
             return True
         return False
 
@@ -2183,12 +1993,12 @@ class Scheduler(PollScheduler):
         """
 
         if {
-            "--buildpkgonly",
-            "--fetchonly",
-            "--fetch-all-uri",
-            "--oneshot",
-            "--onlydeps",
-            "--pretend",
+                "--buildpkgonly",
+                "--fetchonly",
+                "--fetch-all-uri",
+                "--oneshot",
+                "--onlydeps",
+                "--pretend",
         }.intersection(self.myopts):
             return
 
@@ -2219,22 +2029,16 @@ class Scheduler(PollScheduler):
 
             if pkg.operation == "uninstall":
                 if hasattr(world_set, "cleanPackage"):
-                    world_set.cleanPackage(
-                        pkg.root_config.trees["vartree"].dbapi, pkg.cpv
-                    )
+                    world_set.cleanPackage(pkg.root_config.trees["vartree"].dbapi, pkg.cpv)
                 if hasattr(world_set, "remove"):
                     for s in pkg.root_config.setconfig.active:
                         world_set.remove(SETPREFIX + s)
             else:
                 if atom is not None:
                     if hasattr(world_set, "add"):
-                        self._status_msg(
-                            f'Recording {atom} in "world" favorites file...'
-                        )
-                        logger.log(
-                            f" === ({pkg_count.curval} of {pkg_count.maxval}) "
-                            f"Updating world file ({pkg.cpv})"
-                        )
+                        self._status_msg(f'Recording {atom} in "world" favorites file...')
+                        logger.log(f" === ({pkg_count.curval} of {pkg_count.maxval}) "
+                                   f"Updating world file ({pkg.cpv})")
                         world_set.add(atom)
                     else:
                         writemsg_level(
@@ -2246,9 +2050,7 @@ class Scheduler(PollScheduler):
             if world_locked:
                 world_set.unlock()
 
-    def _pkg(
-        self, cpv, type_name, root_config, installed=False, operation=None, myrepo=None
-    ):
+    def _pkg(self, cpv, type_name, root_config, installed=False, operation=None, myrepo=None):
         """
         Get a package instance from the cache, or create a new
         one if necessary. Raises KeyError from aux_get if it
@@ -2265,8 +2067,7 @@ class Scheduler(PollScheduler):
                 root_config=root_config,
                 installed=installed,
                 operation=operation,
-            )
-        )
+            ))
 
         if pkg is not None:
             return pkg

@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class OrUpgradeInstalledTestCase(TestCase):
+
     def testOrUpgradeInstalled(self):
         ebuilds = {
             "net-misc/foo-1": {
@@ -18,8 +19,14 @@ class OrUpgradeInstalledTestCase(TestCase):
             "net-libs/libtirpc-1": {
                 "EAPI": "6",
             },
-            "sys-libs/glibc-2.26": {"EAPI": "6", "IUSE": ""},
-            "sys-libs/glibc-2.24": {"EAPI": "6", "IUSE": "+rpc"},
+            "sys-libs/glibc-2.26": {
+                "EAPI": "6",
+                "IUSE": ""
+            },
+            "sys-libs/glibc-2.24": {
+                "EAPI": "6",
+                "IUSE": "+rpc"
+            },
         }
 
         installed = {
@@ -37,22 +44,20 @@ class OrUpgradeInstalledTestCase(TestCase):
             # in order to upgrade glibc.
             ResolverPlaygroundTestCase(
                 ["net-misc/foo", "@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 ambiguous_merge_order=True,
-                mergelist=(
-                    (
-                        "net-libs/libtirpc-1",
-                        "sys-libs/glibc-2.26",
-                        "net-misc/foo-1",
-                    ),
-                ),
-            ),
-        )
+                mergelist=((
+                    "net-libs/libtirpc-1",
+                    "sys-libs/glibc-2.26",
+                    "net-misc/foo-1",
+                ), ),
+            ), )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
 
         try:
             for test_case in test_cases:
@@ -65,19 +70,20 @@ class OrUpgradeInstalledTestCase(TestCase):
         # In some cases it's necessary to avoid upgrade due to
         # the package being masked.
         user_config = {
-            "package.mask": (">=sys-libs/glibc-2.26",),
+            "package.mask": (">=sys-libs/glibc-2.26", ),
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["net-misc/foo", "@world"],
-                options={"--update": True, "--deep": True},
-                success=True,
-                mergelist=[
-                    "net-misc/foo-1",
-                ],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["net-misc/foo", "@world"],
+            options={
+                "--update": True,
+                "--deep": True
+            },
+            success=True,
+            mergelist=[
+                "net-misc/foo-1",
+            ],
+        ), )
 
         playground = ResolverPlayground(
             debug=False,
@@ -120,7 +126,10 @@ class OrUpgradeInstalledTestCase(TestCase):
             # available.
             ResolverPlaygroundTestCase(
                 ["virtual/rust"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=[],
             ),
@@ -129,22 +138,21 @@ class OrUpgradeInstalledTestCase(TestCase):
             # virtual/rust-1.19.0.
             ResolverPlaygroundTestCase(
                 ["=dev-lang/rust-1.23.0", "virtual/rust"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 all_permutations=True,
                 success=True,
                 ambiguous_merge_order=True,
-                mergelist=(
-                    (
-                        "dev-lang/rust-1.23.0",
-                        "dev-lang/rust-bin-1.19.0",
-                    ),
-                ),
+                mergelist=((
+                    "dev-lang/rust-1.23.0",
+                    "dev-lang/rust-bin-1.19.0",
+                ), ),
             ),
         )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
 
         try:
             for test_case in test_cases:
@@ -157,8 +165,10 @@ class OrUpgradeInstalledTestCase(TestCase):
     def test_llvm_slot_operator(self):
         ebuilds = {
             "media-libs/mesa-19.2.8": {
-                "EAPI": "7",
-                "RDEPEND": """|| (
+                "EAPI":
+                "7",
+                "RDEPEND":
+                """|| (
 					sys-devel/llvm:10
 					sys-devel/llvm:9
 					sys-devel/llvm:8
@@ -183,8 +193,10 @@ class OrUpgradeInstalledTestCase(TestCase):
 
         installed = {
             "media-libs/mesa-19.2.8": {
-                "EAPI": "7",
-                "RDEPEND": """|| (
+                "EAPI":
+                "7",
+                "RDEPEND":
+                """|| (
 					sys-devel/llvm:10
 					sys-devel/llvm:9
 					sys-devel/llvm:8
@@ -205,15 +217,15 @@ class OrUpgradeInstalledTestCase(TestCase):
             # rebuild that prevents upgrade from llvm-8 to llvm-9.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=["sys-devel/llvm-9", "media-libs/mesa-19.2.8"],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
 
         try:
             for test_case in test_cases:

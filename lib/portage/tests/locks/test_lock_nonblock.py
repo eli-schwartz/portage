@@ -12,6 +12,7 @@ from portage.tests import TestCase
 
 
 class LockNonblockTestCase(TestCase):
+
     def _testLockNonblock(self):
         tempdir = tempfile.mkdtemp()
         try:
@@ -71,9 +72,7 @@ class LockNonblockTestCase(TestCase):
         try:
             path = os.path.join(tempdir, "lock_me")
             lock = portage.locks.lockfile(path)
-            self.assertRaises(
-                TryAgain, portage.locks.lockfile, path, flags=os.O_NONBLOCK
-            )
+            self.assertRaises(TryAgain, portage.locks.lockfile, path, flags=os.O_NONBLOCK)
             portage.locks.unlockfile(lock)
         finally:
             shutil.rmtree(tempdir)

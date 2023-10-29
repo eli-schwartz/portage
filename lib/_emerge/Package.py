@@ -116,13 +116,9 @@ class Package(Task):
                 raise
             db = self.root_config.trees["porttree"].dbapi
 
-        self.cpv = _pkg_str(
-            self.cpv, metadata=self._metadata, settings=self.root_config.settings, db=db
-        )
+        self.cpv = _pkg_str(self.cpv, metadata=self._metadata, settings=self.root_config.settings, db=db)
         if hasattr(self.cpv, "slot_invalid"):
-            self._invalid_metadata(
-                "SLOT.invalid", f"SLOT: invalid value: '{self._metadata['SLOT']}'"
-            )
+            self._invalid_metadata("SLOT.invalid", f"SLOT: invalid value: '{self._metadata['SLOT']}'")
         self.cpv_split = self.cpv.cpv_split
         self.category, self.pf = portage.catsplit(self.cpv)
         self.cp = self.cpv.cp
@@ -134,9 +130,7 @@ class Package(Task):
         self._metadata["repository"] = self.cpv.repo
 
         implicit_match = db._iuse_implicit_cnstr(self.cpv, self._metadata)
-        self.iuse = self._iuse(
-            self, self._metadata["IUSE"].split(), implicit_match, self.eapi
-        )
+        self.iuse = self._iuse(self, self._metadata["IUSE"].split(), implicit_match, self.eapi)
 
         if (self.iuse.enabled or self.iuse.disabled) and not eapi_attrs.iuse_defaults:
             if not self.installed:
@@ -188,7 +182,7 @@ class Package(Task):
 
     @property
     def provided_cps(self):
-        return (self.cp,)
+        return (self.cp, )
 
     @property
     def restrict(self):
@@ -283,9 +277,7 @@ class Package(Task):
             raise TypeError("type_name argument is required")
         elif type_name == "ebuild":
             if repo_name is None:
-                raise AssertionError(
-                    "Package._gen_hash_key() " + "called without 'repo_name' argument"
-                )
+                raise AssertionError("Package._gen_hash_key() " + "called without 'repo_name' argument")
             elements.append(repo_name)
         elif type_name == "binary":
             # Including a variety of fingerprints in the hash makes
@@ -342,24 +334,18 @@ class Package(Task):
                         if not isinstance(atom, Atom):
                             continue
                         if atom.slot_operator_built:
-                            e = InvalidDependString(
-                                'Improper context for slot-operator "built" '
-                                f"atom syntax: {atom.unevaluated_atom}"
-                            )
+                            e = InvalidDependString('Improper context for slot-operator "built" '
+                                                    f"atom syntax: {atom.unevaluated_atom}")
                             self._metadata_exception(k, e)
 
-        self._validated_atoms = tuple(
-            {atom for atom in validated_atoms if isinstance(atom, Atom)}
-        )
+        self._validated_atoms = tuple({atom for atom in validated_atoms if isinstance(atom, Atom)})
 
         for k in self._use_conditional_misc_keys:
             v = self._metadata.get(k)
             if not v:
                 continue
             try:
-                use_reduce(
-                    v, eapi=dep_eapi, matchall=True, is_valid_flag=dep_valid_flag
-                )
+                use_reduce(v, eapi=dep_eapi, matchall=True, is_valid_flag=dep_valid_flag)
             except InvalidDependString as e:
                 self._metadata_exception(k, e)
 
@@ -439,9 +425,7 @@ class Package(Task):
             masks["KEYWORDS"] = missing_keywords
 
         try:
-            missing_properties = settings._getMissingProperties(
-                self.cpv, self._metadata
-            )
+            missing_properties = settings._getMissingProperties(self.cpv, self._metadata)
             if missing_properties:
                 masks["PROPERTIES"] = missing_properties
         except InvalidDependString:
@@ -481,13 +465,8 @@ class Package(Task):
             if "invalid" in masks:
                 return False
 
-            if not self.installed and (
-                "CHOST" in masks
-                or "EAPI.deprecated" in masks
-                or "KEYWORDS" in masks
-                or "PROPERTIES" in masks
-                or "RESTRICT" in masks
-            ):
+            if not self.installed and ("CHOST" in masks or "EAPI.deprecated" in masks or "KEYWORDS" in masks
+                                       or "PROPERTIES" in masks or "RESTRICT" in masks):
                 return False
 
             if "package.mask" in masks or "LICENSE" in masks:
@@ -498,9 +477,7 @@ class Package(Task):
     def get_keyword_mask(self):
         """returns None, 'missing', or 'unstable'."""
 
-        missing = self.root_config.settings._getRawMissingKeywords(
-            self.cpv, self._metadata
-        )
+        missing = self.root_config.settings._getRawMissingKeywords(self.cpv, self._metadata)
 
         if not missing:
             return None
@@ -508,9 +485,7 @@ class Package(Task):
         if "**" in missing:
             return "missing"
 
-        global_accept_keywords = frozenset(
-            self.root_config.settings.get("ACCEPT_KEYWORDS", "").split()
-        )
+        global_accept_keywords = frozenset(self.root_config.settings.get("ACCEPT_KEYWORDS", "").split())
 
         for keyword in missing:
             if keyword.lstrip("~") in global_accept_keywords:
@@ -576,14 +551,8 @@ class Package(Task):
         s = "({}, {}".format(
             portage.output.colorize(
                 cpv_color,
-                self.cpv
-                + build_id_str
-                + _slot_separator
-                + self.slot
-                + "/"
-                + self.sub_slot
-                + _repo_separator
-                + self.repo,
+                self.cpv + build_id_str + _slot_separator + self.slot + "/" + self.sub_slot + _repo_separator +
+                self.repo,
             ),
             self.type_name,
         )
@@ -859,15 +828,13 @@ class _PackageMetadataWrapper(_PackageMetadataWrapperBase):
     Detect metadata updates and synchronize Package attributes.
     """
 
-    __slots__ = ("_pkg",)
+    __slots__ = ("_pkg", )
     _wrapped_keys = frozenset(["COUNTER", "INHERITED", "USE", "_mtime_"])
-    _use_conditional_keys = frozenset(
-        [
-            "LICENSE",
-            "PROPERTIES",
-            "RESTRICT",
-        ]
-    )
+    _use_conditional_keys = frozenset([
+        "LICENSE",
+        "PROPERTIES",
+        "RESTRICT",
+    ])
 
     def __init__(self, pkg, metadata):
         _PackageMetadataWrapperBase.__init__(self)
@@ -888,8 +855,7 @@ class _PackageMetadataWrapper(_PackageMetadataWrapperBase):
                             v,
                             uselist=self._pkg.use.enabled,
                             is_valid_flag=self._pkg.iuse.is_valid_flag,
-                        )
-                    )
+                        ))
                 except InvalidDependString:
                     # This error should already have been registered via
                     # self._pkg._invalid_metadata().

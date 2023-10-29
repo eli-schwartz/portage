@@ -8,6 +8,7 @@ from portage.util.futures.unix_events import DefaultEventLoopPolicy
 
 
 class PolicyWrapperRecursionTestCase(TestCase):
+
     def testPolicyWrapperRecursion(self):
         initial_policy = asyncio.get_event_loop_policy()
         if not isinstance(initial_policy, DefaultEventLoopPolicy):

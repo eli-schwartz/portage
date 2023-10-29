@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class AutounmaskUseBacktrackTestCase(TestCase):
+
     def testAutounmaskUseBacktrack(self):
         ebuilds = {
             "dev-libs/A-1": {
@@ -70,13 +71,13 @@ class AutounmaskUseBacktrackTestCase(TestCase):
                     ("dev-libs/C-1", "dev-libs/A-2"),
                     "dev-libs/D-1",
                 ],
-                use_changes={"dev-libs/C-1": {"y": True, "x": True}},
-            ),
-        )
+                use_changes={"dev-libs/C-1": {
+                    "y": True,
+                    "x": True
+                }},
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
 
         try:
             for test_case in test_cases:

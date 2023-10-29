@@ -18,9 +18,7 @@ class WorldHandler:
         self.okay = []
         from portage._sets import load_default_config
 
-        setconfig = load_default_config(
-            portage.settings, portage.db[portage.settings["EROOT"]]
-        )
+        setconfig = load_default_config(portage.settings, portage.db[portage.settings["EROOT"]])
         self._sets = setconfig.getSets()
 
     def _check_world(self, onProgress):
@@ -39,7 +37,7 @@ class WorldHandler:
         for i, atom in enumerate(world_atoms):
             if not isinstance(atom, portage.dep.Atom):
                 if atom.startswith(SETPREFIX):
-                    s = atom[len(SETPREFIX) :]
+                    s = atom[len(SETPREFIX):]
                     if s in sets:
                         self.okay.append(atom)
                     else:

@@ -42,7 +42,7 @@ class database:
         try:
             chf_types = self.chf_types
         except AttributeError:
-            chf_types = (self.validation_chf,)
+            chf_types = (self.validation_chf, )
 
         if self.serialize_eclasses and "_eclasses_" in d:
             for chf_type in chf_types:
@@ -56,18 +56,17 @@ class database:
                     # mtime data.
                     continue
                 try:
-                    d["_eclasses_"] = reconstruct_eclasses(
-                        cpv, d["_eclasses_"], chf_type, paths=self.store_eclass_paths
-                    )
+                    d["_eclasses_"] = reconstruct_eclasses(cpv,
+                                                           d["_eclasses_"],
+                                                           chf_type,
+                                                           paths=self.store_eclass_paths)
                 except cache_errors.CacheCorruption:
                     if chf_type is chf_types[-1]:
                         raise
                 else:
                     break
             else:
-                raise cache_errors.CacheCorruption(
-                    cpv, "entry does not contain a recognized chf_type"
-                )
+                raise cache_errors.CacheCorruption(cpv, "entry does not contain a recognized chf_type")
 
         elif "_eclasses_" not in d:
             d["_eclasses_"] = {}
@@ -88,9 +87,7 @@ class database:
             try:
                 mtime = int(mtime)
             except ValueError:
-                raise cache_errors.CacheCorruption(
-                    cpv, f"_mtime_ conversion to int failed: {mtime}"
-                )
+                raise cache_errors.CacheCorruption(cpv, f"_mtime_ conversion to int failed: {mtime}")
             d["_mtime_"] = mtime
         return d
 
@@ -111,9 +108,7 @@ class database:
             return extern_ec_dict
         chf_getter = operator.attrgetter(chf_type)
         if paths:
-            intern_ec_dict = {
-                k: (v.eclass_dir, chf_getter(v)) for k, v in extern_ec_dict.items()
-            }
+            intern_ec_dict = {k: (v.eclass_dir, chf_getter(v)) for k, v in extern_ec_dict.items()}
         else:
             intern_ec_dict = {k: chf_getter(v) for k, v in extern_ec_dict.items()}
         return intern_ec_dict
@@ -134,13 +129,11 @@ class database:
             if d is None:
                 d = ProtectedDict(values)
             if self.serialize_eclasses:
-                d["_eclasses_"] = serialize_eclasses(
-                    d["_eclasses_"], self.validation_chf, paths=self.store_eclass_paths
-                )
+                d["_eclasses_"] = serialize_eclasses(d["_eclasses_"],
+                                                     self.validation_chf,
+                                                     paths=self.store_eclass_paths)
             else:
-                d["_eclasses_"] = self._internal_eclasses(
-                    d["_eclasses_"], self.validation_chf, self.store_eclass_paths
-                )
+                d["_eclasses_"] = self._internal_eclasses(d["_eclasses_"], self.validation_chf, self.store_eclass_paths)
         elif d is None:
             d = values
         self._setitem(cpv, d)
@@ -233,7 +226,7 @@ class database:
         try:
             chf_types = self.chf_types
         except AttributeError:
-            chf_types = (self.validation_chf,)
+            chf_types = (self.validation_chf, )
 
         for chf_type in chf_types:
             if self._validate_entry(chf_type, entry, ebuild_hash, eclass_db):
@@ -250,9 +243,7 @@ class database:
         else:
             if entry_hash != getattr(ebuild_hash, chf_type):
                 return False
-        update = eclass_db.validate_and_rewrite_cache(
-            entry["_eclasses_"], chf_type, self.store_eclass_paths
-        )
+        update = eclass_db.validate_and_rewrite_cache(entry["_eclasses_"], chf_type, self.store_eclass_paths)
         if update is None:
             return False
         if update:
@@ -312,13 +303,8 @@ def serialize_eclasses(eclass_dict, chf_type="mtime", paths=True):
         return ""
     getter = operator.attrgetter(chf_type)
     if paths:
-        return "\t".join(
-            f"{k}\t{v.eclass_dir}\t{getter(v)}"
-            for k, v in sorted(eclass_dict.items(), key=_keysorter)
-        )
-    return "\t".join(
-        f"{k}\t{getter(v)}" for k, v in sorted(eclass_dict.items(), key=_keysorter)
-    )
+        return "\t".join(f"{k}\t{v.eclass_dir}\t{getter(v)}" for k, v in sorted(eclass_dict.items(), key=_keysorter))
+    return "\t".join(f"{k}\t{getter(v)}" for k, v in sorted(eclass_dict.items(), key=_keysorter))
 
 
 def _md5_deserializer(md5):
@@ -349,13 +335,9 @@ def reconstruct_eclasses(cpv, eclass_string, chf_type="mtime", paths=True):
 
     if paths:
         if len(eclasses) % 3 != 0:
-            raise cache_errors.CacheCorruption(
-                cpv, f"_eclasses_ was of invalid len {len(eclasses)}"
-            )
+            raise cache_errors.CacheCorruption(cpv, f"_eclasses_ was of invalid len {len(eclasses)}")
     elif len(eclasses) % 2 != 0:
-        raise cache_errors.CacheCorruption(
-            cpv, f"_eclasses_ was of invalid len {len(eclasses)}"
-        )
+        raise cache_errors.CacheCorruption(cpv, f"_eclasses_ was of invalid len {len(eclasses)}")
     d = {}
     try:
         i = iter(eclasses)
@@ -367,12 +349,8 @@ def reconstruct_eclasses(cpv, eclass_string, chf_type="mtime", paths=True):
             for name, val in zip(i, i):
                 d[name] = converter(val)
     except IndexError:
-        raise cache_errors.CacheCorruption(
-            cpv, f"_eclasses_ was of invalid len {len(eclasses)}"
-        )
+        raise cache_errors.CacheCorruption(cpv, f"_eclasses_ was of invalid len {len(eclasses)}")
     except ValueError:
-        raise cache_errors.CacheCorruption(
-            cpv, f"_eclasses_ not valid for chf_type {chf_type}"
-        )
+        raise cache_errors.CacheCorruption(cpv, f"_eclasses_ not valid for chf_type {chf_type}")
     del eclasses
     return d

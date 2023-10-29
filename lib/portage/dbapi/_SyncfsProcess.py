@@ -16,7 +16,7 @@ class SyncfsProcess(ForkProcess):
     https://bugs.python.org/issue14597).
     """
 
-    __slots__ = ("paths",)
+    __slots__ = ("paths", )
 
     def _start(self):
         self.target = functools.partial(self._target, self._get_syncfs, self.paths)

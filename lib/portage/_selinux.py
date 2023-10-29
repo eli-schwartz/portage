@@ -48,9 +48,7 @@ def mkdir(target, refdir):
     refdir = _native_string(refdir, encoding=_encodings["fs"], errors="strict")
     (rc, ctx) = selinux.getfilecon(refdir)
     if rc < 0:
-        raise OSError(
-            _('mkdir: Failed getting context of reference directory "%s".') % refdir
-        )
+        raise OSError(_('mkdir: Failed getting context of reference directory "%s".') % refdir)
 
     setfscreate(ctx)
     try:
@@ -91,10 +89,8 @@ def setexec(ctx="\n"):
     try:
         rc = selinux.setexeccon(ctx)
     except OSError:
-        msg = _(
-            "Failed to set new SELinux execution context. "
-            + "Is your current SELinux context allowed to run Portage?"
-        )
+        msg = _("Failed to set new SELinux execution context. " +
+                "Is your current SELinux context allowed to run Portage?")
         if selinux.security_getenforce() == 1:
             raise OSError(msg)
         else:
@@ -104,9 +100,7 @@ def setexec(ctx="\n"):
         if selinux.security_getenforce() == 1:
             raise OSError(_('Failed setting exec() context "%s".') % ctx)
         else:
-            portage.writemsg(
-                "!!! " + _('Failed setting exec() context "%s".') % ctx, noiselevel=-1
-            )
+            portage.writemsg("!!! " + _('Failed setting exec() context "%s".') % ctx, noiselevel=-1)
 
 
 def setfscreate(ctx="\n"):
@@ -127,9 +121,7 @@ class spawn_wrapper:
 
     def __init__(self, spawn_func, selinux_type):
         self._spawn_func = spawn_func
-        selinux_type = _native_string(
-            selinux_type, encoding=_encodings["content"], errors="strict"
-        )
+        selinux_type = _native_string(selinux_type, encoding=_encodings["content"], errors="strict")
         self._con = settype(selinux_type)
 
     def __call__(self, *args, **kwargs):
@@ -150,9 +142,7 @@ def symlink(target, link, reflnk):
     reflnk = _native_string(reflnk, encoding=_encodings["fs"], errors="strict")
     (rc, ctx) = selinux.lgetfilecon(reflnk)
     if rc < 0:
-        raise OSError(
-            _('symlink: Failed getting context of reference symlink "%s".') % reflnk
-        )
+        raise OSError(_('symlink: Failed getting context of reference symlink "%s".') % reflnk)
 
     setfscreate(ctx)
     try:

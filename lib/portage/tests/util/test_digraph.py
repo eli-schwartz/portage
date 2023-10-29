@@ -9,6 +9,7 @@ import portage.util
 
 
 class DigraphTest(TestCase):
+
     def _assertBFSEqual(self, result, expected):
         result_stack = list(result)
         result_stack.reverse()
@@ -109,15 +110,11 @@ class DigraphTest(TestCase):
             self.assertEqual(x.parent_nodes("A", ignore_priority=-2), ["B"])
             self.assertEqual(x.parent_nodes("A", ignore_priority=-1), [])
             self.assertEqual(x.hasallzeros(), False)
-            self._assertBFSEqual(
-                x.bfs("A"), [(None, "A"), ("A", "D"), ("D", "C"), ("C", "B")]
-            )
+            self._assertBFSEqual(x.bfs("A"), [(None, "A"), ("A", "D"), ("D", "C"), ("C", "B")])
             self.assertEqual(x.shortest_path("A", "D"), ["A", "D"])
             self.assertEqual(x.shortest_path("D", "A"), ["D", "C", "B", "A"])
             self.assertEqual(x.shortest_path("A", "D", ignore_priority=2), None)
-            self.assertEqual(
-                x.shortest_path("D", "A", ignore_priority=-2), ["D", "C", "B", "A"]
-            )
+            self.assertEqual(x.shortest_path("D", "A", ignore_priority=-2), ["D", "C", "B", "A"])
             cycles = {tuple(y) for y in x.get_cycles()}
             self.assertEqual(
                 cycles,
@@ -215,9 +212,7 @@ class DigraphTest(TestCase):
             self._assertBFSEqual(x.bfs("A"), [(None, "A"), [("A", "C"), ("A", "B")]])
             self.assertEqual(x.shortest_path("A", "C"), ["A", "C"])
             self.assertEqual(x.shortest_path("C", "A"), ["C", "A"])
-            self.assertEqual(
-                x.shortest_path("A", "C", ignore_priority=0), ["A", "B", "C"]
-            )
+            self.assertEqual(x.shortest_path("A", "C", ignore_priority=0), ["A", "B", "C"])
             self.assertEqual(x.shortest_path("C", "A", ignore_priority=0), ["C", "A"])
             cycles = {frozenset(y) for y in x.get_cycles()}
             self.assertEqual(
@@ -238,6 +233,7 @@ class DigraphTest(TestCase):
             portage.util.noiselimit = 0
 
     def testDigraphIgnorePriority(self):
+
         def always_true(dummy):
             return True
 

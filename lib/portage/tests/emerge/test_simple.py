@@ -25,6 +25,7 @@ from portage.output import colorize
 
 
 class BinhostContentMap(Mapping):
+
     def __init__(self, remote_path, local_path):
         self._remote_path = remote_path
         self._local_path = local_path
@@ -33,9 +34,7 @@ class BinhostContentMap(Mapping):
         safe_path = os.path.normpath(request_path)
         if not safe_path.startswith(self._remote_path + "/"):
             raise KeyError(request_path)
-        local_path = os.path.join(
-            self._local_path, safe_path[len(self._remote_path) + 1 :]
-        )
+        local_path = os.path.join(self._local_path, safe_path[len(self._remote_path) + 1:])
         try:
             with open(local_path, "rb") as f:
                 return f.read()
@@ -44,6 +43,7 @@ class BinhostContentMap(Mapping):
 
 
 class SimpleEmergeTestCase(TestCase):
+
     def _have_python_xml(self):
         try:
             __import__("xml.etree.ElementTree")
@@ -234,19 +234,16 @@ call_has_and_best_version() {
                     installed=installed,
                     debug=debug,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
                 loop = asyncio._wrap_loop()
                 loop.run_until_complete(
                     asyncio.ensure_future(
-                        self._async_test_simple(
-                            playground, metadata_xml_files, loop=loop
-                        ),
+                        self._async_test_simple(playground, metadata_xml_files, loop=loop),
                         loop=loop,
-                    )
-                )
+                    ))
 
     async def _async_test_simple(self, playground, metadata_xml_files, loop):
         debug = playground.debug
@@ -329,7 +326,7 @@ call_has_and_best_version() {
 
         rm_binary = find_binary("rm")
         self.assertEqual(rm_binary is None, False, "rm command not found")
-        rm_cmd = (rm_binary,)
+        rm_cmd = (rm_binary, )
 
         egencache_extra_args = []
         if self._have_python_xml():
@@ -345,18 +342,15 @@ call_has_and_best_version() {
         binhost_dir = os.path.join(eprefix, "binhost")
         binhost_address = "127.0.0.1"
         binhost_remote_path = "/binhost"
-        binhost_server = AsyncHTTPServer(
-            binhost_address, BinhostContentMap(binhost_remote_path, binhost_dir), loop
-        ).__enter__()
+        binhost_server = AsyncHTTPServer(binhost_address, BinhostContentMap(binhost_remote_path, binhost_dir),
+                                         loop).__enter__()
         binhost_uri = "http://{address}:{port}{path}".format(
             address=binhost_address,
             port=binhost_server.server_port,
             path=binhost_remote_path,
         )
 
-        binpkg_format = settings.get(
-            "BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0]
-        )
+        binpkg_format = settings.get("BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0])
         self.assertIn(binpkg_format, ("xpak", "gpkg"))
         if binpkg_format == "xpak":
             foo_filename = "foo-0-1.xpak"
@@ -366,13 +360,10 @@ call_has_and_best_version() {
         test_commands = ()
 
         if hasattr(argparse.ArgumentParser, "parse_intermixed_args"):
-            test_commands += (
-                emerge_cmd + ("--oneshot", "dev-libs/A", "-v", "dev-libs/A"),
-            )
+            test_commands += (emerge_cmd + ("--oneshot", "dev-libs/A", "-v", "dev-libs/A"), )
 
         test_commands += (
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "--usepkgonly",
                 "--root",
                 cross_root,
@@ -381,8 +372,7 @@ call_has_and_best_version() {
                 "/",
                 "dev-libs/A",
             ),
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "--usepkgonly",
                 "--quickpkg-direct=y",
                 "--quickpkg-direct-root",
@@ -390,8 +380,7 @@ call_has_and_best_version() {
                 "dev-libs/A",
             ),
             env_update_cmd,
-            portageq_cmd
-            + (
+            portageq_cmd + (
                 "envvar",
                 "-v",
                 "CONFIG_PROTECT",
@@ -402,78 +391,75 @@ call_has_and_best_version() {
             ),
             etc_update_cmd,
             dispatch_conf_cmd,
-            emerge_cmd + ("--version",),
-            emerge_cmd + ("--info",),
+            emerge_cmd + ("--version", ),
+            emerge_cmd + ("--info", ),
             emerge_cmd + ("--info", "--verbose"),
-            emerge_cmd + ("--list-sets",),
-            emerge_cmd + ("--check-news",),
+            emerge_cmd + ("--list-sets", ),
+            emerge_cmd + ("--check-news", ),
             rm_cmd + ("-rf", cachedir),
             rm_cmd + ("-rf", cachedir_pregen),
-            emerge_cmd + ("--regen",),
+            emerge_cmd + ("--regen", ),
             rm_cmd + ("-rf", cachedir),
-            ({"FEATURES": "metadata-transfer"},) + emerge_cmd + ("--regen",),
+            ({
+                "FEATURES": "metadata-transfer"
+            }, ) + emerge_cmd + ("--regen", ),
             rm_cmd + ("-rf", cachedir),
-            ({"FEATURES": "metadata-transfer"},) + emerge_cmd + ("--regen",),
+            ({
+                "FEATURES": "metadata-transfer"
+            }, ) + emerge_cmd + ("--regen", ),
             rm_cmd + ("-rf", cachedir),
-            egencache_cmd + ("--update",) + tuple(egencache_extra_args),
-            ({"FEATURES": "metadata-transfer"},) + emerge_cmd + ("--metadata",),
+            egencache_cmd + ("--update", ) + tuple(egencache_extra_args),
+            ({
+                "FEATURES": "metadata-transfer"
+            }, ) + emerge_cmd + ("--metadata", ),
             rm_cmd + ("-rf", cachedir),
-            ({"FEATURES": "metadata-transfer"},) + emerge_cmd + ("--metadata",),
-            emerge_cmd + ("--metadata",),
+            ({
+                "FEATURES": "metadata-transfer"
+            }, ) + emerge_cmd + ("--metadata", ),
+            emerge_cmd + ("--metadata", ),
             rm_cmd + ("-rf", cachedir),
             emerge_cmd + ("--oneshot", "virtual/foo"),
-            lambda: self.assertFalse(
-                os.path.exists(os.path.join(pkgdir, "virtual", "foo", foo_filename))
-            ),
-            ({"FEATURES": "unmerge-backup"},)
-            + emerge_cmd
-            + ("--unmerge", "virtual/foo"),
-            lambda: self.assertTrue(
-                os.path.exists(os.path.join(pkgdir, "virtual", "foo", foo_filename))
-            ),
+            lambda: self.assertFalse(os.path.exists(os.path.join(pkgdir, "virtual", "foo", foo_filename))),
+            ({
+                "FEATURES": "unmerge-backup"
+            }, ) + emerge_cmd + ("--unmerge", "virtual/foo"),
+            lambda: self.assertTrue(os.path.exists(os.path.join(pkgdir, "virtual", "foo", foo_filename))),
             emerge_cmd + ("--pretend", "dev-libs/A"),
             ebuild_cmd + (test_ebuild, "manifest", "clean", "package", "merge"),
             emerge_cmd + ("--pretend", "--tree", "--complete-graph", "dev-libs/A"),
             emerge_cmd + ("-p", "dev-libs/B"),
             emerge_cmd + ("-p", "--newrepo", "dev-libs/B"),
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "-B",
                 "dev-libs/B",
             ),
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "--oneshot",
                 "--usepkg",
                 "dev-libs/B",
             ),
             # trigger clean prior to pkg_pretend as in bug #390711
             ebuild_cmd + (test_ebuild, "unpack"),
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "--oneshot",
                 "dev-libs/A",
             ),
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "--noreplace",
                 "dev-libs/A",
             ),
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "--config",
                 "dev-libs/A",
             ),
             emerge_cmd + ("--info", "dev-libs/A", "dev-libs/B"),
             emerge_cmd + ("--pretend", "--depclean", "--verbose", "dev-libs/B"),
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "--pretend",
                 "--depclean",
             ),
-            emerge_cmd + ("--depclean",),
-            quickpkg_cmd
-            + (
+            emerge_cmd + ("--depclean", ),
+            quickpkg_cmd + (
                 "--include-config",
                 "y",
                 "dev-libs/A",
@@ -483,25 +469,13 @@ call_has_and_best_version() {
             # protection.
             lambda: self.assertEqual(
                 0,
-                len(
-                    list(
-                        find_updated_config_files(
-                            eroot, shlex_split(settings["CONFIG_PROTECT"])
-                        )
-                    )
-                ),
+                len(list(find_updated_config_files(eroot, shlex_split(settings["CONFIG_PROTECT"])))),
             ),
             lambda: os.unlink(os.path.join(eprefix, "etc", "A-0")),
             emerge_cmd + ("--usepkgonly", "dev-libs/A"),
             lambda: self.assertEqual(
                 1,
-                len(
-                    list(
-                        find_updated_config_files(
-                            eroot, shlex_split(settings["CONFIG_PROTECT"])
-                        )
-                    )
-                ),
+                len(list(find_updated_config_files(eroot, shlex_split(settings["CONFIG_PROTECT"])))),
             ),
             emaint_cmd + ("--check", "all"),
             emaint_cmd + ("--fix", "all"),
@@ -511,12 +485,9 @@ call_has_and_best_version() {
             portageq_cmd + ("best_visible", eroot, "dev-libs/A"),
             portageq_cmd + ("best_visible", eroot, "binary", "dev-libs/A"),
             portageq_cmd + ("contents", eroot, "dev-libs/A-1"),
-            portageq_cmd
-            + ("metadata", eroot, "ebuild", "dev-libs/A-1", "EAPI", "IUSE", "RDEPEND"),
-            portageq_cmd
-            + ("metadata", eroot, "binary", "dev-libs/A-1", "EAPI", "USE", "RDEPEND"),
-            portageq_cmd
-            + (
+            portageq_cmd + ("metadata", eroot, "ebuild", "dev-libs/A-1", "EAPI", "IUSE", "RDEPEND"),
+            portageq_cmd + ("metadata", eroot, "binary", "dev-libs/A-1", "EAPI", "USE", "RDEPEND"),
+            portageq_cmd + (
                 "metadata",
                 eroot,
                 "installed",
@@ -532,46 +503,64 @@ call_has_and_best_version() {
             emerge_cmd + ("-C", "--quiet", "dev-libs/B"),
             # If EMERGE_DEFAULT_OPTS contains --autounmask=n, then --autounmask
             # must be specified with --autounmask-continue.
-            ({"EMERGE_DEFAULT_OPTS": "--autounmask=n"},)
-            + emerge_cmd
-            + (
-                "--autounmask",
-                "--autounmask-continue",
-                "dev-libs/C",
-            ),
+            (
+                {
+                    "EMERGE_DEFAULT_OPTS": "--autounmask=n"
+                }, ) + emerge_cmd + (
+                    "--autounmask",
+                    "--autounmask-continue",
+                    "dev-libs/C",
+                ),
             # Verify that the above --autounmask-continue command caused
             # USE=flag to be applied correctly to dev-libs/D.
             portageq_cmd + ("match", eroot, "dev-libs/D[flag]"),
             # Test cross-prefix usage, including chpathtool for binpkgs.
             # EAPI 7
-            ({"EPREFIX": cross_prefix},) + emerge_cmd + ("dev-libs/C",),
-            ({"EPREFIX": cross_prefix},)
-            + portageq_cmd
-            + ("has_version", cross_prefix, "dev-libs/C"),
-            ({"EPREFIX": cross_prefix},)
-            + portageq_cmd
-            + ("has_version", cross_prefix, "dev-libs/D"),
-            ({"ROOT": cross_root},) + emerge_cmd + ("dev-libs/D",),
+            (
+                {
+                    "EPREFIX": cross_prefix
+                }, ) + emerge_cmd + ("dev-libs/C", ),
+            ({
+                "EPREFIX": cross_prefix
+            }, ) + portageq_cmd + ("has_version", cross_prefix, "dev-libs/C"),
+            ({
+                "EPREFIX": cross_prefix
+            }, ) + portageq_cmd + ("has_version", cross_prefix, "dev-libs/D"),
+            ({
+                "ROOT": cross_root
+            }, ) + emerge_cmd + ("dev-libs/D", ),
             portageq_cmd + ("has_version", cross_eroot, "dev-libs/D"),
             # EAPI 5
-            ({"EPREFIX": cross_prefix},) + emerge_cmd + ("--usepkgonly", "dev-libs/A"),
-            ({"EPREFIX": cross_prefix},)
-            + portageq_cmd
-            + ("has_version", cross_prefix, "dev-libs/A"),
-            ({"EPREFIX": cross_prefix},)
-            + portageq_cmd
-            + ("has_version", cross_prefix, "dev-libs/B"),
-            ({"EPREFIX": cross_prefix},) + emerge_cmd + ("-C", "--quiet", "dev-libs/B"),
-            ({"EPREFIX": cross_prefix},) + emerge_cmd + ("-C", "--quiet", "dev-libs/A"),
-            ({"EPREFIX": cross_prefix},) + emerge_cmd + ("dev-libs/A",),
-            ({"EPREFIX": cross_prefix},)
-            + portageq_cmd
-            + ("has_version", cross_prefix, "dev-libs/A"),
-            ({"EPREFIX": cross_prefix},)
-            + portageq_cmd
-            + ("has_version", cross_prefix, "dev-libs/B"),
+            (
+                {
+                    "EPREFIX": cross_prefix
+                }, ) + emerge_cmd + ("--usepkgonly", "dev-libs/A"),
+            ({
+                "EPREFIX": cross_prefix
+            }, ) + portageq_cmd + ("has_version", cross_prefix, "dev-libs/A"),
+            ({
+                "EPREFIX": cross_prefix
+            }, ) + portageq_cmd + ("has_version", cross_prefix, "dev-libs/B"),
+            ({
+                "EPREFIX": cross_prefix
+            }, ) + emerge_cmd + ("-C", "--quiet", "dev-libs/B"),
+            ({
+                "EPREFIX": cross_prefix
+            }, ) + emerge_cmd + ("-C", "--quiet", "dev-libs/A"),
+            ({
+                "EPREFIX": cross_prefix
+            }, ) + emerge_cmd + ("dev-libs/A", ),
+            ({
+                "EPREFIX": cross_prefix
+            }, ) + portageq_cmd + ("has_version", cross_prefix, "dev-libs/A"),
+            ({
+                "EPREFIX": cross_prefix
+            }, ) + portageq_cmd + ("has_version", cross_prefix, "dev-libs/B"),
             # Test ROOT support
-            ({"ROOT": cross_root},) + emerge_cmd + ("dev-libs/B",),
+            (
+                {
+                    "ROOT": cross_root
+                }, ) + emerge_cmd + ("dev-libs/B", ),
             portageq_cmd + ("has_version", cross_eroot, "dev-libs/B"),
         )
 
@@ -591,9 +580,9 @@ call_has_and_best_version() {
                 # Remove binrepos.conf and test PORTAGE_BINHOST.
                 lambda: os.unlink(binrepos_conf_file),
                 lambda: os.rename(pkgdir, binhost_dir),
-                ({"PORTAGE_BINHOST": binhost_uri},)
-                + emerge_cmd
-                + ("-fe", "--getbinpkgonly", "dev-libs/A"),
+                ({
+                    "PORTAGE_BINHOST": binhost_uri
+                }, ) + emerge_cmd + ("-fe", "--getbinpkgonly", "dev-libs/A"),
                 lambda: shutil.rmtree(pkgdir),
                 lambda: os.rename(binhost_dir, pkgdir),
             )
@@ -647,9 +636,7 @@ call_has_and_best_version() {
         }
 
         if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
-            env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ[
-                "__PORTAGE_TEST_HARDLINK_LOCKS"
-            ]
+            env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
 
         updates_dir = os.path.join(test_repo_location, "profiles", "updates")
         dirs = [
@@ -687,17 +674,13 @@ call_has_and_best_version() {
             with open(os.path.join(profile_path, "packages"), "w") as f:
                 f.write("*dev-libs/token-system-pkg")
             for cp, xml_data in metadata_xml_files:
-                with open(
-                    os.path.join(test_repo_location, cp, "metadata.xml"), "w"
-                ) as f:
+                with open(os.path.join(test_repo_location, cp, "metadata.xml"), "w") as f:
                     f.write(playground.metadata_xml_template % xml_data)
             with open(os.path.join(updates_dir, "1Q-2010"), "w") as f:
-                f.write(
-                    """
+                f.write("""
 slotmove =app-doc/pms-3 2 3
 move dev-util/git dev-vcs/git
-"""
-                )
+""")
 
             if debug:
                 # The subprocess inherits both stdout and stderr, for
@@ -720,9 +703,7 @@ move dev-util/git dev-vcs/git
                 else:
                     local_env = env
 
-                proc = await asyncio.create_subprocess_exec(
-                    *args, env=local_env, stderr=None, stdout=stdout
-                )
+                proc = await asyncio.create_subprocess_exec(*args, env=local_env, stderr=None, stdout=stdout)
 
                 if debug:
                     await proc.wait()
@@ -732,9 +713,7 @@ move dev-util/git dev-vcs/git
                     if proc.returncode != os.EX_OK:
                         portage.writemsg(output)
 
-                self.assertEqual(
-                    os.EX_OK, proc.returncode, f"emerge failed with args {args}"
-                )
+                self.assertEqual(os.EX_OK, proc.returncode, f"emerge failed with args {args}")
         finally:
             binhost_server.__exit__(None, None, None)
             playground.cleanup()

@@ -49,9 +49,7 @@ class PackageUninstall(CompositeTask):
         myebuildpath = os.path.join(dbdir, pf + ".ebuild")
 
         try:
-            portage.doebuild_environment(
-                myebuildpath, "prerm", settings=self.settings, db=vardb
-            )
+            portage.doebuild_environment(myebuildpath, "prerm", settings=self.settings, db=vardb)
         except UnsupportedAPIException:
             # This is safe to ignore since this function is
             # guaranteed to set PORTAGE_BUILDDIR even though
@@ -60,9 +58,7 @@ class PackageUninstall(CompositeTask):
             # and pkg_postrm phases from executing.
             pass
 
-        self._builddir_lock = EbuildBuildDir(
-            scheduler=self.scheduler, settings=self.settings
-        )
+        self._builddir_lock = EbuildBuildDir(scheduler=self.scheduler, settings=self.settings)
         self._start_task(
             AsyncTaskFuture(future=self._builddir_lock.async_lock()),
             self._start_unmerge,
@@ -156,6 +152,4 @@ class PackageUninstall(CompositeTask):
             if not (background and level < logging.WARNING):
                 portage.util.writemsg_level(msg, level=level, noiselevel=noiselevel)
         else:
-            self.scheduler.output(
-                msg, log_path=log_path, level=level, noiselevel=noiselevel
-            )
+            self.scheduler.output(msg, log_path=log_path, level=level, noiselevel=noiselevel)

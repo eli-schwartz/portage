@@ -11,4 +11,4 @@ class AtomArg(DependencyArg):
     def __init__(self, atom=None, **kwargs):
         DependencyArg.__init__(self, **kwargs)
         self.atom = atom
-        self.pset = InternalPackageSet(initial_atoms=(self.atom,), allow_repo=True)
+        self.pset = InternalPackageSet(initial_atoms=(self.atom, ), allow_repo=True)

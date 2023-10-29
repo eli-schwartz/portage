@@ -13,6 +13,7 @@ from portage.util.futures.unix_events import DefaultEventLoopPolicy
 
 
 class SubprocessExecTestCase(TestCase):
+
     def _run_test(self, test):
         initial_policy = asyncio.get_event_loop_policy()
         if not isinstance(initial_policy, DefaultEventLoopPolicy):
@@ -34,6 +35,7 @@ class SubprocessExecTestCase(TestCase):
         echo_binary = echo_binary.encode()
 
         def test(loop):
+
             async def test_coroutine():
                 proc = await create_subprocess_exec(
                     echo_binary,
@@ -86,10 +88,7 @@ class SubprocessExecTestCase(TestCase):
 
         def test(loop):
             proc = loop.run_until_complete(
-                create_subprocess_exec(
-                    cat_binary, stdin=subprocess.PIPE, stdout=subprocess.PIPE, loop=loop
-                )
-            )
+                create_subprocess_exec(cat_binary, stdin=subprocess.PIPE, stdout=subprocess.PIPE, loop=loop))
 
             out, err = loop.run_until_complete(proc.communicate(input=stdin_data))
 
@@ -112,16 +111,10 @@ class SubprocessExecTestCase(TestCase):
             pr, pw = os.pipe()
 
             cat_proc = loop.run_until_complete(
-                create_subprocess_exec(
-                    cat_binary, stdin=pr, stdout=subprocess.PIPE, loop=loop
-                )
-            )
+                create_subprocess_exec(cat_binary, stdin=pr, stdout=subprocess.PIPE, loop=loop))
 
             echo_proc = loop.run_until_complete(
-                create_subprocess_exec(
-                    echo_binary, b"-n", stdin_data, stdout=pw, loop=loop
-                )
-            )
+                create_subprocess_exec(echo_binary, b"-n", stdin_data, stdout=pw, loop=loop))
 
             os.close(pr)
             os.close(pw)
@@ -156,12 +149,9 @@ class SubprocessExecTestCase(TestCase):
                         stdout=subprocess.PIPE,
                         stderr=subprocess.STDOUT,
                         loop=loop,
-                    )
-                )
+                    ))
 
-            self.assertEqual(
-                tuple(loop.run_until_complete(proc.stdout.read()).split()), args_tuple
-            )
+            self.assertEqual(tuple(loop.run_until_complete(proc.stdout.read()).split()), args_tuple)
             self.assertEqual(loop.run_until_complete(proc.wait()), os.EX_OK)
 
         self._run_test(test)
@@ -186,8 +176,7 @@ class SubprocessExecTestCase(TestCase):
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     loop=loop,
-                )
-            )
+                ))
 
             # This buffers data when necessary to avoid blocking.
             proc.stdin.write(stdin_data)

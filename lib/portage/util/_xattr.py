@@ -1,6 +1,5 @@
 # Copyright 2010-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-
 """Portability shim for xattr support
 
 Exported API is the xattr object with get/get_all/set/remove/list operations.
@@ -23,10 +22,8 @@ class _XattrGetAll:
 
     @classmethod
     def get_all(cls, item, nofollow=False, namespace=None):
-        return [
-            (name, cls.get(item, name, nofollow=nofollow, namespace=namespace))
-            for name in cls.list(item, nofollow=nofollow, namespace=namespace)
-        ]
+        return [(name, cls.get(item, name, nofollow=nofollow, namespace=namespace))
+                for name in cls.list(item, nofollow=nofollow, namespace=namespace)]
 
 
 class _XattrSystemCommands(_XattrGetAll):
@@ -102,7 +99,7 @@ class _XattrSystemCommands(_XattrGetAll):
         for name, value in cls._parse_output(proc.stdout):
             if namespace:
                 if name.startswith(namespace):
-                    name = name[len(namespace) :]
+                    name = name[len(namespace):]
                 else:
                     continue
             if _names_only:
@@ -185,7 +182,6 @@ else:
         except OSError:
             # Stub it out completely.
             xattr = _XattrStub
-
 
 # Add a knob so code can take evasive action as needed.
 XATTRS_WORKS = xattr != _XattrStub

@@ -33,9 +33,7 @@ class SonameDepsProcessor:
         """
         self._provides_exclude = self._exclude_pattern(provides_exclude)
         self._requires_exclude = self._exclude_pattern(requires_exclude)
-        self._requires_map = collections.defaultdict(
-            functools.partial(collections.defaultdict, set)
-        )
+        self._requires_map = collections.defaultdict(functools.partial(collections.defaultdict, set))
         self._provides_map = {}
         self._provides_unfiltered = {}
         self._basename_map = {}
@@ -47,9 +45,7 @@ class SonameDepsProcessor:
     def _exclude_pattern(s):
         # shlex_split enables quoted whitespace inside patterns
         if s:
-            pat = re.compile(
-                "|".join(fnmatch.translate(x.lstrip(os.sep)) for x in shlex_split(s))
-            )
+            pat = re.compile("|".join(fnmatch.translate(x.lstrip(os.sep)) for x in shlex_split(s)))
         else:
             pat = None
         return pat
@@ -69,44 +65,29 @@ class SonameDepsProcessor:
             # the multilib category data is supplied here.
             raise AssertionError(f"Missing multilib category data: {entry.filename}")
 
-        self._basename_map.setdefault(os.path.basename(entry.filename), []).append(
-            entry
-        )
+        self._basename_map.setdefault(os.path.basename(entry.filename), []).append(entry)
 
-        if entry.needed and (
-            self._requires_exclude is None
-            or self._requires_exclude.match(entry.filename.lstrip(os.sep)) is None
-        ):
+        if entry.needed and (self._requires_exclude is None
+                             or self._requires_exclude.match(entry.filename.lstrip(os.sep)) is None):
             runpaths = frozenset()
             if entry.runpaths is not None:
                 expand = {"ORIGIN": os.path.dirname(entry.filename)}
                 runpaths = frozenset(
-                    normalize_path(
-                        varexpand(
-                            x,
-                            expand,
-                            error_leader=lambda: f"{entry.filename}: DT_RUNPATH: ",
-                        )
-                    )
-                    for x in entry.runpaths
-                )
+                    normalize_path(varexpand(
+                        x,
+                        expand,
+                        error_leader=lambda: f"{entry.filename}: DT_RUNPATH: ",
+                    )) for x in entry.runpaths)
             for x in entry.needed:
-                if (
-                    self._requires_exclude is None
-                    or self._requires_exclude.match(x) is None
-                ):
+                if (self._requires_exclude is None or self._requires_exclude.match(x) is None):
                     self._requires_map[multilib_cat][x].add(runpaths)
 
         if entry.soname:
             self._provides_unfiltered.setdefault(multilib_cat, set()).add(entry.soname)
 
-        if entry.soname and (
-            self._provides_exclude is None
-            or (
-                self._provides_exclude.match(entry.filename.lstrip(os.sep)) is None
-                and self._provides_exclude.match(entry.soname) is None
-            )
-        ):
+        if entry.soname and (self._provides_exclude is None or
+                             (self._provides_exclude.match(entry.filename.lstrip(os.sep)) is None
+                              and self._provides_exclude.match(entry.soname) is None)):
             self._provides_map.setdefault(multilib_cat, set()).add(entry.soname)
 
     def _intersect(self):

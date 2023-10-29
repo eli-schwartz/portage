@@ -8,5 +8,6 @@ from portage.tests import TestCase
 
 
 class GrabDictTestCase(TestCase):
+
     def testGrabDictPass(self):
         pass

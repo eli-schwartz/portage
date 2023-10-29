@@ -13,10 +13,17 @@ from portage.output import colorize
 
 
 class SlotChangeWithoutRevBumpTestCase(TestCase):
+
     def testSlotChangeWithoutRevBump(self):
         ebuilds = {
-            "app-arch/libarchive-3.1.1": {"EAPI": "5", "SLOT": "0/13"},
-            "app-arch/libarchive-3.0.4-r1": {"EAPI": "5", "SLOT": "0"},
+            "app-arch/libarchive-3.1.1": {
+                "EAPI": "5",
+                "SLOT": "0/13"
+            },
+            "app-arch/libarchive-3.0.4-r1": {
+                "EAPI": "5",
+                "SLOT": "0"
+            },
             "kde-base/ark-4.10.0": {
                 "EAPI": "5",
                 "DEPEND": "app-arch/libarchive:=",
@@ -25,11 +32,17 @@ class SlotChangeWithoutRevBumpTestCase(TestCase):
         }
 
         binpkgs = {
-            "app-arch/libarchive-3.1.1": {"EAPI": "5", "SLOT": "0"},
+            "app-arch/libarchive-3.1.1": {
+                "EAPI": "5",
+                "SLOT": "0"
+            },
         }
 
         installed = {
-            "app-arch/libarchive-3.1.1": {"EAPI": "5", "SLOT": "0"},
+            "app-arch/libarchive-3.1.1": {
+                "EAPI": "5",
+                "SLOT": "0"
+            },
             "kde-base/ark-4.10.0": {
                 "EAPI": "5",
                 "DEPEND": "app-arch/libarchive:0/0=",
@@ -44,13 +57,19 @@ class SlotChangeWithoutRevBumpTestCase(TestCase):
             # without revbump needs to trigger a rebuild.
             ResolverPlaygroundTestCase(
                 ["kde-base/ark"],
-                options={"--oneshot": True, "--usepkg": True},
+                options={
+                    "--oneshot": True,
+                    "--usepkg": True
+                },
                 success=True,
                 mergelist=["app-arch/libarchive-3.1.1", "kde-base/ark-4.10.0"],
             ),
             ResolverPlaygroundTestCase(
                 ["app-arch/libarchive"],
-                options={"--noreplace": True, "--usepkg": True},
+                options={
+                    "--noreplace": True,
+                    "--usepkg": True
+                },
                 success=True,
                 mergelist=[],
             ),
@@ -85,14 +104,12 @@ class SlotChangeWithoutRevBumpTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.cleanup()

@@ -1,6 +1,5 @@
 # Copyright 2015-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-
 """
 Function to check whether the current used LC_CTYPE handles case
 transformations of ASCII characters in a way compatible with the POSIX
@@ -16,7 +15,6 @@ import traceback
 import portage
 from portage.util import _unicode_decode, writemsg_level
 from portage.util._ctypes import find_library, LoadLibrary
-
 
 locale_categories = (
     "LC_COLLATE",
@@ -60,37 +58,27 @@ def _check_locale(silent):
         if silent:
             return False
 
-        msg = (
-            "WARNING: The LC_CTYPE variable is set to a locale "
-            + "that specifies transformation between lowercase "
-            + "and uppercase ASCII characters that is different than "
-            + "the one specified by POSIX locale. This can break "
-            + "ebuilds and cause issues in programs that rely on "
-            + "the common character conversion scheme. "
-            + "Please consider enabling another locale (such as "
-            + "en_US.UTF-8) in /etc/locale.gen and setting it "
-            + "as LC_CTYPE in make.conf."
-        )
+        msg = ("WARNING: The LC_CTYPE variable is set to a locale " +
+               "that specifies transformation between lowercase " +
+               "and uppercase ASCII characters that is different than " +
+               "the one specified by POSIX locale. This can break " +
+               "ebuilds and cause issues in programs that rely on " + "the common character conversion scheme. " +
+               "Please consider enabling another locale (such as " + "en_US.UTF-8) in /etc/locale.gen and setting it " +
+               "as LC_CTYPE in make.conf.")
         msg = [l for l in textwrap.wrap(msg, 70)]
         msg.append("")
         chars = lambda l: "".join(_unicode_decode(chr(x)) for x in l)
         if uc != ruc:
-            msg.extend(
-                [
-                    f"  {chars(lc)} -> {chars(ruc)}",
-                    "  %28s: %s" % ("expected", chars(uc)),
-                ]
-            )
+            msg.extend([
+                f"  {chars(lc)} -> {chars(ruc)}",
+                "  %28s: %s" % ("expected", chars(uc)),
+            ])
         if lc != rlc:
-            msg.extend(
-                [
-                    f"  {chars(uc)} -> {chars(rlc)}",
-                    "  %28s: %s" % ("expected", chars(lc)),
-                ]
-            )
-        writemsg_level(
-            "".join([f"!!! {l}\n" for l in msg]), level=logging.ERROR, noiselevel=-1
-        )
+            msg.extend([
+                f"  {chars(uc)} -> {chars(rlc)}",
+                "  %28s: %s" % ("expected", chars(lc)),
+            ])
+        writemsg_level("".join([f"!!! {l}\n" for l in msg]), level=logging.ERROR, noiselevel=-1)
         return False
 
     return True

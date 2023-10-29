@@ -7,6 +7,7 @@ from portage.util._dyn_libs.soname_deps import SonameDepsProcessor
 
 
 class SonameDepsProcessorTestCase(TestCase):
+
     def testInternalLibsWithoutSoname(self):
         """
         Test handling of internal libraries that lack an soname, which are

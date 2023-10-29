@@ -8,7 +8,6 @@ from _emerge.AbstractPollTask import AbstractPollTask
 
 
 class PipeReader(AbstractPollTask):
-
     """
     Reads output from one or more files and saves it in memory,
     for retrieval via the getvalue() method. This is driven by
@@ -16,16 +15,14 @@ class PipeReader(AbstractPollTask):
     current process.
     """
 
-    __slots__ = ("input_files",) + ("_read_data", "_use_array")
+    __slots__ = ("input_files", ) + ("_read_data", "_use_array")
 
     def _start(self):
         self._read_data = []
 
         for f in self.input_files.values():
             fd = f if isinstance(f, int) else f.fileno()
-            fcntl.fcntl(
-                fd, fcntl.F_SETFL, fcntl.fcntl(fd, fcntl.F_GETFL) | os.O_NONBLOCK
-            )
+            fcntl.fcntl(fd, fcntl.F_SETFL, fcntl.fcntl(fd, fcntl.F_GETFL) | os.O_NONBLOCK)
 
             if self._use_array:
                 self.scheduler.add_reader(fd, self._array_output_handler, f)

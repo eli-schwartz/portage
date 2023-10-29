@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotOperatorReverseDepsTestCase(TestCase):
+
     def testSlotOperatorReverseDeps(self):
         ebuilds = {
             "media-libs/mesa-11.2.2": {
@@ -65,7 +66,10 @@ class SlotOperatorReverseDepsTestCase(TestCase):
             # version of clang (though a clang update is available).
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=[
                     "sys-devel/llvm-3.8.0-r2",
@@ -88,9 +92,7 @@ class SlotOperatorReverseDepsTestCase(TestCase):
             ),
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -100,6 +102,7 @@ class SlotOperatorReverseDepsTestCase(TestCase):
 
 
 class SlotOperatorReverseDepsLibGit2TestCase(TestCase):
+
     def testSlotOperatorReverseDepsLibGit2(self):
         """
         Test bug #717140, where the depgraph _slot_operator_update_probe
@@ -160,16 +163,16 @@ class SlotOperatorReverseDepsLibGit2TestCase(TestCase):
         test_cases = (
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 # mergelist = ['dev-libs/libgit2-0.28.4-r1', 'dev-libs/libgit2-glib-0.99.0.1', 'dev-vcs/gitg-3.32.1-r1'],
                 mergelist=[],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -180,6 +183,7 @@ class SlotOperatorReverseDepsLibGit2TestCase(TestCase):
 
 
 class SlotOperatorReverseDepsVirtualTestCase(TestCase):
+
     def testSlotOperatorReverseDepsVirtual(self):
         """
         Demonstrate bug #764764, where slot operator rebuilds were
@@ -241,23 +245,22 @@ class SlotOperatorReverseDepsVirtualTestCase(TestCase):
 
         world = ["app-emulation/virtualbox-modules", "x11-drivers/nvidia-drivers"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={"--update": True, "--deep": True},
-                success=True,
-                mergelist=[
-                    "sys-kernel/gentoo-kernel-5.10.6",
-                    "virtual/dist-kernel-5.10.6",
-                    "app-emulation/virtualbox-modules-6.1.16-r1",
-                    "x11-drivers/nvidia-drivers-460.32.03",
-                ],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@world"],
+            options={
+                "--update": True,
+                "--deep": True
+            },
+            success=True,
+            mergelist=[
+                "sys-kernel/gentoo-kernel-5.10.6",
+                "virtual/dist-kernel-5.10.6",
+                "app-emulation/virtualbox-modules-6.1.16-r1",
+                "x11-drivers/nvidia-drivers-460.32.03",
+            ],
+        ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

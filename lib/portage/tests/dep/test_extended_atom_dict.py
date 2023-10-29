@@ -7,6 +7,7 @@ from portage.dep import ExtendedAtomDict
 
 
 class TestExtendedAtomDict(TestCase):
+
     def testExtendedAtomDict(self):
         d = ExtendedAtomDict(dict)
         d["*/*"] = {"test1": "x"}

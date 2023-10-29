@@ -6,6 +6,7 @@ from portage.tests import TestCase
 
 
 class PreloadPortageSubmodulesTestCase(TestCase):
+
     def testPreloadPortageSubmodules(self):
         """
         Verify that _preload_portage_submodules() doesn't leave any

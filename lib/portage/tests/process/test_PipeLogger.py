@@ -10,6 +10,7 @@ from portage.util.futures.unix_events import _set_nonblocking
 
 
 class PipeLoggerTestCase(TestCase):
+
     async def _testPipeLoggerToPipe(self, test_string, loop):
         """
         Test PipeLogger writing to a pipe connected to a PipeReader.
@@ -21,9 +22,7 @@ class PipeLoggerTestCase(TestCase):
         input_fd, writer_pipe = os.pipe()
         _set_nonblocking(writer_pipe)
         writer_pipe = os.fdopen(writer_pipe, "wb", 0)
-        writer = asyncio.ensure_future(
-            _writer(writer_pipe, test_string.encode("ascii"))
-        )
+        writer = asyncio.ensure_future(_writer(writer_pipe, test_string.encode("ascii")))
         writer.add_done_callback(lambda writer: writer_pipe.close())
 
         pr, pw = os.pipe()
@@ -53,24 +52,20 @@ class PipeLoggerTestCase(TestCase):
         loop = asyncio._wrap_loop()
 
         for x in (
-            1,
-            2,
-            5,
-            6,
-            7,
-            8,
-            2**5,
-            2**10,
-            2**12,
-            2**13,
-            2**14,
-            2**17,
-            2**17 + 1,
+                1,
+                2,
+                5,
+                6,
+                7,
+                8,
+                2**5,
+                2**10,
+                2**12,
+                2**13,
+                2**14,
+                2**17,
+                2**17 + 1,
         ):
             test_string = x * "a"
-            output = loop.run_until_complete(
-                self._testPipeLoggerToPipe(test_string, loop)
-            )
-            self.assertEqual(
-                test_string, output, f"x = {x}, len(output) = {len(output)}"
-            )
+            output = loop.run_until_complete(self._testPipeLoggerToPipe(test_string, loop))
+            self.assertEqual(test_string, output, f"x = {x}, len(output) = {len(output)}")

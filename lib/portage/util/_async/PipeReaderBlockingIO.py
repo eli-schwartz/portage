@@ -31,7 +31,7 @@ class PipeReaderBlockingIO(AbstractPollTask):
         self._thread_rlock = threading.RLock()
         with self._thread_rlock:
             for f in self.input_files.values():
-                t = threading.Thread(target=self._reader_thread, args=(f,))
+                t = threading.Thread(target=self._reader_thread, args=(f, ))
                 t.daemon = True
                 t.start()
                 self._threads[f] = t

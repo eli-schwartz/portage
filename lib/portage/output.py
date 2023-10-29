@@ -33,10 +33,8 @@ from portage.localization import _
 
 havecolor = 1
 dotitles = 1
-
 """Maps style class to tuple of attribute names."""
 _styles = {}
-
 """Maps attribute name to ansi code."""
 
 esc_seq = "\x1b["
@@ -77,7 +75,6 @@ def color(fg, bg="default", attr=["normal"]):
 
 
 ansi_codes = [y for x in range(30, 38) for y in (f"{x}m", f"{x};01m")]
-
 
 rgb_ansi_colors = [
     "0x000000",
@@ -132,38 +129,37 @@ codes["darkteal"] = codes["turquoise"]
 codes["0xAAAA00"] = codes["brown"]
 codes["darkyellow"] = codes["0xAAAA00"]
 
-
 # Colors from /lib/gentoo/functions.sh
-_styles["BAD"] = ("red",)
-_styles["BRACKET"] = ("blue",)
-_styles["ERR"] = ("red",)
-_styles["GOOD"] = ("green",)
-_styles["HILITE"] = ("teal",)
-_styles["INFO"] = ("darkgreen",)
-_styles["LOG"] = ("green",)
-_styles["NORMAL"] = ("normal",)
-_styles["QAWARN"] = ("brown",)
-_styles["WARN"] = ("yellow",)
+_styles["BAD"] = ("red", )
+_styles["BRACKET"] = ("blue", )
+_styles["ERR"] = ("red", )
+_styles["GOOD"] = ("green", )
+_styles["HILITE"] = ("teal", )
+_styles["INFO"] = ("darkgreen", )
+_styles["LOG"] = ("green", )
+_styles["NORMAL"] = ("normal", )
+_styles["QAWARN"] = ("brown", )
+_styles["WARN"] = ("yellow", )
 
 # Portage functions
-_styles["INFORM"] = ("darkgreen",)
-_styles["UNMERGE_WARN"] = ("red",)
-_styles["SECURITY_WARN"] = ("red",)
-_styles["MERGE_LIST_PROGRESS"] = ("yellow",)
-_styles["PKG_BLOCKER"] = ("red",)
-_styles["PKG_BLOCKER_SATISFIED"] = ("teal",)
-_styles["PKG_MERGE"] = ("darkgreen",)
-_styles["PKG_MERGE_SYSTEM"] = ("darkgreen",)
-_styles["PKG_MERGE_WORLD"] = ("green",)
-_styles["PKG_BINARY_MERGE"] = ("purple",)
-_styles["PKG_BINARY_MERGE_SYSTEM"] = ("purple",)
-_styles["PKG_BINARY_MERGE_WORLD"] = ("fuchsia",)
-_styles["PKG_UNINSTALL"] = ("red",)
-_styles["PKG_NOMERGE"] = ("teal",)
-_styles["PKG_NOMERGE_SYSTEM"] = ("teal",)
-_styles["PKG_NOMERGE_WORLD"] = ("blue",)
-_styles["PROMPT_CHOICE_DEFAULT"] = ("green",)
-_styles["PROMPT_CHOICE_OTHER"] = ("red",)
+_styles["INFORM"] = ("darkgreen", )
+_styles["UNMERGE_WARN"] = ("red", )
+_styles["SECURITY_WARN"] = ("red", )
+_styles["MERGE_LIST_PROGRESS"] = ("yellow", )
+_styles["PKG_BLOCKER"] = ("red", )
+_styles["PKG_BLOCKER_SATISFIED"] = ("teal", )
+_styles["PKG_MERGE"] = ("darkgreen", )
+_styles["PKG_MERGE_SYSTEM"] = ("darkgreen", )
+_styles["PKG_MERGE_WORLD"] = ("green", )
+_styles["PKG_BINARY_MERGE"] = ("purple", )
+_styles["PKG_BINARY_MERGE_SYSTEM"] = ("purple", )
+_styles["PKG_BINARY_MERGE_WORLD"] = ("fuchsia", )
+_styles["PKG_UNINSTALL"] = ("red", )
+_styles["PKG_NOMERGE"] = ("teal", )
+_styles["PKG_NOMERGE_SYSTEM"] = ("teal", )
+_styles["PKG_NOMERGE_WORLD"] = ("blue", )
+_styles["PROMPT_CHOICE_DEFAULT"] = ("green", )
+_styles["PROMPT_CHOICE_OTHER"] = ("red", )
 
 
 def _parse_color_map(config_root="/", onerror=None):
@@ -188,9 +184,9 @@ def _parse_color_map(config_root="/", onerror=None):
 
     try:
         with open(
-            _unicode_encode(myfile, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["content"],
-            errors="replace",
+                _unicode_encode(myfile, encoding=_encodings["fs"], errors="strict"),
+                encoding=_encodings["content"],
+                errors="replace",
         ) as f:
             lines = f.readlines()
         for lineno, line in enumerate(lines):
@@ -202,10 +198,7 @@ def _parse_color_map(config_root="/", onerror=None):
 
             split_line = line.split("=")
             if len(split_line) != 2:
-                e = ParseError(
-                    _("'%s', line %s: expected exactly one occurrence of '=' operator")
-                    % (myfile, lineno)
-                )
+                e = ParseError(_("'%s', line %s: expected exactly one occurrence of '=' operator") % (myfile, lineno))
                 raise e
                 if onerror:
                     onerror(e)
@@ -216,9 +209,7 @@ def _parse_color_map(config_root="/", onerror=None):
             k = strip_quotes(split_line[0].strip())
             v = strip_quotes(split_line[1].strip())
             if not k in _styles and not k in codes:
-                e = ParseError(
-                    _("'%s', line %s: Unknown variable: '%s'") % (myfile, lineno, k)
-                )
+                e = ParseError(_("'%s', line %s: Unknown variable: '%s'") % (myfile, lineno, k))
                 if onerror:
                     onerror(e)
                 else:
@@ -226,7 +217,7 @@ def _parse_color_map(config_root="/", onerror=None):
                 continue
             if ansi_code_pattern.match(v):
                 if k in _styles:
-                    _styles[k] = (esc_seq + v,)
+                    _styles[k] = (esc_seq + v, )
                 elif k in codes:
                     codes[k] = esc_seq + v
             else:
@@ -238,9 +229,7 @@ def _parse_color_map(config_root="/", onerror=None):
                         elif k in codes:
                             code_list.append(codes[x])
                     else:
-                        e = ParseError(
-                            _("'%s', line %s: Undefined: '%s'") % (myfile, lineno, x)
-                        )
+                        e = ParseError(_("'%s', line %s: Undefined: '%s'") % (myfile, lineno, x))
                         if onerror:
                             onerror(e)
                         else:
@@ -272,11 +261,8 @@ _max_xtermTitle_len = 253
 def xtermTitle(mystr, raw=False):
     global _disable_xtermTitle
     if _disable_xtermTitle is None:
-        _disable_xtermTitle = not (
-            sys.__stderr__.isatty()
-            and "TERM" in os.environ
-            and _legal_terms_re.match(os.environ["TERM"]) is not None
-        )
+        _disable_xtermTitle = not (sys.__stderr__.isatty() and "TERM" in os.environ
+                                   and _legal_terms_re.match(os.environ["TERM"]) is not None)
 
     if dotitles and not _disable_xtermTitle:
         # If the title string is too big then the terminal can
@@ -287,9 +273,7 @@ def xtermTitle(mystr, raw=False):
             mystr = f"\x1b]0;{mystr}\x07"
 
         # avoid potential UnicodeEncodeError
-        mystr = _unicode_encode(
-            mystr, encoding=_encodings["stdio"], errors="backslashreplace"
-        )
+        mystr = _unicode_encode(mystr, encoding=_encodings["stdio"], errors="backslashreplace")
         f = sys.stderr.buffer
         f.write(mystr)
         f.flush()
@@ -305,12 +289,8 @@ def xtermTitleReset():
         if prompt_command == "":
             default_xterm_title = ""
         elif prompt_command is not None:
-            if (
-                dotitles
-                and "TERM" in os.environ
-                and _legal_terms_re.match(os.environ["TERM"]) is not None
-                and sys.__stderr__.isatty()
-            ):
+            if (dotitles and "TERM" in os.environ and _legal_terms_re.match(os.environ["TERM"]) is not None
+                    and sys.__stderr__.isatty()):
                 from portage.process import find_binary, spawn
 
                 shell = os.environ.get("SHELL")
@@ -333,7 +313,7 @@ def xtermTitleReset():
             pwd = os.environ.get("PWD", "")
             home = os.environ.get("HOME", "")
             if home != "" and pwd.startswith(home):
-                pwd = "~" + pwd[len(home) :]
+                pwd = "~" + pwd[len(home):]
             default_xterm_title = "\x1b]0;{}@{}:{}\x07".format(
                 os.environ.get("LOGNAME", ""),
                 os.environ.get("HOSTNAME", "").split(".", 1)[0],
@@ -375,16 +355,16 @@ def style_to_ansi_code(style):
 def colormap():
     mycolors = []
     for c in (
-        "BAD",
-        "BRACKET",
-        "ERR",
-        "GOOD",
-        "HILITE",
-        "INFO",
-        "LOG",
-        "NORMAL",
-        "QAWARN",
-        "WARN",
+            "BAD",
+            "BRACKET",
+            "ERR",
+            "GOOD",
+            "HILITE",
+            "INFO",
+            "LOG",
+            "NORMAL",
+            "QAWARN",
+            "WARN",
     ):
         mycolors.append(f"PORTAGE_COLOR_{c}=$'{style_to_ansi_code(c)}'")
     return "\n".join(mycolors)
@@ -421,7 +401,7 @@ compat_functions_colors = [
 
 
 class create_color_func:
-    __slots__ = ("_color_key",)
+    __slots__ = ("_color_key", )
 
     def __init__(self, color_key):
         self._color_key = color_key
@@ -472,9 +452,7 @@ class ConsoleStyleFile:
     def _write(self, f, s):
         # avoid potential UnicodeEncodeError
         if f in (sys.stdout, sys.stderr):
-            s = _unicode_encode(
-                s, encoding=_encodings["stdio"], errors="backslashreplace"
-            )
+            s = _unicode_encode(s, encoding=_encodings["stdio"], errors="backslashreplace")
             f = f.buffer
         f.write(s)
 
@@ -606,17 +584,9 @@ class EOutput:
 
     def __eend(self, caller, errno, msg):
         if errno == 0:
-            status_brackets = (
-                colorize("BRACKET", "[ ")
-                + colorize("GOOD", "ok")
-                + colorize("BRACKET", " ]")
-            )
+            status_brackets = (colorize("BRACKET", "[ ") + colorize("GOOD", "ok") + colorize("BRACKET", " ]"))
         else:
-            status_brackets = (
-                colorize("BRACKET", "[ ")
-                + colorize("BAD", "!!")
-                + colorize("BRACKET", " ]")
-            )
+            status_brackets = (colorize("BRACKET", "[ ") + colorize("BAD", "!!") + colorize("BRACKET", " ]"))
             if msg:
                 if caller == "eend":
                     self.eerror(msg[0])
@@ -628,8 +598,7 @@ class EOutput:
             out = sys.stdout
             self._write(
                 out,
-                "%*s%s\n"
-                % ((self.term_columns - self.__last_e_len - 7), "", status_brackets),
+                "%*s%s\n" % ((self.term_columns - self.__last_e_len - 7), "", status_brackets),
             )
 
     def ebegin(self, msg):
@@ -901,11 +870,7 @@ class TermProgressBar(ProgressBar):
             image = "{}{}{}".format(
                 self._desc,
                 _percent,
-                "["
-                + (bar_width * " ")
-                + "<=>"
-                + ((max_bar_width - bar_width) * " ")
-                + "]",
+                "[" + (bar_width * " ") + "<=>" + ((max_bar_width - bar_width) * " ") + "]",
             )
             return image
 
@@ -918,14 +883,7 @@ class TermProgressBar(ProgressBar):
             return image
         offset = curval / maxval
         bar_width = int(offset * max_bar_width)
-        image = (
-            image
-            + "["
-            + (bar_width * "=")
-            + ">"
-            + ((max_bar_width - bar_width) * " ")
-            + "]"
-        )
+        image = (image + "[" + (bar_width * "=") + ">" + ((max_bar_width - bar_width) * " ") + "]")
         return image
 
 
@@ -969,7 +927,7 @@ def _init(config_root="/"):
 
 
 class _LazyInitColorMap(portage.proxy.objectproxy.ObjectProxy):
-    __slots__ = ("_attr",)
+    __slots__ = ("_attr", )
 
     def __init__(self, attr):
         portage.proxy.objectproxy.ObjectProxy.__init__(self)

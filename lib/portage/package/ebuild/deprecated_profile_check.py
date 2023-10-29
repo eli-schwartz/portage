@@ -3,7 +3,6 @@
 
 __all__ = ["deprecated_profile_check"]
 
-
 import portage
 from portage import os, _encodings, _unicode_encode
 from portage.const import DEPRECATED_PROFILE_FILE
@@ -28,49 +27,42 @@ def deprecated_profile_check(settings=None):
             deprecated_profile_file = None
 
     if deprecated_profile_file is None:
-        deprecated_profile_file = os.path.join(
-            config_root or "/", DEPRECATED_PROFILE_FILE
-        )
+        deprecated_profile_file = os.path.join(config_root or "/", DEPRECATED_PROFILE_FILE)
         if not os.access(deprecated_profile_file, os.R_OK):
-            deprecated_profile_file = os.path.join(
-                config_root or "/", "etc", "make.profile", "deprecated"
-            )
+            deprecated_profile_file = os.path.join(config_root or "/", "etc", "make.profile", "deprecated")
             if not os.access(deprecated_profile_file, os.R_OK):
                 return
 
     with open(
-        _unicode_encode(
-            deprecated_profile_file, encoding=_encodings["fs"], errors="strict"
-        ),
-        encoding=_encodings["content"],
-        errors="replace",
+            _unicode_encode(deprecated_profile_file, encoding=_encodings["fs"], errors="strict"),
+            encoding=_encodings["content"],
+            errors="replace",
     ) as f:
         dcontent = f.readlines()
     writemsg(
         colorize(
             "BAD",
-            _("\n!!! Your current profile is " "deprecated and not supported anymore."),
-        )
-        + "\n",
+            _("\n!!! Your current profile is "
+              "deprecated and not supported anymore."),
+        ) + "\n",
         noiselevel=-1,
     )
     writemsg(
-        colorize("BAD", _("!!! Use eselect profile to update your " "profile.")) + "\n",
+        colorize("BAD", _("!!! Use eselect profile to update your "
+                          "profile.")) + "\n",
         noiselevel=-1,
     )
     if not dcontent:
         writemsg(
-            colorize("BAD", _("!!! Please refer to the " "Gentoo Upgrading Guide."))
-            + "\n",
+            colorize("BAD", _("!!! Please refer to the "
+                              "Gentoo Upgrading Guide.")) + "\n",
             noiselevel=-1,
         )
         return True
     newprofile = dcontent[0].rstrip("\n")
     writemsg(
-        colorize(
-            "BAD", _("!!! Please upgrade to the " "following profile if possible:")
-        )
-        + "\n\n",
+        colorize("BAD", _("!!! Please upgrade to the "
+                          "following profile if possible:")) + "\n\n",
         noiselevel=-1,
     )
     writemsg(8 * " " + colorize("GOOD", newprofile) + "\n\n", noiselevel=-1)
@@ -88,9 +80,7 @@ def deprecated_profile_check(settings=None):
 
     if settings is not None:
         main_repo_loc = settings.repositories.mainRepoLocation()
-        new_profile_path = os.path.join(
-            main_repo_loc, "profiles", newprofile.rstrip("\n")
-        )
+        new_profile_path = os.path.join(main_repo_loc, "profiles", newprofile.rstrip("\n"))
 
         if os.path.isdir(new_profile_path):
             new_config = portage.config(
@@ -101,24 +91,18 @@ def deprecated_profile_check(settings=None):
 
             if not new_config.profiles:
                 writemsg(
-                    "\n %s %s\n"
-                    % (
+                    "\n %s %s\n" % (
                         colorize("WARN", "*"),
-                        _(
-                            "You must update portage before you "
-                            "can migrate to the above profile."
-                        ),
+                        _("You must update portage before you "
+                          "can migrate to the above profile."),
                     ),
                     noiselevel=-1,
                 )
                 writemsg(
-                    " %s %s\n\n"
-                    % (
+                    " %s %s\n\n" % (
                         colorize("WARN", "*"),
-                        _(
-                            "In order to update portage, "
-                            "run 'emerge --oneshot sys-apps/portage'."
-                        ),
+                        _("In order to update portage, "
+                          "run 'emerge --oneshot sys-apps/portage'."),
                     ),
                     noiselevel=-1,
                 )

@@ -7,6 +7,7 @@ from portage.exception import InvalidAtom
 
 
 class TestAtom(TestCase):
+
     def testAtom(self):
         tests = (
             (
@@ -261,37 +262,65 @@ class TestAtom(TestCase):
             (
                 "virtual/ffmpeg:0/53",
                 "5",
-                {"slot": "0", "sub_slot": "53", "slot_operator": None},
+                {
+                    "slot": "0",
+                    "sub_slot": "53",
+                    "slot_operator": None
+                },
             ),
             (
                 "virtual/ffmpeg:0/53=",
                 "5",
-                {"slot": "0", "sub_slot": "53", "slot_operator": "="},
+                {
+                    "slot": "0",
+                    "sub_slot": "53",
+                    "slot_operator": "="
+                },
             ),
             (
                 "virtual/ffmpeg:=",
                 "5",
-                {"slot": None, "sub_slot": None, "slot_operator": "="},
+                {
+                    "slot": None,
+                    "sub_slot": None,
+                    "slot_operator": "="
+                },
             ),
             (
                 "virtual/ffmpeg:0=",
                 "5",
-                {"slot": "0", "sub_slot": None, "slot_operator": "="},
+                {
+                    "slot": "0",
+                    "sub_slot": None,
+                    "slot_operator": "="
+                },
             ),
             (
                 "virtual/ffmpeg:*",
                 "5",
-                {"slot": None, "sub_slot": None, "slot_operator": "*"},
+                {
+                    "slot": None,
+                    "sub_slot": None,
+                    "slot_operator": "*"
+                },
             ),
             (
                 "virtual/ffmpeg:0",
                 "5",
-                {"slot": "0", "sub_slot": None, "slot_operator": None},
+                {
+                    "slot": "0",
+                    "sub_slot": None,
+                    "slot_operator": None
+                },
             ),
             (
                 "virtual/ffmpeg",
                 "5",
-                {"slot": None, "sub_slot": None, "slot_operator": None},
+                {
+                    "slot": None,
+                    "sub_slot": None,
+                    "slot_operator": None
+                },
             ),
         )
 
@@ -529,16 +558,15 @@ class TestAtom(TestCase):
             ("dev-libs/B[!x?]", [], [], ["x"], "dev-libs/B[!x?]"),
         )
 
-        test_cases_xfail = (
-            (
-                "dev-libs/A[a,b=,!c=,d?,!e?,-f]",
-                [],
-                ["a", "b", "c", "d", "e", "f"],
-                None,
-            ),
-        )
+        test_cases_xfail = ((
+            "dev-libs/A[a,b=,!c=,d?,!e?,-f]",
+            [],
+            ["a", "b", "c", "d", "e", "f"],
+            None,
+        ), )
 
         class use_flag_validator:
+
             def __init__(self, iuse):
                 self.iuse = iuse
 
@@ -548,33 +576,25 @@ class TestAtom(TestCase):
         for atom, other_use, iuse, parent_use, expected_violated_atom in test_cases:
             a = Atom(atom)
             validator = use_flag_validator(iuse)
-            violated_atom = a.violated_conditionals(
-                other_use, validator.is_valid_flag, parent_use
-            )
+            violated_atom = a.violated_conditionals(other_use, validator.is_valid_flag, parent_use)
             if parent_use is None:
-                fail_msg = (
-                    "Atom: %s, other_use: %s, iuse: %s, parent_use: %s, got: %s, expected: %s"
-                    % (
-                        atom,
-                        " ".join(other_use),
-                        " ".join(iuse),
-                        "None",
-                        str(violated_atom),
-                        expected_violated_atom,
-                    )
-                )
+                fail_msg = ("Atom: %s, other_use: %s, iuse: %s, parent_use: %s, got: %s, expected: %s" % (
+                    atom,
+                    " ".join(other_use),
+                    " ".join(iuse),
+                    "None",
+                    str(violated_atom),
+                    expected_violated_atom,
+                ))
             else:
-                fail_msg = (
-                    "Atom: %s, other_use: %s, iuse: %s, parent_use: %s, got: %s, expected: %s"
-                    % (
-                        atom,
-                        " ".join(other_use),
-                        " ".join(iuse),
-                        " ".join(parent_use),
-                        str(violated_atom),
-                        expected_violated_atom,
-                    )
-                )
+                fail_msg = ("Atom: %s, other_use: %s, iuse: %s, parent_use: %s, got: %s, expected: %s" % (
+                    atom,
+                    " ".join(other_use),
+                    " ".join(iuse),
+                    " ".join(parent_use),
+                    str(violated_atom),
+                    expected_violated_atom,
+                ))
             self.assertEqual(str(violated_atom), expected_violated_atom, fail_msg)
 
         for atom, other_use, iuse, parent_use in test_cases_xfail:

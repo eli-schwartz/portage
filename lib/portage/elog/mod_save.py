@@ -18,9 +18,7 @@ def process(mysettings, key, logentries, fulltext):
     if mysettings.get("PORTAGE_LOGDIR"):
         logdir = normalize_path(mysettings["PORTAGE_LOGDIR"])
     else:
-        logdir = os.path.join(
-            os.sep, mysettings["BROOT"].lstrip(os.sep), "var", "log", "portage"
-        )
+        logdir = os.path.join(os.sep, mysettings["BROOT"].lstrip(os.sep), "var", "log", "portage")
 
     if not os.path.isdir(logdir):
         # Only initialize group/mode if the directory doesn't
@@ -35,16 +33,11 @@ def process(mysettings, key, logentries, fulltext):
 
     cat, pf = portage.catsplit(key)
 
-    elogfilename = (
-        pf
-        + ":"
-        + _unicode_decode(
-            time.strftime("%Y%m%d-%H%M%S", time.gmtime(time.time())),
-            encoding=_encodings["content"],
-            errors="replace",
-        )
-        + ".log"
-    )
+    elogfilename = (pf + ":" + _unicode_decode(
+        time.strftime("%Y%m%d-%H%M%S", time.gmtime(time.time())),
+        encoding=_encodings["content"],
+        errors="replace",
+    ) + ".log")
 
     if "split-elog" in mysettings.features:
         log_subdir = os.path.join(logdir, "elog", cat)
@@ -56,10 +49,10 @@ def process(mysettings, key, logentries, fulltext):
 
     try:
         with open(
-            _unicode_encode(elogfilename, encoding=_encodings["fs"], errors="strict"),
-            mode="w",
-            encoding=_encodings["content"],
-            errors="backslashreplace",
+                _unicode_encode(elogfilename, encoding=_encodings["fs"], errors="strict"),
+                mode="w",
+                encoding=_encodings["content"],
+                errors="backslashreplace",
         ) as elogfile:
             elogfile.write(_unicode_decode(fulltext))
     except OSError as e:
@@ -87,8 +80,6 @@ def process(mysettings, key, logentries, fulltext):
     logfile_uid = -1
     if portage.data.secpass >= 2:
         logfile_uid = elogdir_st.st_uid
-    apply_permissions(
-        elogfilename, uid=logfile_uid, gid=elogdir_gid, mode=elogdir_grp_mode, mask=0
-    )
+    apply_permissions(elogfilename, uid=logfile_uid, gid=elogdir_gid, mode=elogdir_grp_mode, mask=0)
 
     return elogfilename

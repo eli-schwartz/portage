@@ -96,6 +96,7 @@ portage.process.atexit_register(close_portdbapi_caches)
 
 
 class _dummy_list(list):
+
     def remove(self, item):
         # TODO: Trigger a DeprecationWarning here, after stable portage
         # has dummy portdbapi_instances.
@@ -106,7 +107,6 @@ class _dummy_list(list):
 
 
 class _better_cache:
-
     """
     The purpose of better_cache is to locate catpkgs in repositories using ``os.listdir()`` as much as possible, which
     is less expensive IO-wise than exhaustively doing a stat on each repo for a particular catpkg. better_cache stores a
@@ -138,9 +138,7 @@ class _better_cache:
         self._scanned_cats = set()
 
         # ordered list of all portree locations we'll scan:
-        self._repo_list = [
-            repo for repo in reversed(list(repositories)) if repo.location is not None
-        ]
+        self._repo_list = [repo for repo in reversed(list(repositories)) if repo.location is not None]
 
     def __getitem__(self, catpkg):
         result = self._items.get(catpkg)
@@ -224,10 +222,8 @@ class portdbapi(dbapi):
 
         if _unused_param is not DeprecationWarning:
             warnings.warn(
-                "The first parameter of the "
-                + "portage.dbapi.porttree.portdbapi"
-                + " constructor is unused since portage-2.1.8. "
-                + "mysettings['PORTDIR'] is used instead.",
+                "The first parameter of the " + "portage.dbapi.porttree.portdbapi" +
+                " constructor is unused since portage-2.1.8. " + "mysettings['PORTDIR'] is used instead.",
                 DeprecationWarning,
                 stacklevel=2,
             )
@@ -256,9 +252,8 @@ class portdbapi(dbapi):
         # root eclass dir, we assume that PORTDIR is invalid or
         # missing. This check allows aux_get() to detect a missing
         # repository and return early by raising a KeyError.
-        self._have_root_eclass_dir = os.path.isdir(
-            os.path.join(self.settings.repositories.mainRepoLocation(), "eclass")
-        )
+        self._have_root_eclass_dir = os.path.isdir(os.path.join(self.settings.repositories.mainRepoLocation(),
+                                                                "eclass"))
 
         # if the portdbapi is "frozen", then we assume that we can cache everything (that no updates to it are happening)
         self.xcache = {}
@@ -284,13 +279,8 @@ class portdbapi(dbapi):
         cache_kwargs = {}
 
         depcachedir_unshared = False
-        if (
-            portage.data.secpass < 1
-            and depcachedir_w_ok
-            and depcachedir_st is not None
-            and os.getuid() == depcachedir_st.st_uid
-            and os.getgid() == depcachedir_st.st_gid
-        ):
+        if (portage.data.secpass < 1 and depcachedir_w_ok and depcachedir_st is not None
+                and os.getuid() == depcachedir_st.st_uid and os.getgid() == depcachedir_st.st_gid):
             # If this user owns depcachedir and is not in the
             # portage group, then don't bother to set permissions
             # on cache entries. This makes it possible to run
@@ -305,9 +295,7 @@ class portdbapi(dbapi):
         # to the cache entries/directories.
         if (secpass < 1 and not depcachedir_unshared) or not depcachedir_w_ok:
             for x in self.porttrees:
-                self.auxdb[x] = volatile.database(
-                    self.depcachedir, x, self._known_keys, **cache_kwargs
-                )
+                self.auxdb[x] = volatile.database(self.depcachedir, x, self._known_keys, **cache_kwargs)
                 try:
                     self._ro_auxdb[x] = self.auxdbmodule(
                         self.depcachedir,
@@ -323,9 +311,7 @@ class portdbapi(dbapi):
                 if x in self.auxdb:
                     continue
                 # location, label, auxdbkeys
-                self.auxdb[x] = self.auxdbmodule(
-                    self.depcachedir, x, self._known_keys, **cache_kwargs
-                )
+                self.auxdb[x] = self.auxdbmodule(self.depcachedir, x, self._known_keys, **cache_kwargs)
         if "metadata-transfer" not in self.settings.features:
             for x in self.porttrees:
                 if x in self._pregen_auxdb:
@@ -370,11 +356,7 @@ class portdbapi(dbapi):
         self._porttrees = tuple(porttrees)
         self._porttrees_repos = portage.OrderedDict(
             (repo.name, repo)
-            for repo in (
-                self.repositories.get_repo_for_location(location)
-                for location in self._porttrees
-            )
-        )
+            for repo in (self.repositories.get_repo_for_location(location) for location in self._porttrees))
 
     def _get_porttrees(self):
         return self._porttrees
@@ -396,11 +378,8 @@ class portdbapi(dbapi):
 
             if not cache.complete_eclass_entries:
                 warnings.warn(
-                    (
-                        "Repository '%s' used deprecated 'pms' cache format. "
-                        "Please migrate to 'md5-dict' format."
-                    )
-                    % (conf.name,),
+                    ("Repository '%s' used deprecated 'pms' cache format. "
+                     "Please migrate to 'md5-dict' format.") % (conf.name, ),
                     DeprecationWarning,
                 )
 
@@ -437,9 +416,7 @@ class portdbapi(dbapi):
                 return license_path
         return None
 
-    def findname(
-        self, mycpv: str, mytree: Optional[str] = None, myrepo: Optional[str] = None
-    ) -> str:
+    def findname(self, mycpv: str, mytree: Optional[str] = None, myrepo: Optional[str] = None) -> str:
         return self.findname2(mycpv, mytree, myrepo)[0]
 
     def getRepositoryPath(self, repository_id):
@@ -555,26 +532,18 @@ class portdbapi(dbapi):
         encoding = _encodings["fs"]
         errors = "strict"
 
-        relative_path = (
-            mysplit[0] + _os.sep + psplit[0] + _os.sep + mysplit[1] + ".ebuild"
-        )
+        relative_path = (mysplit[0] + _os.sep + psplit[0] + _os.sep + mysplit[1] + ".ebuild")
 
         # There is no need to access the filesystem when the package
         # comes from this db and the package repo attribute corresponds
         # to the desired repo, since the file was previously found by
         # the cp_list method.
-        if (
-            myrepo is not None
-            and myrepo == getattr(mycpv, "repo", None)
-            and self is getattr(mycpv, "_db", None)
-        ):
+        if (myrepo is not None and myrepo == getattr(mycpv, "repo", None) and self is getattr(mycpv, "_db", None)):
             return (mytree + _os.sep + relative_path, mytree)
 
         for x in mytrees:
             filename = x + _os.sep + relative_path
-            if _os.access(
-                _unicode_encode(filename, encoding=encoding, errors=errors), _os.R_OK
-            ):
+            if _os.access(_unicode_encode(filename, encoding=encoding, errors=errors), _os.R_OK):
                 return (filename, x)
         return (None, 0)
 
@@ -605,7 +574,8 @@ class portdbapi(dbapi):
             ebuild_hash.mtime
         except FileNotFound:
             writemsg(
-                _("!!! aux_get(): ebuild for " "'%s' does not exist at:\n") % (cpv,),
+                _("!!! aux_get(): ebuild for "
+                  "'%s' does not exist at:\n") % (cpv, ),
                 noiselevel=-1,
             )
             writemsg(f"!!!            {ebuild_path}\n", noiselevel=-1)
@@ -666,9 +636,7 @@ class portdbapi(dbapi):
         # loop on each access, so a local reference is needed in order
         # to avoid instantiating more than one.
         loop = self._event_loop
-        return loop.run_until_complete(
-            self.async_aux_get(mycpv, mylist, mytree=mytree, myrepo=myrepo, loop=loop)
-        )
+        return loop.run_until_complete(self.async_aux_get(mycpv, mylist, mytree=mytree, myrepo=myrepo, loop=loop))
 
     def async_aux_get(self, mycpv, mylist, mytree=None, myrepo=None, loop=None):
         """
@@ -703,11 +671,7 @@ class portdbapi(dbapi):
                 future.set_exception(PortageKeyError(myrepo))
                 return future
 
-        if (
-            mytree is not None
-            and len(self.porttrees) == 1
-            and mytree == self.porttrees[0]
-        ):
+        if (mytree is not None and len(self.porttrees) == 1 and mytree == self.porttrees[0]):
             # mytree matches our only tree, so it's safe to
             # ignore mytree and cache the result
             mytree = None
@@ -715,9 +679,7 @@ class portdbapi(dbapi):
 
         if mytree is None:
             cache_me = True
-        if mytree is None and not self._known_keys.intersection(mylist).difference(
-            self._aux_cache_keys
-        ):
+        if mytree is None and not self._known_keys.intersection(mylist).difference(self._aux_cache_keys):
             aux_cache = self._aux_cache.get(mycpv)
             if aux_cache is not None:
                 future.set_result([aux_cache.get(x, "") for x in mylist])
@@ -781,8 +743,7 @@ class portdbapi(dbapi):
                 mydata,
                 mylocation,
                 cache_me,
-            )
-        )
+            ))
         future.add_done_callback(functools.partial(self._aux_get_cancel, proc))
         proc.start()
         return future
@@ -850,9 +811,7 @@ class portdbapi(dbapi):
         @rtype: dict
         """
         loop = self._event_loop
-        return loop.run_until_complete(
-            self.async_fetch_map(mypkg, useflags=useflags, mytree=mytree, loop=loop)
-        )
+        return loop.run_until_complete(self.async_fetch_map(mypkg, useflags=useflags, mytree=mytree, loop=loop))
 
     def async_fetch_map(self, mypkg, useflags=None, mytree=None, loop=None):
         """
@@ -883,12 +842,8 @@ class portdbapi(dbapi):
                     # Convert this to an InvalidDependString exception since
                     # callers already handle it.
                     result.set_exception(
-                        portage.exception.InvalidDependString(
-                            "getFetchMap(): aux_get() error reading "
-                            + mypkg
-                            + "; aborting."
-                        )
-                    )
+                        portage.exception.InvalidDependString("getFetchMap(): aux_get() error reading " + mypkg +
+                                                              "; aborting."))
                 else:
                     result.set_exception(future.exception())
                 return
@@ -899,27 +854,16 @@ class portdbapi(dbapi):
                 # Convert this to an InvalidDependString exception
                 # since callers already handle it.
                 result.set_exception(
-                    portage.exception.InvalidDependString(
-                        f"getFetchMap(): '{mypkg}' has unsupported EAPI: '{eapi}'"
-                    )
-                )
+                    portage.exception.InvalidDependString(f"getFetchMap(): '{mypkg}' has unsupported EAPI: '{eapi}'"))
                 return
 
             try:
-                result.set_result(
-                    _parse_uri_map(
-                        mypkg, {"EAPI": eapi, "SRC_URI": myuris}, use=useflags
-                    )
-                )
+                result.set_result(_parse_uri_map(mypkg, {"EAPI": eapi, "SRC_URI": myuris}, use=useflags))
             except Exception as e:
                 result.set_exception(e)
 
-        aux_get_future = self.async_aux_get(
-            mypkg, ["EAPI", "SRC_URI"], mytree=mytree, loop=loop
-        )
-        result.add_done_callback(
-            lambda result: aux_get_future.cancel() if result.cancelled() else None
-        )
+        aux_get_future = self.async_aux_get(mypkg, ["EAPI", "SRC_URI"], mytree=mytree, loop=loop)
+        result.add_done_callback(lambda result: aux_get_future.cancel() if result.cancelled() else None)
         aux_get_future.add_done_callback(aux_get_done)
         return result
 
@@ -929,13 +873,12 @@ class portdbapi(dbapi):
         if myebuild is None:
             raise AssertionError(_("ebuild not found for '%s'") % mypkg)
         pkgdir = os.path.dirname(myebuild)
-        mf = self.repositories.get_repo_for_location(
-            os.path.dirname(os.path.dirname(pkgdir))
-        ).load_manifest(pkgdir, self.settings["DISTDIR"])
+        mf = self.repositories.get_repo_for_location(os.path.dirname(os.path.dirname(pkgdir))).load_manifest(
+            pkgdir, self.settings["DISTDIR"])
         checksums = mf.getDigests()
         if not checksums:
             if debug:
-                writemsg(_("[empty/missing/bad digest]: %s\n") % (mypkg,))
+                writemsg(_("[empty/missing/bad digest]: %s\n") % (mypkg, ))
             return {}
         filesdict = {}
         myfiles = self.getFetchMap(mypkg, useflags=useflags, mytree=mytree)
@@ -946,10 +889,7 @@ class portdbapi(dbapi):
                 fetch_size = int(checksums[myfile]["size"])
             except (KeyError, ValueError):
                 if debug:
-                    writemsg(
-                        _("[bad digest]: missing %(file)s for %(pkg)s\n")
-                        % {"file": myfile, "pkg": mypkg}
-                    )
+                    writemsg(_("[bad digest]: missing %(file)s for %(pkg)s\n") % {"file": myfile, "pkg": mypkg})
                 continue
             file_path = os.path.join(self.settings["DISTDIR"], myfile)
             mystat = None
@@ -974,11 +914,7 @@ class portdbapi(dbapi):
                 if ro_distdirs is not None:
                     for x in shlex_split(ro_distdirs):
                         try:
-                            mystat = os.stat(
-                                portage.package.ebuild.fetch.get_mirror_url(
-                                    x, myfile, self.settings
-                                )
-                            )
+                            mystat = os.stat(portage.package.ebuild.fetch.get_mirror_url(x, myfile, self.settings))
                         except OSError:
                             pass
                         else:
@@ -996,9 +932,7 @@ class portdbapi(dbapi):
                 filesdict[myfile] = int(checksums[myfile]["size"])
         return filesdict
 
-    def fetch_check(
-        self, mypkg, useflags=None, mysettings=None, all=False, myrepo=None
-    ):  # pylint: disable=redefined-builtin
+    def fetch_check(self, mypkg, useflags=None, mysettings=None, all=False, myrepo=None):  # pylint: disable=redefined-builtin
         """
         TODO: account for PORTAGE_RO_DISTDIRS
         """
@@ -1019,9 +953,7 @@ class portdbapi(dbapi):
         if myebuild is None:
             raise AssertionError(_("ebuild not found for '%s'") % mypkg)
         pkgdir = os.path.dirname(myebuild)
-        mf = self.repositories.get_repo_for_location(
-            os.path.dirname(os.path.dirname(pkgdir))
-        )
+        mf = self.repositories.get_repo_for_location(os.path.dirname(os.path.dirname(pkgdir)))
         mf = mf.load_manifest(pkgdir, self.settings["DISTDIR"])
         mysums = mf.getDigests()
 
@@ -1032,12 +964,10 @@ class portdbapi(dbapi):
                 reason = _("digest missing")
             else:
                 try:
-                    ok, reason = portage.checksum.verify_all(
-                        os.path.join(self.settings["DISTDIR"], x), mysums[x]
-                    )
+                    ok, reason = portage.checksum.verify_all(os.path.join(self.settings["DISTDIR"], x), mysums[x])
                 except FileNotFound as e:
                     ok = False
-                    reason = _("File Not Found: '%s'") % (e,)
+                    reason = _("File Not Found: '%s'") % (e, )
             if not ok:
                 failures[x] = reason
         if failures:
@@ -1073,9 +1003,7 @@ class portdbapi(dbapi):
             trees = self.porttrees
         for x in categories:
             for oroot in trees:
-                for y in listdir(
-                    oroot + "/" + x, EmptyOnError=1, ignorecvs=1, dirsonly=1
-                ):
+                for y in listdir(oroot + "/" + x, EmptyOnError=1, ignorecvs=1, dirsonly=1):
                     try:
                         atom = Atom(f"{x}/{y}")
                     except InvalidAtom:
@@ -1091,12 +1019,7 @@ class portdbapi(dbapi):
     def cp_list(self, mycp, use_cache=1, mytree=None):
         # NOTE: Cache can be safely shared with the match cache, since the
         # match cache uses the result from dep_expand for the cache_key.
-        if (
-            self.frozen
-            and mytree is not None
-            and len(self.porttrees) == 1
-            and mytree == self.porttrees[0]
-        ):
+        if (self.frozen and mytree is not None and len(self.porttrees) == 1 and mytree == self.porttrees[0]):
             # mytree matches our only tree, so it's safe to
             # ignore mytree and cache the result
             mytree = None
@@ -1119,18 +1042,11 @@ class portdbapi(dbapi):
                 repos = [self.repositories.get_repo_for_location(mytree)]
             else:
                 # assume it's iterable
-                repos = [
-                    self.repositories.get_repo_for_location(location)
-                    for location in mytree
-                ]
+                repos = [self.repositories.get_repo_for_location(location) for location in mytree]
         elif self._better_cache is None:
             repos = self._porttrees_repos.values()
         else:
-            repos = [
-                repo
-                for repo in reversed(self._better_cache[mycp])
-                if repo.name in self._porttrees_repos
-            ]
+            repos = [repo for repo in reversed(self._better_cache[mycp]) if repo.name in self._porttrees_repos]
         mylist = []
         for repo in repos:
             oroot = repo.location
@@ -1147,36 +1063,28 @@ class portdbapi(dbapi):
                     ps = pkgsplit(pf)
                     if not ps:
                         writemsg(
-                            _("\nInvalid ebuild name: %s\n")
-                            % os.path.join(oroot, mycp, x),
+                            _("\nInvalid ebuild name: %s\n") % os.path.join(oroot, mycp, x),
                             noiselevel=-1,
                         )
                         continue
                     if ps[0] != mysplit[1]:
                         writemsg(
-                            _("\nInvalid ebuild name: %s\n")
-                            % os.path.join(oroot, mycp, x),
+                            _("\nInvalid ebuild name: %s\n") % os.path.join(oroot, mycp, x),
                             noiselevel=-1,
                         )
                         continue
                     ver_match = ver_regexp.match("-".join(ps[1:]))
                     if ver_match is None or not ver_match.groups():
                         writemsg(
-                            _("\nInvalid ebuild version: %s\n")
-                            % os.path.join(oroot, mycp, x),
+                            _("\nInvalid ebuild version: %s\n") % os.path.join(oroot, mycp, x),
                             noiselevel=-1,
                         )
                         continue
-                    mylist.append(
-                        _pkg_str(mysplit[0] + "/" + pf, db=self, repo=repo.name)
-                    )
+                    mylist.append(_pkg_str(mysplit[0] + "/" + pf, db=self, repo=repo.name))
         if invalid_category and mylist:
             writemsg(
-                _(
-                    "\n!!! '%s' has a category that is not listed in "
-                    "%setc/portage/categories\n"
-                )
-                % (mycp, self.settings["PORTAGE_CONFIGROOT"]),
+                _("\n!!! '%s' has a category that is not listed in "
+                  "%setc/portage/categories\n") % (mycp, self.settings["PORTAGE_CONFIGROOT"]),
                 noiselevel=-1,
             )
             mylist = []
@@ -1194,14 +1102,14 @@ class portdbapi(dbapi):
 
     def freeze(self):
         for x in (
-            "bestmatch-visible",
-            "cp-list",
-            "match-all",
-            "match-all-cpv-only",
-            "match-visible",
-            "minimum-all",
-            "minimum-all-ignore-profile",
-            "minimum-visible",
+                "bestmatch-visible",
+                "cp-list",
+                "match-all",
+                "match-all-cpv-only",
+                "match-visible",
+                "minimum-all",
+                "minimum-all-ignore-profile",
+                "minimum-visible",
         ):
             self.xcache[x] = {}
         self.frozen = 1
@@ -1311,12 +1219,12 @@ class portdbapi(dbapi):
                 myval = match_from_list(mydep, self.cp_list(mykey, mytree=mytree))
 
         elif level in (
-            "bestmatch-visible",
-            "match-all",
-            "match-visible",
-            "minimum-all",
-            "minimum-all-ignore-profile",
-            "minimum-visible",
+                "bestmatch-visible",
+                "match-all",
+                "match-visible",
+                "minimum-all",
+                "minimum-all-ignore-profile",
+                "minimum-visible",
         ):
             # Find the minimum matching visible version. This is optimized to
             # minimize the number of metadata accesses (improves performance
@@ -1326,7 +1234,7 @@ class portdbapi(dbapi):
             else:
                 mylist = match_from_list(mydep, self.cp_list(mykey, mytree=mytree))
 
-            ignore_profile = level in ("minimum-all-ignore-profile",)
+            ignore_profile = level in ("minimum-all-ignore-profile", )
             visibility_filter = level not in (
                 "match-all",
                 "minimum-all",
@@ -1345,21 +1253,14 @@ class portdbapi(dbapi):
                     metadata = dict(
                         zip(
                             aux_keys,
-                            (
-                                await self.async_aux_get(
-                                    cpv, aux_keys, myrepo=cpv.repo, loop=loop
-                                )
-                            ),
-                        )
-                    )
+                            (await self.async_aux_get(cpv, aux_keys, myrepo=cpv.repo, loop=loop)),
+                        ))
                 except KeyError:
                     # ebuild not in this repo, or masked by corruption
                     continue
 
                 try:
-                    pkg_str = _pkg_str(
-                        cpv, metadata=metadata, settings=self.settings, db=self
-                    )
+                    pkg_str = _pkg_str(cpv, metadata=metadata, settings=self.settings, db=self)
                 except InvalidData:
                     continue
 
@@ -1370,8 +1271,7 @@ class portdbapi(dbapi):
                     continue
 
                 if mydep.unevaluated_atom.use is not None and not self._match_use(
-                    mydep, pkg_str, metadata, ignore_profile=ignore_profile
-                ):
+                        mydep, pkg_str, metadata, ignore_profile=ignore_profile):
                     continue
 
                 myval.append(pkg_str)
@@ -1441,9 +1341,7 @@ class portdbapi(dbapi):
             for repo in repos:
                 metadata.clear()
                 try:
-                    metadata.update(
-                        zip(aux_keys, self.aux_get(mycpv, aux_keys, myrepo=repo))
-                    )
+                    metadata.update(zip(aux_keys, self.aux_get(mycpv, aux_keys, myrepo=repo)))
                 except KeyError:
                     continue
                 except PortageException as e:
@@ -1498,9 +1396,8 @@ class portdbapi(dbapi):
 
 
 class portagetree:
-    def __init__(
-        self, root=DeprecationWarning, virtual=DeprecationWarning, settings=None
-    ):
+
+    def __init__(self, root=DeprecationWarning, virtual=DeprecationWarning, settings=None):
         """
         Constructor for a PortageTree
 
@@ -1518,10 +1415,8 @@ class portagetree:
 
         if root is not DeprecationWarning:
             warnings.warn(
-                "The root parameter of the "
-                + "portage.dbapi.porttree.portagetree"
-                + " constructor is now unused. Use "
-                + "settings['ROOT'] instead.",
+                "The root parameter of the " + "portage.dbapi.porttree.portagetree" +
+                " constructor is now unused. Use " + "settings['ROOT'] instead.",
                 DeprecationWarning,
                 stacklevel=2,
             )
@@ -1553,10 +1448,8 @@ class portagetree:
     @property
     def root(self):
         warnings.warn(
-            "The root attribute of "
-            + "portage.dbapi.porttree.portagetree"
-            + " is deprecated. Use "
-            + "settings['ROOT'] instead.",
+            "The root attribute of " + "portage.dbapi.porttree.portagetree" + " is deprecated. Use " +
+            "settings['ROOT'] instead.",
             DeprecationWarning,
             stacklevel=3,
         )
@@ -1565,9 +1458,7 @@ class portagetree:
     @property
     def virtual(self):
         warnings.warn(
-            "The 'virtual' attribute of "
-            + "portage.dbapi.porttree.portagetree"
-            + " is deprecated.",
+            "The 'virtual' attribute of " + "portage.dbapi.porttree.portagetree" + " is deprecated.",
             DeprecationWarning,
             stacklevel=3,
         )
@@ -1664,9 +1555,7 @@ class FetchlistDict(Mapping):
     keys = __iter__
 
 
-def _async_manifest_fetchlist(
-    portdb, repo_config, cp, cpv_list=None, max_jobs=None, max_load=None, loop=None
-):
+def _async_manifest_fetchlist(portdb, repo_config, cp, cpv_list=None, max_jobs=None, max_load=None, loop=None):
     """
     Asynchronous form of FetchlistDict, with max_jobs and max_load
     parameters in order to control async_aux_get concurrency.
@@ -1693,11 +1582,7 @@ def _async_manifest_fetchlist(
     """
     loop = asyncio._wrap_loop(loop)
     result = loop.create_future()
-    cpv_list = (
-        portdb.cp_list(cp, mytree=repo_config.location)
-        if cpv_list is None
-        else cpv_list
-    )
+    cpv_list = (portdb.cp_list(cp, mytree=repo_config.location) if cpv_list is None else cpv_list)
 
     def gather_done(gather_result):
         # All exceptions must be consumed from gather_result before this
@@ -1706,38 +1591,27 @@ def _async_manifest_fetchlist(
         e = None
         if not gather_result.cancelled():
             for future in gather_result.result():
-                if (
-                    future.done()
-                    and not future.cancelled()
-                    and future.exception() is not None
-                ):
+                if (future.done() and not future.cancelled() and future.exception() is not None):
                     e = future.exception()
 
         if result.cancelled():
             return
         if e is None:
-            result.set_result(
-                {k: list(v.result()) for k, v in zip(cpv_list, gather_result.result())}
-            )
+            result.set_result({k: list(v.result()) for k, v in zip(cpv_list, gather_result.result())})
         else:
             result.set_exception(e)
 
     gather_result = iter_gather(
         # Use a generator expression for lazy evaluation, so that iter_gather
         # controls the number of concurrent async_fetch_map calls.
-        (
-            portdb.async_fetch_map(cpv, mytree=repo_config.location, loop=loop)
-            for cpv in cpv_list
-        ),
+        (portdb.async_fetch_map(cpv, mytree=repo_config.location, loop=loop) for cpv in cpv_list),
         max_jobs=max_jobs,
         max_load=max_load,
         loop=loop,
     )
 
     gather_result.add_done_callback(gather_done)
-    result.add_done_callback(
-        lambda result: gather_result.cancel() if result.cancelled() else None
-    )
+    result.add_done_callback(lambda result: gather_result.cancel() if result.cancelled() else None)
 
     return result
 
@@ -1763,9 +1637,7 @@ def _parse_uri_map(cpv, metadata, use=None):
             distfile = os.path.basename(uri)
             if not distfile:
                 raise portage.exception.InvalidDependString(
-                    ("getFetchMap(): '%s' SRC_URI has no file " + "name: '%s'")
-                    % (cpv, uri)
-                )
+                    ("getFetchMap(): '%s' SRC_URI has no file " + "name: '%s'") % (cpv, uri))
 
         uri_set = uri_map.get(distfile)
         if uri_set is None:

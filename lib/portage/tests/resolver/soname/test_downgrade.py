@@ -13,6 +13,7 @@ from portage.output import colorize
 
 
 class SonameDowngradeTestCase(TestCase):
+
     def testSingleSlot(self):
         ebuilds = {
             "dev-libs/icu-49": {},
@@ -48,7 +49,7 @@ class SonameDowngradeTestCase(TestCase):
         }
 
         user_config = {
-            "package.mask": (">=dev-libs/icu-49",),
+            "package.mask": (">=dev-libs/icu-49", ),
         }
 
         world = ["dev-libs/libxml2"]
@@ -132,7 +133,7 @@ class SonameDowngradeTestCase(TestCase):
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                user_config["make.conf"] = (f'BINPKG_FORMAT="{binpkg_format}"',)
+                user_config["make.conf"] = (f'BINPKG_FORMAT="{binpkg_format}"', )
                 playground = ResolverPlayground(
                     binpkgs=binpkgs,
                     ebuilds=ebuilds,
@@ -144,9 +145,7 @@ class SonameDowngradeTestCase(TestCase):
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     # Disable debug so that cleanup works.
                     playground.debug = False
@@ -154,8 +153,12 @@ class SonameDowngradeTestCase(TestCase):
 
     def testTwoSlots(self):
         ebuilds = {
-            "dev-libs/glib-1.2.10": {"SLOT": "1"},
-            "dev-libs/glib-2.30.2": {"SLOT": "2"},
+            "dev-libs/glib-1.2.10": {
+                "SLOT": "1"
+            },
+            "dev-libs/glib-2.30.2": {
+                "SLOT": "2"
+            },
             "dev-libs/dbus-glib-0.98": {
                 "EAPI": "1",
                 "DEPEND": "dev-libs/glib:2",
@@ -200,7 +203,7 @@ class SonameDowngradeTestCase(TestCase):
         }
 
         user_config = {
-            "package.mask": (">=dev-libs/glib-2.32",),
+            "package.mask": (">=dev-libs/glib-2.32", ),
         }
 
         world = [
@@ -208,29 +211,27 @@ class SonameDowngradeTestCase(TestCase):
             "dev-libs/dbus-glib",
         ]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--autounmask": "n",
-                    "--deep": True,
-                    "--ignore-soname-deps": "n",
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]dev-libs/glib-2.30.2",
-                    "[binary]dev-libs/dbus-glib-0.98",
-                ],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@world"],
+            options={
+                "--autounmask": "n",
+                "--deep": True,
+                "--ignore-soname-deps": "n",
+                "--update": True,
+                "--usepkgonly": True,
+            },
+            success=True,
+            mergelist=[
+                "[binary]dev-libs/glib-2.30.2",
+                "[binary]dev-libs/dbus-glib-0.98",
+            ],
+        ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                user_config["make.conf"] = (f'BINPKG_FORMAT="{binpkg_format}"',)
+                user_config["make.conf"] = (f'BINPKG_FORMAT="{binpkg_format}"', )
                 playground = ResolverPlayground(
                     ebuilds=ebuilds,
                     binpkgs=binpkgs,
@@ -243,9 +244,7 @@ class SonameDowngradeTestCase(TestCase):
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     # Disable debug so that cleanup works.
                     playground.debug = False

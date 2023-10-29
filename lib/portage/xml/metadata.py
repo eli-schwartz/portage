@@ -1,6 +1,5 @@
 # Copyright 2010-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-
 """Provides an easy-to-use python interface to Gentoo's metadata.xml file.
 
 	Example usage:
@@ -29,7 +28,6 @@
 """
 
 __all__ = ("MetaDataXML", "parse_metadata_use")
-
 
 import re
 import xml.etree.ElementTree as etree
@@ -169,9 +167,7 @@ class _Upstream:
 
     def upstream_remoteids(self):
         """Retrieve upstream remote ID from xml node."""
-        return [
-            (e.text, e.get("type")) for e in self.node.findall("remote-id") if e.text
-        ]
+        return [(e.text, e.get("type")) for e in self.node.findall("remote-id") if e.text]
 
 
 class MetaDataXML:
@@ -192,9 +188,7 @@ class MetaDataXML:
 
         try:
             self._xml_tree = etree.parse(
-                _unicode_encode(
-                    metadata_xml_path, encoding=_encodings["fs"], errors="strict"
-                ),
+                _unicode_encode(metadata_xml_path, encoding=_encodings["fs"], errors="strict"),
                 parser=etree.XMLParser(target=_MetadataTreeBuilder()),
             )
         except ImportError:
@@ -234,9 +228,7 @@ class MetaDataXML:
         if self._herdstree is None:
             try:
                 self._herdstree = etree.parse(
-                    _unicode_encode(
-                        self._herds_path, encoding=_encodings["fs"], errors="strict"
-                    ),
+                    _unicode_encode(self._herds_path, encoding=_encodings["fs"], errors="strict"),
                     parser=etree.XMLParser(target=_MetadataTreeBuilder()),
                 )
             except (ImportError, OSError, SyntaxError):
@@ -295,9 +287,7 @@ class MetaDataXML:
             if self._xml_tree is None:
                 self._descriptions = tuple()
             else:
-                self._descriptions = tuple(
-                    e.text for e in self._xml_tree.findall("longdescription") if e.text
-                )
+                self._descriptions = tuple(e.text for e in self._xml_tree.findall("longdescription") if e.text)
 
         return self._descriptions
 
@@ -312,9 +302,7 @@ class MetaDataXML:
             if self._xml_tree is None:
                 self._maintainers = tuple()
             else:
-                self._maintainers = tuple(
-                    _Maintainer(node) for node in self._xml_tree.findall("maintainer")
-                )
+                self._maintainers = tuple(_Maintainer(node) for node in self._xml_tree.findall("maintainer"))
 
         return self._maintainers
 
@@ -349,9 +337,7 @@ class MetaDataXML:
             if self._xml_tree is None:
                 self._upstream = tuple()
             else:
-                self._upstream = tuple(
-                    _Upstream(node) for node in self._xml_tree.findall("upstream")
-                )
+                self._upstream = tuple(_Upstream(node) for node in self._xml_tree.findall("upstream"))
 
         return self._upstream
 
@@ -487,7 +473,5 @@ def parse_metadata_use(xml_tree):
                     uselist[flag.get("name")] = {}
 
                 # (flag_restrict can be None)
-                uselist[flag.get("name")][flag_restrict] = " ".join(
-                    "".join(inner_text).split()
-                )
+                uselist[flag.get("name")][flag_restrict] = " ".join("".join(inner_text).split())
     return uselist

@@ -106,12 +106,11 @@ from portage.package.ebuild._config.helper import (
     prune_incremental,
 )
 
-
 _feature_flags_cache = {}
 
 
 def _get_feature_flags(eapi_attrs):
-    cache_key = (eapi_attrs.feature_flag_test,)
+    cache_key = (eapi_attrs.feature_flag_test, )
     flags = _feature_flags_cache.get(cache_key)
     if flags is not None:
         return flags
@@ -132,9 +131,7 @@ def autouse(myvartree, use_cache=1, mysettings=None):
 
 def check_config_instance(test):
     if not isinstance(test, config):
-        raise TypeError(
-            f"Invalid type for config object: {test.__class__} (should be {config})"
-        )
+        raise TypeError(f"Invalid type for config object: {test.__class__} (should be {config})")
 
 
 def best_from_dict(key, top_dict, key_order, EmptyOnError=1, FullCopy=1, AllowEmpty=1):
@@ -163,10 +160,9 @@ def _lazy_iuse_regex(iuse_implicit):
 
 
 class _iuse_implicit_match_cache:
+
     def __init__(self, settings):
-        self._iuse_implicit_re = re.compile(
-            f"^({'|'.join(settings._get_implicit_iuse())})$"
-        )
+        self._iuse_implicit_re = re.compile(f"^({'|'.join(settings._get_implicit_iuse())})$")
         self._cache = {}
 
     def __call__(self, flag):
@@ -192,9 +188,7 @@ class config:
     virtuals ...etc you look in here.
     """
 
-    _constant_keys = frozenset(
-        ["PORTAGE_BIN_PATH", "PORTAGE_GID", "PORTAGE_PYM_PATH", "PORTAGE_PYTHONPATH"]
-    )
+    _constant_keys = frozenset(["PORTAGE_BIN_PATH", "PORTAGE_GID", "PORTAGE_PYM_PATH", "PORTAGE_PYTHONPATH"])
 
     _deprecated_keys = {
         "PORTAGE_LOGDIR": "PORT_LOGDIR",
@@ -451,9 +445,7 @@ class config:
 
             if make_conf_count == 2:
                 writemsg(
-                    "!!! %s\n"
-                    % _("Found 2 make.conf files, using both '%s' and '%s'")
-                    % tuple(make_conf_paths),
+                    "!!! %s\n" % _("Found 2 make.conf files, using both '%s' and '%s'") % tuple(make_conf_paths),
                     noiselevel=-1,
                 )
 
@@ -498,33 +490,21 @@ class config:
             expand_map["SYSROOT"] = sysroot
 
             if portage._not_installed:
-                make_globals_path = os.path.join(
-                    PORTAGE_BASE_PATH, "cnf", "make.globals"
-                )
+                make_globals_path = os.path.join(PORTAGE_BASE_PATH, "cnf", "make.globals")
             else:
-                make_globals_path = os.path.join(
-                    self.global_config_path, "make.globals"
-                )
+                make_globals_path = os.path.join(self.global_config_path, "make.globals")
             old_make_globals = os.path.join(config_root, "etc", "make.globals")
-            if os.path.isfile(old_make_globals) and not os.path.samefile(
-                make_globals_path, old_make_globals
-            ):
+            if os.path.isfile(old_make_globals) and not os.path.samefile(make_globals_path, old_make_globals):
                 # Don't warn if they refer to the same path, since
                 # that can be used for backward compatibility with
                 # old software.
                 writemsg(
-                    "!!! %s\n"
-                    % _(
-                        "Found obsolete make.globals file: "
-                        "'%s', (using '%s' instead)"
-                    )
-                    % (old_make_globals, make_globals_path),
+                    "!!! %s\n" % _("Found obsolete make.globals file: "
+                                   "'%s', (using '%s' instead)") % (old_make_globals, make_globals_path),
                     noiselevel=-1,
                 )
 
-            make_globals = getconfig(
-                make_globals_path, tolerant=tolerant, expand=expand_map
-            )
+            make_globals = getconfig(make_globals_path, tolerant=tolerant, expand=expand_map)
             if make_globals is None:
                 make_globals = {}
 
@@ -547,10 +527,7 @@ class config:
             if self.modules["user"] is None:
                 self.modules["user"] = {}
             user_auxdbmodule = self.modules["user"].get("portdbapi.auxdbmodule")
-            if (
-                user_auxdbmodule is not None
-                and user_auxdbmodule in self._module_aliases
-            ):
+            if (user_auxdbmodule is not None and user_auxdbmodule in self._module_aliases):
                 warnings.warn(f"'{user_auxdbmodule}' is deprecated: {modules_file}")
 
             self.modules["default"] = {
@@ -584,9 +561,7 @@ class config:
                 env = os.environ
 
             # Avoid potential UnicodeDecodeError exceptions later.
-            env_unicode = {
-                _unicode_decode(k): _unicode_decode(v) for k, v in env.items()
-            }
+            env_unicode = {_unicode_decode(k): _unicode_decode(v) for k, v in env.items()}
 
             self.backupenv = env_unicode
 
@@ -673,8 +648,8 @@ class config:
                         new_ov.append(portage._shell_quote(ov))
                     else:
                         writemsg(
-                            _("!!! Invalid PORTDIR_OVERLAY" " (not a dir): '%s'\n")
-                            % ov,
+                            _("!!! Invalid PORTDIR_OVERLAY"
+                              " (not a dir): '%s'\n") % ov,
                             noiselevel=-1,
                         )
 
@@ -699,8 +674,7 @@ class config:
                         eapi_default=None,
                         allow_repo=allow_profile_repo_deps(x),
                         allow_build_id=x.allow_build_id,
-                    )
-                    for x in profiles_complex
+                    ) for x in profiles_complex
                 ]
             except OSError as e:
                 _raise_exc(e)
@@ -733,8 +707,7 @@ class config:
                             tolerant=tolerant,
                             expand=expand_map,
                             recursive=x.portage1_directories,
-                        )
-                    )
+                        ))
                 self._make_defaults = mygcfg_dlists
                 mygcfg = stack_dicts(mygcfg_dlists, incrementals=self.incrementals)
                 if mygcfg is None:
@@ -751,17 +724,13 @@ class config:
                         allow_sourcing=True,
                         expand=expand_map,
                         recursive=True,
-                    )
-                    or {}
-                )
+                    ) or {})
 
             # __* variables set in make.conf are local and are not be propagated.
             mygcfg = {k: v for k, v in mygcfg.items() if not k.startswith("__")}
 
             # Don't allow the user to override certain variables in make.conf
-            profile_only_variables = (
-                self.configdict["defaults"].get("PROFILE_ONLY_VARIABLES", "").split()
-            )
+            profile_only_variables = (self.configdict["defaults"].get("PROFILE_ONLY_VARIABLES", "").split())
             profile_only_variables = stack_lists([profile_only_variables])
             non_user_variables = set()
             non_user_variables.update(profile_only_variables)
@@ -770,12 +739,10 @@ class config:
             non_user_variables = frozenset(non_user_variables)
             self._non_user_variables = non_user_variables
 
-            self._env_d_blacklist = frozenset(
-                chain(
-                    profile_only_variables,
-                    self._env_blacklist,
-                )
-            )
+            self._env_d_blacklist = frozenset(chain(
+                profile_only_variables,
+                self._env_blacklist,
+            ))
             env_d = self.configdict["env.d"]
             for k in self._env_d_blacklist:
                 env_d.pop(k, None)
@@ -837,20 +804,17 @@ class config:
 
             self._repo_make_defaults = {}
             for repo in self.repositories.repos_with_profiles():
-                d = (
-                    getconfig(
-                        os.path.join(repo.location, "profiles", "make.defaults"),
-                        tolerant=tolerant,
-                        expand=self.configdict["globals"].copy(),
-                        recursive=repo.portage1_profiles,
-                    )
-                    or {}
-                )
+                d = (getconfig(
+                    os.path.join(repo.location, "profiles", "make.defaults"),
+                    tolerant=tolerant,
+                    expand=self.configdict["globals"].copy(),
+                    recursive=repo.portage1_profiles,
+                ) or {})
                 if d:
                     for k in chain(
-                        self._env_blacklist,
-                        profile_only_variables,
-                        self._global_only_vars,
+                            self._env_blacklist,
+                            profile_only_variables,
+                            self._global_only_vars,
                     ):
                         d.pop(k, None)
                 self._repo_make_defaults[repo.name] = d
@@ -866,11 +830,8 @@ class config:
             # Initialize all USE related variables we track ourselves.
             self.usemask = self._use_manager.getUseMask()
             self.useforce = self._use_manager.getUseForce()
-            self.configdict["conf"][
-                "USE"
-            ] = self._use_manager.extract_global_USE_changes(
-                self.configdict["conf"].get("USE", "")
-            )
+            self.configdict["conf"]["USE"] = self._use_manager.extract_global_USE_changes(self.configdict["conf"].get(
+                "USE", ""))
 
             # Read license_groups and optionally license_groups and package.license from user config
             self._license_manager = LicenseManager(
@@ -879,17 +840,12 @@ class config:
                 user_config=local_config,
             )
             # Extract '*/*' entries from package.license
-            self.configdict["conf"][
-                "ACCEPT_LICENSE"
-            ] = self._license_manager.extract_global_changes(
-                self.configdict["conf"].get("ACCEPT_LICENSE", "")
-            )
+            self.configdict["conf"]["ACCEPT_LICENSE"] = self._license_manager.extract_global_changes(
+                self.configdict["conf"].get("ACCEPT_LICENSE", ""))
 
             # profile.bashrc
             self._profile_bashrc = tuple(
-                os.path.isfile(os.path.join(profile.location, "profile.bashrc"))
-                for profile in profiles_complex
-            )
+                os.path.isfile(os.path.join(profile.location, "profile.bashrc")) for profile in profiles_complex)
 
             if local_config:
                 # package.properties
@@ -904,9 +860,7 @@ class config:
                 v = propdict.pop("*/*", None)
                 if v is not None:
                     if "ACCEPT_PROPERTIES" in self.configdict["conf"]:
-                        self.configdict["conf"]["ACCEPT_PROPERTIES"] += " " + " ".join(
-                            v
-                        )
+                        self.configdict["conf"]["ACCEPT_PROPERTIES"] += " " + " ".join(v)
                     else:
                         self.configdict["conf"]["ACCEPT_PROPERTIES"] = " ".join(v)
                 for k, v in propdict.items():
@@ -977,32 +931,20 @@ class config:
                         continue
 
                     for k, v in bashrc.items():
-                        envfiles = [
-                            os.path.join(profile.location, "bashrc", envname)
-                            for envname in v
-                        ]
-                        self._pbashrcdict[profile].setdefault(k.cp, {}).setdefault(
-                            k, []
-                        ).extend(envfiles)
+                        envfiles = [os.path.join(profile.location, "bashrc", envname) for envname in v]
+                        self._pbashrcdict[profile].setdefault(k.cp, {}).setdefault(k, []).extend(envfiles)
 
             # getting categories from an external file now
             self.categories = [
-                grabfile(os.path.join(x, "categories"))
-                for x in locations_manager.profile_and_user_locations
+                grabfile(os.path.join(x, "categories")) for x in locations_manager.profile_and_user_locations
             ]
             category_re = dbapi._category_re
             # categories used to be a tuple, but now we use a frozenset
             # for hashed category validation in pordbapi.cp_list()
-            self.categories = frozenset(
-                x
-                for x in stack_lists(self.categories, incremental=1)
-                if category_re.match(x) is not None
-            )
+            self.categories = frozenset(x for x in stack_lists(self.categories, incremental=1)
+                                        if category_re.match(x) is not None)
 
-            archlist = [
-                grabfile(os.path.join(x, "arch.list"))
-                for x in locations_manager.profile_and_user_locations
-            ]
+            archlist = [grabfile(os.path.join(x, "arch.list")) for x in locations_manager.profile_and_user_locations]
             archlist = sorted(stack_lists(archlist, incremental=1))
             self.configdict["conf"]["PORTAGE_ARCHLIST"] = " ".join(archlist)
 
@@ -1011,18 +953,11 @@ class config:
                 provpath = os.path.join(x.location, "package.provided")
                 if os.path.exists(provpath):
                     if _get_eapi_attrs(x.eapi).allows_package_provided:
-                        pkgprovidedlines.append(
-                            grabfile(provpath, recursive=x.portage1_directories)
-                        )
+                        pkgprovidedlines.append(grabfile(provpath, recursive=x.portage1_directories))
                     else:
                         # TODO: bail out?
                         writemsg(
-                            (
-                                _("!!! package.provided not allowed in EAPI %s: ")
-                                % x.eapi
-                            )
-                            + x.location
-                            + "\n",
+                            (_("!!! package.provided not allowed in EAPI %s: ") % x.eapi) + x.location + "\n",
                             noiselevel=-1,
                         )
 
@@ -1041,9 +976,7 @@ class config:
                 cpvr = catpkgsplit(pkgprovidedlines[x])
                 if not cpvr or cpvr[0] == "null":
                     writemsg(
-                        _("Invalid package name in package.provided: ")
-                        + pkgprovidedlines[x]
-                        + "\n",
+                        _("Invalid package name in package.provided: ") + pkgprovidedlines[x] + "\n",
                         noiselevel=-1,
                     )
                     has_invalid_data = True
@@ -1068,9 +1001,7 @@ class config:
             # reasonable defaults; this is important as without USE_ORDER,
             # USE will always be "" (nothing set)!
             if "USE_ORDER" not in self:
-                self[
-                    "USE_ORDER"
-                ] = "env:pkg:conf:defaults:pkginternal:features:repo:env.d"
+                self["USE_ORDER"] = "env:pkg:conf:defaults:pkginternal:features:repo:env.d"
                 self.backup_changes("USE_ORDER")
 
             if "CBUILD" not in self and "CHOST" in self:
@@ -1082,9 +1013,7 @@ class config:
                 # it's always set. This allows isolated-functions.sh to avoid
                 # calling uname -s when sourced.
                 system = platform.system()
-                if system is not None and (
-                    system.endswith("BSD") or system == "DragonFly"
-                ):
+                if system is not None and (system.endswith("BSD") or system == "DragonFly"):
                     self["USERLAND"] = "BSD"
                 else:
                     self["USERLAND"] = "GNU"
@@ -1131,11 +1060,8 @@ class config:
                     self[var] = str(int(self.get(var, default_val)))
                 except ValueError:
                     writemsg(
-                        _(
-                            "!!! %s='%s' is not a valid integer.  "
-                            "Falling back to %s.\n"
-                        )
-                        % (var, self[var], default_val),
+                        _("!!! %s='%s' is not a valid integer.  "
+                          "Falling back to %s.\n") % (var, self[var], default_val),
                         noiselevel=-1,
                     )
                     self[var] = default_val
@@ -1143,17 +1069,13 @@ class config:
 
             self.depcachedir = self.get("PORTAGE_DEPCACHEDIR")
             if self.depcachedir is None:
-                self.depcachedir = os.path.join(
-                    os.sep, portage.const.EPREFIX, DEPCACHE_PATH.lstrip(os.sep)
-                )
+                self.depcachedir = os.path.join(os.sep, portage.const.EPREFIX, DEPCACHE_PATH.lstrip(os.sep))
                 if unprivileged and target_root != os.sep:
                     # In unprivileged mode, automatically make
                     # depcachedir relative to target_root if the
                     # default depcachedir is not writable.
                     if not os.access(first_existing(self.depcachedir), os.W_OK):
-                        self.depcachedir = os.path.join(
-                            eroot, DEPCACHE_PATH.lstrip(os.sep)
-                        )
+                        self.depcachedir = os.path.join(eroot, DEPCACHE_PATH.lstrip(os.sep))
 
             self["PORTAGE_DEPCACHEDIR"] = self.depcachedir
             self.backup_changes("PORTAGE_DEPCACHEDIR")
@@ -1167,9 +1089,7 @@ class config:
             feature_use = []
             if "test" in self.features:
                 feature_use.append("test")
-            self.configdict["features"]["USE"] = self._default_features_use = " ".join(
-                feature_use
-            )
+            self.configdict["features"]["USE"] = self._default_features_use = " ".join(feature_use)
             if feature_use:
                 # Regenerate USE so that the initial "test" flag state is
                 # correct for evaluation of !test? conditionals in RESTRICT.
@@ -1219,22 +1139,13 @@ class config:
         broot_env_d_path = os.path.join(broot or "/", "etc", "profile.env")
         eroot_env_d_path = os.path.join(eroot or "/", "etc", "profile.env")
 
-        if (
-            os.path.exists(broot_env_d_path)
-            and os.path.exists(eroot_env_d_path)
-            and os.path.samefile(broot_env_d_path, eroot_env_d_path)
-        ):
-            broot_env_d = (
-                getconfig(broot_env_d_path, tolerant=tolerant, expand=False) or {}
-            )
+        if (os.path.exists(broot_env_d_path) and os.path.exists(eroot_env_d_path)
+                and os.path.samefile(broot_env_d_path, eroot_env_d_path)):
+            broot_env_d = (getconfig(broot_env_d_path, tolerant=tolerant, expand=False) or {})
             eroot_env_d = broot_env_d
         else:
-            broot_env_d = (
-                getconfig(broot_env_d_path, tolerant=tolerant, expand=False) or {}
-            )
-            eroot_env_d = (
-                getconfig(eroot_env_d_path, tolerant=tolerant, expand=False) or {}
-            )
+            broot_env_d = (getconfig(broot_env_d_path, tolerant=tolerant, expand=False) or {})
+            eroot_env_d = (getconfig(eroot_env_d_path, tolerant=tolerant, expand=False) or {})
 
         env_d = {}
 
@@ -1284,11 +1195,7 @@ class config:
                         if not default_valid:
                             if v_split:
                                 writemsg_level(
-                                    _(
-                                        "%s setting from make.globals"
-                                        + " is invalid: '%s'\n"
-                                    )
-                                    % (k, v),
+                                    _("%s setting from make.globals" + " is invalid: '%s'\n") % (k, v),
                                     level=logging.ERROR,
                                     noiselevel=-1,
                                 )
@@ -1342,9 +1249,7 @@ class config:
                 self._locations_manager.profiles_complex,
                 self._locations_manager.abs_user_config,
                 self.local_config,
-                global_accept_keywords=self.configdict["defaults"].get(
-                    "ACCEPT_KEYWORDS", ""
-                ),
+                global_accept_keywords=self.configdict["defaults"].get("ACCEPT_KEYWORDS", ""),
             )
         return self._keywords_manager_obj
 
@@ -1385,17 +1290,11 @@ class config:
     def soname_provided(self):
         if self._soname_provided is None:
             d = stack_dictlist(
-                (
-                    grabdict(os.path.join(x, "soname.provided"), recursive=True)
-                    for x in self.profiles
-                ),
+                (grabdict(os.path.join(x, "soname.provided"), recursive=True) for x in self.profiles),
                 incremental=True,
             )
             self._soname_provided = frozenset(
-                SonameAtom(cat, soname)
-                for cat, sonames in d.items()
-                for soname in sonames
-            )
+                SonameAtom(cat, soname) for cat, sonames in d.items() for soname in sonames)
         return self._soname_provided
 
     def expandLicenseTokens(self, tokens):
@@ -1412,19 +1311,14 @@ class config:
         archlist = self.archlist()
         if not archlist:
             writemsg(
-                _(
-                    "--- 'profiles/arch.list' is empty or "
-                    "not available. Empty ebuild repository?\n"
-                ),
+                _("--- 'profiles/arch.list' is empty or "
+                  "not available. Empty ebuild repository?\n"),
                 noiselevel=1,
             )
         else:
             for group in groups:
-                if (
-                    group not in archlist
-                    and not (group.startswith("-") and group[1:] in archlist)
-                    and group not in ("*", "~*", "**")
-                ):
+                if (group not in archlist and not (group.startswith("-") and group[1:] in archlist)
+                        and group not in ("*", "~*", "**")):
                     writemsg(
                         _("!!! INVALID ACCEPT_KEYWORDS: %s\n") % str(group),
                         noiselevel=-1,
@@ -1458,26 +1352,14 @@ class config:
                     break
 
             if abs_profile_path is None:
-                abs_profile_path = os.path.join(
-                    self["PORTAGE_CONFIGROOT"], PROFILE_PATH
-                )
+                abs_profile_path = os.path.join(self["PORTAGE_CONFIGROOT"], PROFILE_PATH)
 
             writemsg(
-                _(
-                    "\n\n!!! %s is not a symlink and will probably prevent most merges.\n"
-                )
-                % abs_profile_path,
+                _("\n\n!!! %s is not a symlink and will probably prevent most merges.\n") % abs_profile_path,
                 noiselevel=-1,
             )
-            writemsg(
-                _("!!! It should point into a profile within %s/profiles/\n")
-                % self["PORTDIR"]
-            )
-            writemsg(
-                _(
-                    "!!! (You can safely ignore this message when syncing. It's harmless.)\n\n\n"
-                )
-            )
+            writemsg(_("!!! It should point into a profile within %s/profiles/\n") % self["PORTDIR"])
+            writemsg(_("!!! (You can safely ignore this message when syncing. It's harmless.)\n\n\n"))
 
         abs_user_virtuals = os.path.join(self["PORTAGE_CONFIGROOT"], USER_VIRTUALS_FILE)
         if os.path.exists(abs_user_virtuals):
@@ -1485,38 +1367,28 @@ class config:
             writemsg("!!! /etc/portage/profile/virtuals. Please move it to\n")
             writemsg("!!! this new location.\n\n")
 
-        if not sandbox_capable and (
-            "sandbox" in self.features or "usersandbox" in self.features
-        ):
-            if self.profile_path is not None and os.path.realpath(
-                self.profile_path
-            ) == os.path.realpath(
-                os.path.join(self["PORTAGE_CONFIGROOT"], PROFILE_PATH)
-            ):
+        if not sandbox_capable and ("sandbox" in self.features or "usersandbox" in self.features):
+            if self.profile_path is not None and os.path.realpath(self.profile_path) == os.path.realpath(
+                    os.path.join(self["PORTAGE_CONFIGROOT"], PROFILE_PATH)):
                 # Don't show this warning when running repoman and the
                 # sandbox feature came from a profile that doesn't belong
                 # to the user.
                 writemsg(
-                    colorize(
-                        "BAD", _("!!! Problem with sandbox" " binary. Disabling...\n\n")
-                    ),
+                    colorize("BAD", _("!!! Problem with sandbox"
+                                      " binary. Disabling...\n\n")),
                     noiselevel=-1,
                 )
 
         if "fakeroot" in self.features and not fakeroot_capable:
             writemsg(
-                _(
-                    "!!! FEATURES=fakeroot is enabled, but the "
-                    "fakeroot binary is not installed.\n"
-                ),
+                _("!!! FEATURES=fakeroot is enabled, but the "
+                  "fakeroot binary is not installed.\n"),
                 noiselevel=-1,
             )
 
         if "webrsync-gpg" in self.features:
             writemsg(
-                _(
-                    "!!! FEATURES=webrsync-gpg is deprecated, see the make.conf(5) man page.\n"
-                ),
+                _("!!! FEATURES=webrsync-gpg is deprecated, see the make.conf(5) man page.\n"),
                 noiselevel=-1,
             )
 
@@ -1525,20 +1397,16 @@ class config:
 
             if "userpriv" in self.features:
                 writemsg(
-                    _(
-                        "!!! FEATURES=userpriv is enabled, but "
-                        "os.setgroups is not available.\n"
-                    ),
+                    _("!!! FEATURES=userpriv is enabled, but "
+                      "os.setgroups is not available.\n"),
                     noiselevel=-1,
                 )
                 warning_shown = True
 
             if "userfetch" in self.features:
                 writemsg(
-                    _(
-                        "!!! FEATURES=userfetch is enabled, but "
-                        "os.setgroups is not available.\n"
-                    ),
+                    _("!!! FEATURES=userfetch is enabled, but "
+                      "os.setgroups is not available.\n"),
                     noiselevel=-1,
                 )
                 warning_shown = True
@@ -1569,21 +1437,14 @@ class config:
                     noiselevel=-1,
                 )
             else:
-                if (
-                    self.get(
-                        f"BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}", None
-                    )
-                    is not None
-                ):
+                if (self.get(f"BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}", None) is not None):
                     compression["compress"] = compression["compress"].replace(
                         "${BINPKG_COMPRESS_FLAGS}",
                         f"${{BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}}}",
                     )
 
                 try:
-                    compression_binary = shlex_split(
-                        portage.util.varexpand(compression["compress"], mydict=self)
-                    )[0]
+                    compression_binary = shlex_split(portage.util.varexpand(compression["compress"], mydict=self))[0]
                 except IndexError as e:
                     writemsg(
                         "!!! BINPKG_COMPRESS contains invalid or "
@@ -1595,8 +1456,7 @@ class config:
                         missing_package = compression["package"]
                         writemsg(
                             "!!! BINPKG_COMPRESS unsupported %s. "
-                            "Missing package: %s"
-                            % (binpkg_compression, missing_package),
+                            "Missing package: %s" % (binpkg_compression, missing_package),
                             noiselevel=-1,
                         )
 
@@ -1689,9 +1549,7 @@ class config:
             if use is None:
                 use = frozenset(settings["PORTAGE_USE"].split())
 
-            values[
-                "ACCEPT_LICENSE"
-            ] = settings._license_manager.get_prunned_accept_license(
+            values["ACCEPT_LICENSE"] = settings._license_manager.get_prunned_accept_license(
                 settings.mycpv,
                 use,
                 settings.get("LICENSE", ""),
@@ -1704,9 +1562,7 @@ class config:
 
         def _flatten(self, var, use, settings):
             try:
-                restrict = set(
-                    use_reduce(settings.get(var, ""), uselist=use, flat=True)
-                )
+                restrict = set(use_reduce(settings.get(var, ""), uselist=use, flat=True))
             except InvalidDependString:
                 restrict = set()
             return " ".join(sorted(restrict))
@@ -1739,9 +1595,7 @@ class config:
         def __getitem__(self, key):
             prefix = key.lower() + "_"
             prefix_len = len(prefix)
-            expand_flags = {
-                x[prefix_len:] for x in self._use if x[:prefix_len] == prefix
-            }
+            expand_flags = {x[prefix_len:] for x in self._use if x[:prefix_len] == prefix}
             var_split = self._use_expand_dict.get(key, "").split()
             # Preserve the order of var_split because it can matter for things
             # like LINGUAS.
@@ -1895,9 +1749,7 @@ class config:
                 pkg_configdict["PORTAGE_REPO_NAME"] = repository
             iuse = pkg_configdict["IUSE"]
             if pkg is None:
-                self.mycpv = _pkg_str(
-                    self.mycpv, metadata=pkg_configdict, settings=self
-                )
+                self.mycpv = _pkg_str(self.mycpv, metadata=pkg_configdict, settings=self)
                 cpv_slot = self.mycpv
             else:
                 cpv_slot = pkg
@@ -1918,9 +1770,7 @@ class config:
         if repository and repository != Package.UNKNOWN_REPO:
             repos = []
             try:
-                repos.extend(
-                    repo.name for repo in self.repositories[repository].masters
-                )
+                repos.extend(repo.name for repo in self.repositories[repository].masters)
             except KeyError:
                 pass
             repos.append(repository)
@@ -1943,9 +1793,7 @@ class config:
 
         if repo_env or self.configdict["repo"]:
             self.configdict["repo"].clear()
-            self.configdict["repo"].update(
-                stack_dicts(repo_env, incrementals=self.incrementals)
-            )
+            self.configdict["repo"].update(stack_dicts(repo_env, incrementals=self.incrementals))
             has_changed = True
 
         defaults = []
@@ -1999,9 +1847,7 @@ class config:
 
         bashrc_files = []
 
-        for profile, profile_bashrc in zip(
-            self._locations_manager.profiles_complex, self._profile_bashrc
-        ):
+        for profile, profile_bashrc in zip(self._locations_manager.profiles_complex, self._profile_bashrc):
             if profile_bashrc:
                 bashrc_files.append(os.path.join(profile.location, "profile.bashrc"))
             if profile in self._pbashrcdict:
@@ -2027,9 +1873,7 @@ class config:
             # it. Discard any package.use settings here and they'll
             # be added back later.
             pkg_configdict.pop("USE", None)
-            self._grab_pkg_env(
-                self._penv, pkg_configdict, protected_keys=protected_pkg_keys
-            )
+            self._grab_pkg_env(self._penv, pkg_configdict, protected_keys=protected_pkg_keys)
 
             # Now add package.use settings, which override USE from
             # package.env
@@ -2042,10 +1886,7 @@ class config:
         elif previous_penv:
             has_changed = True
 
-        if not (
-            previous_iuse == iuse
-            and previous_iuse_effective is not None == eapi_attrs.iuse_effective
-        ):
+        if not (previous_iuse == iuse and previous_iuse_effective is not None == eapi_attrs.iuse_effective):
             has_changed = True
 
         if has_changed:
@@ -2083,38 +1924,27 @@ class config:
         if raw_restrict:
             try:
                 if built_use is not None:
-                    properties = use_reduce(
-                        raw_properties, uselist=built_use, flat=True
-                    )
+                    properties = use_reduce(raw_properties, uselist=built_use, flat=True)
                     restrict = use_reduce(raw_restrict, uselist=built_use, flat=True)
                 else:
                     properties = use_reduce(
                         raw_properties,
-                        uselist=frozenset(
-                            x
-                            for x in self["USE"].split()
-                            if x in explicit_iuse or iuse_implicit_match(x)
-                        ),
+                        uselist=frozenset(x for x in self["USE"].split()
+                                          if x in explicit_iuse or iuse_implicit_match(x)),
                         flat=True,
                     )
                     restrict = use_reduce(
                         raw_restrict,
-                        uselist=frozenset(
-                            x
-                            for x in self["USE"].split()
-                            if x in explicit_iuse or iuse_implicit_match(x)
-                        ),
+                        uselist=frozenset(x for x in self["USE"].split()
+                                          if x in explicit_iuse or iuse_implicit_match(x)),
                         flat=True,
                     )
             except PortageException:
                 pass
             else:
                 allow_test = self.get("ALLOW_TEST", "").split()
-                restrict_test = (
-                    "test" in restrict
-                    and not "all" in allow_test
-                    and not ("test_network" in properties and "network" in allow_test)
-                )
+                restrict_test = ("test" in restrict and not "all" in allow_test
+                                 and not ("test_network" in properties and "network" in allow_test))
 
         if restrict_test and "test" in self.features:
             # Handle it like IUSE="-test", since features USE is
@@ -2135,15 +1965,9 @@ class config:
             env_configdict.pop(k, None)
 
         lazy_vars = self._lazy_vars(built_use, self)
-        env_configdict.addLazySingleton(
-            "ACCEPT_LICENSE", lazy_vars.__getitem__, "ACCEPT_LICENSE"
-        )
-        env_configdict.addLazySingleton(
-            "PORTAGE_PROPERTIES", lazy_vars.__getitem__, "PORTAGE_PROPERTIES"
-        )
-        env_configdict.addLazySingleton(
-            "PORTAGE_RESTRICT", lazy_vars.__getitem__, "PORTAGE_RESTRICT"
-        )
+        env_configdict.addLazySingleton("ACCEPT_LICENSE", lazy_vars.__getitem__, "ACCEPT_LICENSE")
+        env_configdict.addLazySingleton("PORTAGE_PROPERTIES", lazy_vars.__getitem__, "PORTAGE_PROPERTIES")
+        env_configdict.addLazySingleton("PORTAGE_RESTRICT", lazy_vars.__getitem__, "PORTAGE_RESTRICT")
 
         if built_use is not None:
             pkg_configdict["PORTAGE_BUILT_USE"] = " ".join(built_use)
@@ -2176,8 +2000,7 @@ class config:
                 "  declare -gA ___PORTAGE_IUSE_HASH=(%s); "
                 "fi; "
                 "[[ -n ${___PORTAGE_IUSE_HASH[$1]} ]]; "
-                "}"
-            ) % " ".join(f'["{x}"]=1' for x in portage_iuse)
+                "}") % " ".join(f'["{x}"]=1' for x in portage_iuse)
         else:
             portage_iuse = self._get_implicit_iuse()
             portage_iuse.update(explicit_iuse)
@@ -2187,12 +2010,8 @@ class config:
             # implementing ___in_portage_iuse() the older/slower way.
 
             # PORTAGE_IUSE is not always needed so it's lazily evaluated.
-            self.configdict["env"].addLazySingleton(
-                "PORTAGE_IUSE", _lazy_iuse_regex, portage_iuse
-            )
-            self.configdict["env"][
-                "BASH_FUNC____in_portage_iuse%%"
-            ] = "() { [[ $1 =~ ${PORTAGE_IUSE} ]]; }"
+            self.configdict["env"].addLazySingleton("PORTAGE_IUSE", _lazy_iuse_regex, portage_iuse)
+            self.configdict["env"]["BASH_FUNC____in_portage_iuse%%"] = "() { [[ $1 =~ ${PORTAGE_IUSE} ]]; }"
 
         ebuild_force_test = not restrict_test and self.get("EBUILD_FORCE_TEST") == "1"
 
@@ -2208,13 +2027,7 @@ class config:
 
         # Allow _* flags from USE_EXPAND wildcards to pass through here.
         use.difference_update(
-            [
-                x
-                for x in use
-                if (x not in explicit_iuse and not iuse_implicit_match(x))
-                and x[-2:] != "_*"
-            ]
-        )
+            [x for x in use if (x not in explicit_iuse and not iuse_implicit_match(x)) and x[-2:] != "_*"])
 
         # Use the calculated USE flags to regenerate the USE_EXPAND flags so
         # that they are consistent. For optimal performance, use slice
@@ -2236,7 +2049,7 @@ class config:
             if len(x_split) == 1:
                 continue
             for i in range(len(x_split) - 1):
-                k = "_".join(x_split[: i + 1])
+                k = "_".join(x_split[:i + 1])
                 if k in use_expand_split:
                     use_expand_iuses[k].add(x)
                     break
@@ -2259,9 +2072,7 @@ class config:
         # attribute since we still want to be able to see global USE
         # settings for things like emerge --info.
 
-        self.configdict["env"]["PORTAGE_USE"] = " ".join(
-            sorted(x for x in use if x[-2:] != "_*")
-        )
+        self.configdict["env"]["PORTAGE_USE"] = " ".join(sorted(x for x in use if x[-2:] != "_*"))
 
         # Clear the eapi cache here rather than in the constructor, since
         # setcpv triggers lazy instantiation of things like _use_manager.
@@ -2286,16 +2097,15 @@ class config:
             )
             if penvconfig is None:
                 writemsg(
-                    "!!! %s references non-existent file: %s\n"
-                    % (os.path.join(abs_user_config, "package.env"), penvfile),
+                    "!!! %s references non-existent file: %s\n" %
+                    (os.path.join(abs_user_config, "package.env"), penvfile),
                     noiselevel=-1,
                 )
             else:
                 for k, v in penvconfig.items():
                     if k in protected_keys or k in non_user_variables:
                         writemsg(
-                            "!!! Illegal variable "
-                            + f"'{k}' assigned in '{penvfile}'\n",
+                            "!!! Illegal variable " + f"'{k}' assigned in '{penvfile}'\n",
                             noiselevel=-1,
                         )
                     elif k in incrementals:
@@ -2388,9 +2198,7 @@ class config:
         @rtype: String
         @return: A matching atom string or None if one is not found.
         """
-        return self._mask_manager.getMaskAtom(
-            cpv, metadata["SLOT"], metadata.get("repository")
-        )
+        return self._mask_manager.getMaskAtom(cpv, metadata["SLOT"], metadata.get("repository"))
 
     def _getRawMaskAtom(self, cpv, metadata):
         """
@@ -2404,9 +2212,7 @@ class config:
         @rtype: String
         @return: A matching atom string or None if one is not found.
         """
-        return self._mask_manager.getRawMaskAtom(
-            cpv, metadata["SLOT"], metadata.get("repository")
-        )
+        return self._mask_manager.getRawMaskAtom(cpv, metadata["SLOT"], metadata.get("repository"))
 
     def _getProfileMaskAtom(self, cpv, metadata):
         """
@@ -2476,9 +2282,7 @@ class config:
         # Hack: Need to check the env directly here as otherwise stacking
         # doesn't work properly as negative values are lost in the config
         # object (bug #139600)
-        backuped_accept_keywords = self.configdict["backupenv"].get(
-            "ACCEPT_KEYWORDS", ""
-        )
+        backuped_accept_keywords = self.configdict["backupenv"].get("ACCEPT_KEYWORDS", "")
         global_accept_keywords = self.get("ACCEPT_KEYWORDS", "")
 
         return self._keywords_manager.getMissingKeywords(
@@ -2517,9 +2321,8 @@ class config:
     def _getPKeywords(self, cpv, metadata):
         global_accept_keywords = self.get("ACCEPT_KEYWORDS", "")
 
-        return self._keywords_manager.getPKeywords(
-            cpv, metadata["SLOT"], metadata.get("repository"), global_accept_keywords
-        )
+        return self._keywords_manager.getPKeywords(cpv, metadata["SLOT"], metadata.get("repository"),
+                                                   global_accept_keywords)
 
     def _getMissingLicenses(self, cpv, metadata):
         """
@@ -2590,11 +2393,7 @@ class config:
         else:
             use = []
 
-        return [
-            x
-            for x in use_reduce(properties_str, uselist=use, flat=True)
-            if x not in acceptable_properties
-        ]
+        return [x for x in use_reduce(properties_str, uselist=use, flat=True) if x not in acceptable_properties]
 
     def _getMissingRestrict(self, cpv, metadata):
         """
@@ -2643,11 +2442,7 @@ class config:
         else:
             use = []
 
-        return [
-            x
-            for x in use_reduce(restrict_str, uselist=use, flat=True)
-            if x not in acceptable_restricts
-        ]
+        return [x for x in use_reduce(restrict_str, uselist=use, flat=True) if x not in acceptable_restricts]
 
     def _accept_chost(self, cpv, metadata):
         """
@@ -2666,20 +2461,16 @@ class config:
                     self._accept_chost_re = re.compile(r"^%s$" % accept_chost[0])
                 except re.error as e:
                     writemsg(
-                        _("!!! Invalid ACCEPT_CHOSTS value: '%s': %s\n")
-                        % (accept_chost[0], e),
+                        _("!!! Invalid ACCEPT_CHOSTS value: '%s': %s\n") % (accept_chost[0], e),
                         noiselevel=-1,
                     )
                     self._accept_chost_re = re.compile("^$")
             else:
                 try:
-                    self._accept_chost_re = re.compile(
-                        r"^(%s)$" % "|".join(accept_chost)
-                    )
+                    self._accept_chost_re = re.compile(r"^(%s)$" % "|".join(accept_chost))
                 except re.error as e:
                     writemsg(
-                        _("!!! Invalid ACCEPT_CHOSTS value: '%s': %s\n")
-                        % (" ".join(accept_chost), e),
+                        _("!!! Invalid ACCEPT_CHOSTS value: '%s': %s\n") % (" ".join(accept_chost), e),
                         noiselevel=-1,
                     )
                     self._accept_chost_re = re.compile("^$")
@@ -2695,9 +2486,7 @@ class config:
     def reload(self):
         """Reload things like /etc/profile.env that can change during runtime."""
         self.configdict["env.d"].clear()
-        env_d = self._get_env_d(
-            broot=self["BROOT"], eroot=self["EROOT"], tolerant=self._tolerant
-        )
+        env_d = self._get_env_d(broot=self["BROOT"], eroot=self["EROOT"], tolerant=self._tolerant)
         for k in self._env_d_blacklist:
             env_d.pop(k, None)
         self.configdict["env.d"].update(env_d)
@@ -2765,7 +2554,7 @@ class config:
                 self._accept_properties = tuple(mysplit)
         else:
             # repoman will accept any property
-            self._accept_properties = ("*",)
+            self._accept_properties = ("*", )
 
         if self.local_config:
             mysplit = []
@@ -2777,7 +2566,7 @@ class config:
                 self._accept_restrict = tuple(mysplit)
         else:
             # repoman will accept any property
-            self._accept_restrict = ("*",)
+            self._accept_restrict = ("*", )
 
         increment_lists = {}
         for k in myincrementals:
@@ -2807,10 +2596,8 @@ class config:
                         writemsg(
                             colorize(
                                 "BAD",
-                                _("%s values should not start with a '+': %s")
-                                % (mykey, x),
-                            )
-                            + "\n",
+                                _("%s values should not start with a '+': %s") % (mykey, x),
+                            ) + "\n",
                             noiselevel=-1,
                         )
                         x = x[1:]
@@ -2917,7 +2704,8 @@ class config:
                     writemsg(
                         colorize(
                             "BAD",
-                            _("USE flags should not start " "with a '+': %s\n") % x,
+                            _("USE flags should not start "
+                              "with a '+': %s\n") % x,
                         ),
                         noiselevel=-1,
                     )
@@ -2929,9 +2717,7 @@ class config:
                     if x[-2:] == "_*":
                         prefix = x[1:-1]
                         prefix_len = len(prefix)
-                        myflags.difference_update(
-                            [y for y in myflags if y[:prefix_len] == prefix]
-                        )
+                        myflags.difference_update([y for y in myflags if y[:prefix_len] == prefix])
                     myflags.discard(x[1:])
                     continue
 
@@ -2975,12 +2761,9 @@ class config:
                             writemsg(
                                 colorize(
                                     "BAD",
-                                    _(
-                                        "Invalid '+' "
-                                        "operator in non-incremental variable "
-                                        "'%s': '%s'\n"
-                                    )
-                                    % (var, x),
+                                    _("Invalid '+' "
+                                      "operator in non-incremental variable "
+                                      "'%s': '%s'\n") % (var, x),
                                 ),
                                 noiselevel=-1,
                             )
@@ -2989,12 +2772,9 @@ class config:
                             writemsg(
                                 colorize(
                                     "BAD",
-                                    _(
-                                        "Invalid '+' "
-                                        "operator in incremental variable "
-                                        "'%s': '%s'\n"
-                                    )
-                                    % (var, x),
+                                    _("Invalid '+' "
+                                      "operator in incremental variable "
+                                      "'%s': '%s'\n") % (var, x),
                                 ),
                                 noiselevel=-1,
                             )
@@ -3004,12 +2784,9 @@ class config:
                             writemsg(
                                 colorize(
                                     "BAD",
-                                    _(
-                                        "Invalid '-' "
-                                        "operator in non-incremental variable "
-                                        "'%s': '%s'\n"
-                                    )
-                                    % (var, x),
+                                    _("Invalid '-' "
+                                      "operator in non-incremental variable "
+                                      "'%s': '%s'\n") % (var, x),
                                 ),
                                 noiselevel=-1,
                             )
@@ -3042,9 +2819,7 @@ class config:
             for k in use_expand:
                 prefix = k.lower() + "_"
                 prefix_len = len(prefix)
-                expand_flags = {
-                    x[prefix_len:] for x in myflags if x[:prefix_len] == prefix
-                }
+                expand_flags = {x[prefix_len:] for x in myflags if x[:prefix_len] == prefix}
                 var_split = use_expand_dict.get(k, "").split()
                 var_split = [x for x in var_split if x in expand_flags]
                 var_split.extend(sorted(expand_flags.difference(var_split)))
@@ -3064,8 +2839,7 @@ class config:
     @property
     def virts_p(self):
         warnings.warn(
-            "portage config.virts_p attribute "
-            + "is deprecated, use config.get_virts_p()",
+            "portage config.virts_p attribute " + "is deprecated, use config.get_virts_p()",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -3074,8 +2848,7 @@ class config:
     @property
     def virtuals(self):
         warnings.warn(
-            "portage config.virtuals attribute "
-            + "is deprecated, use config.getvirtuals()",
+            "portage config.virtuals attribute " + "is deprecated, use config.getvirtuals()",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -3116,20 +2889,14 @@ class config:
             return self._getitem(key)
         except KeyError:
             if portage._internal_caller:
-                stack = (
-                    traceback.format_stack()[:-1]
-                    + traceback.format_exception(*sys.exc_info())[1:]
-                )
+                stack = (traceback.format_stack()[:-1] + traceback.format_exception(*sys.exc_info())[1:])
                 try:
                     # Ensure that output is written to terminal.
                     with open("/dev/tty", "w") as f:
                         f.write("=" * 96 + "\n")
-                        f.write(
-                            "=" * 8
-                            + " Traceback for invalid call to portage.package.ebuild.config.config.__getitem__ "
-                            + "=" * 8
-                            + "\n"
-                        )
+                        f.write("=" * 8 +
+                                " Traceback for invalid call to portage.package.ebuild.config.config.__getitem__ " +
+                                "=" * 8 + "\n")
                         f.writelines(stack)
                         f.write("=" * 96 + "\n")
                 except Exception:
@@ -3137,8 +2904,7 @@ class config:
                 raise
             else:
                 warnings.warn(
-                    _("Passing nonexistent key %r to %s is deprecated. Use %s instead.")
-                    % (
+                    _("Passing nonexistent key %r to %s is deprecated. Use %s instead.") % (
                         key,
                         "portage.package.ebuild.config.config.__getitem__",
                         "portage.package.ebuild.config.config.get",
@@ -3158,15 +2924,11 @@ class config:
                 return portage._pym_path
 
             if mykey == "PORTAGE_PYTHONPATH":
-                value = [
-                    x for x in self.backupenv.get("PYTHONPATH", "").split(":") if x
-                ]
+                value = [x for x in self.backupenv.get("PYTHONPATH", "").split(":") if x]
                 need_pym_path = True
                 if value:
                     try:
-                        need_pym_path = not os.path.samefile(
-                            value[0], portage._pym_path
-                        )
+                        need_pym_path = not os.path.samefile(value[0], portage._pym_path)
                     except OSError:
                         pass
                 if need_pym_path:
@@ -3201,9 +2963,7 @@ class config:
     def pop(self, key, *args):
         self.modifying()
         if len(args) > 1:
-            raise TypeError(
-                "pop expected at most 2 arguments, got " + repr(1 + len(args))
-            )
+            raise TypeError("pop expected at most 2 arguments, got " + repr(1 + len(args)))
         v = self
         for d in reversed(self.lookuplist):
             v = d.pop(key, v)
@@ -3246,9 +3006,7 @@ class config:
     def __setitem__(self, mykey, myvalue):
         "set a value; will be thrown away at reset() time"
         if not isinstance(myvalue, str):
-            raise ValueError(
-                f"Invalid type being used as a value: '{str(mykey)}': '{str(myvalue)}'"
-            )
+            raise ValueError(f"Invalid type being used as a value: '{str(mykey)}': '{str(myvalue)}'")
 
         # Avoid potential UnicodeDecodeError exceptions later.
         mykey = _unicode_decode(mykey)
@@ -3268,15 +3026,10 @@ class config:
         phase = self.get("EBUILD_PHASE")
         emerge_from = self.get("EMERGE_FROM")
         filter_calling_env = False
-        if (
-            self.mycpv is not None
-            and not (emerge_from == "ebuild" and phase == "setup")
-            and phase not in ("clean", "cleanrm", "depend", "fetch")
-        ):
+        if (self.mycpv is not None and not (emerge_from == "ebuild" and phase == "setup")
+                and phase not in ("clean", "cleanrm", "depend", "fetch")):
             temp_dir = self.get("T")
-            if temp_dir is not None and os.path.exists(
-                os.path.join(temp_dir, "environment")
-            ):
+            if temp_dir is not None and os.path.exists(os.path.join(temp_dir, "environment")):
                 filter_calling_env = True
 
         environ_whitelist = self._environ_whitelist
@@ -3289,11 +3042,7 @@ class config:
                     noiselevel=-1,
                 )
                 continue
-            if (
-                filter_calling_env
-                and x not in environ_whitelist
-                and not self._environ_whitelist_re.match(x)
-            ):
+            if (filter_calling_env and x not in environ_whitelist and not self._environ_whitelist_re.match(x)):
                 # Do not allow anything to leak into the ebuild
                 # environment unless it is explicitly whitelisted.
                 # This ensures that variables unset by the ebuild
@@ -3331,9 +3080,7 @@ class config:
         if not eapi_exports_merge_type(eapi):
             mydict.pop("MERGE_TYPE", None)
 
-        src_like_phase = phase == "setup" or _phase_func_map.get(phase, "").startswith(
-            "src_"
-        )
+        src_like_phase = phase == "setup" or _phase_func_map.get(phase, "").startswith("src_")
 
         if not (src_like_phase and eapi_attrs.sysroot):
             mydict.pop("ESYSROOT", None)
@@ -3342,20 +3089,18 @@ class config:
             mydict.pop("BROOT", None)
 
         if phase == "depend" or (
-            # Prefix variables are supported beginning with EAPI 3.
-            eapi is not None
-            and not eapi_supports_prefix(eapi)
-        ):
+                # Prefix variables are supported beginning with EAPI 3.
+                eapi is not None and not eapi_supports_prefix(eapi)):
             mydict.pop("ED", None)
             mydict.pop("EPREFIX", None)
             mydict.pop("EROOT", None)
             mydict.pop("ESYSROOT", None)
 
         if phase not in (
-            "pretend",
-            "setup",
-            "preinst",
-            "postinst",
+                "pretend",
+                "setup",
+                "preinst",
+                "postinst",
         ) or not eapi_exports_replace_vars(eapi):
             mydict.pop("REPLACING_VERSIONS", None)
 
@@ -3415,14 +3160,11 @@ class config:
             thirdparty_lists = []
             for repo_name in reversed(self.repositories.prepos_order):
                 thirdparty_lists.append(
-                    grabdict(
-                        os.path.join(
-                            self.repositories[repo_name].location,
-                            "profiles",
-                            "thirdpartymirrors",
-                        )
-                    )
-                )
+                    grabdict(os.path.join(
+                        self.repositories[repo_name].location,
+                        "profiles",
+                        "thirdpartymirrors",
+                    )))
             self._thirdpartymirrors = stack_dictlist(thirdparty_lists, incremental=True)
         return self._thirdpartymirrors
 
@@ -3444,9 +3186,7 @@ class config:
                         self._selinux_enabled = 0
                 else:
                     writemsg(
-                        _(
-                            "!!! SELinux module not found. Please verify that it was installed.\n"
-                        ),
+                        _("!!! SELinux module not found. Please verify that it was installed.\n"),
                         noiselevel=-1,
                     )
                     self._selinux_enabled = 0

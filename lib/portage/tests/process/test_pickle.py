@@ -9,6 +9,7 @@ from _emerge.FifoIpcDaemon import FifoIpcDaemon
 
 
 class PickleTestCase(TestCase):
+
     def test_PackageMetadataWrapperBase(self):
         """
         Verify that instances of slot_dict_class, like
@@ -29,9 +30,7 @@ class PickleTestCase(TestCase):
         Verify that FifoIpcDaemon._files_dict instances are picklable for
         compatibility with the multiprocessing spawn start method.
         """
-        obj = FifoIpcDaemon._files_dict(
-            (k, "test-value") for k in FifoIpcDaemon._file_names
-        )
+        obj = FifoIpcDaemon._files_dict((k, "test-value") for k in FifoIpcDaemon._file_names)
         self.assertEqual(obj["pipe_in"], "test-value")
         # Attributes of same name exist because of slot_dict_class prefix="" argument.
         self.assertEqual(obj.pipe_in, obj["pipe_in"])

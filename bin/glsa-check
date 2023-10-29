@@ -11,12 +11,8 @@ import operator
 
 from os import path as osp
 
-if osp.isfile(
-    osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")
-):
-    sys.path.insert(
-        0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib")
-    )
+if osp.isfile(osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")):
+    sys.path.insert(0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib"))
 import portage
 
 portage._internal_caller = True
@@ -29,14 +25,10 @@ __author__ = "Marius Mauch <genone@gentoo.org>"
 __version__ = "1.0.1"
 
 # option parsing
-epilog = (
-    "glsa-list can contain an arbitrary number of GLSA ids,"
-    " filenames containing GLSAs or the special identifiers"
-    " 'all' and 'affected'"
-)
-parser = argparse.ArgumentParser(
-    usage=__program__ + " <option> [glsa-id | all | new | affected]", epilog=epilog
-)
+epilog = ("glsa-list can contain an arbitrary number of GLSA ids,"
+          " filenames containing GLSAs or the special identifiers"
+          " 'all' and 'affected'")
+parser = argparse.ArgumentParser(usage=__program__ + " <option> [glsa-id | all | new | affected]", epilog=epilog)
 
 modes = parser.add_argument_group("Modes")
 modes.add_argument(
@@ -55,9 +47,7 @@ modes.add_argument(
     dest="mode",
     help="Show all information about the GLSA(s) or set",
 )
-modes.add_argument(
-    "--print", action="store_const", const="dump", dest="mode", help="Alias for --dump"
-)
+modes.add_argument("--print", action="store_const", const="dump", dest="mode", help="Alias for --dump")
 modes.add_argument(
     "-t",
     "--test",
@@ -80,7 +70,8 @@ modes.add_argument(
     action="store_const",
     const="fix",
     dest="mode",
-    help="(experimental) Attempt to remediate the system based on the instructions given in the GLSA(s) or set. This will only upgrade (when an upgrade path exists) or remove packages",
+    help=
+    "(experimental) Attempt to remediate the system based on the instructions given in the GLSA(s) or set. This will only upgrade (when an upgrade path exists) or remove packages",
 )
 modes.add_argument(
     "-i",
@@ -98,9 +89,7 @@ modes.add_argument(
     dest="mode",
     help="Send a mail with the given GLSAs to the administrator",
 )
-parser.add_argument(
-    "-V", "--version", action="store_true", help="Show information about glsa-check"
-)
+parser.add_argument("-V", "--version", action="store_true", help="Show information about glsa-check")
 parser.add_argument(
     "-q",
     "--quiet",
@@ -108,12 +97,8 @@ parser.add_argument(
     dest="quiet",
     help="Be less verbose and do not send empty mail",
 )
-parser.add_argument(
-    "-v", "--verbose", action="store_true", dest="verbose", help="Print more messages"
-)
-parser.add_argument(
-    "-n", "--nocolor", action="store_true", help="Removes color from output"
-)
+parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Print more messages")
+parser.add_argument("-n", "--nocolor", action="store_true", help="Removes color from output")
 parser.add_argument(
     "-e",
     "--emergelike",
@@ -166,9 +151,7 @@ elif mode != "list" and not params:
     sys.exit(1)
 elif mode in ["fix", "inject"] and os.geteuid() != 0:
     # we need root privileges for write access
-    sys.stderr.write(
-        "\nThis tool needs root access to " + options.mode + " this GLSA\n\n"
-    )
+    sys.stderr.write("\nThis tool needs root access to " + options.mode + " this GLSA\n\n")
     sys.exit(2)
 elif mode == "list" and not params:
     params.append("affected")
@@ -195,9 +178,7 @@ todolist = [e for e in completelist if e not in checklist]
 glsalist = []
 if "new" in params:
     params.remove("new")
-    sys.stderr.write(
-        "Warning: The 'new' glsa-list target has been removed, using 'affected'.\n"
-    )
+    sys.stderr.write("Warning: The 'new' glsa-list target has been removed, using 'affected'.\n")
     params.append("affected")
 
 if "all" in params:
@@ -219,9 +200,7 @@ if "affected" in params:
 # remove invalid parameters
 for p in params[:]:
     if not (p in completelist or os.path.exists(p)):
-        sys.stderr.write(
-            f"(removing {p} from parameter list as it isn't a valid GLSA specification)\n"
-        )
+        sys.stderr.write(f"(removing {p} from parameter list as it isn't a valid GLSA specification)\n")
         params.remove(p)
 
 glsalist.extend([g for g in params if g not in glsalist])
@@ -264,15 +243,7 @@ def summarylist(myglsalist, fd1=sys.stdout, fd2=sys.stderr, encoding="utf-8"):
         else:
             access = ""
 
-        fd1.write(
-            color(myglsa.nr)
-            + " "
-            + color(status)
-            + " "
-            + color(access)
-            + myglsa.title
-            + " ("
-        )
+        fd1.write(color(myglsa.nr) + " " + color(status) + " " + color(access) + myglsa.title + " (")
         if not verbose:
             for pkg in list(myglsa.packages)[:3]:
                 fd1.write(" " + pkg + " ")
@@ -282,12 +253,8 @@ def summarylist(myglsalist, fd1=sys.stdout, fd2=sys.stderr, encoding="utf-8"):
             for cpv in myglsa.packages.keys():
                 pkg = myglsa.packages[cpv]
                 for path in pkg:
-                    v_installed = reduce(
-                        operator.add, [match(v, vardb) for v in path["vul_atoms"]], []
-                    )
-                    u_installed = reduce(
-                        operator.add, [match(u, vardb) for u in path["unaff_atoms"]], []
-                    )
+                    v_installed = reduce(operator.add, [match(v, vardb) for v in path["vul_atoms"]], [])
+                    u_installed = reduce(operator.add, [match(u, vardb) for u in path["unaff_atoms"]], [])
                 mylist = sorted(set(v_installed).difference(set(u_installed)))
                 if len(mylist) > 0:
                     cpv = color(" ".join(mylist))
@@ -331,18 +298,14 @@ if mode in ["dump", "fix", "inject", "pretend"]:
                     sys.stdout.write("Fixing GLSA " + myid + "\n")
                 mergelist = myglsa.getMergeList(least_change=least_change)
                 if mergelist == []:
-                    sys.stdout.write(
-                        ">>> cannot fix GLSA, no unaffected packages available\n"
-                    )
+                    sys.stdout.write(">>> cannot fix GLSA, no unaffected packages available\n")
                     sys.exit(2)
                 for pkg in mergelist:
                     sys.stdout.write(">>> merging " + pkg + "\n")
                     # using emerge for the actual merging as it contains the dependency
                     # code and we want to be consistent in behaviour. Also this functionality
                     # will be integrated in emerge later, so it shouldn't hurt much.
-                    emergecmd = (
-                        "emerge --oneshot" + (" --quiet" if quiet else "") + " =" + pkg
-                    )
+                    emergecmd = ("emerge --oneshot" + (" --quiet" if quiet else "") + " =" + pkg)
                     if verbose:
                         sys.stderr.write(emergecmd + "\n")
                     exitcode = os.system(emergecmd)
@@ -368,9 +331,7 @@ if mode in ["dump", "fix", "inject", "pretend"]:
 
                 # first, extract the atoms that cannot be upgraded (where key == "")
                 no_upgrades = []
-                sys.stdout.write(
-                    ">>> The following updates will be performed for this GLSA:\n"
-                )
+                sys.stdout.write(">>> The following updates will be performed for this GLSA:\n")
                 if "" in mergedict:
                     no_upgrades = mergedict[""]
                     del mergedict[""]
@@ -379,13 +340,7 @@ if mode in ["dump", "fix", "inject", "pretend"]:
                 if mergedict:
                     sys.stdout.write(">>> Updates that will be performed:\n")
                     for upd, vuln in mergedict.items():
-                        sys.stdout.write(
-                            "     "
-                            + green(upd)
-                            + " (vulnerable: "
-                            + red(", ".join(vuln))
-                            + ")\n"
-                        )
+                        sys.stdout.write("     " + green(upd) + " (vulnerable: " + red(", ".join(vuln)) + ")\n")
 
                 if no_upgrades:
                     sys.stdout.write(">>> No upgrade path exists for these packages:\n")
@@ -468,9 +423,7 @@ if mode == "mail":
         myfd.close()
 
     if glsalist or not quiet:
-        mymessage = portage.mail.create_message(
-            myfrom, myrecipient, mysubject, summary, myattachments
-        )
+        mymessage = portage.mail.create_message(myfrom, myrecipient, mysubject, summary, myattachments)
         portage.mail.send_mail(portage.settings, mymessage)
 
     sys.exit(0)

@@ -9,6 +9,7 @@ from portage.util.install_mask import InstallMask, install_mask_dir
 
 
 class InstallMaskTestCase(TestCase):
+
     def testTrailingSlash(self):
         """
         Test that elements with a trailing slash match a directory
@@ -165,9 +166,7 @@ class InstallMaskTestCase(TestCase):
                 self.assertEqual(
                     install_mask.match(path),
                     expected,
-                    'unexpected match result for "{}" with path {}'.format(
-                        install_mask_str, path
-                    ),
+                    'unexpected match result for "{}" with path {}'.format(install_mask_str, path),
                 )
 
     def testSymlinkDir(self):
@@ -187,9 +186,7 @@ class InstallMaskTestCase(TestCase):
 
             install_mask = InstallMask("/foo/")
             install_mask_dir(tmp_dir, install_mask)
-            self.assertFalse(
-                os.path.lexists(link_name), f"failed to remove {link_name}"
-            )
+            self.assertFalse(os.path.lexists(link_name), f"failed to remove {link_name}")
             self.assertFalse(os.path.lexists(base_dir), f"failed to remove {base_dir}")
         finally:
             shutil.rmtree(tmp_dir)

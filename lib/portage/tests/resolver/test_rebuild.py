@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class RebuildTestCase(TestCase):
+
     def testRebuild(self):
         """
         Rebuild packages when build-time dependencies are upgraded.
@@ -18,28 +19,79 @@ class RebuildTestCase(TestCase):
             "sys-libs/x-1": {},
             "sys-libs/x-1-r1": {},
             "sys-libs/x-2": {},
-            "sys-apps/a-1": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/a-2": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/b-1": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/b-2": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/c-1": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/c-2": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/d-1": {"RDEPEND": "sys-libs/x"},
-            "sys-apps/d-2": {"RDEPEND": "sys-libs/x"},
-            "sys-apps/e-2": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/f-2": {"DEPEND": "sys-apps/a", "RDEPEND": ""},
-            "sys-apps/g-2": {"DEPEND": "sys-apps/b sys-libs/x", "RDEPEND": ""},
+            "sys-apps/a-1": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/a-2": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/b-1": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/b-2": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/c-1": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/c-2": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/d-1": {
+                "RDEPEND": "sys-libs/x"
+            },
+            "sys-apps/d-2": {
+                "RDEPEND": "sys-libs/x"
+            },
+            "sys-apps/e-2": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/f-2": {
+                "DEPEND": "sys-apps/a",
+                "RDEPEND": ""
+            },
+            "sys-apps/g-2": {
+                "DEPEND": "sys-apps/b sys-libs/x",
+                "RDEPEND": ""
+            },
         }
 
         installed = {
             "sys-libs/x-1": {},
-            "sys-apps/a-1": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/b-1": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/c-1": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/d-1": {"RDEPEND": "sys-libs/x"},
-            "sys-apps/e-1": {"DEPEND": "sys-libs/x", "RDEPEND": ""},
-            "sys-apps/f-1": {"DEPEND": "sys-apps/a", "RDEPEND": ""},
-            "sys-apps/g-1": {"DEPEND": "sys-apps/b", "RDEPEND": ""},
+            "sys-apps/a-1": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/b-1": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/c-1": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/d-1": {
+                "RDEPEND": "sys-libs/x"
+            },
+            "sys-apps/e-1": {
+                "DEPEND": "sys-libs/x",
+                "RDEPEND": ""
+            },
+            "sys-apps/f-1": {
+                "DEPEND": "sys-apps/a",
+                "RDEPEND": ""
+            },
+            "sys-apps/g-1": {
+                "DEPEND": "sys-apps/b",
+                "RDEPEND": ""
+            },
         }
 
         world = [
@@ -181,9 +233,7 @@ class RebuildTestCase(TestCase):
             ),
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
 
         try:
             for test_case in test_cases:

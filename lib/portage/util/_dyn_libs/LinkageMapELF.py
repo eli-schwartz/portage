@@ -26,7 +26,6 @@ from portage.util import writemsg_level
 from portage.util._dyn_libs.NeededEntry import NeededEntry
 from portage.util.elf.header import ELFHeader
 
-
 # Map ELF e_machine values from NEEDED.ELF.2 to approximate multilib
 # categories. This approximation will produce incorrect results on x32
 # and mips systems, but the result is not worse than using the raw
@@ -52,7 +51,6 @@ _approx_multilib_categories = {
 
 
 class LinkageMapELF:
-
     """Models dynamic linker dependencies."""
 
     _needed_aux_key = "NEEDED.ELF.2"
@@ -107,10 +105,9 @@ class LinkageMapELF:
         return key
 
     class _ObjectKey:
-
         """Helper class used as _obj_properties keys for objects."""
 
-        __slots__ = ("_key",)
+        __slots__ = ("_key", )
 
         def __init__(self, obj, root):
             """
@@ -181,7 +178,7 @@ class LinkageMapELF:
             return isinstance(self._key, tuple)
 
     class _LibGraphNode(_ObjectKey):
-        __slots__ = ("alt_paths",)
+        __slots__ = ("alt_paths", )
 
         def __init__(self, key):
             """
@@ -222,9 +219,7 @@ class LinkageMapELF:
         root = self._root
         root_len = len(root) - 1
         self._clear_cache()
-        self._defpath.update(
-            getlibpaths(self._dbapi.settings["EROOT"], env=self._dbapi.settings)
-        )
+        self._defpath.update(getlibpaths(self._dbapi.settings["EROOT"], env=self._dbapi.settings))
         libs = self._libs
         obj_properties = self._obj_properties
 
@@ -285,19 +280,12 @@ class LinkageMapELF:
             else:
                 for l in proc.stdout:
                     try:
-                        l = _unicode_decode(
-                            l, encoding=_encodings["content"], errors="strict"
-                        )
+                        l = _unicode_decode(l, encoding=_encodings["content"], errors="strict")
                     except UnicodeDecodeError:
-                        l = _unicode_decode(
-                            l, encoding=_encodings["content"], errors="replace"
-                        )
+                        l = _unicode_decode(l, encoding=_encodings["content"], errors="replace")
                         writemsg_level(
-                            _(
-                                "\nError decoding characters "
-                                "returned from scanelf: %s\n\n"
-                            )
-                            % (l,),
+                            _("\nError decoding characters "
+                              "returned from scanelf: %s\n\n") % (l, ),
                             level=logging.ERROR,
                             noiselevel=-1,
                         )
@@ -311,12 +299,12 @@ class LinkageMapELF:
                         continue
                     try:
                         with open(
-                            _unicode_encode(
-                                entry.filename,
-                                encoding=_encodings["fs"],
-                                errors="strict",
-                            ),
-                            "rb",
+                                _unicode_encode(
+                                    entry.filename,
+                                    encoding=_encodings["fs"],
+                                    errors="strict",
+                                ),
+                                "rb",
                         ) as f:
                             elf_header = ELFHeader.read(f)
                     except OSError as e:
@@ -381,7 +369,8 @@ class LinkageMapELF:
                 # os.stat() will raise "TypeError: must be encoded string
                 # without NULL bytes, not str" in this case.
                 writemsg_level(
-                    _("\nLine contains null byte(s) " "in %s: %s\n\n") % (location, l),
+                    _("\nLine contains null byte(s) "
+                      "in %s: %s\n\n") % (location, l),
                     level=logging.ERROR,
                     noiselevel=-1,
                 )
@@ -398,18 +387,12 @@ class LinkageMapELF:
             # multilib category. If all else fails, use e_machine, just
             # as older versions of portage did.
             if entry.multilib_category is None:
-                entry.multilib_category = _approx_multilib_categories.get(
-                    entry.arch, entry.arch
-                )
+                entry.multilib_category = _approx_multilib_categories.get(entry.arch, entry.arch)
 
             entry.filename = normalize_path(entry.filename)
             expand = {"ORIGIN": os.path.dirname(entry.filename)}
             entry.runpaths = frozenset(
-                normalize_path(
-                    varexpand(x, expand, error_leader=lambda: f"{location}: ")
-                )
-                for x in entry.runpaths
-            )
+                normalize_path(varexpand(x, expand, error_leader=lambda: f"{location}: ")) for x in entry.runpaths)
             entry.runpaths = frozensets.setdefault(entry.runpaths, entry.runpaths)
             owner_entries[owner].append(entry)
 
@@ -438,18 +421,10 @@ class LinkageMapELF:
                         implicit_runpaths.append(provider_dir)
 
                 if implicit_runpaths:
-                    entry.runpaths = frozenset(
-                        itertools.chain(entry.runpaths, implicit_runpaths)
-                    )
-                    entry.runpaths = frozensets.setdefault(
-                        entry.runpaths, entry.runpaths
-                    )
+                    entry.runpaths = frozenset(itertools.chain(entry.runpaths, implicit_runpaths))
+                    entry.runpaths = frozensets.setdefault(entry.runpaths, entry.runpaths)
 
-        for owner, entry in (
-            (owner, entry)
-            for (owner, entries) in owner_entries.items()
-            for entry in entries
-        ):
+        for owner, entry in ((owner, entry) for (owner, entries) in owner_entries.items() for entry in entries):
             arch = entry.multilib_category
             obj = entry.filename
             soname = entry.soname
@@ -463,9 +438,7 @@ class LinkageMapELF:
             myprops = obj_properties.get(obj_key)
             if myprops is None:
                 indexed = False
-                myprops = self._obj_properties_class(
-                    arch, needed, path, soname, [], owner
-                )
+                myprops = self._obj_properties_class(arch, needed, path, soname, [], owner)
                 obj_properties[obj_key] = myprops
             # All object paths are added into the obj_properties tuple.
             myprops.alt_paths.append(obj)
@@ -515,7 +488,6 @@ class LinkageMapELF:
         os = _os_merge
 
         class _LibraryCache:
-
             """
             Caches properties associated with paths.
 
@@ -558,9 +530,7 @@ class LinkageMapELF:
                     else:
                         arch = obj_props.arch
                         soname = obj_props.soname
-                    return cache_self.cache.setdefault(
-                        obj, (arch, soname, obj_key, True)
-                    )
+                    return cache_self.cache.setdefault(obj, (arch, soname, obj_key, True))
                 return cache_self.cache.setdefault(obj, (None, None, obj_key, False))
 
         rValue = {}
@@ -590,56 +560,37 @@ class LinkageMapELF:
                 # the same name as the soname exists in obj's runpath.
                 # XXX If we catalog symlinks in LinkageMap, this could be improved.
                 for directory in path:
-                    cachedArch, cachedSoname, cachedKey, cachedExists = cache.get(
-                        os.path.join(directory, soname)
-                    )
+                    cachedArch, cachedSoname, cachedKey, cachedExists = cache.get(os.path.join(directory, soname))
                     # Check that this library provides the needed soname.  Doing
                     # this, however, will cause consumers of libraries missing
                     # sonames to be unnecessarily emerged. (eg libmix.so)
                     if cachedSoname == soname and cachedArch == arch:
                         validLibraries.add(cachedKey)
-                        if debug and cachedKey not in set(
-                            map(self._obj_key_cache.get, libraries)
-                        ):
+                        if debug and cachedKey not in set(map(self._obj_key_cache.get, libraries)):
                             # XXX This is most often due to soname symlinks not in
                             # a library's directory.  We could catalog symlinks in
                             # LinkageMap to avoid checking for this edge case here.
                             writemsg_level(
-                                _("Found provider outside of findProviders:")
-                                + (
-                                    " %s -> %s %s\n"
-                                    % (
-                                        os.path.join(directory, soname),
-                                        self._obj_properties[cachedKey].alt_paths,
-                                        libraries,
-                                    )
-                                ),
+                                _("Found provider outside of findProviders:") + (" %s -> %s %s\n" % (
+                                    os.path.join(directory, soname),
+                                    self._obj_properties[cachedKey].alt_paths,
+                                    libraries,
+                                )),
                                 level=logging.DEBUG,
                                 noiselevel=-1,
                             )
                         # A valid library has been found, so there is no need to
                         # continue.
                         break
-                    if (
-                        debug
-                        and cachedArch == arch
-                        and cachedKey in self._obj_properties
-                    ):
+                    if (debug and cachedArch == arch and cachedKey in self._obj_properties):
                         writemsg_level(
-                            (
-                                _(
-                                    "Broken symlink or missing/bad soname: "
-                                    + "%(dir_soname)s -> %(cachedKey)s "
-                                    + "with soname %(cachedSoname)s but expecting %(soname)s"
-                                )
-                                % {
-                                    "dir_soname": os.path.join(directory, soname),
-                                    "cachedKey": self._obj_properties[cachedKey],
-                                    "cachedSoname": cachedSoname,
-                                    "soname": soname,
-                                }
-                            )
-                            + "\n",
+                            (_("Broken symlink or missing/bad soname: " + "%(dir_soname)s -> %(cachedKey)s " +
+                               "with soname %(cachedSoname)s but expecting %(soname)s") % {
+                                   "dir_soname": os.path.join(directory, soname),
+                                   "cachedKey": self._obj_properties[cachedKey],
+                                   "cachedSoname": cachedSoname,
+                                   "soname": soname,
+                               }) + "\n",
                             level=logging.DEBUG,
                             noiselevel=-1,
                         )
@@ -665,8 +616,7 @@ class LinkageMapELF:
                                 )
                             else:
                                 writemsg_level(
-                                    _("Possibly missing symlink:")
-                                    + f"{os.path.join(os.path.dirname(lib), soname)}\n",
+                                    _("Possibly missing symlink:") + f"{os.path.join(os.path.dirname(lib), soname)}\n",
                                     level=logging.DEBUG,
                                     noiselevel=-1,
                                 )
@@ -718,11 +668,7 @@ class LinkageMapELF:
             raise KeyError(f"{obj_key} ({obj}) not in object list")
         basename = os.path.basename(obj)
         soname = self._obj_properties[obj_key].soname
-        return (
-            len(basename) < len(soname)
-            and basename.endswith(".so")
-            and soname.startswith(basename[:-3])
-        )
+        return (len(basename) < len(soname) and basename.endswith(".so") and soname.startswith(basename[:-3]))
 
     def listLibraryObjects(self):
         """
@@ -772,7 +718,7 @@ class LinkageMapELF:
             raise KeyError(f"{obj_key} not in object list")
         if obj_props.owner is None:
             return ()
-        return (obj_props.owner,)
+        return (obj_props.owner, )
 
     def getSoname(self, obj):
         """
@@ -920,9 +866,7 @@ class LinkageMapELF:
         # have any consumers.
         if not isinstance(obj, self._ObjectKey):
             soname = self._obj_properties[obj_key].soname
-            soname_link = os.path.join(
-                self._root, os.path.dirname(obj).lstrip(os.path.sep), soname
-            )
+            soname_link = os.path.join(self._root, os.path.dirname(obj).lstrip(os.path.sep), soname)
             obj_path = os.path.join(self._root, obj.lstrip(os.sep))
             try:
                 soname_st = os.stat(soname_link)
@@ -931,8 +875,8 @@ class LinkageMapELF:
                 pass
             else:
                 if (obj_st.st_dev, obj_st.st_ino) != (
-                    soname_st.st_dev,
-                    soname_st.st_ino,
+                        soname_st.st_dev,
+                        soname_st.st_ino,
                 ):
                     return set()
 

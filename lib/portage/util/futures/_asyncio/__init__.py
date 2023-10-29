@@ -46,9 +46,7 @@ portage.proxy.lazyimport.lazyimport(
     "portage.util.futures:compat_coroutine@_compat_coroutine",
 )
 from portage.util._eventloop.asyncio_event_loop import (
-    AsyncioEventLoop as _AsyncioEventLoop,
-)
-
+    AsyncioEventLoop as _AsyncioEventLoop, )
 
 _lock = threading.Lock()
 _policy = None
@@ -129,9 +127,7 @@ def create_subprocess_exec(*args, **kwargs):
     kwargs.setdefault("close_fds", False)
     # Use the real asyncio create_subprocess_exec (loop argument
     # is deprecated since since Python 3.8).
-    return ensure_future(
-        _real_asyncio.create_subprocess_exec(*args, **kwargs), loop=loop
-    )
+    return ensure_future(_real_asyncio.create_subprocess_exec(*args, **kwargs), loop=loop)
 
 
 def wait(futures, loop=None, timeout=None, return_when=ALL_COMPLETED):
@@ -181,9 +177,7 @@ def ensure_future(coro_or_future, loop=None):
     loop = _wrap_loop(loop)
     if isinstance(loop._asyncio_wrapper, _AsyncioEventLoop):
         # Use the real asyncio loop and ensure_future.
-        return _real_asyncio.ensure_future(
-            coro_or_future, loop=loop._asyncio_wrapper._loop
-        )
+        return _real_asyncio.ensure_future(coro_or_future, loop=loop._asyncio_wrapper._loop)
 
     if isinstance(coro_or_future, Future):
         return coro_or_future
@@ -285,10 +279,7 @@ def _safe_loop():
                 _real_asyncio.set_event_loop(_loop)
             loop = _thread_weakrefs.loops[thread_key] = _AsyncioEventLoop(loop=_loop)
 
-    if (
-        _thread_weakrefs.mainloop is None
-        and threading.current_thread() is threading.main_thread()
-    ):
+    if (_thread_weakrefs.mainloop is None and threading.current_thread() is threading.main_thread()):
         _thread_weakrefs.mainloop = loop
 
     return loop
@@ -316,7 +307,5 @@ def _thread_weakrefs_atexit():
                     loop.close()
 
 
-_thread_weakrefs = types.SimpleNamespace(
-    lock=threading.Lock(), loops=None, mainloop=None, pid=None
-)
+_thread_weakrefs = types.SimpleNamespace(lock=threading.Lock(), loops=None, mainloop=None, pid=None)
 portage.process.atexit_register(_thread_weakrefs_atexit)

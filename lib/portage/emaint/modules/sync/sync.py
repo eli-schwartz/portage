@@ -17,7 +17,6 @@ from portage.util._async.AsyncScheduler import AsyncScheduler
 import _emerge
 from _emerge.emergelog import emergelog
 
-
 portage.proxy.lazyimport.lazyimport(
     globals(),
     "_emerge.actions:adjust_configs,load_emerge_config",
@@ -52,9 +51,7 @@ class SyncRepos:
 
             # Parse EMERGE_DEFAULT_OPTS, for settings like
             # --package-moves=n.
-            cmdline = portage.util.shlex_split(
-                emerge_config.target_config.settings.get("EMERGE_DEFAULT_OPTS", "")
-            )
+            cmdline = portage.util.shlex_split(emerge_config.target_config.settings.get("EMERGE_DEFAULT_OPTS", ""))
             emerge_config.opts = parse_opts(cmdline, silent=True)[1]
 
             if hasattr(portage, "settings"):
@@ -69,9 +66,7 @@ class SyncRepos:
         self.emerge_config = emerge_config
         if emerge_logging:
             _emerge.emergelog._disable = False
-        self.xterm_titles = (
-            "notitles" not in self.emerge_config.target_config.settings.features
-        )
+        self.xterm_titles = ("notitles" not in self.emerge_config.target_config.settings.features)
         emergelog(self.xterm_titles, " === sync")
 
     def auto_sync(self, **kwargs):
@@ -112,9 +107,7 @@ class SyncRepos:
             return_messages = False
         if isinstance(repo_names, str):
             repo_names = repo_names.split()
-        success, repos, msgs = self._get_repos(
-            auto_sync_only=False, match_repos=repo_names
-        )
+        success, repos, msgs = self._get_repos(auto_sync_only=False, match_repos=repo_names)
         if not success:
             if return_messages:
                 return (False, msgs)
@@ -133,9 +126,7 @@ class SyncRepos:
         for repo in available:
             if repo.name in repos:
                 selected.append(repo)
-            elif repo.aliases is not None and any(
-                alias in repos for alias in repo.aliases
-            ):
+            elif repo.aliases is not None and any(alias in repos for alias in repo.aliases):
                 selected.append(repo)
         return selected
 
@@ -157,11 +148,8 @@ class SyncRepos:
                 missing = match_repos - repo_names
                 if missing:
                     msgs.append(
-                        red(" * ")
-                        + "The specified repo(s) were not found: %s"
-                        % (" ".join(repo_name for repo_name in missing))
-                        + "\n   ...returning"
-                    )
+                        red(" * ") + "The specified repo(s) were not found: %s" %
+                        (" ".join(repo_name for repo_name in missing)) + "\n   ...returning")
                     return (False, repos, msgs)
 
         if auto_sync_only:
@@ -172,22 +160,18 @@ class SyncRepos:
             repos = [repo for repo in repos if repo.sync_type is not None]
             if match_repos is not None:
                 msgs.append(
-                    red(" * ")
-                    + "The specified repo(s) have sync disabled: %s"
-                    % " ".join(repo.name for repo in sync_disabled)
-                    + "\n   ...returning"
-                )
+                    red(" * ") + "The specified repo(s) have sync disabled: %s" % " ".join(repo.name
+                                                                                           for repo in sync_disabled) +
+                    "\n   ...returning")
                 return (False, repos, msgs)
 
         missing_sync_uri = [repo for repo in repos if repo.sync_uri is None]
         if missing_sync_uri:
             repos = [repo for repo in repos if repo.sync_uri is not None]
             msgs.append(
-                red(" * ")
-                + "The specified repo(s) are missing sync-uri: %s"
-                % " ".join(repo.name for repo in missing_sync_uri)
-                + "\n   ...returning"
-            )
+                red(" * ") + "The specified repo(s) are missing sync-uri: %s" % " ".join(repo.name
+                                                                                         for repo in missing_sync_uri) +
+                "\n   ...returning")
             return (False, repos, msgs)
 
         return (True, repos, msgs)
@@ -218,11 +202,8 @@ class SyncRepos:
 
         sync_manager = SyncManager(self.emerge_config.target_config.settings, emergelog)
 
-        max_jobs = (
-            self.emerge_config.opts.get("--jobs", 1)
-            if "parallel-fetch" in self.emerge_config.target_config.settings.features
-            else 1
-        )
+        max_jobs = (self.emerge_config.opts.get("--jobs", 1)
+                    if "parallel-fetch" in self.emerge_config.target_config.settings.features else 1)
         sync_scheduler = SyncScheduler(
             emerge_config=self.emerge_config,
             selected_repos=selected_repos,
@@ -260,9 +241,7 @@ class SyncRepos:
         self._reload_config()
         self._do_pkg_moves()
         msgs.extend(self._check_updates())
-        display_news_notification(
-            self.emerge_config.target_config, self.emerge_config.opts
-        )
+        display_news_notification(self.emerge_config.target_config, self.emerge_config.opts)
 
         if return_messages:
             return (returncode, msgs)
@@ -270,45 +249,31 @@ class SyncRepos:
 
     def _do_pkg_moves(self):
         if self.emerge_config.opts.get("--package-moves") != "n" and _global_updates(
-            self.emerge_config.trees,
-            self.emerge_config.target_config.mtimedb["updates"],
-            quiet=("--quiet" in self.emerge_config.opts),
+                self.emerge_config.trees,
+                self.emerge_config.target_config.mtimedb["updates"],
+                quiet=("--quiet" in self.emerge_config.opts),
         ):
             self.emerge_config.target_config.mtimedb.commit()
             # Reload the whole config.
             self._reload_config()
 
     def _check_updates(self):
-        mybestpv = self.emerge_config.target_config.trees["porttree"].dbapi.xmatch(
-            "bestmatch-visible", portage.const.PORTAGE_PACKAGE_ATOM
-        )
-        mypvs = portage.best(
-            self.emerge_config.target_config.trees["vartree"].dbapi.match(
-                portage.const.PORTAGE_PACKAGE_ATOM
-            )
-        )
+        mybestpv = self.emerge_config.target_config.trees["porttree"].dbapi.xmatch("bestmatch-visible",
+                                                                                   portage.const.PORTAGE_PACKAGE_ATOM)
+        mypvs = portage.best(self.emerge_config.target_config.trees["vartree"].dbapi.match(
+            portage.const.PORTAGE_PACKAGE_ATOM))
         try:
-            old_use = (
-                self.emerge_config.target_config.trees["vartree"]
-                .dbapi.aux_get(mypvs, ["USE"])[0]
-                .split()
-            )
+            old_use = (self.emerge_config.target_config.trees["vartree"].dbapi.aux_get(mypvs, ["USE"])[0].split())
         except KeyError:
             old_use = ()
 
         chk_updated_cfg_files(
             self.emerge_config.target_config.root,
-            portage.util.shlex_split(
-                self.emerge_config.target_config.settings.get("CONFIG_PROTECT", "")
-            ),
+            portage.util.shlex_split(self.emerge_config.target_config.settings.get("CONFIG_PROTECT", "")),
         )
 
         msgs = []
-        if (
-            not (mybestpv and mypvs)
-            or mybestpv == mypvs
-            or "--quiet" in self.emerge_config.opts
-        ):
+        if (not (mybestpv and mypvs) or mybestpv == mypvs or "--quiet" in self.emerge_config.opts):
             return msgs
 
         # Suggest to update to the latest available version of portage.
@@ -319,32 +284,16 @@ class SyncRepos:
         portdb.doebuild_settings.setcpv(mybestpv, mydb=portdb)
         usemask = portdb.doebuild_settings.usemask
         useforce = portdb.doebuild_settings.useforce
-        new_use = (
-            frozenset(portdb.doebuild_settings["PORTAGE_USE"].split()) | useforce
-        ) - usemask
-        new_python_targets = frozenset(
-            x for x in new_use if x.startswith("python_targets_")
-        )
-        old_python_targets = frozenset(
-            x for x in old_use if x.startswith("python_targets_")
-        )
+        new_use = (frozenset(portdb.doebuild_settings["PORTAGE_USE"].split()) | useforce) - usemask
+        new_python_targets = frozenset(x for x in new_use if x.startswith("python_targets_"))
+        old_python_targets = frozenset(x for x in old_use if x.startswith("python_targets_"))
 
         if new_python_targets == old_python_targets:
             msgs.append("")
-            msgs.append(
-                warn(" * ")
-                + bold("An update to portage is available.")
-                + " It is _highly_ recommended"
-            )
-            msgs.append(
-                warn(" * ")
-                + "that you update portage now, before any other packages are updated."
-            )
+            msgs.append(warn(" * ") + bold("An update to portage is available.") + " It is _highly_ recommended")
+            msgs.append(warn(" * ") + "that you update portage now, before any other packages are updated.")
             msgs.append("")
-            msgs.append(
-                warn(" * ")
-                + "To update portage, run 'emerge --oneshot sys-apps/portage' now."
-            )
+            msgs.append(warn(" * ") + "To update portage, run 'emerge --oneshot sys-apps/portage' now.")
             msgs.append("")
         return msgs
 
@@ -357,9 +306,7 @@ class SyncRepos:
         """Creates emaint style messages to return to the task handler"""
         messages = []
         for rval in rvals:
-            messages.append(
-                f"Action: {action} for repo: {rval[0]}, returned code = {rval[1]}"
-            )
+            messages.append(f"Action: {action} for repo: {rval[0]}, returned code = {rval[1]}")
         return messages
 
 
@@ -462,11 +409,7 @@ class SyncScheduler(AsyncScheduler):
         is discovered, choose a random node to break the cycle.
         """
         if self._sync_graph and not self._leaf_nodes:
-            self._leaf_nodes = [
-                obj
-                for obj in self._sync_graph.leaf_nodes()
-                if obj not in self._running_repos
-            ]
+            self._leaf_nodes = [obj for obj in self._sync_graph.leaf_nodes() if obj not in self._running_repos]
 
             if not (self._leaf_nodes or self._running_repos):
                 # If there is a circular master relationship,

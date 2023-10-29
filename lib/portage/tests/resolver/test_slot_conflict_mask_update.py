@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotConflictMaskUpdateTestCase(TestCase):
+
     def testBacktrackingGoodVersionFirst(self):
         """
         When backtracking due to slot conflicts, we masked the version that has been pulled
@@ -16,24 +17,28 @@ class SlotConflictMaskUpdateTestCase(TestCase):
         """
 
         ebuilds = {
-            "dev-libs/A-1": {"DEPEND": "=dev-libs/C-1 dev-libs/B"},
-            "dev-libs/B-1": {"DEPEND": "=dev-libs/C-1"},
-            "dev-libs/B-2": {"DEPEND": "=dev-libs/C-2"},
+            "dev-libs/A-1": {
+                "DEPEND": "=dev-libs/C-1 dev-libs/B"
+            },
+            "dev-libs/B-1": {
+                "DEPEND": "=dev-libs/C-1"
+            },
+            "dev-libs/B-2": {
+                "DEPEND": "=dev-libs/C-2"
+            },
             "dev-libs/C-1": {},
             "dev-libs/C-2": {},
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["dev-libs/A"],
-                mergelist=[
-                    "dev-libs/C-1",
-                    "dev-libs/B-1",
-                    "dev-libs/A-1",
-                ],
-                success=True,
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["dev-libs/A"],
+            mergelist=[
+                "dev-libs/C-1",
+                "dev-libs/B-1",
+                "dev-libs/A-1",
+            ],
+            success=True,
+        ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
 

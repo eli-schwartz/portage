@@ -308,6 +308,7 @@ class digraph:
         return len(self.leaf_nodes(ignore_priority=ignore_priority)) == len(self.order)
 
     def debug_print(self):
+
         def output(s):
             writemsg(s, noiselevel=-1)
 

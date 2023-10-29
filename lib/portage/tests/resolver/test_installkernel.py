@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class InstallKernelTestCase(TestCase):
+
     def testInstallKernel(self):
         ebuilds = {
             "sys-kernel/installkernel-systemd-boot-1": {
@@ -80,9 +81,7 @@ class InstallKernelTestCase(TestCase):
             ),
         )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed)
 
         try:
             for test_case in test_cases:

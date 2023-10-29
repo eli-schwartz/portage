@@ -13,9 +13,7 @@ class ConfigFileSetTestCase(TestCase):
     """Simple Test Case for ConfigFileSet"""
 
     def setUp(self):
-        fd, self.testfile = tempfile.mkstemp(
-            suffix=".testdata", prefix=self.__class__.__name__, text=True
-        )
+        fd, self.testfile = tempfile.mkstemp(suffix=".testdata", prefix=self.__class__.__name__, text=True)
         f = os.fdopen(fd, "w")
         for i in range(0, len(test_cps)):
             atom = test_cps[i]

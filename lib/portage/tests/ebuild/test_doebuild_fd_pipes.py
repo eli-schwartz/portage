@@ -13,6 +13,7 @@ from _emerge.PipeReader import PipeReader
 
 
 class DoebuildFdPipesTestCase(TestCase):
+
     def testDoebuild(self):
         """
         Invoke portage.doebuild() with the fd_pipes parameter, and
@@ -24,20 +25,19 @@ class DoebuildFdPipesTestCase(TestCase):
         output_fd = 200
         ebuild_body = ["S=${WORKDIR}"]
         for phase_func in (
-            "pkg_info",
-            "pkg_nofetch",
-            "pkg_pretend",
-            "pkg_setup",
-            "src_unpack",
-            "src_prepare",
-            "src_configure",
-            "src_compile",
-            "src_test",
-            "src_install",
+                "pkg_info",
+                "pkg_nofetch",
+                "pkg_pretend",
+                "pkg_setup",
+                "src_unpack",
+                "src_prepare",
+                "src_configure",
+                "src_compile",
+                "src_test",
+                "src_install",
         ):
-            ebuild_body.append(
-                ("%s() { echo ${EBUILD_PHASE}" " 1>&%s; }") % (phase_func, output_fd)
-            )
+            ebuild_body.append(("%s() { echo ${EBUILD_PHASE}"
+                                " 1>&%s; }") % (phase_func, output_fd))
 
         ebuild_body.append("")
         ebuild_body = "\n".join(ebuild_body)
@@ -64,18 +64,14 @@ class DoebuildFdPipesTestCase(TestCase):
             portdb = root_config.trees["porttree"].dbapi
             settings = portage.config(clone=playground.settings)
             if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
-                settings["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ[
-                    "__PORTAGE_TEST_HARDLINK_LOCKS"
-                ]
+                settings["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
                 settings.backup_changes("__PORTAGE_TEST_HARDLINK_LOCKS")
 
             settings.features.add("noauto")
             settings.features.add("test")
             settings["PORTAGE_PYTHON"] = portage._python_interpreter
             settings["PORTAGE_QUIET"] = "1"
-            settings["PYTHONDONTWRITEBYTECODE"] = os.environ.get(
-                "PYTHONDONTWRITEBYTECODE", ""
-            )
+            settings["PYTHONDONTWRITEBYTECODE"] = os.environ.get("PYTHONDONTWRITEBYTECODE", "")
 
             fake_bin = os.path.join(settings["EPREFIX"], "bin")
             portage.util.ensure_dirs(fake_bin)
@@ -86,9 +82,7 @@ class DoebuildFdPipesTestCase(TestCase):
             settings.backup_changes("__PORTAGE_TEST_PATH_OVERRIDE")
 
             cpv = "app-misct/foo-1"
-            metadata = dict(
-                zip(Package.metadata_keys, portdb.aux_get(cpv, Package.metadata_keys))
-            )
+            metadata = dict(zip(Package.metadata_keys, portdb.aux_get(cpv, Package.metadata_keys)))
 
             pkg = Package(
                 built=False,
@@ -103,19 +97,19 @@ class DoebuildFdPipesTestCase(TestCase):
             self.assertNotEqual(ebuildpath, None)
 
             for phase in (
-                "info",
-                "nofetch",
-                "pretend",
-                "setup",
-                "unpack",
-                "prepare",
-                "configure",
-                "compile",
-                "test",
-                "install",
-                "qmerge",
-                "clean",
-                "merge",
+                    "info",
+                    "nofetch",
+                    "pretend",
+                    "setup",
+                    "unpack",
+                    "prepare",
+                    "configure",
+                    "compile",
+                    "test",
+                    "install",
+                    "qmerge",
+                    "clean",
+                    "merge",
             ):
                 pr, pw = os.pipe()
 

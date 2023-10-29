@@ -9,35 +9,72 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotCollisionTestCase(TestCase):
+
     def testSlotCollision(self):
         ebuilds = {
-            "dev-libs/A-1": {"PDEPEND": "foo? ( dev-libs/B )", "IUSE": "foo"},
-            "dev-libs/B-1": {"IUSE": "foo"},
-            "dev-libs/C-1": {"DEPEND": "dev-libs/A[foo]", "EAPI": 2},
+            "dev-libs/A-1": {
+                "PDEPEND": "foo? ( dev-libs/B )",
+                "IUSE": "foo"
+            },
+            "dev-libs/B-1": {
+                "IUSE": "foo"
+            },
+            "dev-libs/C-1": {
+                "DEPEND": "dev-libs/A[foo]",
+                "EAPI": 2
+            },
             "dev-libs/D-1": {
                 "DEPEND": "dev-libs/A[foo=] dev-libs/B[foo=]",
                 "IUSE": "foo",
                 "EAPI": 2,
             },
             "dev-libs/E-1": {},
-            "dev-libs/E-2": {"IUSE": "foo"},
+            "dev-libs/E-2": {
+                "IUSE": "foo"
+            },
             "app-misc/Z-1": {},
             "app-misc/Z-2": {},
-            "app-misc/Y-1": {"DEPEND": "=app-misc/Z-1"},
-            "app-misc/Y-2": {"DEPEND": ">app-misc/Z-1"},
-            "app-misc/X-1": {"DEPEND": "=app-misc/Z-2"},
-            "app-misc/X-2": {"DEPEND": "<app-misc/Z-2"},
-            "sci-libs/K-1": {"IUSE": "+foo", "EAPI": 1},
-            "sci-libs/L-1": {"DEPEND": "sci-libs/K[-foo]", "EAPI": 2},
-            "sci-libs/M-1": {"DEPEND": "sci-libs/K[foo=]", "IUSE": "+foo", "EAPI": 2},
-            "sci-libs/Q-1": {"SLOT": "1", "IUSE": "+bar foo", "EAPI": 1},
+            "app-misc/Y-1": {
+                "DEPEND": "=app-misc/Z-1"
+            },
+            "app-misc/Y-2": {
+                "DEPEND": ">app-misc/Z-1"
+            },
+            "app-misc/X-1": {
+                "DEPEND": "=app-misc/Z-2"
+            },
+            "app-misc/X-2": {
+                "DEPEND": "<app-misc/Z-2"
+            },
+            "sci-libs/K-1": {
+                "IUSE": "+foo",
+                "EAPI": 1
+            },
+            "sci-libs/L-1": {
+                "DEPEND": "sci-libs/K[-foo]",
+                "EAPI": 2
+            },
+            "sci-libs/M-1": {
+                "DEPEND": "sci-libs/K[foo=]",
+                "IUSE": "+foo",
+                "EAPI": 2
+            },
+            "sci-libs/Q-1": {
+                "SLOT": "1",
+                "IUSE": "+bar foo",
+                "EAPI": 1
+            },
             "sci-libs/Q-2": {
                 "SLOT": "2",
                 "IUSE": "+bar +foo",
                 "EAPI": 2,
                 "PDEPEND": "sci-libs/Q:1[bar?,foo?]",
             },
-            "sci-libs/P-1": {"DEPEND": "sci-libs/Q:1[foo=]", "IUSE": "foo", "EAPI": 2},
+            "sci-libs/P-1": {
+                "DEPEND": "sci-libs/Q:1[foo=]",
+                "IUSE": "foo",
+                "EAPI": 2
+            },
             "sys-libs/A-1": {
                 "RDEPEND": "foo? ( sys-libs/J[foo=] )",
                 "IUSE": "+foo",
@@ -48,27 +85,64 @@ class SlotCollisionTestCase(TestCase):
                 "IUSE": "+bar",
                 "EAPI": "4",
             },
-            "sys-libs/C-1": {"RDEPEND": "sys-libs/J[bar]", "EAPI": "4"},
-            "sys-libs/D-1": {"RDEPEND": "sys-libs/J[bar?]", "IUSE": "bar", "EAPI": "4"},
+            "sys-libs/C-1": {
+                "RDEPEND": "sys-libs/J[bar]",
+                "EAPI": "4"
+            },
+            "sys-libs/D-1": {
+                "RDEPEND": "sys-libs/J[bar?]",
+                "IUSE": "bar",
+                "EAPI": "4"
+            },
             "sys-libs/E-1": {
                 "RDEPEND": "sys-libs/J[foo(+)?]",
                 "IUSE": "+foo",
                 "EAPI": "4",
             },
-            "sys-libs/F-1": {"RDEPEND": "sys-libs/J[foo(+)]", "EAPI": "4"},
-            "sys-libs/J-1": {"IUSE": "+foo", "EAPI": "4"},
-            "sys-libs/J-2": {"IUSE": "+bar", "EAPI": "4"},
+            "sys-libs/F-1": {
+                "RDEPEND": "sys-libs/J[foo(+)]",
+                "EAPI": "4"
+            },
+            "sys-libs/J-1": {
+                "IUSE": "+foo",
+                "EAPI": "4"
+            },
+            "sys-libs/J-2": {
+                "IUSE": "+bar",
+                "EAPI": "4"
+            },
             "app-misc/A-1": {
                 "IUSE": "foo +bar",
                 "REQUIRED_USE": "^^ ( foo bar )",
                 "EAPI": "4",
             },
-            "app-misc/B-1": {"DEPEND": "=app-misc/A-1[foo=]", "IUSE": "foo", "EAPI": 2},
-            "app-misc/C-1": {"DEPEND": "=app-misc/A-1[foo]", "EAPI": 2},
-            "app-misc/E-1": {"RDEPEND": "dev-libs/E[foo?]", "IUSE": "foo", "EAPI": "2"},
-            "app-misc/F-1": {"RDEPEND": "=dev-libs/E-1", "IUSE": "foo", "EAPI": "2"},
-            "dev-lang/perl-5.12": {"SLOT": "0/5.12", "EAPI": "5"},
-            "dev-lang/perl-5.16": {"SLOT": "0/5.16", "EAPI": "5"},
+            "app-misc/B-1": {
+                "DEPEND": "=app-misc/A-1[foo=]",
+                "IUSE": "foo",
+                "EAPI": 2
+            },
+            "app-misc/C-1": {
+                "DEPEND": "=app-misc/A-1[foo]",
+                "EAPI": 2
+            },
+            "app-misc/E-1": {
+                "RDEPEND": "dev-libs/E[foo?]",
+                "IUSE": "foo",
+                "EAPI": "2"
+            },
+            "app-misc/F-1": {
+                "RDEPEND": "=dev-libs/E-1",
+                "IUSE": "foo",
+                "EAPI": "2"
+            },
+            "dev-lang/perl-5.12": {
+                "SLOT": "0/5.12",
+                "EAPI": "5"
+            },
+            "dev-lang/perl-5.16": {
+                "SLOT": "0/5.16",
+                "EAPI": "5"
+            },
         }
         installed = {
             "dev-libs/A-1": {
@@ -76,16 +150,27 @@ class SlotCollisionTestCase(TestCase):
                 "IUSE": "foo",
                 "USE": "foo",
             },
-            "dev-libs/B-1": {"IUSE": "foo", "USE": "foo"},
-            "dev-libs/C-1": {"DEPEND": "dev-libs/A[foo]", "EAPI": 2},
+            "dev-libs/B-1": {
+                "IUSE": "foo",
+                "USE": "foo"
+            },
+            "dev-libs/C-1": {
+                "DEPEND": "dev-libs/A[foo]",
+                "EAPI": 2
+            },
             "dev-libs/D-1": {
                 "DEPEND": "dev-libs/A[foo=] dev-libs/B[foo=]",
                 "IUSE": "foo",
                 "USE": "foo",
                 "EAPI": 2,
             },
-            "sci-libs/K-1": {"IUSE": "foo", "USE": ""},
-            "sci-libs/L-1": {"DEPEND": "sci-libs/K[-foo]"},
+            "sci-libs/K-1": {
+                "IUSE": "foo",
+                "USE": ""
+            },
+            "sci-libs/L-1": {
+                "DEPEND": "sci-libs/K[-foo]"
+            },
             "sci-libs/Q-1": {
                 "SLOT": "1",
                 "IUSE": "+bar +foo",
@@ -120,9 +205,14 @@ class SlotCollisionTestCase(TestCase):
                     "dev-libs/D-1",
                 ],
                 ignore_mergelist_order=True,
-                slot_collision_solutions=[
-                    {"dev-libs/A-1": {"foo": True}, "dev-libs/D-1": {"foo": True}}
-                ],
+                slot_collision_solutions=[{
+                    "dev-libs/A-1": {
+                        "foo": True
+                    },
+                    "dev-libs/D-1": {
+                        "foo": True
+                    }
+                }],
             ),
             ResolverPlaygroundTestCase(
                 [
@@ -203,9 +293,14 @@ class SlotCollisionTestCase(TestCase):
                 success=False,
                 mergelist=["sci-libs/L-1", "sci-libs/M-1", "sci-libs/K-1"],
                 ignore_mergelist_order=True,
-                slot_collision_solutions=[
-                    {"sci-libs/K-1": {"foo": False}, "sci-libs/M-1": {"foo": False}}
-                ],
+                slot_collision_solutions=[{
+                    "sci-libs/K-1": {
+                        "foo": False
+                    },
+                    "sci-libs/M-1": {
+                        "foo": False
+                    }
+                }],
             ),
             # Avoid duplicates.
             ResolverPlaygroundTestCase(
@@ -219,9 +314,14 @@ class SlotCollisionTestCase(TestCase):
                 mergelist=["sci-libs/P-1", "sci-libs/Q-1"],
                 ignore_mergelist_order=True,
                 all_permutations=True,
-                slot_collision_solutions=[
-                    {"sci-libs/Q-1": {"foo": True}, "sci-libs/P-1": {"foo": True}}
-                ],
+                slot_collision_solutions=[{
+                    "sci-libs/Q-1": {
+                        "foo": True
+                    },
+                    "sci-libs/P-1": {
+                        "foo": True
+                    }
+                }],
             ),
         )
         # NOTE: For this test case, ResolverPlaygroundTestCase attributes
@@ -251,28 +351,38 @@ class SlotCollisionTestCase(TestCase):
         which cannot be solved each on their own.
         """
         ebuilds = {
-            "dev-libs/A-1": {"RDEPEND": "=dev-libs/X-1"},
-            "dev-libs/B-1": {"RDEPEND": "dev-libs/X"},
-            "dev-libs/X-1": {"RDEPEND": "=dev-libs/Y-1"},
-            "dev-libs/X-2": {"RDEPEND": "=dev-libs/Y-2"},
-            "dev-libs/Y-1": {"PDEPEND": "=dev-libs/X-1"},
-            "dev-libs/Y-2": {"PDEPEND": "=dev-libs/X-2"},
+            "dev-libs/A-1": {
+                "RDEPEND": "=dev-libs/X-1"
+            },
+            "dev-libs/B-1": {
+                "RDEPEND": "dev-libs/X"
+            },
+            "dev-libs/X-1": {
+                "RDEPEND": "=dev-libs/Y-1"
+            },
+            "dev-libs/X-2": {
+                "RDEPEND": "=dev-libs/Y-2"
+            },
+            "dev-libs/Y-1": {
+                "PDEPEND": "=dev-libs/X-1"
+            },
+            "dev-libs/Y-2": {
+                "PDEPEND": "=dev-libs/X-2"
+            },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["dev-libs/A", "dev-libs/B"],
-                all_permutations=True,
-                options={"--backtrack": 0},
-                success=True,
-                ambiguous_merge_order=True,
-                mergelist=[
-                    "dev-libs/Y-1",
-                    "dev-libs/X-1",
-                    ("dev-libs/A-1", "dev-libs/B-1"),
-                ],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["dev-libs/A", "dev-libs/B"],
+            all_permutations=True,
+            options={"--backtrack": 0},
+            success=True,
+            ambiguous_merge_order=True,
+            mergelist=[
+                "dev-libs/Y-1",
+                "dev-libs/X-1",
+                ("dev-libs/A-1", "dev-libs/B-1"),
+            ],
+        ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)
         try:
@@ -288,32 +398,46 @@ class SlotCollisionTestCase(TestCase):
         level of dependencies between the two conflicts.
         """
         ebuilds = {
-            "dev-libs/A-1": {"RDEPEND": "=dev-libs/X-1"},
-            "dev-libs/B-1": {"RDEPEND": "dev-libs/X"},
-            "dev-libs/X-1": {"RDEPEND": "dev-libs/K"},
-            "dev-libs/X-2": {"RDEPEND": "dev-libs/L"},
-            "dev-libs/K-1": {"RDEPEND": "=dev-libs/Y-1"},
-            "dev-libs/L-1": {"RDEPEND": "=dev-libs/Y-2"},
-            "dev-libs/Y-1": {"PDEPEND": "=dev-libs/X-1"},
-            "dev-libs/Y-2": {"PDEPEND": "=dev-libs/X-2"},
+            "dev-libs/A-1": {
+                "RDEPEND": "=dev-libs/X-1"
+            },
+            "dev-libs/B-1": {
+                "RDEPEND": "dev-libs/X"
+            },
+            "dev-libs/X-1": {
+                "RDEPEND": "dev-libs/K"
+            },
+            "dev-libs/X-2": {
+                "RDEPEND": "dev-libs/L"
+            },
+            "dev-libs/K-1": {
+                "RDEPEND": "=dev-libs/Y-1"
+            },
+            "dev-libs/L-1": {
+                "RDEPEND": "=dev-libs/Y-2"
+            },
+            "dev-libs/Y-1": {
+                "PDEPEND": "=dev-libs/X-1"
+            },
+            "dev-libs/Y-2": {
+                "PDEPEND": "=dev-libs/X-2"
+            },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["dev-libs/A", "dev-libs/B"],
-                all_permutations=True,
-                options={"--backtrack": 0},
-                success=True,
-                ignore_mergelist_order=True,
-                mergelist=[
-                    "dev-libs/Y-1",
-                    "dev-libs/X-1",
-                    "dev-libs/K-1",
-                    "dev-libs/A-1",
-                    "dev-libs/B-1",
-                ],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["dev-libs/A", "dev-libs/B"],
+            all_permutations=True,
+            options={"--backtrack": 0},
+            success=True,
+            ignore_mergelist_order=True,
+            mergelist=[
+                "dev-libs/Y-1",
+                "dev-libs/X-1",
+                "dev-libs/K-1",
+                "dev-libs/A-1",
+                "dev-libs/B-1",
+            ],
+        ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)
         try:
@@ -329,21 +453,25 @@ class SlotCollisionTestCase(TestCase):
         in the past when a package had a DEPEND on itself.
         """
         ebuilds = {
-            "dev-libs/A-1": {"RDEPEND": "=dev-libs/X-1"},
-            "dev-libs/B-1": {"RDEPEND": "dev-libs/X"},
+            "dev-libs/A-1": {
+                "RDEPEND": "=dev-libs/X-1"
+            },
+            "dev-libs/B-1": {
+                "RDEPEND": "dev-libs/X"
+            },
             "dev-libs/X-1": {},
-            "dev-libs/X-2": {"DEPEND": ">=dev-libs/X-2"},
+            "dev-libs/X-2": {
+                "DEPEND": ">=dev-libs/X-2"
+            },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["dev-libs/A", "dev-libs/B"],
-                all_permutations=True,
-                success=True,
-                ignore_mergelist_order=True,
-                mergelist=["dev-libs/X-1", "dev-libs/A-1", "dev-libs/B-1"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["dev-libs/A", "dev-libs/B"],
+            all_permutations=True,
+            success=True,
+            ignore_mergelist_order=True,
+            mergelist=["dev-libs/X-1", "dev-libs/A-1", "dev-libs/B-1"],
+        ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)
         try:

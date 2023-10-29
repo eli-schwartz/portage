@@ -4,7 +4,6 @@
 doc = """Check and fix problems in the resume and/or resume_backup files."""
 __doc__ = doc
 
-
 module_spec = {
     "name": "resume",
     "description": doc,

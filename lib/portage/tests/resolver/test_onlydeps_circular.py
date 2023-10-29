@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class OnlydepsTestCase(TestCase):
+
     def testOnlydeps(self):
         ebuilds = {
             "app-misc/A-1": {
@@ -40,12 +41,9 @@ class OnlydepsTestCase(TestCase):
                 success=True,
                 options={"--onlydeps": True},
                 mergelist=["app-misc/B-0"],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

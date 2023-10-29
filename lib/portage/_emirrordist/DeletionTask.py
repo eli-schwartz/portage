@@ -19,9 +19,7 @@ class DeletionTask(CompositeTask):
         if self.config.options.recycle_dir is not None:
             recycle_path = os.path.join(self.config.options.recycle_dir, self.distfile)
             if self.config.options.dry_run:
-                logger.info(
-                    f"dry-run: move '{self.distfile}' from distfiles to recycle"
-                )
+                logger.info(f"dry-run: move '{self.distfile}' from distfiles to recycle")
             else:
                 logger.debug(f"move '{self.distfile}' from distfiles to recycle")
                 try:
@@ -29,10 +27,8 @@ class DeletionTask(CompositeTask):
                     os.rename(os.path.realpath(self.distfile_path), recycle_path)
                 except OSError as e:
                     if e.errno != errno.EXDEV:
-                        logger.error(
-                            ("rename %s from distfiles to " "recycle failed: %s")
-                            % (self.distfile, e)
-                        )
+                        logger.error(("rename %s from distfiles to "
+                                      "recycle failed: %s") % (self.distfile, e))
                 else:
                     self._delete_links()
                     self._async_wait()
@@ -84,10 +80,8 @@ class DeletionTask(CompositeTask):
                     success = False
 
         else:
-            logger.error(
-                ("%s copy from distfiles " "to recycle failed: %s")
-                % (self.distfile, copier.future.exception())
-            )
+            logger.error(("%s copy from distfiles "
+                          "to recycle failed: %s") % (self.distfile, copier.future.exception()))
             success = False
 
         if success:
@@ -104,9 +98,7 @@ class DeletionTask(CompositeTask):
             if isinstance(layout, ContentHashLayout) and not self.distfile.digests:
                 logger.debug(f"_delete_links: '{self.distfile}' has no digests")
                 continue
-            distfile_path = os.path.join(
-                self.config.options.distfiles, layout.get_path(self.distfile)
-            )
+            distfile_path = os.path.join(self.config.options.distfiles, layout.get_path(self.distfile))
             try:
                 os.unlink(distfile_path)
             except OSError as e:

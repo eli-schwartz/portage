@@ -142,7 +142,8 @@ class MergeProcess(ForkProcess):
         fcntl.fcntl(
             elog_reader_fd.fileno(),
             fcntl.F_SETFL,
-            fcntl.fcntl(elog_reader_fd.fileno(), fcntl.F_GETFL) | os.O_NONBLOCK,
+            fcntl.fcntl(elog_reader_fd.fileno(), fcntl.F_GETFL)
+            | os.O_NONBLOCK,
         )
 
         mtime_reader, mtime_writer = multiprocessing.Pipe(duplex=False)
@@ -286,10 +287,7 @@ class MergeProcess(ForkProcess):
         """
         Extend _proc_join_done to react to RETURNCODE_POSTINST_FAILURE.
         """
-        if (
-            not future.cancelled()
-            and proc.exitcode == portage.const.RETURNCODE_POSTINST_FAILURE
-        ):
+        if (not future.cancelled() and proc.exitcode == portage.const.RETURNCODE_POSTINST_FAILURE):
             self.postinst_failure = True
             self.returncode = os.EX_OK
         super()._proc_join_done(proc, future)
@@ -314,9 +312,7 @@ class MergeProcess(ForkProcess):
             self._elog_reader_fd = None
         if self._elog_keys is not None:
             for key in self._elog_keys:
-                portage.elog.elog_process(
-                    key, self.settings, phasefilter=("prerm", "postrm")
-                )
+                portage.elog.elog_process(key, self.settings, phasefilter=("prerm", "postrm"))
             self._elog_keys = None
 
         super()._unregister()

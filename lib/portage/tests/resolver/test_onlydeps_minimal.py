@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class OnlydepsMinimalTestCase(TestCase):
+
     def testOnlydepsMinimal(self):
         ebuilds = {
             "dev-libs/A-1": {
@@ -29,7 +30,10 @@ class OnlydepsMinimalTestCase(TestCase):
                 ["dev-libs/A"],
                 all_permutations=True,
                 success=True,
-                options={"--onlydeps": True, "--onlydeps-with-rdeps": "y"},
+                options={
+                    "--onlydeps": True,
+                    "--onlydeps-with-rdeps": "y"
+                },
                 ambiguous_merge_order=True,
                 mergelist=[("dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1")],
             ),
@@ -37,7 +41,10 @@ class OnlydepsMinimalTestCase(TestCase):
                 ["dev-libs/A"],
                 all_permutations=True,
                 success=True,
-                options={"--onlydeps": True, "--onlydeps-with-rdeps": "n"},
+                options={
+                    "--onlydeps": True,
+                    "--onlydeps-with-rdeps": "n"
+                },
                 mergelist=["dev-libs/B-1"],
             ),
             ResolverPlaygroundTestCase(
@@ -50,7 +57,7 @@ class OnlydepsMinimalTestCase(TestCase):
                     "--onlydeps-with-ideps": "y",
                 },
                 ambiguous_merge_order=True,
-                mergelist=[("dev-libs/B-1",)],
+                mergelist=[("dev-libs/B-1", )],
             ),
             ResolverPlaygroundTestCase(
                 ["dev-libs/A"],
@@ -65,9 +72,7 @@ class OnlydepsMinimalTestCase(TestCase):
             ),
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

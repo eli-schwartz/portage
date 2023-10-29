@@ -47,9 +47,7 @@ class BacktrackParameter:
         result.needed_license_changes = copy.copy(self.needed_license_changes)
         result.rebuild_list = copy.copy(self.rebuild_list)
         result.reinstall_list = copy.copy(self.reinstall_list)
-        result.slot_operator_replace_installed = copy.copy(
-            self.slot_operator_replace_installed
-        )
+        result.slot_operator_replace_installed = copy.copy(self.slot_operator_replace_installed)
         result.slot_operator_mask_built = self.slot_operator_mask_built.copy()
         result.prune_rebuilds = self.prune_rebuilds
 
@@ -61,20 +59,16 @@ class BacktrackParameter:
         return result
 
     def __eq__(self, other):
-        return (
-            self.circular_dependency == other.circular_dependency
-            and self.needed_unstable_keywords == other.needed_unstable_keywords
-            and self.needed_p_mask_changes == other.needed_p_mask_changes
-            and self.runtime_pkg_mask == other.runtime_pkg_mask
-            and self.needed_use_config_changes == other.needed_use_config_changes
-            and self.needed_license_changes == other.needed_license_changes
-            and self.rebuild_list == other.rebuild_list
-            and self.reinstall_list == other.reinstall_list
-            and self.slot_operator_replace_installed
-            == other.slot_operator_replace_installed
-            and self.slot_operator_mask_built == other.slot_operator_mask_built
-            and self.prune_rebuilds == other.prune_rebuilds
-        )
+        return (self.circular_dependency == other.circular_dependency
+                and self.needed_unstable_keywords == other.needed_unstable_keywords
+                and self.needed_p_mask_changes == other.needed_p_mask_changes
+                and self.runtime_pkg_mask == other.runtime_pkg_mask
+                and self.needed_use_config_changes == other.needed_use_config_changes
+                and self.needed_license_changes == other.needed_license_changes
+                and self.rebuild_list == other.rebuild_list and self.reinstall_list == other.reinstall_list
+                and self.slot_operator_replace_installed == other.slot_operator_replace_installed
+                and self.slot_operator_mask_built == other.slot_operator_mask_built
+                and self.prune_rebuilds == other.prune_rebuilds)
 
 
 class _BacktrackNode:
@@ -85,9 +79,7 @@ class _BacktrackNode:
         "terminal",
     )
 
-    def __init__(
-        self, parameter=BacktrackParameter(), depth=0, mask_steps=0, terminal=True
-    ):
+    def __init__(self, parameter=BacktrackParameter(), depth=0, mask_steps=0, terminal=True):
         self.parameter = parameter
         self.depth = depth
         self.mask_steps = mask_steps
@@ -148,10 +140,7 @@ class Backtracker:
         """
 
         for pkg, mask_info in runtime_pkg_mask.items():
-            if (
-                "missing dependency" in mask_info
-                or "slot_operator_mask_built" in mask_info
-            ):
+            if ("missing dependency" in mask_info or "slot_operator_mask_built" in mask_info):
                 continue
 
             entry_is_valid = False
@@ -189,9 +178,7 @@ class Backtracker:
             new_node.mask_steps += 1
             new_node.terminal = False
             for pkg, parent_atoms in similar_pkgs:
-                new_node.parameter.runtime_pkg_mask.setdefault(pkg, {})[
-                    "slot conflict"
-                ] = parent_atoms
+                new_node.parameter.runtime_pkg_mask.setdefault(pkg, {})["slot conflict"] = parent_atoms
             self._add(new_node)
 
     def _feedback_missing_dep(self, dep):
@@ -200,9 +187,8 @@ class Backtracker:
         new_node.mask_steps += 1
         new_node.terminal = False
 
-        new_node.parameter.runtime_pkg_mask.setdefault(dep.parent, {})[
-            "missing dependency"
-        ] = {(dep.parent, dep.root, dep.atom)}
+        new_node.parameter.runtime_pkg_mask.setdefault(dep.parent,
+                                                       {})["missing dependency"] = {(dep.parent, dep.root, dep.atom)}
 
         self._add(new_node)
 
@@ -217,18 +203,14 @@ class Backtracker:
         for change, data in changes.items():
             if change == "circular_dependency":
                 for pkg, circular_children in data.items():
-                    para.circular_dependency.setdefault(pkg, set()).update(
-                        circular_children
-                    )
+                    para.circular_dependency.setdefault(pkg, set()).update(circular_children)
             elif change == "needed_unstable_keywords":
                 para.needed_unstable_keywords.update(data)
             elif change == "needed_p_mask_changes":
                 para.needed_p_mask_changes.update(data)
             elif change == "needed_license_changes":
                 for pkg, missing_licenses in data:
-                    para.needed_license_changes.setdefault(pkg, set()).update(
-                        missing_licenses
-                    )
+                    para.needed_license_changes.setdefault(pkg, set()).update(missing_licenses)
             elif change == "needed_use_config_changes":
                 for pkg, (new_use, new_changes) in data:
                     para.needed_use_config_changes[pkg] = (new_use, new_changes)
@@ -263,9 +245,7 @@ class Backtracker:
         """
         Takes information from the depgraph and computes new backtrack parameters to try.
         """
-        assert (
-            self._current_node is not None
-        ), "call feedback() only after get() was called"
+        assert (self._current_node is not None), "call feedback() only after get() was called"
 
         # Not all config changes require a restart, that's why they can appear together
         # with other conflicts.

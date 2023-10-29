@@ -18,6 +18,7 @@ from portage.util.futures.unix_events import (
 
 
 class _PipeClosedTestCase:
+
     def test_pipe(self):
         read_end, write_end = os.pipe()
         self._do_test(read_end, write_end)

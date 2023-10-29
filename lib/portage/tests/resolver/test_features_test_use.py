@@ -37,9 +37,7 @@ class TestDepend(TestCase):
             mergelist=["dev-libs/B-1", "dev-libs/A-1"],
         )
 
-        playground = ResolverPlayground(
-            ebuilds=self.ebuilds, user_config=user_config, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=self.ebuilds, user_config=user_config, debug=False)
         try:
             playground.run_TestCase(test_case)
             self.assertEqual(test_case.test_success, True, test_case.fail_msg)
@@ -51,13 +49,9 @@ class TestDepend(TestCase):
         Test that FEATURES=test no longer forces USE=test.
         """
         user_config = {"make.conf": ("FEATURES=test", 'USE="-test"')}
-        test_case = ResolverPlaygroundTestCase(
-            ["dev-libs/A"], options={}, success=True, mergelist=["dev-libs/A-1"]
-        )
+        test_case = ResolverPlaygroundTestCase(["dev-libs/A"], options={}, success=True, mergelist=["dev-libs/A-1"])
 
-        playground = ResolverPlayground(
-            ebuilds=self.ebuilds, user_config=user_config, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=self.ebuilds, user_config=user_config, debug=False)
         try:
             playground.run_TestCase(test_case)
             self.assertEqual(test_case.test_success, True, test_case.fail_msg)
@@ -71,14 +65,15 @@ class TestDepend(TestCase):
         user_config = {"make.conf": ("FEATURES=test", 'USE=""')}
         test_case = ResolverPlaygroundTestCase(
             ["dev-libs/A"],
-            options={"--newuse": True, "--selective": True},
+            options={
+                "--newuse": True,
+                "--selective": True
+            },
             success=True,
             mergelist=["dev-libs/B-1", "dev-libs/A-1"],
         )
 
-        playground = ResolverPlayground(
-            ebuilds=self.ebuilds, user_config=user_config, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=self.ebuilds, user_config=user_config, debug=False)
         try:
             playground.run_TestCase(test_case)
             self.assertEqual(test_case.test_success, True, test_case.fail_msg)

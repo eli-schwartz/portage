@@ -48,9 +48,7 @@ class GitSync(NewBase):
         try:
             if not os.path.exists(self.repo.location):
                 os.makedirs(self.repo.location)
-                self.logger(
-                    self.xterm_titles, f"Created new directory {self.repo.location}"
-                )
+                self.logger(self.xterm_titles, f"Created new directory {self.repo.location}")
         except OSError:
             return (1, False)
 
@@ -61,22 +59,12 @@ class GitSync(NewBase):
         git_cmd_opts = ""
         if self.repo.module_specific_options.get("sync-git-env"):
             shlexed_env = shlex_split(self.repo.module_specific_options["sync-git-env"])
-            env = {
-                k: v
-                for k, _, v in (assignment.partition("=") for assignment in shlexed_env)
-                if k
-            }
+            env = {k: v for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k}
             self.spawn_kwargs["env"].update(env)
 
         if self.repo.module_specific_options.get("sync-git-clone-env"):
-            shlexed_env = shlex_split(
-                self.repo.module_specific_options["sync-git-clone-env"]
-            )
-            clone_env = {
-                k: v
-                for k, _, v in (assignment.partition("=") for assignment in shlexed_env)
-                if k
-            }
+            shlexed_env = shlex_split(self.repo.module_specific_options["sync-git-clone-env"])
+            clone_env = {k: v for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k}
             self.spawn_kwargs["env"].update(clone_env)
 
         if self.settings.get("PORTAGE_QUIET") == "1":
@@ -89,9 +77,7 @@ class GitSync(NewBase):
             git_cmd_opts += " --depth 1"
 
         if self.repo.module_specific_options.get("sync-git-clone-extra-opts"):
-            git_cmd_opts += (
-                f" {self.repo.module_specific_options['sync-git-clone-extra-opts']}"
-            )
+            git_cmd_opts += (f" {self.repo.module_specific_options['sync-git-clone-extra-opts']}")
         git_cmd = "{} clone{} {} .".format(
             self.bin_command,
             git_cmd_opts,
@@ -148,28 +134,16 @@ class GitSync(NewBase):
 
         # We don't want to operate with a .git outside of the given
         # repo in any circumstances.
-        self.spawn_kwargs["env"].update(
-            {"GIT_CEILING_DIRECTORIES": self._gen_ceiling_string(self.repo.location)}
-        )
+        self.spawn_kwargs["env"].update({"GIT_CEILING_DIRECTORIES": self._gen_ceiling_string(self.repo.location)})
 
         if self.repo.module_specific_options.get("sync-git-env"):
             shlexed_env = shlex_split(self.repo.module_specific_options["sync-git-env"])
-            env = {
-                k: v
-                for k, _, v in (assignment.partition("=") for assignment in shlexed_env)
-                if k
-            }
+            env = {k: v for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k}
             self.spawn_kwargs["env"].update(env)
 
         if self.repo.module_specific_options.get("sync-git-pull-env"):
-            shlexed_env = shlex_split(
-                self.repo.module_specific_options["sync-git-pull-env"]
-            )
-            pull_env = {
-                k: v
-                for k, _, v in (assignment.partition("=") for assignment in shlexed_env)
-                if k
-            }
+            shlexed_env = shlex_split(self.repo.module_specific_options["sync-git-pull-env"])
+            pull_env = {k: v for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k}
             self.spawn_kwargs["env"].update(pull_env)
 
         if quiet:
@@ -242,8 +216,7 @@ class GitSync(NewBase):
                     subprocess.check_output(
                         is_shallow_cmd,
                         cwd=portage._unicode_encode(self.repo.location),
-                    )
-                ).rstrip("\n")
+                    )).rstrip("\n")
                 if is_shallow_res == "false":
                     sync_depth = 0
             else:
@@ -257,9 +230,7 @@ class GitSync(NewBase):
             shallow = True
 
         if self.repo.module_specific_options.get("sync-git-pull-extra-opts"):
-            git_cmd_opts += (
-                f" {self.repo.module_specific_options['sync-git-pull-extra-opts']}"
-            )
+            git_cmd_opts += (f" {self.repo.module_specific_options['sync-git-pull-extra-opts']}")
 
         self.add_safe_directory()
 
@@ -274,8 +245,7 @@ class GitSync(NewBase):
                         "@{upstream}",
                     ],
                     cwd=portage._unicode_encode(self.repo.location),
-                )
-            ).rstrip("\n")
+                )).rstrip("\n")
         except subprocess.CalledProcessError as e:
             msg = f"!!! git rev-parse error in {self.repo.location}"
             self.logger(self.xterm_titles, msg)
@@ -308,8 +278,7 @@ class GitSync(NewBase):
                 subprocess.check_output(
                     git_get_remote_url_cmd,
                     cwd=portage._unicode_encode(self.repo.location),
-                )
-            ).strip()
+                )).strip()
             if git_remote_url != self.repo.sync_uri:
                 git_set_remote_url_cmd = [
                     "git",
@@ -337,9 +306,7 @@ class GitSync(NewBase):
             writemsg_level(git_cmd + "\n")
 
         rev_cmd = [self.bin_command, "rev-list", "--max-count=1", "HEAD"]
-        previous_rev = subprocess.check_output(
-            rev_cmd, cwd=portage._unicode_encode(self.repo.location)
-        )
+        previous_rev = subprocess.check_output(rev_cmd, cwd=portage._unicode_encode(self.repo.location))
 
         exitcode = portage.process.spawn_bash(
             f"cd {portage._shell_quote(self.repo.location)} ; exec {git_cmd}",
@@ -379,14 +346,11 @@ class GitSync(NewBase):
                 return (exitcode, False)
 
         # `git diff --quiet` returns 0 on a clean tree and 1 otherwise
-        is_clean = (
-            portage.process.spawn(
-                f"{self.bin_command} diff --quiet",
-                cwd=portage._unicode_encode(self.repo.location),
-                **self.spawn_kwargs,
-            )
-            == 0
-        )
+        is_clean = (portage.process.spawn(
+            f"{self.bin_command} diff --quiet",
+            cwd=portage._unicode_encode(self.repo.location),
+            **self.spawn_kwargs,
+        ) == 0)
 
         if not is_clean and not self.repo.volatile:
             # If the repo isn't clean, clobber any changes for parity
@@ -429,16 +393,13 @@ class GitSync(NewBase):
                 writemsg_level(msg + "\n", level=logging.ERROR, noiselevel=-1)
                 return (exitcode, False)
 
-        current_rev = subprocess.check_output(
-            rev_cmd, cwd=portage._unicode_encode(self.repo.location)
-        )
+        current_rev = subprocess.check_output(rev_cmd, cwd=portage._unicode_encode(self.repo.location))
 
         return (os.EX_OK, current_rev != previous_rev)
 
     def verify_head(self, revision="-1") -> bool:
-        if self.repo.module_specific_options.get(
-            "sync-git-verify-commit-signature", "false"
-        ).lower() not in ("true", "yes"):
+        if self.repo.module_specific_options.get("sync-git-verify-commit-signature",
+                                                 "false").lower() not in ("true", "yes"):
             return True
 
         if self.repo.sync_openpgp_key_path is not None and gemato is None:
@@ -495,8 +456,7 @@ class GitSync(NewBase):
                         rev_cmd,
                         cwd=portage._unicode_encode(self.repo.location),
                         env=env,
-                    )
-                ).strip()
+                    )).strip()
             except subprocess.CalledProcessError:
                 return False
 
@@ -549,10 +509,7 @@ class GitSync(NewBase):
             ret = (
                 os.EX_OK,
                 portage._unicode_decode(
-                    subprocess.check_output(
-                        rev_cmd, cwd=portage._unicode_encode(self.repo.location)
-                    )
-                ),
+                    subprocess.check_output(rev_cmd, cwd=portage._unicode_encode(self.repo.location))),
             )
         except subprocess.CalledProcessError:
             ret = (1, False)

@@ -14,6 +14,7 @@ from portage.exception import CompressorOperationFailed
 
 
 class test_gpkg_stream_case(TestCase):
+
     def test_gpkg_stream_reader(self):
         data = urandom(1048576)
         data_io = io.BytesIO(data)
@@ -60,9 +61,8 @@ class test_gpkg_stream_case(TestCase):
             data = urandom(1048576)
             with tarfile.open(gpkg_file_loc, "w") as test_tar:
                 test_tarinfo = tarfile.TarInfo("test")
-                with portage.gpkg.tar_stream_writer(
-                    test_tarinfo, test_tar, tarfile.USTAR_FORMAT, ["cat"]
-                ) as test_writer:
+                with portage.gpkg.tar_stream_writer(test_tarinfo, test_tar, tarfile.USTAR_FORMAT,
+                                                    ["cat"]) as test_writer:
                     test_writer.write(data)
 
             with tarfile.open(gpkg_file_loc, "r") as test_tar:
@@ -80,9 +80,7 @@ class test_gpkg_stream_case(TestCase):
             data = urandom(1048576)
             with tarfile.open(gpkg_file_loc, "w") as test_tar:
                 test_tarinfo = tarfile.TarInfo("test")
-                with portage.gpkg.tar_stream_writer(
-                    test_tarinfo, test_tar, tarfile.USTAR_FORMAT
-                ) as test_writer:
+                with portage.gpkg.tar_stream_writer(test_tarinfo, test_tar, tarfile.USTAR_FORMAT) as test_writer:
                     test_writer.write(data)
 
             with tarfile.open(gpkg_file_loc, "r") as test_tar:

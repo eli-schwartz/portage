@@ -9,14 +9,13 @@ from portage.tests import TestCase
 
 
 class ManifestTestCase(TestCase):
+
     def test_simple_addFile(self):
         tempdir = Path(tempfile.mkdtemp()) / "app-portage" / "diffball"
         manifest = Manifest(str(tempdir), required_hashes=["SHA512", "BLAKE2B"])
 
         (tempdir / "files").mkdir(parents=True)
-        (tempdir / "files" / "test.patch").write_text(
-            "Fix the diffball foobar functionality.\n"
-        )
+        (tempdir / "files" / "test.patch").write_text("Fix the diffball foobar functionality.\n")
 
         # Nothing should be in the Manifest yet
         with self.assertRaises(KeyError):

@@ -9,18 +9,40 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotConflictForceRebuildTestCase(TestCase):
+
     def testSlotConflictForceRebuild(self):
         ebuilds = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/A-2": {"EAPI": "5", "SLOT": "0/2"},
-            "app-misc/B-0": {"EAPI": "5", "RDEPEND": "app-misc/A:="},
-            "app-misc/C-0": {"EAPI": "5", "RDEPEND": "app-misc/A"},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/A-2": {
+                "EAPI": "5",
+                "SLOT": "0/2"
+            },
+            "app-misc/B-0": {
+                "EAPI": "5",
+                "RDEPEND": "app-misc/A:="
+            },
+            "app-misc/C-0": {
+                "EAPI": "5",
+                "RDEPEND": "app-misc/A"
+            },
         }
 
         installed = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/B-0": {"EAPI": "5", "RDEPEND": "app-misc/A:0/1="},
-            "app-misc/C-0": {"EAPI": "5", "RDEPEND": "app-misc/A:0/1="},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/B-0": {
+                "EAPI": "5",
+                "RDEPEND": "app-misc/A:0/1="
+            },
+            "app-misc/C-0": {
+                "EAPI": "5",
+                "RDEPEND": "app-misc/A:0/1="
+            },
         }
 
         world = ["app-misc/B", "app-misc/C"]
@@ -38,12 +60,9 @@ class SlotConflictForceRebuildTestCase(TestCase):
                 ambiguous_merge_order=True,
                 mergelist=["app-misc/A-2", ("app-misc/B-0", "app-misc/C-0")],
                 forced_rebuilds={"app-misc/A-2": ["app-misc/B-0", "app-misc/C-0"]},
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

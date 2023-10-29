@@ -1,7 +1,7 @@
 # Copyright 2010-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = ("LicenseManager",)
+__all__ = ("LicenseManager", )
 
 from portage import os
 from portage.dep import ExtendedAtomDict, use_reduce
@@ -14,6 +14,7 @@ from portage.package.ebuild._config.helper import ordered_by_atom_specificity
 
 
 class LicenseManager:
+
     def __init__(self, license_group_locations, abs_user_config, user_config=True):
         self._accept_license_str = None
         self._accept_license = None
@@ -88,8 +89,8 @@ class LicenseManager:
         license_group = self._license_groups.get(group_name)
         if group_name in traversed_groups:
             writemsg(
-                _("Circular license group reference" " detected in '%s'\n")
-                % group_name,
+                _("Circular license group reference"
+                  " detected in '%s'\n") % group_name,
                 noiselevel=-1,
             )
             rValue.append("@" + group_name)
@@ -98,8 +99,8 @@ class LicenseManager:
             for l in license_group:
                 if l.startswith("-"):
                     writemsg(
-                        _("Skipping invalid element %s" " in license group '%s'\n")
-                        % (l, group_name),
+                        _("Skipping invalid element %s"
+                          " in license group '%s'\n") % (l, group_name),
                         noiselevel=-1,
                     )
                 else:
@@ -107,9 +108,7 @@ class LicenseManager:
         else:
             if self._license_groups and group_name not in self._undef_lic_groups:
                 self._undef_lic_groups.add(group_name)
-                writemsg(
-                    _("Undefined license group '%s'\n") % group_name, noiselevel=-1
-                )
+                writemsg(_("Undefined license group '%s'\n") % group_name, noiselevel=-1)
             rValue.append("@" + group_name)
         if negate:
             rValue = ["-" + token for token in rValue]
@@ -237,6 +236,4 @@ class LicenseManager:
     def set_accept_license_str(self, accept_license_str):
         if accept_license_str != self._accept_license_str:
             self._accept_license_str = accept_license_str
-            self._accept_license = tuple(
-                self.expandLicenseTokens(accept_license_str.split())
-            )
+            self._accept_license = tuple(self.expandLicenseTokens(accept_license_str.split()))

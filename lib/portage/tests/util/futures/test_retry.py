@@ -61,6 +61,7 @@ class HangForever:
 
 
 class RetryTestCase(TestCase):
+
     @contextlib.contextmanager
     def _wrap_coroutine_func(self, coroutine_func):
         """
@@ -89,13 +90,9 @@ class RetryTestCase(TestCase):
                 delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
             )
             decorated_func = decorator(func_coroutine, loop=loop)
-            done, pending = loop.run_until_complete(
-                asyncio.wait([decorated_func()], loop=loop)
-            )
+            done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
-            self.assertTrue(
-                isinstance(done.pop().exception().__cause__, SucceedNeverException)
-            )
+            self.assertTrue(isinstance(done.pop().exception().__cause__, SucceedNeverException))
 
     def testSucceedNeverReraise(self):
         loop = global_event_loop()
@@ -107,9 +104,7 @@ class RetryTestCase(TestCase):
                 delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
             )
             decorated_func = decorator(func_coroutine, loop=loop)
-            done, pending = loop.run_until_complete(
-                asyncio.wait([decorated_func()], loop=loop)
-            )
+            done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
             self.assertTrue(isinstance(done.pop().exception(), SucceedNeverException))
 
@@ -122,13 +117,9 @@ class RetryTestCase(TestCase):
                 delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
             )
             decorated_func = decorator(func_coroutine, loop=loop)
-            done, pending = loop.run_until_complete(
-                asyncio.wait([decorated_func()], loop=loop)
-            )
+            done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
-            self.assertTrue(
-                isinstance(done.pop().exception().__cause__, asyncio.TimeoutError)
-            )
+            self.assertTrue(isinstance(done.pop().exception().__cause__, asyncio.TimeoutError))
 
     def testHangForeverReraise(self):
         loop = global_event_loop()
@@ -140,9 +131,7 @@ class RetryTestCase(TestCase):
                 delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
             )
             decorated_func = decorator(func_coroutine, loop=loop)
-            done, pending = loop.run_until_complete(
-                asyncio.wait([decorated_func()], loop=loop)
-            )
+            done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
             self.assertTrue(isinstance(done.pop().exception(), asyncio.TimeoutError))
 
@@ -169,9 +158,7 @@ class RetryTestCase(TestCase):
                 delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
             )
             decorated_func = decorator(func_coroutine, loop=loop)
-            done, pending = loop.run_until_complete(
-                asyncio.wait([decorated_func()], loop=loop)
-            )
+            done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
             cause = done.pop().exception().__cause__
             self.assertTrue(
@@ -192,13 +179,9 @@ class RetryTestCase(TestCase):
                 delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
             )
             decorated_func = decorator(func_coroutine, loop=loop)
-            done, pending = loop.run_until_complete(
-                asyncio.wait([decorated_func()], loop=loop)
-            )
+            done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
-            self.assertTrue(
-                isinstance(done.pop().exception().__cause__, asyncio.TimeoutError)
-            )
+            self.assertTrue(isinstance(done.pop().exception().__cause__, asyncio.TimeoutError))
 
 
 class RetryForkExecutorTestCase(RetryTestCase):
@@ -299,5 +282,6 @@ class RetryForkExecutorTestCase(RetryTestCase):
 
 
 class RetryThreadExecutorTestCase(RetryForkExecutorTestCase):
+
     def _setUpExecutor(self):
         self._executor = ThreadPoolExecutor(max_workers=1)

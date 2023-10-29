@@ -23,13 +23,11 @@ def parse_desktop_entry(path):
     return parser
 
 
-_trivial_warnings = re.compile(
-    r" looks "
-    # >=desktop-file-utils-0.25
-    r"(?:the same as that of key|"
-    # <desktop-file-utils-0.25
-    r"redundant with value) "
-)
+_trivial_warnings = re.compile(r" looks "
+                               # >=desktop-file-utils-0.25
+                               r"(?:the same as that of key|"
+                               # <desktop-file-utils-0.25
+                               r"redundant with value) ")
 
 _ignored_errors = (
     # Ignore error for emacs.desktop:
@@ -40,8 +38,7 @@ _ignored_errors = (
 
 _ShowIn_exemptions = (
     # See bug #480586.
-    'contains an unregistered value "Pantheon"',
-)
+    'contains an unregistered value "Pantheon"', )
 
 
 def validate_desktop_entry(path):
@@ -55,14 +52,12 @@ def validate_desktop_entry(path):
     if output_lines:
         filtered_output = []
         for line in output_lines:
-            msg = line[len(path) + 2 :]
+            msg = line[len(path) + 2:]
             # "hint:" output is new in desktop-file-utils-0.21
             if msg.startswith("hint: ") or msg in _ignored_errors:
                 continue
-            if (
-                'for key "NotShowIn" in group "Desktop Entry"' in msg
-                or 'for key "OnlyShowIn" in group "Desktop Entry"' in msg
-            ):
+            if ('for key "NotShowIn" in group "Desktop Entry"' in msg
+                    or 'for key "OnlyShowIn" in group "Desktop Entry"' in msg):
                 exempt = False
                 for s in _ShowIn_exemptions:
                     if s in msg:
@@ -74,9 +69,7 @@ def validate_desktop_entry(path):
         output_lines = filtered_output
 
     if output_lines:
-        output_lines = [
-            line for line in output_lines if _trivial_warnings.search(line) is None
-        ]
+        output_lines = [line for line in output_lines if _trivial_warnings.search(line) is None]
 
     return output_lines
 

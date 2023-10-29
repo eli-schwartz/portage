@@ -6,7 +6,6 @@ __all__ = ["cacheddir", "listdir"]
 import errno
 import stat
 
-
 from portage import os
 from portage.const import VCS_DIRS
 from portage.exception import DirectoryNotFound, PermissionDenied, PortageException
@@ -21,9 +20,7 @@ from portage.util import normalize_path
 dircache = {}
 
 
-def cacheddir(
-    my_original_path, ignorecvs, ignorelist, EmptyOnError, followSymlinks=True
-):
+def cacheddir(my_original_path, ignorecvs, ignorelist, EmptyOnError, followSymlinks=True):
     mypath = normalize_path(my_original_path)
     try:
         pathstat = os.stat(mypath)
@@ -70,9 +67,7 @@ def cacheddir(
             if file_path in ignorelist:
                 pass
             elif ignorecvs:
-                if file_path[:2] != ".#" and not (
-                    file_type == 1 and file_path in VCS_DIRS
-                ):
+                if file_path[:2] != ".#" and not (file_type == 1 and file_path in VCS_DIRS):
                     ret_list.append(file_path)
                     ret_ftype.append(file_type)
     else:
@@ -115,9 +110,7 @@ def listdir(
     @return: A list of files and directories (or just files or just directories) or an empty list.
     """
 
-    fpaths, ftype = cacheddir(
-        mypath, ignorecvs, ignorelist, EmptyOnError, followSymlinks
-    )
+    fpaths, ftype = cacheddir(mypath, ignorecvs, ignorelist, EmptyOnError, followSymlinks)
 
     if fpaths is None:
         fpaths = []
@@ -143,10 +136,7 @@ def listdir(
                     EmptyOnError,
                     followSymlinks,
                 )
-                stack.extend(
-                    (os.path.join(file_path, x), x_type)
-                    for x, x_type in zip(subdir_list, subdir_types)
-                )
+                stack.extend((os.path.join(file_path, x), x_type) for x, x_type in zip(subdir_list, subdir_types))
 
     if filesonly:
         fpaths = [x for x, x_type in zip(fpaths, ftype) if x_type == 0]

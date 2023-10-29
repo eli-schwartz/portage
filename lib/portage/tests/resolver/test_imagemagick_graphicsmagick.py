@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class ImageMagickGraphicsMagickTestCase(TestCase):
+
     def testImageMagickUpdate(self):
         ebuilds = {
             "media-gfx/imagemagick-6.9.7.0": {
@@ -72,18 +73,18 @@ class ImageMagickGraphicsMagickTestCase(TestCase):
             # autounmask USE change for media-gfx/graphicsmagick[imagemagick]
             ResolverPlaygroundTestCase(
                 ["media-gfx/imagemagick", "@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=[
                     "media-gfx/imagemagick-6.9.7.0",
                     "media-gfx/inkscape-0.91-r3",
                 ],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

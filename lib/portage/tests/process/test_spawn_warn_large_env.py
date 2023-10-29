@@ -13,6 +13,7 @@ from portage.tests import TestCase
 
 
 class SpawnWarnLargeEnvTestCase(TestCase):
+
     def testSpawnWarnLargeEnv(self):
         if platform.system() != "Linux":
             self.skipTest("not Linux")
@@ -38,9 +39,7 @@ class SpawnWarnLargeEnvTestCase(TestCase):
                     echo_output,
                     logfile_content,
                 )
-            self.assertTrue(
-                portage.process.env_too_large_warnings > previous_env_too_large_warnings
-            )
+            self.assertTrue(portage.process.env_too_large_warnings > previous_env_too_large_warnings)
             self.assertEqual(retval, 0)
         finally:
             shutil.rmtree(tmpdir)

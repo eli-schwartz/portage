@@ -11,6 +11,7 @@ from portage.util import writemsg_level
 
 
 class CheckGitConfig(CheckSyncConfig):
+
     def __init__(self, repo, logger):
         CheckSyncConfig.__init__(self, repo, logger)
         self.checks.append("check_depth")
@@ -28,9 +29,7 @@ class CheckGitConfig(CheckSyncConfig):
                 d = int(d)
             except ValueError:
                 writemsg_level(
-                    "!!! %s\n"
-                    % _("%s value is not a number: '%s'")
-                    % (attr.replace("_", "-"), d),
+                    "!!! %s\n" % _("%s value is not a number: '%s'") % (attr.replace("_", "-"), d),
                     level=self.logger.ERROR,
                     noiselevel=-1,
                 )
@@ -38,15 +37,11 @@ class CheckGitConfig(CheckSyncConfig):
                 setattr(self.repo, attr, d)
 
     def check_verify_commit_signature(self):
-        v = self.repo.module_specific_options.get(
-            "sync-git-verify-commit-signature", "false"
-        ).lower()
+        v = self.repo.module_specific_options.get("sync-git-verify-commit-signature", "false").lower()
 
         if v not in ("yes", "no", "true", "false"):
             writemsg_level(
-                "!!! %s\n"
-                % _("sync-git-verify-commit-signature not one of: %s")
-                % ("{yes, no, true, false}"),
+                "!!! %s\n" % _("sync-git-verify-commit-signature not one of: %s") % ("{yes, no, true, false}"),
                 level=self.logger.ERROR,
                 noiselevel=-1,
             )
@@ -57,19 +52,23 @@ module_spec = {
     "description": doc,
     "provides": {
         "git-module": {
-            "name": "git",
-            "sourcefile": "git",
-            "class": "GitSync",
-            "description": doc,
+            "name":
+            "git",
+            "sourcefile":
+            "git",
+            "class":
+            "GitSync",
+            "description":
+            doc,
             "functions": ["sync", "new", "exists", "retrieve_head"],
             "func_desc": {
                 "sync": "Performs a git pull on the repository",
                 "new": "Creates the new repository at the specified location",
-                "exists": "Returns a boolean of whether the specified dir "
-                + "exists and is a valid Git repository",
+                "exists": "Returns a boolean of whether the specified dir " + "exists and is a valid Git repository",
                 "retrieve_head": "Returns the head commit hash",
             },
-            "validate_config": CheckGitConfig,
+            "validate_config":
+            CheckGitConfig,
             "module_specific_options": (
                 "sync-git-clone-env",
                 "sync-git-clone-extra-opts",

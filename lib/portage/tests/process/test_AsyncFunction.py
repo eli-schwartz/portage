@@ -15,6 +15,7 @@ from portage.util.futures.unix_events import _set_nonblocking
 
 
 class AsyncFunctionTestCase(TestCase):
+
     @staticmethod
     def _read_from_stdin(pw):
         if pw is not None:
@@ -35,11 +36,7 @@ class AsyncFunctionTestCase(TestCase):
                 background=False,
                 scheduler=loop,
                 target=self._read_from_stdin,
-                args=(
-                    pw.fileno()
-                    if multiprocessing.get_start_method() == "fork"
-                    else None,
-                ),
+                args=(pw.fileno() if multiprocessing.get_start_method() == "fork" else None, ),
             )
             reader.start()
         finally:
@@ -81,11 +78,7 @@ class AsyncFunctionTestCase(TestCase):
         proc = AsyncFunction(
             scheduler=loop,
             target=self._test_getpid_fork,
-            kwargs=dict(
-                preexec_fn=functools.partial(
-                    multiprocessing.set_start_method, "spawn", force=True
-                )
-            ),
+            kwargs=dict(preexec_fn=functools.partial(multiprocessing.set_start_method, "spawn", force=True)),
         )
         proc.start()
         self.assertEqual(proc.wait(), 0)

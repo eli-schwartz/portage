@@ -31,8 +31,7 @@ class SVNSync(NewBase):
         # initial checkout
         svn_root = self.repo.sync_uri
         exitcode = portage.process.spawn_bash(
-            "cd %s; exec svn co %s ."
-            % (
+            "cd %s; exec svn co %s ." % (
                 portage._shell_quote(self.repo.location),
                 portage._shell_quote(svn_root),
             ),

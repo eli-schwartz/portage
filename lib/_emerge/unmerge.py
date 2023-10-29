@@ -102,10 +102,7 @@ def _unmerge_display(
         if not unmerge_files:
             if unmerge_action in ["rage-clean", "unmerge"]:
                 print()
-                print(
-                    bold(f"emerge {unmerge_action}")
-                    + " can only be used with specific package names"
-                )
+                print(bold(f"emerge {unmerge_action}") + " can only be used with specific package names")
                 print()
                 return 1, {}
 
@@ -127,10 +124,7 @@ def _unmerge_display(
                     # possible cat/pkg or dep; treat as such
                     candidate_catpkgs.append(x)
                 elif unmerge_action in ["prune", "clean"]:
-                    print(
-                        "\n!!! Prune and clean do not accept individual"
-                        + " ebuilds as arguments;\n    skipping.\n"
-                    )
+                    print("\n!!! Prune and clean do not accept individual" + " ebuilds as arguments;\n    skipping.\n")
                     continue
                 else:
                     # it appears that the user is specifying an installed
@@ -160,9 +154,7 @@ def _unmerge_display(
                         # The Path is shorter... so it can't be inside the vdb.
                         print(sp_absx)
                         print(absx)
-                        print(
-                            "\n!!!", x, "cannot be inside " + vdb_path + "; aborting.\n"
-                        )
+                        print("\n!!!", x, "cannot be inside " + vdb_path + "; aborting.\n")
                         return 1, {}
 
                     for idx in range(0, sp_vdb_len):
@@ -183,19 +175,10 @@ def _unmerge_display(
         if not quiet:
             newline = "\n"
         if settings["ROOT"] != "/":
-            writemsg_level(
-                darkgreen(
-                    newline
-                    + f">>> Using system located in ROOT tree {settings['ROOT']}\n"
-                )
-            )
+            writemsg_level(darkgreen(newline + f">>> Using system located in ROOT tree {settings['ROOT']}\n"))
 
         if ("--pretend" in myopts or "--ask" in myopts) and not quiet:
-            writemsg_level(
-                darkgreen(
-                    newline + ">>> These are the packages that would be unmerged:\n"
-                )
-            )
+            writemsg_level(darkgreen(newline + ">>> These are the packages that would be unmerged:\n"))
 
         # Preservation of order is required for --depclean and --prune so
         # that dependencies are respected. Use all_selected to eliminate
@@ -209,15 +192,8 @@ def _unmerge_display(
             try:
                 mymatch = vartree.dbapi.match(x)
             except portage.exception.AmbiguousPackageName as errpkgs:
-                print(
-                    '\n\n!!! The short ebuild name "'
-                    + x
-                    + '" is ambiguous.  Please specify'
-                )
-                print(
-                    "!!! one of the following fully-qualified "
-                    + "ebuild names instead:\n"
-                )
+                print('\n\n!!! The short ebuild name "' + x + '" is ambiguous.  Please specify')
+                print("!!! one of the following fully-qualified " + "ebuild names instead:\n")
                 for i in errpkgs[0]:
                     print("    " + green(i))
                 print()
@@ -248,9 +224,8 @@ def _unmerge_display(
                 for mypkg in mymatch[1:]:
                     myslot = vartree.getslot(mypkg)
                     mycounter = vartree.dbapi.cpv_counter(mypkg)
-                    if (
-                        myslot == best_slot and mycounter > best_counter
-                    ) or mypkg == portage.best([mypkg, best_version]):
+                    if (myslot == best_slot and mycounter > best_counter) or mypkg == portage.best(
+                        [mypkg, best_version]):
                         if myslot == best_slot:
                             if mycounter < best_counter:
                                 # On slot collision, keep the one with the
@@ -261,11 +236,8 @@ def _unmerge_display(
                         best_slot = myslot
                         best_counter = mycounter
                 pkgmap[mykey]["protected"].add(best_version)
-                pkgmap[mykey]["selected"].update(
-                    mypkg
-                    for mypkg in mymatch
-                    if mypkg != best_version and mypkg not in all_selected
-                )
+                pkgmap[mykey]["selected"].update(mypkg for mypkg in mymatch
+                                                 if mypkg != best_version and mypkg not in all_selected)
                 all_selected.update(pkgmap[mykey]["selected"])
             else:
                 # unmerge_action == "clean"
@@ -311,15 +283,11 @@ def _unmerge_display(
                     # is protected, and the rest are selected
         numselected = len(all_selected)
         if global_unmerge and not numselected:
-            portage.writemsg_stdout(
-                "\n>>> No outdated packages were found on your system.\n"
-            )
+            portage.writemsg_stdout("\n>>> No outdated packages were found on your system.\n")
             return 1, {}
 
         if not numselected:
-            portage.writemsg_stdout(
-                "\n>>> No packages selected for removal by " + unmerge_action + "\n"
-            )
+            portage.writemsg_stdout("\n>>> No packages selected for removal by " + unmerge_action + "\n")
             return 1, {}
     finally:
         if vdb_lock:
@@ -334,20 +302,14 @@ def _unmerge_display(
     while not stop:
         stop = True
         pos = len(installed_sets)
-        for s in installed_sets[pos - 1 :]:
+        for s in installed_sets[pos - 1:]:
             if s not in sets:
                 continue
-            candidates = [
-                x[len(SETPREFIX) :]
-                for x in sets[s].getNonAtoms()
-                if x.startswith(SETPREFIX)
-            ]
+            candidates = [x[len(SETPREFIX):] for x in sets[s].getNonAtoms() if x.startswith(SETPREFIX)]
             if candidates:
                 stop = False
                 installed_sets += candidates
-    installed_sets = [
-        x for x in installed_sets if x not in root_config.setconfig.active
-    ]
+    installed_sets = [x for x in installed_sets if x not in root_config.setconfig.active]
     del stop, pos
 
     # we don't want to unmerge packages that are still listed in user-editable package sets
@@ -366,18 +328,14 @@ def _unmerge_display(
             if unmerge_action != "clean" and root_config.root == "/":
                 skip_pkg = False
                 if portage.match_from_list(portage.const.PORTAGE_PACKAGE_ATOM, [pkg]):
-                    msg = (
-                        f"Not unmerging package {pkg.cpv} "
-                        "since there is no valid reason for Portage to "
-                        f"{unmerge_action} itself."
-                    )
+                    msg = (f"Not unmerging package {pkg.cpv} "
+                           "since there is no valid reason for Portage to "
+                           f"{unmerge_action} itself.")
                     skip_pkg = True
                 elif vartree.dbapi._dblink(cpv).isowner(portage._python_interpreter):
-                    msg = (
-                        f"Not unmerging package {pkg.cpv} since there is no valid "
-                        f"reason for Portage to {unmerge_action} currently used Python "
-                        "interpreter."
-                    )
+                    msg = (f"Not unmerging package {pkg.cpv} since there is no valid "
+                           f"reason for Portage to {unmerge_action} currently used Python "
+                           "interpreter.")
                     skip_pkg = True
                 if skip_pkg:
                     for line in textwrap.wrap(msg, 75):
@@ -401,10 +359,8 @@ def _unmerge_display(
                         continue
                     unknown_sets.add(s)
                     out = portage.output.EOutput()
-                    out.eerror(
-                        f"Unknown set '@{s}' in "
-                        f"{root_config.settings['EROOT']}{portage.const.WORLD_SETS_FILE}"
-                    )
+                    out.eerror(f"Unknown set '@{s}' in "
+                               f"{root_config.settings['EROOT']}{portage.const.WORLD_SETS_FILE}")
                     continue
 
                 # only check instances of EditablePackageSet as other classes are generally used for
@@ -439,18 +395,14 @@ def _unmerge_display(
                             break
             if parents:
                 print(colorize("WARN", f"Package {cpv} is going to be unmerged,"))
-                print(
-                    colorize("WARN", "but still listed in the following package sets:")
-                )
+                print(colorize("WARN", "but still listed in the following package sets:"))
                 print(f"    {', '.join(parents)}\n")
 
     del installed_sets
 
     numselected = len(all_selected)
     if not numselected:
-        writemsg_level(
-            "\n>>> No packages selected for removal by " + unmerge_action + "\n"
-        )
+        writemsg_level("\n>>> No packages selected for removal by " + unmerge_action + "\n")
         return 1, {}
 
     # Unmerge order only matters in some cases
@@ -486,12 +438,8 @@ def _unmerge_display(
             mylist.difference_update(all_selected)
         cp = portage.cpv_getkey(next(iter(selected)))
         for y in vartree.dep_match(cp):
-            if (
-                y not in pkgmap[x]["omitted"]
-                and y not in pkgmap[x]["selected"]
-                and y not in pkgmap[x]["protected"]
-                and y not in all_selected
-            ):
+            if (y not in pkgmap[x]["omitted"] and y not in pkgmap[x]["selected"] and y not in pkgmap[x]["protected"]
+                    and y not in all_selected):
                 pkgmap[x]["omitted"].add(y)
         if global_unmerge and not pkgmap[x]["selected"]:
             # avoid cluttering the preview printout with stuff that isn't getting unmerged
@@ -511,9 +459,7 @@ def _unmerge_display(
                 noiselevel=-1,
             )
             writemsg_level(
-                colorize(
-                    "WARN", "!!! Unmerging it may " + "be damaging to your system.\n\n"
-                ),
+                colorize("WARN", "!!! Unmerging it may " + "be damaging to your system.\n\n"),
                 level=logging.WARNING,
                 noiselevel=-1,
             )
@@ -534,13 +480,9 @@ def _unmerge_display(
                 sorted_pkgs.sort(key=cpv_sort_key())
                 for mypkg in sorted_pkgs:
                     if mytype == "selected":
-                        writemsg_level(
-                            colorize("UNMERGE_WARN", mypkg.version + " "), noiselevel=-1
-                        )
+                        writemsg_level(colorize("UNMERGE_WARN", mypkg.version + " "), noiselevel=-1)
                     else:
-                        writemsg_level(
-                            colorize("GOOD", mypkg.version + " "), noiselevel=-1
-                        )
+                        writemsg_level(colorize("GOOD", mypkg.version + " "), noiselevel=-1)
             else:
                 writemsg_level("none ", noiselevel=-1)
             if not quiet:
@@ -553,18 +495,9 @@ def _unmerge_display(
         noiselevel=-1,
     )
 
-    writemsg_level(
-        "\n>>> "
-        + colorize("UNMERGE_WARN", "'Selected'")
-        + " packages are slated for removal.\n"
-    )
-    writemsg_level(
-        ">>> "
-        + colorize("GOOD", "'Protected'")
-        + " and "
-        + colorize("GOOD", "'omitted'")
-        + " packages will not be removed.\n\n"
-    )
+    writemsg_level("\n>>> " + colorize("UNMERGE_WARN", "'Selected'") + " packages are slated for removal.\n")
+    writemsg_level(">>> " + colorize("GOOD", "'Protected'") + " and " + colorize("GOOD", "'omitted'") +
+                   " packages will not be removed.\n\n")
 
     return os.EX_OK, pkgmap
 
@@ -671,11 +604,7 @@ def unmerge(
                     raise UninstallFailure(retval)
                 sys.exit(retval)
             else:
-                if (
-                    clean_world
-                    and hasattr(sets["selected"], "cleanPackage")
-                    and hasattr(sets["selected"], "lock")
-                ):
+                if (clean_world and hasattr(sets["selected"], "cleanPackage") and hasattr(sets["selected"], "lock")):
                     sets["selected"].lock()
                     if hasattr(sets["selected"], "load"):
                         sets["selected"].load()
@@ -683,11 +612,7 @@ def unmerge(
                     sets["selected"].unlock()
                 emergelog(xterm_titles, " >>> unmerge success: " + y)
 
-    if (
-        clean_world
-        and hasattr(sets["selected"], "remove")
-        and hasattr(sets["selected"], "lock")
-    ):
+    if (clean_world and hasattr(sets["selected"], "remove") and hasattr(sets["selected"], "lock")):
         sets["selected"].lock()
         # load is called inside remove()
         for s in root_config.setconfig.active:

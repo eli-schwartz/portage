@@ -64,11 +64,9 @@ class OptionItem:
 def usage(module_controller):
     _usage = "usage: emaint [options] COMMAND"
 
-    desc = (
-        "The emaint program provides an interface to system health "
-        + "checks and maintenance. See the emaint(1) man page "
-        + "for additional information about the following commands:"
-    )
+    desc = ("The emaint program provides an interface to system health " +
+            "checks and maintenance. See the emaint(1) man page " +
+            "for additional information about the following commands:")
 
     _usage += "\n\n"
     for line in textwrap.wrap(desc, 65):
@@ -103,9 +101,7 @@ def module_opts(module_controller, module):
 class TaskHandler:
     """Handles the running of the tasks it is given"""
 
-    def __init__(
-        self, show_progress_bar=True, verbose=True, callback=None, module_output=None
-    ):
+    def __init__(self, show_progress_bar=True, verbose=True, callback=None, module_output=None):
         self.show_progress_bar = show_progress_bar
         self.verbose = verbose
         self.callback = callback

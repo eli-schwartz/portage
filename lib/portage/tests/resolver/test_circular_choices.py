@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class CircularJsoncppCmakeBootstrapTestCase(TestCase):
+
     def testCircularJsoncppCmakeBootstrapOrDeps(self):
         ebuilds = {
             "dev-libs/jsoncpp-1.9.2": {
@@ -65,12 +66,9 @@ class CircularJsoncppCmakeBootstrapTestCase(TestCase):
                 options={"--depclean": True},
                 success=True,
                 cleanlist=["dev-util/cmake-bootstrap-3.16.2"],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=ebuilds, world=["dev-util/cmake"]
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=ebuilds, world=["dev-util/cmake"])
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -80,7 +78,10 @@ class CircularJsoncppCmakeBootstrapTestCase(TestCase):
 
     def testVirtualCmakeBootstrapUseConditional(self):
         ebuilds = {
-            "dev-libs/jsoncpp-1.9.2": {"EAPI": "7", "BDEPEND": "virtual/cmake"},
+            "dev-libs/jsoncpp-1.9.2": {
+                "EAPI": "7",
+                "BDEPEND": "virtual/cmake"
+            },
             "dev-util/cmake-bootstrap-3.16.2": {
                 "EAPI": "7",
             },
@@ -106,8 +107,7 @@ class CircularJsoncppCmakeBootstrapTestCase(TestCase):
                     "dev-util/cmake-3.16.2",
                 ],
                 success=True,
-            ),
-        )
+            ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:
@@ -119,6 +119,7 @@ class CircularJsoncppCmakeBootstrapTestCase(TestCase):
 
 
 class CircularChoicesTestCase(TestCase):
+
     def testDirectCircularDependency(self):
         ebuilds = {
             "dev-lang/gwydion-dylan-2.4.0": {
@@ -136,8 +137,7 @@ class CircularChoicesTestCase(TestCase):
                     "dev-lang/gwydion-dylan-2.4.0",
                 ],
                 success=True,
-            ),
-        )
+            ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:
@@ -149,9 +149,13 @@ class CircularChoicesTestCase(TestCase):
 
 
 class VirtualCircularChoicesTestCase(TestCase):
+
     def testDirectVirtualCircularDependency(self):
         ebuilds = {
-            "dev-java/icedtea-6.1.10.3": {"SLOT": "6", "DEPEND": "virtual/jdk"},
+            "dev-java/icedtea-6.1.10.3": {
+                "SLOT": "6",
+                "DEPEND": "virtual/jdk"
+            },
             "dev-java/icedtea6-bin-1.10.3": {},
             "virtual/jdk-1.6.0": {
                 "SLOT": "1.6",
@@ -169,8 +173,7 @@ class VirtualCircularChoicesTestCase(TestCase):
                     "dev-java/icedtea-6.1.10.3",
                 ],
                 success=True,
-            ),
-        )
+            ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:
@@ -182,6 +185,7 @@ class VirtualCircularChoicesTestCase(TestCase):
 
 
 class CircularPypyExeTestCase(TestCase):
+
     def testCircularPypyExe(self):
         ebuilds = {
             "dev-python/pypy-7.3.0": {
@@ -209,8 +213,7 @@ class CircularPypyExeTestCase(TestCase):
                 ["dev-python/pypy"],
                 mergelist=["dev-python/pypy-exe-bin-7.3.0", "dev-python/pypy-7.3.0"],
                 success=True,
-            ),
-        )
+            ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)
         try:

@@ -13,6 +13,7 @@ from portage.output import colorize
 
 
 class BdepsTestCase(TestCase):
+
     def testImageMagickUpdate(self):
         ebuilds = {
             "app-misc/A-1": {
@@ -20,7 +21,9 @@ class BdepsTestCase(TestCase):
                 "DEPEND": "app-misc/B",
                 "RDEPEND": "app-misc/C",
             },
-            "app-misc/B-1": {"EAPI": "6"},
+            "app-misc/B-1": {
+                "EAPI": "6"
+            },
             "app-misc/B-2": {
                 "EAPI": "6",
             },
@@ -86,7 +89,7 @@ class BdepsTestCase(TestCase):
             },
         }
 
-        world = ("app-misc/A",)
+        world = ("app-misc/A", )
 
         test_cases = (
             # Enable --with-bdeps automatically when
@@ -197,15 +200,13 @@ class BdepsTestCase(TestCase):
                     binpkgs=binpkgs,
                     world=world,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     # Disable debug so that cleanup works.
                     playground.debug = False

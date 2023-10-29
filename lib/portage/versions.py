@@ -22,7 +22,6 @@ from functools import lru_cache
 from typing import Any, Optional, Union
 from collections.abc import Sequence
 
-
 import portage
 
 portage.proxy.lazyimport.lazyimport(
@@ -58,18 +57,7 @@ _vr = _v + "(-r(" + _rev + "))?"
 
 _cp = "(" + _cat + "/" + _pkg + "(-" + _vr + ")?)"
 _cpv = "(" + _cp + "-" + _vr + ")"
-_pv = (
-    "(?P<pn>"
-    + _pkg
-    + "(?P<pn_inval>-"
-    + _vr
-    + ")?)"
-    + "-(?P<ver>"
-    + _v
-    + ")(-r(?P<rev>"
-    + _rev
-    + "))?"
-)
+_pv = ("(?P<pn>" + _pkg + "(?P<pn_inval>-" + _vr + ")?)" + "-(?P<ver>" + _v + ")(-r(?P<rev>" + _rev + "))?")
 
 ver_regexp = re.compile("^" + _vr + "$")
 suffix_regexp = re.compile("^(alpha|beta|rc|pre|p)(\\d*)$")
@@ -464,9 +452,7 @@ class _pkg_str(str):
             self.__dict__["repo"] = repo
 
     def __setattr__(self, name: str, value: Any) -> None:
-        raise AttributeError(
-            "_pkg_str instances are immutable", self.__class__, name, value
-        )
+        raise AttributeError("_pkg_str instances are immutable", self.__class__, name, value)
 
     @staticmethod
     def _long(var: Any, default: int) -> int:
@@ -499,9 +485,7 @@ class _pkg_str(str):
             return stable
 
 
-def pkgsplit(
-    mypkg: str, silent: int = 1, eapi: Any = None
-) -> Optional[tuple[str, str, str]]:
+def pkgsplit(mypkg: str, silent: int = 1, eapi: Any = None) -> Optional[tuple[str, str, str]]:
     """
     @param mypkg: either a pv or cpv
     @return:
@@ -553,7 +537,7 @@ def cpv_getversion(mycpv: Union[str, _pkg_str], eapi: Any = None) -> Optional[st
     cp = cpv_getkey(mycpv, eapi=eapi)
     if cp is None:
         return None
-    return mycpv[len(cp + "-") :]
+    return mycpv[len(cp + "-"):]
 
 
 def cpv_sort_key(eapi: Any = None) -> Any:

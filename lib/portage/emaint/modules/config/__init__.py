@@ -4,7 +4,6 @@
 doc = """Check and clean the config tracker list for uninstalled packages."""
 __doc__ = doc
 
-
 module_spec = {
     "name": "config",
     "description": doc,

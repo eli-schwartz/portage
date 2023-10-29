@@ -1,12 +1,10 @@
 # Copyright 2008-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-
 __all__ = ["ObjectProxy"]
 
 
 class ObjectProxy:
-
     """
     Object that acts as a proxy to another object, forwarding
     attribute accesses and method calls. This can be useful
@@ -34,9 +32,7 @@ class ObjectProxy:
         return object.__getattribute__(self, "_get_target")().__enter__()
 
     def __exit__(self, exc_type, exc_value, traceback):
-        return object.__getattribute__(self, "_get_target")().__exit__(
-            exc_type, exc_value, traceback
-        )
+        return object.__getattribute__(self, "_get_target")().__exit__(exc_type, exc_value, traceback)
 
     def __setitem__(self, key, value):
         object.__getattribute__(self, "_get_target")()[key] = value

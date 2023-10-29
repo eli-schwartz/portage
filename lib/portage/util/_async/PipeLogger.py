@@ -14,7 +14,6 @@ from _emerge.AbstractPollTask import AbstractPollTask
 
 
 class PipeLogger(AbstractPollTask):
-
     """
     This can be used for logging output of a child process,
     optionally outputing to log_file_path and/or stdout_fd.  It can
@@ -39,17 +38,13 @@ class PipeLogger(AbstractPollTask):
         elif log_file_path is not None:
             try:
                 self._log_file = open(
-                    _unicode_encode(
-                        log_file_path, encoding=_encodings["fs"], errors="strict"
-                    ),
+                    _unicode_encode(log_file_path, encoding=_encodings["fs"], errors="strict"),
                     mode="ab",
                 )
 
                 if log_file_path.endswith(".gz"):
                     self._log_file_real = self._log_file
-                    self._log_file = gzip.GzipFile(
-                        filename="", mode="ab", fileobj=self._log_file
-                    )
+                    self._log_file = gzip.GzipFile(filename="", mode="ab", fileobj=self._log_file)
 
                 portage.util.apply_secpass_permissions(
                     log_file_path,
@@ -70,9 +65,7 @@ class PipeLogger(AbstractPollTask):
 
         fcntl.fcntl(fd, fcntl.F_SETFL, fcntl.fcntl(fd, fcntl.F_GETFL) | os.O_NONBLOCK)
 
-        self._io_loop_task = asyncio.ensure_future(
-            self._io_loop(self.input_fd), loop=self.scheduler
-        )
+        self._io_loop_task = asyncio.ensure_future(self._io_loop(self.input_fd), loop=self.scheduler)
         self._io_loop_task.add_done_callback(self._io_loop_done)
         self._registered = True
 
@@ -116,7 +109,7 @@ class PipeLogger(AbstractPollTask):
                 stdout_buf = buf
                 while stdout_buf:
                     try:
-                        stdout_buf = stdout_buf[os.write(stdout_fd, stdout_buf) :]
+                        stdout_buf = stdout_buf[os.write(stdout_fd, stdout_buf):]
                     except OSError as e:
                         if e.errno != errno.EAGAIN:
                             raise

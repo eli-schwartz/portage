@@ -15,6 +15,7 @@ from portage.output import colorize
 
 
 class MoveSlotEntTestCase(TestCase):
+
     def testMoveSlotEnt(self):
         ebuilds = {
             "dev-libs/A-2::dont_apply_updates": {
@@ -69,13 +70,11 @@ class MoveSlotEntTestCase(TestCase):
             },
         }
 
-        updates = textwrap.dedent(
-            """
+        updates = textwrap.dedent("""
 			slotmove dev-libs/A 0 2
 			slotmove dev-libs/B 0 1
 			slotmove dev-libs/C 0 1
-		"""
-        )
+		""")
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -86,7 +85,7 @@ class MoveSlotEntTestCase(TestCase):
                     ebuilds=ebuilds,
                     installed=installed,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
@@ -107,13 +106,11 @@ class MoveSlotEntTestCase(TestCase):
 
                     # Create an empty updates directory, so that this
                     # repo doesn't inherit updates from the main repo.
-                    ensure_dirs(
-                        os.path.join(
-                            portdb.getRepositoryPath("dont_apply_updates"),
-                            "profiles",
-                            "updates",
-                        )
-                    )
+                    ensure_dirs(os.path.join(
+                        portdb.getRepositoryPath("dont_apply_updates"),
+                        "profiles",
+                        "updates",
+                    ))
 
                     global_noiselimit = portage.util.noiselimit
                     portage.util.noiselimit = -2
@@ -128,12 +125,8 @@ class MoveSlotEntTestCase(TestCase):
                     vardb._clear_cache()
 
                     # 0/2.30 -> 2/2.30
-                    self.assertEqual(
-                        "2/2.30", vardb.aux_get("dev-libs/A-1", ["SLOT"])[0]
-                    )
-                    self.assertEqual(
-                        "2/2.30", bindb.aux_get("dev-libs/A-1", ["SLOT"])[0]
-                    )
+                    self.assertEqual("2/2.30", vardb.aux_get("dev-libs/A-1", ["SLOT"])[0])
+                    self.assertEqual("2/2.30", bindb.aux_get("dev-libs/A-1", ["SLOT"])[0])
 
                     # 0 -> 1
                     self.assertEqual("1", vardb.aux_get("dev-libs/B-1", ["SLOT"])[0])
@@ -144,13 +137,9 @@ class MoveSlotEntTestCase(TestCase):
                     self.assertEqual("1", bindb.aux_get("dev-libs/C-1", ["SLOT"])[0])
 
                     # dont_apply_updates
-                    self.assertEqual(
-                        "0/2.30", bindb.aux_get("dev-libs/A-2", ["SLOT"])[0]
-                    )
+                    self.assertEqual("0/2.30", bindb.aux_get("dev-libs/A-2", ["SLOT"])[0])
                     self.assertEqual("0", bindb.aux_get("dev-libs/B-2", ["SLOT"])[0])
-                    self.assertEqual(
-                        "0/2.1", bindb.aux_get("dev-libs/C-2.1", ["SLOT"])[0]
-                    )
+                    self.assertEqual("0/2.1", bindb.aux_get("dev-libs/C-2.1", ["SLOT"])[0])
 
                 finally:
                     playground.cleanup()

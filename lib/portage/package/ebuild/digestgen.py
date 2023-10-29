@@ -43,9 +43,7 @@ def digestgen(myarchives=None, mysettings=None, myportdb=None):
     @return: 1 on success and 0 on failure
     """
     if mysettings is None or myportdb is None:
-        raise TypeError(
-            "portage.digestgen(): 'mysettings' and 'myportdb' parameter are required."
-        )
+        raise TypeError("portage.digestgen(): 'mysettings' and 'myportdb' parameter are required.")
 
     try:
         portage._doebuild_manifest_exempt_depend += 1
@@ -70,18 +68,12 @@ def digestgen(myarchives=None, mysettings=None, myportdb=None):
         repo_required_hashes = mf.manifest_required_hashes
         if repo_required_hashes is None:
             repo_required_hashes = MANIFEST2_HASH_DEFAULTS
-        mf = mf.load_manifest(
-            mysettings["O"], mysettings["DISTDIR"], fetchlist_dict=fetchlist_dict
-        )
+        mf = mf.load_manifest(mysettings["O"], mysettings["DISTDIR"], fetchlist_dict=fetchlist_dict)
 
         if not mf.allow_create:
             writemsg_stdout(
-                _(
-                    ">>> Skipping creating Manifest for %s; "
-                    "repository is configured to not use them\n"
-                )
-                % mysettings["O"]
-            )
+                _(">>> Skipping creating Manifest for %s; "
+                  "repository is configured to not use them\n") % mysettings["O"])
             return 1
 
         # Don't require all hashes since that can trigger excessive
@@ -174,14 +166,8 @@ def digestgen(myarchives=None, mysettings=None, myportdb=None):
                         f"ebuild --force {os.path.basename(myebuild)} manifest",
                     )
                     writemsg(
-                        (
-                            _(
-                                "!!! If you would like to forcefully replace the existing Manifest entry\n"
-                                "!!! for %s, use the following command:\n"
-                            )
-                            % myfile
-                        )
-                        + f"!!!    {cmd}\n",
+                        (_("!!! If you would like to forcefully replace the existing Manifest entry\n"
+                           "!!! for %s, use the following command:\n") % myfile) + f"!!!    {cmd}\n",
                         noiselevel=-1,
                     )
                 return 0
@@ -204,7 +190,7 @@ def digestgen(myarchives=None, mysettings=None, myportdb=None):
         try:
             mf.write(sign=False)
         except PermissionDenied as e:
-            writemsg(_("!!! Permission Denied: %s\n") % (e,), noiselevel=-1)
+            writemsg(_("!!! Permission Denied: %s\n") % (e, ), noiselevel=-1)
             return 0
         if "assume-digests" not in mysettings.features:
             distlist = list(mf.fhashdict.get("DIST", {}))
@@ -217,11 +203,7 @@ def digestgen(myarchives=None, mysettings=None, myportdb=None):
                 cp = os.path.sep.join(mysettings["O"].split(os.path.sep)[-2:])
                 pkgs = myportdb.cp_list(cp, mytree=mytree)
                 pkgs.sort()
-                writemsg_stdout(
-                    "  digest.assumed"
-                    + colorize("WARN", str(len(auto_assumed)).rjust(18))
-                    + "\n"
-                )
+                writemsg_stdout("  digest.assumed" + colorize("WARN", str(len(auto_assumed)).rjust(18)) + "\n")
                 for pkg_key in pkgs:
                     fetchlist = myportdb.getFetchMap(pkg_key, mytree=mytree)
                     pv = pkg_key.split("/")[1]

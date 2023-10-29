@@ -20,9 +20,7 @@ def _sync_decorator(func, loop=None):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        return (loop or asyncio.get_event_loop()).run_until_complete(
-            func(*args, **kwargs)
-        )
+        return (loop or asyncio.get_event_loop()).run_until_complete(func(*args, **kwargs))
 
     return wrapper
 
@@ -39,9 +37,7 @@ def _sync_methods(obj, loop=None):
     loop = asyncio._wrap_loop(loop)
     return _ObjectAttrWrapper(
         obj,
-        lambda attr: _sync_decorator(attr, loop=loop)
-        if asyncio.iscoroutinefunction(attr)
-        else attr,
+        lambda attr: _sync_decorator(attr, loop=loop) if asyncio.iscoroutinefunction(attr) else attr,
     )
 
 

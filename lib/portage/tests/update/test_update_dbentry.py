@@ -19,6 +19,7 @@ from portage.output import colorize
 
 
 class UpdateDbentryTestCase(TestCase):
+
     def testUpdateDbentryTestCase(self):
         cases = (
             (
@@ -219,11 +220,9 @@ class UpdateDbentryTestCase(TestCase):
 
         world = ["dev-libs/M", "dev-libs/N"]
 
-        updates = textwrap.dedent(
-            """
+        updates = textwrap.dedent("""
 			move dev-libs/M dev-libs/M-moved
-		"""
-        )
+		""")
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -235,7 +234,7 @@ class UpdateDbentryTestCase(TestCase):
                     installed=installed,
                     world=world,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
@@ -258,13 +257,11 @@ class UpdateDbentryTestCase(TestCase):
 
                     # Create an empty updates directory, so that this
                     # repo doesn't inherit updates from the main repo.
-                    ensure_dirs(
-                        os.path.join(
-                            portdb.getRepositoryPath("dont_apply_updates"),
-                            "profiles",
-                            "updates",
-                        )
-                    )
+                    ensure_dirs(os.path.join(
+                        portdb.getRepositoryPath("dont_apply_updates"),
+                        "profiles",
+                        "updates",
+                    ))
 
                     global_noiselimit = portage.util.noiselimit
                     portage.util.noiselimit = -2

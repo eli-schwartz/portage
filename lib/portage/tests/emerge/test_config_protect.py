@@ -19,6 +19,7 @@ from portage.util import ensure_dirs, find_updated_config_files, shlex_split
 
 
 class ConfigProtectTestCase(TestCase):
+
     def testConfigProtect(self):
         """
         Demonstrates many different scenarios. For example:
@@ -143,12 +144,7 @@ src_install() {
         def updated_config_files(count):
             self.assertEqual(
                 count,
-                sum(
-                    len(x[1])
-                    for x in find_updated_config_files(
-                        eroot, shlex_split(config_protect)
-                    )
-                ),
+                sum(len(x[1]) for x in find_updated_config_files(eroot, shlex_split(config_protect))),
             )
 
         test_commands = (
@@ -233,9 +229,7 @@ src_install() {
         }
 
         if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
-            env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ[
-                "__PORTAGE_TEST_HARDLINK_LOCKS"
-            ]
+            env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
 
         dirs = [distdir, fake_bin, portage_tmpdir, var_cache_edb]
         etc_symlinks = ("dispatch-conf.conf", "etc-update.conf")
@@ -291,8 +285,6 @@ src_install() {
                         for line in output:
                             sys.stderr.write(_unicode_decode(line))
 
-                self.assertEqual(
-                    os.EX_OK, proc.returncode, f"emerge failed with args {args}"
-                )
+                self.assertEqual(os.EX_OK, proc.returncode, f"emerge failed with args {args}")
         finally:
             playground.cleanup()

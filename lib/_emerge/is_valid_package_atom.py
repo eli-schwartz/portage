@@ -9,7 +9,7 @@ def insert_category_into_atom(atom, category):
     # Handle '*' character for "extended syntax" wildcard support.
     alphanum = re.search(r"[\*\w]", atom, re.UNICODE)
     if alphanum:
-        ret = atom[: alphanum.start()] + f"{category}/" + atom[alphanum.start() :]
+        ret = atom[:alphanum.start()] + f"{category}/" + atom[alphanum.start():]
     else:
         ret = None
     return ret
@@ -20,6 +20,4 @@ def is_valid_package_atom(x, allow_repo=False, allow_build_id=True):
         x2 = insert_category_into_atom(x, "cat")
         if x2 is not None:
             x = x2
-    return isvalidatom(
-        x, allow_blockers=False, allow_repo=allow_repo, allow_build_id=allow_build_id
-    )
+    return isvalidatom(x, allow_blockers=False, allow_repo=allow_repo, allow_build_id=allow_build_id)

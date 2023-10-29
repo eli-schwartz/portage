@@ -10,6 +10,7 @@ from portage.tests import TestCase
 
 
 class ArrayFromfileEofTestCase(TestCase):
+
     def testArrayFromfileEof(self):
         # This tests if the following python issue is fixed
         # in the currently running version of python:

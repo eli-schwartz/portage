@@ -28,6 +28,7 @@ else:
 
 
 class IsTextFile:
+
     def __init__(self):
         if magic is not None:
             self._call = self._is_text_magic
@@ -89,7 +90,7 @@ def chpath_inplace(filename, is_text_file, old, new):
         if not in_byte:
             break
 
-        if in_byte == old[matched_byte_count : matched_byte_count + 1]:
+        if in_byte == old[matched_byte_count:matched_byte_count + 1]:
             matched_byte_count += 1
             if matched_byte_count == len_old:
                 modified = True
@@ -136,7 +137,7 @@ def chpath_inplace(filename, is_text_file, old, new):
 def chpath_inplace_symlink(filename, st, old, new):
     target = os.readlink(filename)
     if target.startswith(old):
-        new_target = new + target[len(old) :]
+        new_target = new + target[len(old):]
         os.unlink(filename)
         os.symlink(new_target, filename)
         os.lchown(filename, st.st_uid, st.st_gid)
@@ -146,9 +147,7 @@ def main(argv):
     parser = argparse.ArgumentParser(description=doc)
     parser.add_argument("location", default=None, help="root directory (e.g. ${D})")
     parser.add_argument("old", default=None, help="original build prefix (e.g. /)")
-    parser.add_argument(
-        "new", default=None, help="new install prefix (e.g. ${EPREFIX})"
-    )
+    parser.add_argument("new", default=None, help="new install prefix (e.g. ${EPREFIX})")
     opts = parser.parse_args(argv)
 
     location, old, new = opts.location, opts.old, opts.new

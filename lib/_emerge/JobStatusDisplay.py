@@ -45,11 +45,7 @@ class JobStatusDisplay:
 
         self.reset()
 
-        isatty = (
-            os.environ.get("TERM") != "dumb"
-            and hasattr(self.out, "isatty")
-            and self.out.isatty()
-        )
+        isatty = (os.environ.get("TERM") != "dumb" and hasattr(self.out, "isatty") and self.out.isatty())
         object.__setattr__(self, "_isatty", isatty)
         if not isatty or not self._init_term():
             term_codes = {}
@@ -276,7 +272,7 @@ class JobStatusDisplay:
             # Use plain_output here since it's easier to truncate
             # properly than the color output which contains console
             # color codes.
-            self._update(plain_output[: self.width])
+            self._update(plain_output[:self.width])
         else:
             self._update(color_output.getvalue())
 

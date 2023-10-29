@@ -1,7 +1,6 @@
 # Copyright 2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-
 from _emerge.CompositeTask import CompositeTask
 from _emerge.EbuildProcess import EbuildProcess
 from _emerge.SpawnProcess import SpawnProcess
@@ -33,17 +32,17 @@ class PackagePhase(CompositeTask):
     def _start(self):
         try:
             with open(
-                _unicode_encode(
-                    os.path.join(
-                        self.settings["PORTAGE_BUILDDIR"],
-                        "build-info",
-                        "PKG_INSTALL_MASK",
+                    _unicode_encode(
+                        os.path.join(
+                            self.settings["PORTAGE_BUILDDIR"],
+                            "build-info",
+                            "PKG_INSTALL_MASK",
+                        ),
+                        encoding=_encodings["fs"],
+                        errors="strict",
                     ),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                encoding=_encodings["repo.content"],
-                errors="replace",
+                    encoding=_encodings["repo.content"],
+                    errors="replace",
             ) as f:
                 self._pkg_install_mask = InstallMask(f.read())
         except OSError:
@@ -56,11 +55,9 @@ class PackagePhase(CompositeTask):
                         self._shell_binary,
                         "-e",
                         "-c",
-                        (
-                            "rm -rf {PROOT}; "
-                            'cp -pPR $(cp --help | grep -q -- "^[[:space:]]*-l," && echo -l)'
-                            ' "${{D}}" {PROOT}'
-                        ).format(PROOT=portage._shell_quote(self._proot)),
+                        ("rm -rf {PROOT}; "
+                         'cp -pPR $(cp --help | grep -q -- "^[[:space:]]*-l," && echo -l)'
+                         ' "${{D}}" {PROOT}').format(PROOT=portage._shell_quote(self._proot)),
                     ],
                     background=self.background,
                     env=self.settings.environ(),
@@ -81,9 +78,7 @@ class PackagePhase(CompositeTask):
                 AsyncFunction(
                     target=install_mask_dir,
                     args=(
-                        os.path.join(
-                            self._proot, self.settings["EPREFIX"].lstrip(os.sep)
-                        ),
+                        os.path.join(self._proot, self.settings["EPREFIX"].lstrip(os.sep)),
                         self._pkg_install_mask,
                     ),
                 ),

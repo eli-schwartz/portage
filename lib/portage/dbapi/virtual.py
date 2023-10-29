@@ -38,9 +38,8 @@ class fakedbapi(dbapi):
         the same implementation of self._instance_key.
         """
         if self.cpvdict:
-            raise AssertionError(
-                "_set_multi_instance called after " "packages have already been added"
-            )
+            raise AssertionError("_set_multi_instance called after "
+                                 "packages have already been added")
         self._multi_instance = multi_instance
         if multi_instance:
             self._instance_key = self._instance_key_multi_instance
@@ -148,15 +147,11 @@ class fakedbapi(dbapi):
         except AttributeError:
             myslot = None
 
-        if mycp is None or (
-            myslot is None and metadata is not None and metadata.get("SLOT")
-        ):
+        if mycp is None or (myslot is None and metadata is not None and metadata.get("SLOT")):
             if metadata is None:
                 mycpv = _pkg_str(mycpv, db=self)
             else:
-                mycpv = _pkg_str(
-                    mycpv, metadata=metadata, settings=self.settings, db=self
-                )
+                mycpv = _pkg_str(mycpv, metadata=metadata, settings=self.settings, db=self)
 
             mycp = mycpv.cp
             try:

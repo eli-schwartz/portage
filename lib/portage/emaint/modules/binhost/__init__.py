@@ -4,7 +4,6 @@
 doc = """Scan and generate metadata indexes for binary packages."""
 __doc__ = doc
 
-
 module_spec = {
     "name": "binhost",
     "description": doc,

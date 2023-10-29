@@ -9,7 +9,7 @@ class EbuildSpawnProcess(AbstractEbuildProcess):
     Used by doebuild.spawn() to manage the spawned process.
     """
 
-    _spawn_kwarg_names = AbstractEbuildProcess._spawn_kwarg_names + ("fakeroot_state",)
+    _spawn_kwarg_names = AbstractEbuildProcess._spawn_kwarg_names + ("fakeroot_state", )
 
     __slots__ = ("fakeroot_state", "spawn_func")
 

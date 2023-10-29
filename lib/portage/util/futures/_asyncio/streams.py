@@ -32,11 +32,10 @@ def _reader(input_file, loop=None):
 
 
 class _Reader:
+
     def __init__(self, future, input_file, loop):
         self._future = future
-        self._pipe_reader = PipeReader(
-            input_files={"input_file": input_file}, scheduler=loop
-        )
+        self._pipe_reader = PipeReader(input_files={"input_file": input_file}, scheduler=loop)
 
         self._future.add_done_callback(self._cancel_callback)
         self._pipe_reader.addExitListener(self._eof)
@@ -75,7 +74,7 @@ async def _writer(output_file, content, loop=DeprecationWarning):
     fd = output_file.fileno()
     while content:
         try:
-            content = content[os.write(fd, content) :]
+            content = content[os.write(fd, content):]
         except OSError as e:
             if e.errno != errno.EAGAIN:
                 raise

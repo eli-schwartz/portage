@@ -21,9 +21,7 @@ def get_binpkg_format(binpkg_path, check_file=False, remote=False):
         if file_ext_format is not None:
             return file_ext_format
         else:
-            raise InvalidBinaryPackageFormat(
-                f"Unsupported binary package format from '{binpkg_path}'"
-            )
+            raise InvalidBinaryPackageFormat(f"Unsupported binary package format from '{binpkg_path}'")
 
     if file_ext_format is not None and not check_file:
         return file_ext_format
@@ -53,24 +51,17 @@ def get_binpkg_format(binpkg_path, check_file=False, remote=False):
     except Exception as err:
         # We got many different exceptions here, so have to catch all of them.
         file_format = None
-        writemsg(
-            colorize("ERR", f"Error reading binpkg '{binpkg_path}': {err}"),
-        )
+        writemsg(colorize("ERR", f"Error reading binpkg '{binpkg_path}': {err}"), )
         raise InvalidBinaryPackageFormat(f"Error reading binpkg '{binpkg_path}': {err}")
 
     if file_format is None:
-        raise InvalidBinaryPackageFormat(
-            f"Unsupported binary package format from '{binpkg_path}'"
-        )
+        raise InvalidBinaryPackageFormat(f"Unsupported binary package format from '{binpkg_path}'")
 
     if (file_ext_format is not None) and (file_ext_format != file_format):
         writemsg(
             colorize(
                 "WARN",
-                "File {} binpkg format mismatch, actual format: {}".format(
-                    binpkg_path, file_format
-                ),
-            )
-        )
+                "File {} binpkg format mismatch, actual format: {}".format(binpkg_path, file_format),
+            ))
 
     return file_format

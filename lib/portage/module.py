@@ -54,12 +54,9 @@ class Module:
             except KeyError:
                 kid["module_name"] = ".".join([mod_name, self.name])
                 writemsg(
-                    _(
-                        f"{self.name} module's module_spec is old, missing attribute: "
-                        "'sourcefile'.  Backward compatibility may be "
-                        f"removed in the future.\nFile: {self._module.__file__}\n"
-                    )
-                )
+                    _(f"{self.name} module's module_spec is old, missing attribute: "
+                      "'sourcefile'.  Backward compatibility may be "
+                      f"removed in the future.\nFile: {self._module.__file__}\n"))
             kid["is_imported"] = False
             self.kids[kidname] = kid
             self.kids_names.append(kidname)
@@ -67,10 +64,8 @@ class Module:
 
     def get_class(self, name):
         if not name or name not in self.kids_names:
-            raise InvalidModuleName(
-                f"Module name '{name}' is invalid or not"
-                f"part of the module '{self.name}'"
-            )
+            raise InvalidModuleName(f"Module name '{name}' is invalid or not"
+                                    f"part of the module '{self.name}'")
         kid = self.kids[name]
         if kid["is_imported"]:
             module = kid["instance"]
@@ -122,11 +117,7 @@ class Modules:
         # The importables list cannot be a generator.
         # If it was a generator, it would be consumed by self.parents.extend()
         # and the following for loop wouldn't have anything to iterate with.
-        importables = [
-            entry
-            for entry in names
-            if not entry.startswith("__") and _a_real_module(entry)
-        ]
+        importables = [entry for entry in names if not entry.startswith("__") and _a_real_module(entry)]
         self.parents.extend(importables)
 
         kids = {}
@@ -238,5 +229,4 @@ class Modules:
                 raise ModuleVersionError(
                     f"Error loading '{self._namepath}' plugin module: {module.module_spec['name']}, version: {module.module_spec['version']}\n"
                     "Module is not compatible with the current application version\n"
-                    f"Compatible module API versions are: {self.compat_versions}"
-                )
+                    f"Compatible module API versions are: {self.compat_versions}")

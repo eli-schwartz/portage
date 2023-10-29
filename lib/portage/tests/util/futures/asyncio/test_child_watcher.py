@@ -11,6 +11,7 @@ from portage.util.futures.unix_events import DefaultEventLoopPolicy
 
 
 class ChildWatcherTestCase(TestCase):
+
     def testChildWatcher(self):
         true_binary = find_binary("true")
         self.assertNotEqual(true_binary, None)

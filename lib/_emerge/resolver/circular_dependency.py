@@ -31,9 +31,7 @@ class circular_dependency_handler:
             # Show this debug output before doing the calculations
             # that follow, so at least we have this debug info
             # if we happen to hit a bug later.
-            writemsg_level(
-                "\n\ncircular dependency graph:\n\n", level=logging.DEBUG, noiselevel=-1
-            )
+            writemsg_level("\n\ncircular dependency graph:\n\n", level=logging.DEBUG, noiselevel=-1)
             self.debug_print()
 
         self.cycles, self.shortest_cycle = self._find_cycles()
@@ -48,9 +46,7 @@ class circular_dependency_handler:
 
     def _find_cycles(self):
         shortest_cycle = None
-        cycles = self.graph.get_cycles(
-            ignore_priority=DepPrioritySatisfiedRange.ignore_medium_soft
-        )
+        cycles = self.graph.get_cycles(ignore_priority=DepPrioritySatisfiedRange.ignore_medium_soft)
         for cycle in cycles:
             if not shortest_cycle or len(cycle) < len(shortest_cycle):
                 shortest_cycle = cycle
@@ -103,9 +99,7 @@ class circular_dependency_handler:
         return pkg.use.mask, pkg.use.force
 
     def _get_autounmask_changes(self, pkg):
-        needed_use_config_change = (
-            self.depgraph._dynamic_config._needed_use_config_changes.get(pkg)
-        )
+        needed_use_config_change = (self.depgraph._dynamic_config._needed_use_config_changes.get(pkg))
         if needed_use_config_change is None:
             return frozenset()
 
@@ -136,9 +130,7 @@ class circular_dependency_handler:
                     break
 
             try:
-                affecting_use = extract_affecting_use(
-                    dep, parent_atom, eapi=parent.eapi
-                )
+                affecting_use = extract_affecting_use(dep, parent_atom, eapi=parent.eapi)
             except InvalidDependString:
                 if not parent.installed:
                     raise
@@ -156,9 +148,7 @@ class circular_dependency_handler:
 
             # If any of the flags we're going to touch is in REQUIRED_USE, add all
             # other flags in REQUIRED_USE to affecting_use, to not lose any solution.
-            required_use_flags = get_required_use_flags(
-                parent._metadata.get("REQUIRED_USE", ""), eapi=parent.eapi
-            )
+            required_use_flags = get_required_use_flags(parent._metadata.get("REQUIRED_USE", ""), eapi=parent.eapi)
 
             if affecting_use.intersection(required_use_flags):
                 # TODO: Find out exactly which REQUIRED_USE flags are
@@ -183,9 +173,7 @@ class circular_dependency_handler:
                 # positive and negative effects (flag? vs. !flag?), assume
                 # a positive relationship.
                 current_use = self.depgraph._pkg_use_enabled(parent)
-                affecting_use = tuple(
-                    flag for flag in affecting_use if flag in current_use
-                )
+                affecting_use = tuple(flag for flag in affecting_use if flag in current_use)
 
                 if len(affecting_use) > self.MAX_AFFECTING_USE:
                     # There are too many USE combinations to explore in
@@ -196,9 +184,7 @@ class circular_dependency_handler:
             # a set of possible changes
             # TODO: Use the information encoded in REQUIRED_USE
             solutions = set()
-            for use_state in product(
-                ("disabled", "enabled"), repeat=len(affecting_use)
-            ):
+            for use_state in product(("disabled", "enabled"), repeat=len(affecting_use)):
                 current_use = set(self.depgraph._pkg_use_enabled(parent))
                 for flag, state in zip(affecting_use, use_state):
                     if state == "enabled":
@@ -218,10 +204,10 @@ class circular_dependency_handler:
                     required_use = parent._metadata.get("REQUIRED_USE", "")
 
                     if check_required_use(
-                        required_use,
-                        current_use,
-                        parent.iuse.is_valid_flag,
-                        eapi=parent.eapi,
+                            required_use,
+                            current_use,
+                            parent.iuse.is_valid_flag,
+                            eapi=parent.eapi,
                     ):
                         use = self.depgraph._pkg_use_enabled(parent)
                         solution = set()
@@ -246,9 +232,7 @@ class circular_dependency_handler:
                 # If a requiremnet is hard, ignore the suggestion.
                 # If the requirment is conditional, warn the user that other changes might be needed.
                 followup_change = False
-                parent_parent_atoms = self.depgraph._dynamic_config._parent_atoms.get(
-                    changed_parent
-                )
+                parent_parent_atoms = self.depgraph._dynamic_config._parent_atoms.get(changed_parent)
                 for ppkg, atom in parent_parent_atoms:
                     atom = atom.unevaluated_atom
                     if not atom.use:
@@ -278,9 +262,7 @@ class circular_dependency_handler:
                         changes.append(colorize("blue", "-" + flag))
                 msg = f"- {parent.cpv} (Change USE: {' '.join(changes)})\n"
                 if followup_change:
-                    msg += (
-                        " (This change might require USE changes on parent packages.)"
-                    )
+                    msg += (" (This change might require USE changes on parent packages.)")
                 suggestions.append(msg)
                 final_solutions.setdefault(pkg, set()).add(solution)
 
@@ -293,9 +275,7 @@ class circular_dependency_handler:
         """
         graph = self.graph.copy()
         while True:
-            root_nodes = graph.root_nodes(
-                ignore_priority=DepPrioritySatisfiedRange.ignore_medium_soft
-            )
+            root_nodes = graph.root_nodes(ignore_priority=DepPrioritySatisfiedRange.ignore_medium_soft)
             if not root_nodes:
                 break
             graph.difference_update(root_nodes)

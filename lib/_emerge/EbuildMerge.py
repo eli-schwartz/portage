@@ -79,10 +79,8 @@ class EbuildMerge(CompositeTask):
                 f"Post-Build Cleaning ({pkg.cpv}::{pkg_path})",
                 short_msg=short_msg,
             )
-        logger.log(
-            f" ::: completed emerge ({pkg_count.curval} of {pkg_count.maxval}) "
-            f"{pkg.cpv} to {pkg.root}"
-        )
+        logger.log(f" ::: completed emerge ({pkg_count.curval} of {pkg_count.maxval}) "
+                   f"{pkg.cpv} to {pkg.root}")
 
         self._start_exit_hook(self.returncode)
 

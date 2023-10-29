@@ -24,9 +24,7 @@ class GPG:
         """
         self.settings = settings
         self.thread = None
-        self.GPG_signing_base_command = self.settings.get(
-            "BINPKG_GPG_SIGNING_BASE_COMMAND"
-        )
+        self.GPG_signing_base_command = self.settings.get("BINPKG_GPG_SIGNING_BASE_COMMAND")
         self.digest_algo = self.settings.get("BINPKG_GPG_SIGNING_DIGEST")
         self.signing_gpg_home = self.settings.get("BINPKG_GPG_SIGNING_GPG_HOME")
         self.signing_gpg_key = self.settings.get("BINPKG_GPG_SIGNING_KEY")
@@ -48,10 +46,8 @@ class GPG:
         Set GPG_TTY and run GPG unlock command.
         If gpg-keepalive is set, start keepalive thread.
         """
-        if self.GPG_unlock_command and (
-            self.settings.get("BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0])
-            == "gpkg"
-        ):
+        if self.GPG_unlock_command and (self.settings.get("BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0])
+                                        == "gpkg"):
             try:
                 os.environ["GPG_TTY"] = os.ttyname(sys.stdout.fileno())
             except OSError as e:
@@ -70,9 +66,7 @@ class GPG:
                 raise GPGException("GPG unlock failed")
 
             if self.keepalive:
-                self.GPG_unlock_command = shlex_split(
-                    varexpand(self.GPG_unlock_command, mydict=self.settings)
-                )
+                self.GPG_unlock_command = shlex_split(varexpand(self.GPG_unlock_command, mydict=self.settings))
                 self.thread = threading.Thread(target=self.gpg_keepalive, daemon=True)
                 self.thread.start()
 

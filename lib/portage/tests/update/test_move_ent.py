@@ -15,6 +15,7 @@ from portage.output import colorize
 
 
 class MoveEntTestCase(TestCase):
+
     def testMoveEnt(self):
         ebuilds = {
             "dev-libs/A-2::dont_apply_updates": {
@@ -43,11 +44,9 @@ class MoveEntTestCase(TestCase):
             },
         }
 
-        updates = textwrap.dedent(
-            """
+        updates = textwrap.dedent("""
 			move dev-libs/A dev-libs/A-moved
-		"""
-        )
+		""")
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -82,13 +81,11 @@ class MoveEntTestCase(TestCase):
 
                     # Create an empty updates directory, so that this
                     # repo doesn't inherit updates from the main repo.
-                    ensure_dirs(
-                        os.path.join(
-                            portdb.getRepositoryPath("dont_apply_updates"),
-                            "profiles",
-                            "updates",
-                        )
-                    )
+                    ensure_dirs(os.path.join(
+                        portdb.getRepositoryPath("dont_apply_updates"),
+                        "profiles",
+                        "updates",
+                    ))
 
                     global_noiselimit = portage.util.noiselimit
                     portage.util.noiselimit = -2
@@ -111,13 +108,9 @@ class MoveEntTestCase(TestCase):
                     bindb.aux_get("dev-libs/A-moved-1", ["EAPI"])
 
                     # dont_apply_updates
-                    self.assertRaises(
-                        KeyError, vardb.aux_get, "dev-libs/A-moved-2", ["EAPI"]
-                    )
+                    self.assertRaises(KeyError, vardb.aux_get, "dev-libs/A-moved-2", ["EAPI"])
                     vardb.aux_get("dev-libs/A-2", ["EAPI"])
-                    self.assertRaises(
-                        KeyError, bindb.aux_get, "dev-libs/A-moved-2", ["EAPI"]
-                    )
+                    self.assertRaises(KeyError, bindb.aux_get, "dev-libs/A-moved-2", ["EAPI"])
                     bindb.aux_get("dev-libs/A-2", ["EAPI"])
 
                 finally:

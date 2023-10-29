@@ -28,11 +28,7 @@ def dep_expand(mydep, mydb=None, use_cache=1, settings=None):
         if not has_cat:
             alphanum = re.search(r"\w", orig_dep)
             if alphanum:
-                mydep = (
-                    orig_dep[: alphanum.start()]
-                    + "null/"
-                    + orig_dep[alphanum.start() :]
-                )
+                mydep = (orig_dep[:alphanum.start()] + "null/" + orig_dep[alphanum.start():])
         try:
             mydep = Atom(mydep, allow_repo=True)
         except InvalidAtom:

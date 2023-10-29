@@ -53,9 +53,7 @@ class SchedulerInterface(SlotObject):
     def _return_false():
         return False
 
-    async def async_output(
-        self, msg, log_file=None, background=None, level=0, noiselevel=-1
-    ):
+    async def async_output(self, msg, log_file=None, background=None, level=0, noiselevel=-1):
         """
         Output a msg to stdio (if not in background) and to a log file
         if provided.
@@ -105,9 +103,7 @@ class SchedulerInterface(SlotObject):
         if log_path is not None:
             try:
                 f = open(
-                    _unicode_encode(
-                        log_path, encoding=_encodings["fs"], errors="strict"
-                    ),
+                    _unicode_encode(log_path, encoding=_encodings["fs"], errors="strict"),
                     mode="ab",
                 )
                 f_real = f

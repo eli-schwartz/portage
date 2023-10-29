@@ -18,9 +18,7 @@ import os
 from os import path as osp
 import sys
 
-if osp.isfile(
-    osp.abspath(osp.join(osp.dirname(__file__), "../../../../.portage_not_installed"))
-):
+if osp.isfile(osp.abspath(osp.join(osp.dirname(__file__), "../../../../.portage_not_installed"))):
     sys.path.insert(0, osp.abspath(osp.join(osp.dirname(__file__), "../../../../lib")))
 import portage
 
@@ -64,7 +62,4 @@ html_theme = "sphinxdoc"
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = []
 
-autodoc_default_options = {
-    opt: True
-    for opt in filter(None, os.environ.get("SPHINX_APIDOC_OPTIONS", "").split(","))
-}
+autodoc_default_options = {opt: True for opt in filter(None, os.environ.get("SPHINX_APIDOC_OPTIONS", "").split(","))}

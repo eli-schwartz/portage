@@ -9,10 +9,17 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotConflictRebuildTestCase(TestCase):
+
     def testSlotConflictRebuild(self):
         ebuilds = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/A-2": {"EAPI": "5", "SLOT": "0/2"},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/A-2": {
+                "EAPI": "5",
+                "SLOT": "0/2"
+            },
             "app-misc/B-0": {
                 "EAPI": "5",
                 "DEPEND": "app-misc/A:=",
@@ -23,8 +30,14 @@ class SlotConflictRebuildTestCase(TestCase):
                 "DEPEND": "<app-misc/A-2",
                 "RDEPEND": "<app-misc/A-2",
             },
-            "app-misc/D-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/D-2": {"EAPI": "5", "SLOT": "0/2"},
+            "app-misc/D-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/D-2": {
+                "EAPI": "5",
+                "SLOT": "0/2"
+            },
             "app-misc/E-0": {
                 "EAPI": "5",
                 "DEPEND": "app-misc/D:=",
@@ -33,7 +46,10 @@ class SlotConflictRebuildTestCase(TestCase):
         }
 
         installed = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
             "app-misc/B-0": {
                 "EAPI": "5",
                 "DEPEND": "app-misc/A:0/1=",
@@ -44,7 +60,10 @@ class SlotConflictRebuildTestCase(TestCase):
                 "DEPEND": "<app-misc/A-2",
                 "RDEPEND": "<app-misc/A-2",
             },
-            "app-misc/D-1": {"EAPI": "5", "SLOT": "0/1"},
+            "app-misc/D-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
             "app-misc/E-0": {
                 "EAPI": "5",
                 "DEPEND": "app-misc/D:0/1=",
@@ -59,15 +78,16 @@ class SlotConflictRebuildTestCase(TestCase):
             # upgrade and we don't want to trigger unnecessary rebuilds.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True, "--backtrack": 4},
+                options={
+                    "--update": True,
+                    "--deep": True,
+                    "--backtrack": 4
+                },
                 success=True,
                 mergelist=["app-misc/D-2", "app-misc/E-0"],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -88,12 +108,21 @@ class SlotConflictRebuildTestCase(TestCase):
                 "DEPEND": "app-misc/B:=",
                 "RDEPEND": "app-misc/B:=",
             },
-            "app-misc/B-1": {"EAPI": "5", "SLOT": "1"},
-            "app-misc/B-2": {"EAPI": "5", "SLOT": "2/2"},
+            "app-misc/B-1": {
+                "EAPI": "5",
+                "SLOT": "1"
+            },
+            "app-misc/B-2": {
+                "EAPI": "5",
+                "SLOT": "2/2"
+            },
         }
 
         installed = {
-            "app-misc/B-1": {"EAPI": "5", "SLOT": "1"},
+            "app-misc/B-1": {
+                "EAPI": "5",
+                "SLOT": "1"
+            },
         }
 
         expected_mergelist = ["app-misc/A-1", "app-misc/B-2"]
@@ -115,22 +144,22 @@ class SlotConflictRebuildTestCase(TestCase):
 
             expected_mergelist.append(f"app-misc/C{i}C-1")
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"],
-                ignore_mergelist_order=True,
-                all_permutations=True,
-                options={"--backtrack": 3, "--update": True, "--deep": True},
-                success=True,
-                mergelist=expected_mergelist,
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["app-misc/A"],
+            ignore_mergelist_order=True,
+            all_permutations=True,
+            options={
+                "--backtrack": 3,
+                "--update": True,
+                "--deep": True
+            },
+            success=True,
+            mergelist=expected_mergelist,
+        ), )
 
         world = []
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -149,7 +178,10 @@ class SlotConflictRebuildTestCase(TestCase):
                 "DEPEND": "app-misc/B:= app-misc/C",
                 "RDEPEND": "app-misc/B:= app-misc/C",
             },
-            "app-misc/B-2": {"EAPI": "5", "SLOT": "2"},
+            "app-misc/B-2": {
+                "EAPI": "5",
+                "SLOT": "2"
+            },
             "app-misc/C-1": {
                 "EAPI": "5",
                 "DEPEND": "app-misc/B:=",
@@ -163,7 +195,10 @@ class SlotConflictRebuildTestCase(TestCase):
                 "DEPEND": "app-misc/B:1/1= app-misc/C",
                 "RDEPEND": "app-misc/B:1/1= app-misc/C",
             },
-            "app-misc/B-1": {"EAPI": "5", "SLOT": "1"},
+            "app-misc/B-1": {
+                "EAPI": "5",
+                "SLOT": "1"
+            },
             "app-misc/C-1": {
                 "EAPI": "5",
                 "DEPEND": "app-misc/B:1/1=",
@@ -172,12 +207,13 @@ class SlotConflictRebuildTestCase(TestCase):
         }
 
         test_cases = (
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"], success=True, mergelist=["app-misc/A-2"]
-            ),
+            ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-2"]),
             ResolverPlaygroundTestCase(
                 ["app-misc/A"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=["app-misc/B-2", "app-misc/C-1", "app-misc/A-2"],
             ),
@@ -185,9 +221,7 @@ class SlotConflictRebuildTestCase(TestCase):
 
         world = []
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -208,8 +242,14 @@ class SlotConflictRebuildTestCase(TestCase):
                 "DEPEND": "app-misc/B",
                 "RDEPEND": "app-misc/B",
             },
-            "app-misc/B-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/B-2": {"EAPI": "5", "SLOT": "0/2"},
+            "app-misc/B-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/B-2": {
+                "EAPI": "5",
+                "SLOT": "0/2"
+            },
         }
 
         installed = {
@@ -218,20 +258,19 @@ class SlotConflictRebuildTestCase(TestCase):
                 "DEPEND": "app-misc/B:0/1=",
                 "RDEPEND": "app-misc/B:0/1=",
             },
-            "app-misc/B-1": {"EAPI": "5", "SLOT": "0/1"},
+            "app-misc/B-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["app-misc/B"], success=True, mergelist=["app-misc/B-2", "app-misc/A-1"]
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["app-misc/B"],
+                                                 success=True,
+                                                 mergelist=["app-misc/B-2", "app-misc/A-1"]), )
 
         world = ["app-misc/A"]
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -246,11 +285,26 @@ class SlotConflictRebuildTestCase(TestCase):
         >= atom, but in the end didn't install the child update because of the < atom.
         """
         ebuilds = {
-            "cat/slotted-lib-1": {"EAPI": "5", "SLOT": "1"},
-            "cat/slotted-lib-2": {"EAPI": "5", "SLOT": "2"},
-            "cat/slotted-lib-3": {"EAPI": "5", "SLOT": "3"},
-            "cat/slotted-lib-4": {"EAPI": "5", "SLOT": "4"},
-            "cat/slotted-lib-5": {"EAPI": "5", "SLOT": "5"},
+            "cat/slotted-lib-1": {
+                "EAPI": "5",
+                "SLOT": "1"
+            },
+            "cat/slotted-lib-2": {
+                "EAPI": "5",
+                "SLOT": "2"
+            },
+            "cat/slotted-lib-3": {
+                "EAPI": "5",
+                "SLOT": "3"
+            },
+            "cat/slotted-lib-4": {
+                "EAPI": "5",
+                "SLOT": "4"
+            },
+            "cat/slotted-lib-5": {
+                "EAPI": "5",
+                "SLOT": "5"
+            },
             "cat/user-1": {
                 "EAPI": "5",
                 "DEPEND": ">=cat/slotted-lib-2:= <cat/slotted-lib-4:=",
@@ -259,7 +313,10 @@ class SlotConflictRebuildTestCase(TestCase):
         }
 
         installed = {
-            "cat/slotted-lib-3": {"EAPI": "5", "SLOT": "3"},
+            "cat/slotted-lib-3": {
+                "EAPI": "5",
+                "SLOT": "3"
+            },
             "cat/user-1": {
                 "EAPI": "5",
                 "DEPEND": ">=cat/slotted-lib-2:3/3= <cat/slotted-lib-4:3/3=",
@@ -267,20 +324,19 @@ class SlotConflictRebuildTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["cat/user"],
-                options={"--deep": True, "--update": True},
-                success=True,
-                mergelist=[],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["cat/user"],
+            options={
+                "--deep": True,
+                "--update": True
+            },
+            success=True,
+            mergelist=[],
+        ), )
 
         world = []
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -298,12 +354,18 @@ class SlotConflictRebuildTestCase(TestCase):
         Make sure we don't perform this undesirable rebuild.
         """
         ebuilds = {
-            "net-firewall/iptables-1.4.21::overlay": {"EAPI": "5", "SLOT": "0/10"},
+            "net-firewall/iptables-1.4.21::overlay": {
+                "EAPI": "5",
+                "SLOT": "0/10"
+            },
             "sys-apps/iproute2-3.11.0::overlay": {
                 "EAPI": "5",
                 "RDEPEND": "net-firewall/iptables:=",
             },
-            "net-firewall/iptables-1.4.21": {"EAPI": "5", "SLOT": "0"},
+            "net-firewall/iptables-1.4.21": {
+                "EAPI": "5",
+                "SLOT": "0"
+            },
             "sys-apps/iproute2-3.12.0": {
                 "EAPI": "5",
                 "RDEPEND": "net-firewall/iptables:=",
@@ -311,7 +373,10 @@ class SlotConflictRebuildTestCase(TestCase):
         }
 
         installed = {
-            "net-firewall/iptables-1.4.21::overlay": {"EAPI": "5", "SLOT": "0/10"},
+            "net-firewall/iptables-1.4.21::overlay": {
+                "EAPI": "5",
+                "SLOT": "0/10"
+            },
             "sys-apps/iproute2-3.12.0": {
                 "EAPI": "5",
                 "RDEPEND": "net-firewall/iptables:0/10=",
@@ -320,18 +385,18 @@ class SlotConflictRebuildTestCase(TestCase):
 
         world = ["sys-apps/iproute2"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={"--deep": True, "--update": True, "--verbose": True},
-                success=True,
-                mergelist=[],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@world"],
+            options={
+                "--deep": True,
+                "--update": True,
+                "--verbose": True
+            },
+            success=True,
+            mergelist=[],
+        ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -347,14 +412,26 @@ class SlotConflictRebuildTestCase(TestCase):
 
         """
         ebuilds = {
-            "net-firewall/iptables-1.4.21::overlay": {"EAPI": "5", "SLOT": "0/10"},
-            "net-firewall/iptables-1.4.21-r1::overlay": {"EAPI": "5", "SLOT": "0/10"},
+            "net-firewall/iptables-1.4.21::overlay": {
+                "EAPI": "5",
+                "SLOT": "0/10"
+            },
+            "net-firewall/iptables-1.4.21-r1::overlay": {
+                "EAPI": "5",
+                "SLOT": "0/10"
+            },
             "sys-apps/iproute2-3.11.0::overlay": {
                 "EAPI": "5",
                 "RDEPEND": "net-firewall/iptables:=",
             },
-            "net-firewall/iptables-1.4.21": {"EAPI": "5", "SLOT": "0"},
-            "net-firewall/iptables-1.4.21-r1": {"EAPI": "5", "SLOT": "0"},
+            "net-firewall/iptables-1.4.21": {
+                "EAPI": "5",
+                "SLOT": "0"
+            },
+            "net-firewall/iptables-1.4.21-r1": {
+                "EAPI": "5",
+                "SLOT": "0"
+            },
             "sys-apps/iproute2-3.12.0": {
                 "EAPI": "5",
                 "RDEPEND": "net-firewall/iptables:=",
@@ -362,7 +439,10 @@ class SlotConflictRebuildTestCase(TestCase):
         }
 
         installed = {
-            "net-firewall/iptables-1.4.21::overlay": {"EAPI": "5", "SLOT": "0/10"},
+            "net-firewall/iptables-1.4.21::overlay": {
+                "EAPI": "5",
+                "SLOT": "0/10"
+            },
             "sys-apps/iproute2-3.12.0": {
                 "EAPI": "5",
                 "RDEPEND": "net-firewall/iptables:0/10=",
@@ -371,18 +451,18 @@ class SlotConflictRebuildTestCase(TestCase):
 
         world = ["sys-apps/iproute2"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={"--deep": True, "--update": True, "--verbose": True},
-                success=True,
-                mergelist=["net-firewall/iptables-1.4.21-r1::overlay"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@world"],
+            options={
+                "--deep": True,
+                "--update": True,
+                "--verbose": True
+            },
+            success=True,
+            mergelist=["net-firewall/iptables-1.4.21-r1::overlay"],
+        ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -392,8 +472,14 @@ class SlotConflictRebuildTestCase(TestCase):
 
     def testSlotConflictRebuildGolang(self):
         ebuilds = {
-            "dev-lang/go-1.14.7": {"EAPI": "7", "SLOT": "0/1.14.7"},
-            "dev-lang/go-1.15": {"EAPI": "7", "SLOT": "0/1.15"},
+            "dev-lang/go-1.14.7": {
+                "EAPI": "7",
+                "SLOT": "0/1.14.7"
+            },
+            "dev-lang/go-1.15": {
+                "EAPI": "7",
+                "SLOT": "0/1.15"
+            },
             "net-p2p/syncthing-1.3.4-r1": {
                 "EAPI": "7",
                 "BDEPEND": "=dev-lang/go-1.14* >=dev-lang/go-1.12",
@@ -401,7 +487,10 @@ class SlotConflictRebuildTestCase(TestCase):
         }
 
         installed = {
-            "dev-lang/go-1.14.7": {"EAPI": "7", "SLOT": "0/1.14.7"},
+            "dev-lang/go-1.14.7": {
+                "EAPI": "7",
+                "SLOT": "0/1.14.7"
+            },
             "net-p2p/syncthing-1.3.4-r1": {
                 "EAPI": "7",
                 "BDEPEND": "=dev-lang/go-1.14* >=dev-lang/go-1.12",
@@ -415,15 +504,15 @@ class SlotConflictRebuildTestCase(TestCase):
             # update due to a slot conflict (bug #439688).
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=[],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

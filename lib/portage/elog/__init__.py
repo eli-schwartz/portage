@@ -2,7 +2,6 @@
 # Copyright 2006-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-
 import portage
 
 portage.proxy.lazyimport.lazyimport(
@@ -120,9 +119,7 @@ def elog_process(cpv, mysettings, phasefilter=None):
             pass
 
     if "T" in mysettings:
-        ebuild_logentries = collect_ebuild_messages(
-            os.path.join(mysettings["T"], "logging")
-        )
+        ebuild_logentries = collect_ebuild_messages(os.path.join(mysettings["T"], "logging"))
     else:
         # A build dir isn't necessarily required since the messages.e*
         # functions allow messages to be generated in-memory.
@@ -155,9 +152,7 @@ def elog_process(cpv, mysettings, phasefilter=None):
         default_logentries = filter_loglevels(all_logentries[key], my_elog_classes)
 
         # in case the filters matched all messages and no module overrides exist
-        if len(default_logentries) == 0 and (
-            not ":" in mysettings.get("PORTAGE_ELOG_SYSTEM", "")
-        ):
+        if len(default_logentries) == 0 and (not ":" in mysettings.get("PORTAGE_ELOG_SYSTEM", "")):
             continue
 
         default_fulllog = _combine_logentries(default_logentries)
@@ -192,13 +187,8 @@ def elog_process(cpv, mysettings, phasefilter=None):
                     _elog_atexit_handlers.append(m.finalize)
                     atexit_register(m.finalize)
             except (ImportError, AttributeError) as e:
-                writemsg(
-                    _(
-                        "!!! Error while importing logging modules "
-                        'while loading "mod_%s":\n'
-                    )
-                    % str(s)
-                )
+                writemsg(_("!!! Error while importing logging modules "
+                           'while loading "mod_%s":\n') % str(s))
                 writemsg(f"{str(e)}\n", noiselevel=-1)
             except AlarmSignal:
                 writemsg(f"Timeout in elog_process for system '{s}'\n", noiselevel=-1)

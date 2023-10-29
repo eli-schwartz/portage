@@ -16,7 +16,6 @@ from portage.util.futures import asyncio
 
 
 class SpawnProcess(SubProcess):
-
     """
     Constructor keyword args are passed into portage.process.spawn().
     The required "args" keyword argument will be passed as the first
@@ -41,15 +40,11 @@ class SpawnProcess(SubProcess):
         "unshare_net",
     )
 
-    __slots__ = (
-        ("args", "log_filter_file")
-        + _spawn_kwarg_names
-        + (
-            "_main_task",
-            "_main_task_cancel",
-            "_selinux_type",
-        )
-    )
+    __slots__ = (("args", "log_filter_file") + _spawn_kwarg_names + (
+        "_main_task",
+        "_main_task_cancel",
+        "_selinux_type",
+    ))
 
     # Max number of attempts to kill the processes listed in cgroup.procs,
     # given that processes may fork before they can be killed.
@@ -151,9 +146,7 @@ class SpawnProcess(SubProcess):
         if can_log and not self.background:
             stdout_fd = os.dup(fd_pipes_orig[1])
 
-        self._start_main_task(
-            master_fd, log_file_path=log_file_path, stdout_fd=stdout_fd
-        )
+        self._start_main_task(master_fd, log_file_path=log_file_path, stdout_fd=stdout_fd)
         self._registered = True
 
     def _start_main_task(self, pr, log_file_path=None, stdout_fd=None):
@@ -175,9 +168,7 @@ class SpawnProcess(SubProcess):
 
         pipe_logger.start()
 
-        self._main_task_cancel = functools.partial(
-            self._main_cancel, build_logger, pipe_logger
-        )
+        self._main_task_cancel = functools.partial(self._main_cancel, build_logger, pipe_logger)
         self._main_task = asyncio.ensure_future(
             self._main(build_logger, pipe_logger, loop=self.scheduler),
             loop=self.scheduler,

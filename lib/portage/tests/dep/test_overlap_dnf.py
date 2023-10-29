@@ -7,6 +7,7 @@ from portage.dep.dep_check import _overlap_dnf
 
 
 class OverlapDNFTestCase(TestCase):
+
     def testOverlapDNF(self):
         test_cases = (
             (

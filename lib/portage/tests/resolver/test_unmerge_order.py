@@ -10,6 +10,7 @@ from portage.tests.resolver.ResolverPlayground import ResolverPlayground
 
 
 class _TestData:
+
     def __init__(self, unmerge_files, expected_pkgmap):
         self.unmerge_files = unmerge_files
 
@@ -26,6 +27,7 @@ class _TestData:
 
 
 class UnmergeOrderTestCase(TestCase):
+
     def testUnmergeOrder(self):
         ebuilds = {
             "c/x-1": {},
@@ -83,12 +85,8 @@ class UnmergeOrderTestCase(TestCase):
             # Two cpv atoms belonging to the same cp. The pkgmap should contain an
             # entry for each cpv, in the same order. The third installed cpv belonging
             # to the cp should be listed in the omitted section of each entry.
-            _TestData(
-                ["c/z-4", "c/z-5"], [(["c/z-4"], ["c/z-6"]), (["c/z-5"], ["c/z-6"])]
-            ),
-            _TestData(
-                ["c/z-5", "c/z-4"], [(["c/z-5"], ["c/z-6"]), (["c/z-4"], ["c/z-6"])]
-            ),
+            _TestData(["c/z-4", "c/z-5"], [(["c/z-4"], ["c/z-6"]), (["c/z-5"], ["c/z-6"])]),
+            _TestData(["c/z-5", "c/z-4"], [(["c/z-5"], ["c/z-6"]), (["c/z-4"], ["c/z-6"])]),
             # Three cpv atoms belonging to the same cp. The pkgmap should contain an
             # entry for each cpv, in the same order. Since there are no other instances
             # of the cp, the omitted section of each entry should be empty.
@@ -177,21 +175,13 @@ class UnmergeOrderTestCase(TestCase):
             # in the omitted section.
             _TestData(["c/x-1", "c/y-2"], [(["c/x-1"], []), (["c/y-2"], [])]),
             _TestData(["c/y-2", "c/x-1"], [(["c/y-2"], []), (["c/x-1"], [])]),
-            _TestData(
-                ["c/x-1", "c/z-4"], [(["c/x-1"], []), (["c/z-4"], ["c/z-5", "c/z-6"])]
-            ),
-            _TestData(
-                ["c/z-4", "c/x-1"], [(["c/z-4"], ["c/z-5", "c/z-6"]), (["c/x-1"], [])]
-            ),
+            _TestData(["c/x-1", "c/z-4"], [(["c/x-1"], []), (["c/z-4"], ["c/z-5", "c/z-6"])]),
+            _TestData(["c/z-4", "c/x-1"], [(["c/z-4"], ["c/z-5", "c/z-6"]), (["c/x-1"], [])]),
             # cpv's/cp where some cpv's are not instances of the cp. The pkgmap should
             # contain an entry for each in the same order, with the cp expanded
             # to all installed instances.
-            _TestData(
-                ["c/x-1", "c/z"], [(["c/x-1"], []), (["c/z-4", "c/z-5", "c/z-6"], [])]
-            ),
-            _TestData(
-                ["c/z", "c/x-1"], [(["c/z-4", "c/z-5", "c/z-6"], []), (["c/x-1"], [])]
-            ),
+            _TestData(["c/x-1", "c/z"], [(["c/x-1"], []), (["c/z-4", "c/z-5", "c/z-6"], [])]),
+            _TestData(["c/z", "c/x-1"], [(["c/z-4", "c/z-5", "c/z-6"], []), (["c/x-1"], [])]),
             _TestData(
                 ["c/x-1", "c/z-4", "c/z"],
                 [(["c/x-1"], []), (["c/z-4"], []), (["c/z-5", "c/z-6"], [])],
@@ -233,9 +223,7 @@ class UnmergeOrderTestCase(TestCase):
                 eroot = playground.settings["EROOT"]
                 root_config = playground.trees[eroot]["root_config"]
 
-                res, pkgmap = _unmerge_display(
-                    root_config, [], "unmerge", test_case.unmerge_files, ordered=True
-                )
+                res, pkgmap = _unmerge_display(root_config, [], "unmerge", test_case.unmerge_files, ordered=True)
 
                 self.assertEqual(res, os.EX_OK)
                 self.assertEqual(pkgmap, test_case.expected_pkgmap)

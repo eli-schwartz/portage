@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class MergeOrderTestCase(TestCase):
+
     def testMergeOrder(self):
         ebuilds = {
             "app-misc/blocker-buildtime-a-1": {},
@@ -215,9 +216,12 @@ class MergeOrderTestCase(TestCase):
                 "IUSE": "X +encode",
             },
             "virtual/ffmpeg-0.6.90": {
-                "EAPI": "2",
-                "IUSE": "X +encode",
-                "RDEPEND": "|| ( >=media-video/ffmpeg-0.6.90_rc0-r2[X=,encode=] >=media-video/libav-0.6.90_rc[X=,encode=] )",
+                "EAPI":
+                "2",
+                "IUSE":
+                "X +encode",
+                "RDEPEND":
+                "|| ( >=media-video/ffmpeg-0.6.90_rc0-r2[X=,encode=] >=media-video/libav-0.6.90_rc[X=,encode=] )",
             },
             "x11-base/xorg-drivers-1.20-r2": {
                 "EAPI": "7",
@@ -307,10 +311,14 @@ class MergeOrderTestCase(TestCase):
                 "USE": "encode",
             },
             "virtual/ffmpeg-0.6.90": {
-                "EAPI": "2",
-                "IUSE": "X +encode",
-                "USE": "encode",
-                "RDEPEND": "|| ( >=media-video/ffmpeg-0.6.90_rc0-r2[X=,encode=] >=media-video/libav-0.6.90_rc[X=,encode=] )",
+                "EAPI":
+                "2",
+                "IUSE":
+                "X +encode",
+                "USE":
+                "encode",
+                "RDEPEND":
+                "|| ( >=media-video/ffmpeg-0.6.90_rc0-r2[X=,encode=] >=media-video/libav-0.6.90_rc[X=,encode=] )",
             },
             "x11-base/xorg-drivers-1.20-r2": {
                 "EAPI": "7",
@@ -383,9 +391,7 @@ class MergeOrderTestCase(TestCase):
                 # The following merge order assertion reflects optimal order for
                 # a circular relationship which is DEPEND in one direction and
                 # RDEPEND in the other.
-                merge_order_assertions=(
-                    ("app-misc/circ-buildtime-a-1", "app-misc/circ-buildtime-c-1"),
-                ),
+                merge_order_assertions=(("app-misc/circ-buildtime-a-1", "app-misc/circ-buildtime-c-1"), ),
                 mergelist=[
                     (
                         "app-misc/circ-buildtime-b-1",
@@ -425,16 +431,12 @@ class MergeOrderTestCase(TestCase):
                 success=True,
                 all_permutations=True,
                 ambiguous_merge_order=True,
-                merge_order_assertions=(
-                    ("app-misc/circ-satisfied-a-1", "app-misc/circ-satisfied-c-1"),
-                ),
-                mergelist=[
-                    (
-                        "app-misc/circ-satisfied-a-1",
-                        "app-misc/circ-satisfied-b-1",
-                        "app-misc/circ-satisfied-c-1",
-                    )
-                ],
+                merge_order_assertions=(("app-misc/circ-satisfied-a-1", "app-misc/circ-satisfied-c-1"), ),
+                mergelist=[(
+                    "app-misc/circ-satisfied-a-1",
+                    "app-misc/circ-satisfied-b-1",
+                    "app-misc/circ-satisfied-c-1",
+                )],
             ),
             # In the case of multiple runtime cycles, where some cycles
             # may depend on smaller independent cycles, it's optimal
@@ -514,19 +516,15 @@ class MergeOrderTestCase(TestCase):
                 success=False,
                 all_permutations=True,
                 ambiguous_merge_order=True,
-                merge_order_assertions=(
-                    (
-                        "app-misc/blocker-update-order-hard-unsolvable-a-1",
-                        "app-misc/installed-old-version-blocks-hard-unsolvable-a-2",
-                    ),
-                ),
-                mergelist=[
-                    (
-                        "app-misc/blocker-update-order-hard-unsolvable-a-1",
-                        "app-misc/installed-old-version-blocks-hard-unsolvable-a-2",
-                        "!!app-misc/blocker-update-order-hard-unsolvable-a",
-                    )
-                ],
+                merge_order_assertions=((
+                    "app-misc/blocker-update-order-hard-unsolvable-a-1",
+                    "app-misc/installed-old-version-blocks-hard-unsolvable-a-2",
+                ), ),
+                mergelist=[(
+                    "app-misc/blocker-update-order-hard-unsolvable-a-1",
+                    "app-misc/installed-old-version-blocks-hard-unsolvable-a-2",
+                    "!!app-misc/blocker-update-order-hard-unsolvable-a",
+                )],
             ),
             # The installed package has runtime blockers that
             # should cause it to be uninstalled. The uninstall
@@ -634,17 +632,15 @@ class MergeOrderTestCase(TestCase):
                     ("kde-misc/kdnssd-avahi-0.1.2", "kde-base/kdnssd-3.5.7"),
                     ("kde-base/libkdegames-3.5.7", "kde-base/kmines-3.5.7"),
                 ),
-                mergelist=[
-                    (
-                        "kde-base/kdelibs-3.5.7",
-                        "dev-util/pkgconfig-0.25-r2",
-                        "kde-misc/kdnssd-avahi-0.1.2",
-                        "app-arch/xz-utils-5.0.2",
-                        "kde-base/libkdegames-3.5.7",
-                        "kde-base/kdnssd-3.5.7",
-                        "kde-base/kmines-3.5.7",
-                    )
-                ],
+                mergelist=[(
+                    "kde-base/kdelibs-3.5.7",
+                    "dev-util/pkgconfig-0.25-r2",
+                    "kde-misc/kdnssd-avahi-0.1.2",
+                    "app-arch/xz-utils-5.0.2",
+                    "kde-base/libkdegames-3.5.7",
+                    "kde-base/kdnssd-3.5.7",
+                    "kde-base/kmines-3.5.7",
+                )],
             ),
             # Test satisfied circular DEPEND/RDEPEND with one := operator.
             # Both deps are already satisfied by installed packages, but

@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class DeletionIterator:
+
     def __init__(self, config):
         self._config = config
 
@@ -25,23 +26,13 @@ class DeletionIterator:
         deletion_delay = self._config.options.deletion_delay
         start_time = self._config.start_time
         distfiles_set = set()
-        distfiles_set.update(
-            (
-                filename
-                if isinstance(filename, DistfileName)
-                else DistfileName(filename)
-                for filename in itertools.chain.from_iterable(
-                    layout.get_filenames(distdir) for layout in self._config.layouts
-                )
-            )
-            if self._config.content_db is None
-            else itertools.chain.from_iterable(
-                self._config.content_db.get_filenames_translate(filename)
-                for filename in itertools.chain.from_iterable(
-                    layout.get_filenames(distdir) for layout in self._config.layouts
-                )
-            )
-        )
+        distfiles_set.update((filename if isinstance(filename, DistfileName) else DistfileName(filename)
+                              for filename in itertools.chain.from_iterable(
+                                  layout.get_filenames(distdir) for layout in self._config.layouts)
+                              ) if self._config.content_db is None else itertools.chain.from_iterable(
+                                  self._config.content_db.get_filenames_translate(filename)
+                                  for filename in itertools.chain.from_iterable(
+                                      layout.get_filenames(distdir) for layout in self._config.layouts)))
         for filename in distfiles_set:
             # require at least one successful stat()
             exceptions = []
@@ -61,10 +52,8 @@ class DeletionIterator:
                         break
             else:
                 if exceptions:
-                    logger.error(
-                        "stat failed on '%s' in distfiles: %s\n"
-                        % (filename, "; ".join(str(x) for x in exceptions))
-                    )
+                    logger.error("stat failed on '%s' in distfiles: %s\n" %
+                                 (filename, "; ".join(str(x) for x in exceptions)))
                 continue
 
             if filename in file_owners:
@@ -79,9 +68,7 @@ class DeletionIterator:
                         del deletion_db[filename]
                     except KeyError:
                         pass
-            elif distfiles_local is not None and os.path.exists(
-                os.path.join(distfiles_local, filename)
-            ):
+            elif distfiles_local is not None and os.path.exists(os.path.join(distfiles_local, filename)):
                 if deletion_db is not None:
                     try:
                         del deletion_db[filename]

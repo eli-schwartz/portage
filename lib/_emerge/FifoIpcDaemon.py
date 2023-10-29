@@ -10,7 +10,7 @@ from portage.cache.mappings import slot_dict_class
 class FifoIpcDaemon(AbstractPollTask):
     __slots__ = ("input_fifo", "output_fifo", "_files")
 
-    _file_names = ("pipe_in",)
+    _file_names = ("pipe_in", )
     _files_dict = slot_dict_class(_file_names, prefix="")
 
     def _start(self):

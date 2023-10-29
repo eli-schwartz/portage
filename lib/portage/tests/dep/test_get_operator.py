@@ -7,6 +7,7 @@ from portage.dep import get_operator
 
 
 class GetOperator(TestCase):
+
     def testGetOperator(self):
         # get_operator does not validate operators
         tests = [

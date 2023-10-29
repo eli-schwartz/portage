@@ -3,6 +3,7 @@
 
 
 class IndexStreamIterator:
+
     def __init__(self, f, parser):
         self.parser = parser
         self._file = f

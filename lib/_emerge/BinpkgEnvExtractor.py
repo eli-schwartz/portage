@@ -14,7 +14,7 @@ class BinpkgEnvExtractor(CompositeTask):
     Extract environment.bz2 for a binary or installed package.
     """
 
-    __slots__ = ("settings",)
+    __slots__ = ("settings", )
 
     def saved_env_exists(self):
         return os.path.exists(self._get_saved_env_path())

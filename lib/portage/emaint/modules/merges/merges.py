@@ -169,9 +169,7 @@ class MergesHandler:
             if not isvalidatom(pkg_atom):
                 pkg_invalid_entries.add(f"'{pkg_atom}' is an invalid package atom.")
             if not portdb.cpv_exists(pkg_name):
-                pkg_invalid_entries.add(
-                    f"'{pkg_name}' does not exist in the ebuild repository."
-                )
+                pkg_invalid_entries.add(f"'{pkg_name}' does not exist in the ebuild repository.")
             pkg_atoms.add(pkg_atom)
 
     def _emerge_pkg_atoms(self, module_output, pkg_atoms, yes=False):
@@ -256,9 +254,7 @@ class MergesHandler:
             errors.append(", ".join(sorted(failed_pkgs)))
             return (False, errors)
         self._remove_failed_dirs(failed_pkgs)
-        results = self._emerge_pkg_atoms(
-            module_output, pkg_atoms, yes=kwargs.get("options", {}).get("yes", False)
-        )
+        results = self._emerge_pkg_atoms(module_output, pkg_atoms, yes=kwargs.get("options", {}).get("yes", False))
         # list any new failed merges
         for pkg in sorted(self._scan()):
             results.append(f"'{pkg}' still found as a failed merge.")

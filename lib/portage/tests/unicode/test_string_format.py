@@ -1,7 +1,6 @@
 # Copyright 2010-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-
 from portage import _encodings, _unicode_encode
 from portage.exception import PortageException
 from portage.tests import TestCase

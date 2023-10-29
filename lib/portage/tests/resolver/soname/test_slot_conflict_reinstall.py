@@ -13,6 +13,7 @@ from portage.output import colorize
 
 
 class SonameSlotConflictReinstallTestCase(TestCase):
+
     def testSonameSlotConflictReinstall(self):
         binpkgs = {
             "app-misc/A-1": {
@@ -53,7 +54,10 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                 "RDEPEND": "app-misc/A",
                 "REQUIRES": "x86_32: libA-1.so",
             },
-            "app-misc/C-0": {"DEPEND": "<app-misc/A-2", "RDEPEND": "<app-misc/A-2"},
+            "app-misc/C-0": {
+                "DEPEND": "<app-misc/A-2",
+                "RDEPEND": "<app-misc/A-2"
+            },
             "app-misc/D-1": {
                 "PROVIDES": "x86_32: libD-1.so",
             },
@@ -80,8 +84,7 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                 },
                 success=True,
                 mergelist=["[binary]app-misc/D-2", "[binary]app-misc/E-0"],
-            ),
-        )
+            ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -93,15 +96,13 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.debug = False
                     playground.cleanup()
@@ -155,22 +156,20 @@ class SonameSlotConflictReinstallTestCase(TestCase):
 
             expected_mergelist.append(f"[binary]app-misc/C{i}C-1")
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"],
-                ignore_mergelist_order=True,
-                all_permutations=True,
-                options={
-                    "--backtrack": 3,
-                    "--deep": True,
-                    "--ignore-soname-deps": "n",
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=expected_mergelist,
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["app-misc/A"],
+            ignore_mergelist_order=True,
+            all_permutations=True,
+            options={
+                "--backtrack": 3,
+                "--deep": True,
+                "--ignore-soname-deps": "n",
+                "--update": True,
+                "--usepkgonly": True,
+            },
+            success=True,
+            mergelist=expected_mergelist,
+        ), )
 
         world = []
 
@@ -184,16 +183,14 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.debug = False
                     playground.cleanup()
@@ -280,16 +277,14 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.debug = False
                     playground.cleanup()
@@ -341,19 +336,17 @@ class SonameSlotConflictReinstallTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["cat/user"],
-                options={
-                    "--deep": True,
-                    "--ignore-soname-deps": "n",
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=[],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["cat/user"],
+            options={
+                "--deep": True,
+                "--ignore-soname-deps": "n",
+                "--update": True,
+                "--usepkgonly": True,
+            },
+            success=True,
+            mergelist=[],
+        ), )
 
         world = []
 
@@ -367,15 +360,13 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.debug = False
                     playground.cleanup()

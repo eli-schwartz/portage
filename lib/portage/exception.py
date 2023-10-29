@@ -120,6 +120,7 @@ class TimeoutException(PortageException):
 
 
 class AlarmSignal(TimeoutException):
+
     def __init__(self, value, signum=None, frame=None):
         TimeoutException.__init__(self, value)
         self.signum = signum
@@ -216,11 +217,9 @@ class UnsupportedAPIException(PortagePackageException):
         if not isinstance(eapi, str):
             eapi = str(eapi)
         eapi = eapi.lstrip("-")
-        msg = _(
-            f"Unable to do any operations on '{self.cpv}', since "
-            "its EAPI is higher than this portage version's. Please upgrade"
-            f" to a portage version that supports EAPI '{eapi}'."
-        )
+        msg = _(f"Unable to do any operations on '{self.cpv}', since "
+                "its EAPI is higher than this portage version's. Please upgrade"
+                f" to a portage version that supports EAPI '{eapi}'.")
         return _unicode_decode(msg, encoding=_encodings["content"], errors="replace")
 
 

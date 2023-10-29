@@ -1,7 +1,7 @@
 # Copyright 2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = ("features_set",)
+__all__ = ("features_set", )
 
 import logging
 
@@ -88,18 +88,14 @@ class features_set:
         if "unknown-features-warn" in self._features:
             unknown_features = self._features.difference(SUPPORTED_FEATURES)
             if unknown_features:
-                unknown_features = unknown_features.difference(
-                    self._settings._unknown_features
-                )
+                unknown_features = unknown_features.difference(self._settings._unknown_features)
                 if unknown_features:
                     self._settings._unknown_features.update(unknown_features)
                     writemsg_level(
                         colorize(
                             "BAD",
-                            _("FEATURES variable contains unknown value(s): %s")
-                            % ", ".join(sorted(unknown_features)),
-                        )
-                        + "\n",
+                            _("FEATURES variable contains unknown value(s): %s") % ", ".join(sorted(unknown_features)),
+                        ) + "\n",
                         level=logging.WARNING,
                         noiselevel=-1,
                     )
@@ -128,6 +124,4 @@ class features_set:
             else:
                 positive.add(x)
                 negative.discard(x)
-        self._settings._features_overrides[:] = list(positive) + list(
-            "-" + x for x in negative
-        )
+        self._settings._features_overrides[:] = list(positive) + list("-" + x for x in negative)

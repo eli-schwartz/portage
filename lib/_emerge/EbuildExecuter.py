@@ -26,12 +26,10 @@ class EbuildExecuter(CompositeTask):
 
         if eapi_exports_replace_vars(settings["EAPI"]):
             vardb = pkg.root_config.trees["vartree"].dbapi
-            settings["REPLACING_VERSIONS"] = " ".join(
-                {
-                    portage.versions.cpv_getversion(match)
-                    for match in vardb.match(pkg.slot_atom) + vardb.match("=" + pkg.cpv)
-                }
-            )
+            settings["REPLACING_VERSIONS"] = " ".join({
+                portage.versions.cpv_getversion(match)
+                for match in vardb.match(pkg.slot_atom) + vardb.match("=" + pkg.cpv)
+            })
 
         setup_phase = EbuildPhase(
             background=self.background,
@@ -88,7 +86,6 @@ class EbuildExecuter(CompositeTask):
                     phase=phase,
                     scheduler=self.scheduler,
                     settings=self.settings,
-                )
-            )
+                ))
 
         self._start_task(ebuild_phases, self._default_final_exit)

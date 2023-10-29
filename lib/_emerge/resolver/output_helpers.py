@@ -1,6 +1,5 @@
 # Copyright 2010-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-
 """Contains private support functions for the Display class
 in output.py
 """
@@ -33,6 +32,7 @@ from _emerge.Package import Package
 
 
 class _RepoDisplay:
+
     def __init__(self, roots):
         self._shown_repos = {}
         self._unknown_repo = False
@@ -42,9 +42,7 @@ class _RepoDisplay:
                 repo_paths.add(repo.location)
         repo_paths = list(repo_paths)
         self._repo_paths = repo_paths
-        self._repo_paths_real = [
-            os.path.realpath(repo_path) for repo_path in repo_paths
-        ]
+        self._repo_paths_real = [os.path.realpath(repo_path) for repo_path in repo_paths]
 
     def repoStr(self, repo_path_real):
         real_index = -1
@@ -77,15 +75,12 @@ class _RepoDisplay:
             for index, repo_path in enumerate(show_repo_paths):
                 output.append(" " + teal("[" + str(index) + "]") + f" {repo_path}\n")
         if unknown_repo:
-            output.append(
-                " "
-                + teal("[?]")
-                + " indicates that the source repository could not be determined\n"
-            )
+            output.append(" " + teal("[?]") + " indicates that the source repository could not be determined\n")
         return "".join(output)
 
 
 class _PackageCounters:
+
     def __init__(self):
         self.upgrades = 0
         self.downgrades = 0
@@ -102,9 +97,7 @@ class _PackageCounters:
         self.binary = 0
 
     def __str__(self):
-        total_installs = (
-            self.upgrades + self.downgrades + self.newslot + self.new + self.reinst
-        )
+        total_installs = (self.upgrades + self.downgrades + self.newslot + self.new + self.reinst)
         myoutput = []
         details = []
         myoutput.append(f"Total: {total_installs} package")
@@ -149,25 +142,20 @@ class _PackageCounters:
             if self.restrict_fetch > 1:
                 myoutput.append("s")
         if self.restrict_fetch_satisfied < self.restrict_fetch:
-            myoutput.append(
-                bad(
-                    f" ({self.restrict_fetch - self.restrict_fetch_satisfied} unsatisfied)"
-                )
-            )
+            myoutput.append(bad(f" ({self.restrict_fetch - self.restrict_fetch_satisfied} unsatisfied)"))
         if self.blocks > 0:
             myoutput.append(f"\nConflict: {self.blocks} block")
             if self.blocks > 1:
                 myoutput.append("s")
             if self.blocks_satisfied < self.blocks:
-                myoutput.append(
-                    bad(f" ({self.blocks - self.blocks_satisfied} unsatisfied)")
-                )
+                myoutput.append(bad(f" ({self.blocks - self.blocks_satisfied} unsatisfied)"))
             else:
                 myoutput.append(" (all satisfied)")
         return "".join(myoutput)
 
 
 class _DisplayConfig:
+
     def __init__(self, depgraph, mylist, favorites, verbosity):
         frozen_config = depgraph._frozen_config
         dynamic_config = depgraph._dynamic_config
@@ -177,25 +165,15 @@ class _DisplayConfig:
         self.verbosity = verbosity
 
         if self.verbosity is None:
-            self.verbosity = (
-                "--quiet" in frozen_config.myopts
-                and 1
-                or "--verbose" in frozen_config.myopts
-                and 3
-                or 2
-            )
+            self.verbosity = ("--quiet" in frozen_config.myopts and 1 or "--verbose" in frozen_config.myopts and 3 or 2)
 
-        self.oneshot = (
-            "--oneshot" in frozen_config.myopts or "--onlydeps" in frozen_config.myopts
-        )
+        self.oneshot = ("--oneshot" in frozen_config.myopts or "--onlydeps" in frozen_config.myopts)
         self.columns = "--columns" in frozen_config.myopts
         self.tree_display = "--tree" in frozen_config.myopts
         self.alphabetical = "--alphabetical" in frozen_config.myopts
         self.quiet = "--quiet" in frozen_config.myopts
         self.all_flags = self.verbosity == 3 or self.quiet
-        self.print_use_string = (
-            self.verbosity != 1 or "--verbose" in frozen_config.myopts
-        )
+        self.print_use_string = (self.verbosity != 1 or "--verbose" in frozen_config.myopts)
         self.edebug = frozen_config.edebug
         self.unordered_display = "--unordered-display" in frozen_config.myopts
 
@@ -224,9 +202,7 @@ class _DisplayConfig:
         self.selected_sets = {}
         for root_name, root in self.roots.items():
             try:
-                self.selected_sets[root_name] = InternalPackageSet(
-                    initial_atoms=root.setconfig.getSetAtoms("selected")
-                )
+                self.selected_sets[root_name] = InternalPackageSet(initial_atoms=root.setconfig.getSetAtoms("selected"))
             except PackageSetNotFound:
                 # A nested set could not be resolved, so ignore nested sets.
                 self.selected_sets[root_name] = root.sets["selected"]
@@ -246,6 +222,7 @@ _alnum_sort_re = re.compile(r"(\d+)")
 
 
 def _alnum_sort_key(x):
+
     def _convert_even_to_int(it):
         it = iter(it)
         try:
@@ -308,12 +285,7 @@ def _create_use_string(
                 removed.append(flag_str)
             continue
         else:
-            if (
-                is_new
-                or flag in old_iuse
-                and flag not in old_use
-                and (conf.all_flags or reinst_flag)
-            ):
+            if (is_new or flag in old_iuse and flag not in old_use and (conf.all_flags or reinst_flag)):
                 flag_str = blue("-" + flag)
             elif flag not in old_iuse:
                 flag_str = yellow("-" + flag)
@@ -345,11 +317,7 @@ def _tree_display(conf, mylist):
     # corresponding blockers to the digraph.
     mygraph = conf.digraph.copy()
 
-    executed_uninstalls = {
-        node
-        for node in mylist
-        if isinstance(node, Package) and node.operation == "unmerge"
-    }
+    executed_uninstalls = {node for node in mylist if isinstance(node, Package) and node.operation == "unmerge"}
 
     for uninstall in conf.blocker_uninstalls.leaf_nodes():
         uninstall_parents = conf.blocker_uninstalls.parent_nodes(uninstall)
@@ -358,9 +326,7 @@ def _tree_display(conf, mylist):
 
         # Remove the corresponding "nomerge" node and substitute
         # the Uninstall node.
-        inst_pkg = conf.pkg(
-            uninstall.cpv, "installed", uninstall.root_config, installed=True
-        )
+        inst_pkg = conf.pkg(uninstall.cpv, "installed", uninstall.root_config, installed=True)
 
         try:
             mygraph.remove(inst_pkg)
@@ -391,9 +357,7 @@ def _tree_display(conf, mylist):
         # If the uninstall task did not need to be executed because
         # of an upgrade, display Blocker -> Upgrade edges since the
         # corresponding Blocker -> Uninstall edges will not be shown.
-        upgrade_node = next(
-            conf.package_tracker.match(uninstall.root, uninstall.slot_atom), None
-        )
+        upgrade_node = next(conf.package_tracker.match(uninstall.root, uninstall.slot_atom), None)
 
         if upgrade_node is not None and uninstall not in executed_uninstalls:
             for blocker in uninstall_parents:
@@ -500,29 +464,15 @@ def _prune_tree_display(display_list):
     last_merge_depth = 0
     for i in range(len(display_list) - 1, -1, -1):
         node, depth, ordered = display_list[i]
-        if (
-            not ordered
-            and depth == 0
-            and i > 0
-            and node == display_list[i - 1][0]
-            and display_list[i - 1][1] == 0
-        ):
+        if (not ordered and depth == 0 and i > 0 and node == display_list[i - 1][0] and display_list[i - 1][1] == 0):
             # An ordered node got a consecutive duplicate
             # when the tree was being filled in.
             del display_list[i]
             continue
-        if (
-            ordered
-            and isinstance(node, Package)
-            and node.operation in ("merge", "uninstall")
-        ):
+        if (ordered and isinstance(node, Package) and node.operation in ("merge", "uninstall")):
             last_merge_depth = depth
             continue
-        if (
-            depth >= last_merge_depth
-            or i < len(display_list) - 1
-            and depth >= display_list[i + 1][1]
-        ):
+        if (depth >= last_merge_depth or i < len(display_list) - 1 and depth >= display_list[i + 1][1]):
             del display_list[i]
 
 

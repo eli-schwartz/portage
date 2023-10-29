@@ -6,6 +6,7 @@ from portage.tests import TestCase
 
 
 class ShellQuoteTestCase(TestCase):
+
     def testShellQuote(self):
         test_data = [
             # String contains no special characters, should be preserved.

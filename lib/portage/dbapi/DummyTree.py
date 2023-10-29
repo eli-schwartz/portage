@@ -12,7 +12,7 @@ class DummyTree:
     an interface which is minimally compatible with the *tree classes.
     """
 
-    __slots__ = ("dbapi",)
+    __slots__ = ("dbapi", )
 
     def __init__(self, dbapi):
         self.dbapi = dbapi

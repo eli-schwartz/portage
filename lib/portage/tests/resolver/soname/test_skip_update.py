@@ -14,6 +14,7 @@ from portage.output import colorize
 
 
 class SonameSkipUpdateTestCase(TestCase):
+
     def testSonameSkipUpdateNoPruneRebuilds(self):
         """
         Make sure that there are fewer backtracking runs required if we
@@ -21,8 +22,8 @@ class SonameSkipUpdateTestCase(TestCase):
         _eliminate_rebuilds works for the purposes of bug 915494.
         """
         with patch(
-            "_emerge.depgraph._dynamic_depgraph_config._ENABLE_PRUNE_REBUILDS",
-            new=False,
+                "_emerge.depgraph._dynamic_depgraph_config._ENABLE_PRUNE_REBUILDS",
+                new=False,
         ):
             self.testSonameSkipUpdate(backtrack=2)
 
@@ -52,7 +53,7 @@ class SonameSkipUpdateTestCase(TestCase):
             },
         }
 
-        world = ("app-misc/A",)
+        world = ("app-misc/A", )
 
         test_cases = (
             # Test that --ignore-soname-deps allows the upgrade,
@@ -99,15 +100,13 @@ class SonameSkipUpdateTestCase(TestCase):
                     installed=installed,
                     world=world,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     # Disable debug so that cleanup works.
                     playground.debug = False

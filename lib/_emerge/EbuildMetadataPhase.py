@@ -19,7 +19,6 @@ import fcntl
 
 
 class EbuildMetadataPhase(SubProcess):
-
     """
     Asynchronous interface for the ebuild "depend" phase which is
     used to extract metadata from the ebuild.
@@ -41,16 +40,16 @@ class EbuildMetadataPhase(SubProcess):
         "_raw_metadata",
     )
 
-    _file_names = ("ebuild",)
+    _file_names = ("ebuild", )
     _files_dict = slot_dict_class(_file_names, prefix="")
 
     def _start(self):
         ebuild_path = self.ebuild_hash.location
 
         with open(
-            _unicode_encode(ebuild_path, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["repo.content"],
-            errors="replace",
+                _unicode_encode(ebuild_path, encoding=_encodings["fs"], errors="strict"),
+                encoding=_encodings["repo.content"],
+                errors="replace",
         ) as f:
             self._eapi, self._eapi_lineno = portage._parse_eapi_ebuild_head(f)
 
@@ -188,9 +187,7 @@ class EbuildMetadataPhase(SubProcess):
                 if parsed_eapi is None:
                     parsed_eapi = "0"
                 self.eapi_supported = portage.eapi_is_supported(metadata["EAPI"])
-                if (not metadata["EAPI"] or self.eapi_supported) and metadata[
-                    "EAPI"
-                ] != parsed_eapi:
+                if (not metadata["EAPI"] or self.eapi_supported) and metadata["EAPI"] != parsed_eapi:
                     self._eapi_invalid(metadata)
                     metadata_valid = False
 
@@ -200,13 +197,8 @@ class EbuildMetadataPhase(SubProcess):
                 # entries for unsupported EAPIs.
                 if self.eapi_supported:
                     if metadata.get("INHERITED", False):
-                        metadata[
-                            "_eclasses_"
-                        ] = self.portdb.repositories.get_repo_for_location(
-                            self.repo_path
-                        ).eclass_db.get_eclass_data(
-                            metadata["INHERITED"].split()
-                        )
+                        metadata["_eclasses_"] = self.portdb.repositories.get_repo_for_location(
+                            self.repo_path).eclass_db.get_eclass_data(metadata["INHERITED"].split())
                     else:
                         metadata["_eclasses_"] = {}
                     metadata.pop("INHERITED", None)
@@ -214,9 +206,7 @@ class EbuildMetadataPhase(SubProcess):
                     # If called by egencache, this cache write is
                     # undesirable when metadata-transfer is disabled.
                     if self.write_auxdb is not False:
-                        self.portdb._write_cache(
-                            self.cpv, self.repo_path, metadata, self.ebuild_hash
-                        )
+                        self.portdb._write_cache(self.cpv, self.repo_path, metadata, self.ebuild_hash)
                 else:
                     metadata = {"EAPI": metadata["EAPI"]}
                 self.metadata = metadata

@@ -35,11 +35,8 @@ if not lchown:
 
         def lchown(*_args, **_kwargs):
             writemsg(
-                colorize("BAD", "!!!")
-                + _(
-                    " It seems that os.lchown does not"
-                    " exist.  Please rebuild python.\n"
-                ),
+                colorize("BAD", "!!!") + _(" It seems that os.lchown does not"
+                                           " exist.  Please rebuild python.\n"),
                 noiselevel=-1,
             )
 
@@ -113,9 +110,7 @@ def portage_group_warning():
 
 
 def _unprivileged_mode(eroot, eroot_st):
-    return (
-        os.getuid() != 0 and os.access(eroot, os.W_OK) and not eroot_st.st_mode & 0o0002
-    )
+    return (os.getuid() != 0 and os.access(eroot, os.W_OK) and not eroot_st.st_mode & 0o0002)
 
 
 uid = os.getuid()
@@ -144,9 +139,7 @@ def _get_global(k):
         else:
             # The config class has equivalent code, but we also need to
             # do it here if _disable_legacy_globals() has been called.
-            eroot_or_parent = first_existing(
-                os.path.join(_target_root(), _target_eprefix().lstrip(os.sep))
-            )
+            eroot_or_parent = first_existing(os.path.join(_target_root(), _target_eprefix().lstrip(os.sep)))
             try:
                 eroot_st = os.stat(eroot_or_parent)
             except OSError:
@@ -178,32 +171,24 @@ def _get_global(k):
         # Suppress this error message if both PORTAGE_GRPNAME and
         # PORTAGE_USERNAME are set to "root", for things like
         # Android (see bug #454060).
-        if keyerror and not (
-            _get_global("_portage_username") == "root"
-            and _get_global("_portage_grpname") == "root"
-        ):
+        if keyerror and not (_get_global("_portage_username") == "root" and _get_global("_portage_grpname") == "root"):
             writemsg(
                 colorize("BAD", _("portage: 'portage' user or group missing.")) + "\n",
                 noiselevel=-1,
             )
             writemsg(
-                _(
-                    "         For the defaults, line 1 goes into passwd, "
-                    "and 2 into group.\n"
-                ),
+                _("         For the defaults, line 1 goes into passwd, "
+                  "and 2 into group.\n"),
                 noiselevel=-1,
             )
             writemsg(
                 colorize(
                     "GOOD",
                     "         portage:x:250:250:portage:/var/tmp/portage:/bin/false",
-                )
-                + "\n",
+                ) + "\n",
                 noiselevel=-1,
             )
-            writemsg(
-                colorize("GOOD", "         portage::250:portage") + "\n", noiselevel=-1
-            )
+            writemsg(colorize("GOOD", "         portage::250:portage") + "\n", noiselevel=-1)
             portage_group_warning()
 
         globals()["portage_gid"] = portage_gid
@@ -224,13 +209,9 @@ def _get_global(k):
             # grp.getgrall() since it is known to trigger spurious
             # SIGPIPE problems with nss_ldap.
             encoding = portage._encodings["content"]
-            cmd = (
-                portage._unicode_encode(x, encoding=encoding, errors="strict")
-                for x in ("id", "-G", _portage_username)
-            )
-            proc = subprocess.Popen(
-                cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-            )
+            cmd = (portage._unicode_encode(x, encoding=encoding, errors="strict")
+                   for x in ("id", "-G", _portage_username))
+            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             myoutput = proc.communicate()[0]
             status = proc.wait()
             if os.WIFEXITED(status) and os.WEXITSTATUS(status) == os.EX_OK:
@@ -241,9 +222,7 @@ def _get_global(k):
                     except ValueError:
                         return None
 
-                unicode_decode = portage._unicode_decode(
-                    myoutput, encoding=encoding, errors="strict"
-                )
+                unicode_decode = portage._unicode_decode(myoutput, encoding=encoding, errors="strict")
                 checked_v = (check(x) for x in unicode_decode.split())
                 filtered_v = (x for x in checked_v if x)
                 v = sorted(set(filtered_v))
@@ -263,9 +242,7 @@ def _get_global(k):
         else:
             # The config class has equivalent code, but we also need to
             # do it here if _disable_legacy_globals() has been called.
-            eroot_or_parent = first_existing(
-                os.path.join(_target_root(), _target_eprefix().lstrip(os.sep))
-            )
+            eroot_or_parent = first_existing(os.path.join(_target_root(), _target_eprefix().lstrip(os.sep)))
             try:
                 eroot_st = os.stat(eroot_or_parent)
             except OSError:
@@ -295,7 +272,7 @@ def _get_global(k):
 
 
 class _GlobalProxy(portage.proxy.objectproxy.ObjectProxy):
-    __slots__ = ("_name",)
+    __slots__ = ("_name", )
 
     def __init__(self, name):
         portage.proxy.objectproxy.ObjectProxy.__init__(self)
@@ -306,12 +283,12 @@ class _GlobalProxy(portage.proxy.objectproxy.ObjectProxy):
 
 
 for k in (
-    "portage_gid",
-    "portage_uid",
-    "secpass",
-    "userpriv_groups",
-    "_portage_grpname",
-    "_portage_username",
+        "portage_gid",
+        "portage_uid",
+        "secpass",
+        "userpriv_groups",
+        "_portage_grpname",
+        "_portage_username",
 ):
     globals()[k] = _GlobalProxy(k)
 del k
@@ -323,10 +300,7 @@ def _init(settings):
     initialize global variables. This allows settings to come from make.conf
     instead of requiring them to be set in the calling environment.
     """
-    if (
-        "_portage_grpname" not in _initialized_globals
-        and "_portage_username" not in _initialized_globals
-    ):
+    if ("_portage_grpname" not in _initialized_globals and "_portage_username" not in _initialized_globals):
         # Prevents "TypeError: expected string" errors
         # from grp.getgrnam() with PyPy
         native_string = platform.python_implementation() == "PyPy"

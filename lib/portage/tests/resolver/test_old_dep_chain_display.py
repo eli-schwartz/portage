@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class OldDepChainDisplayTestCase(TestCase):
+
     def testOldDepChainDisplay(self):
         ebuilds = {
             "dev-libs/A-1": {
@@ -26,17 +27,18 @@ class OldDepChainDisplayTestCase(TestCase):
                 "DEPEND": "!bar? ( dev-libs/D[-baz] )",
                 "EAPI": "2",
             },
-            "dev-libs/C-1": {"KEYWORDS": "~x86"},
-            "dev-libs/D-1": {"IUSE": "+baz", "EAPI": "1"},
+            "dev-libs/C-1": {
+                "KEYWORDS": "~x86"
+            },
+            "dev-libs/D-1": {
+                "IUSE": "+baz",
+                "EAPI": "1"
+            },
         }
 
         test_cases = (
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-1"], options={"--autounmask": "n"}, success=False
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-2"], options={"--autounmask": "n"}, success=False
-            ),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1"], options={"--autounmask": "n"}, success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-2"], options={"--autounmask": "n"}, success=False),
         )
 
         playground = ResolverPlayground(ebuilds=ebuilds)

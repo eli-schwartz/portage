@@ -13,6 +13,7 @@ from portage.output import colorize
 
 
 class SonameUnsatisfiedTestCase(TestCase):
+
     def testSonameUnsatisfied(self):
         binpkgs = {
             "app-misc/A-1": {
@@ -83,16 +84,14 @@ class SonameUnsatisfiedTestCase(TestCase):
                     installed=installed,
                     world=world,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     # Disable debug so that cleanup works.
                     playground.debug = False

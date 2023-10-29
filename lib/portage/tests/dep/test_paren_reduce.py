@@ -7,6 +7,7 @@ from portage.exception import InvalidDependString
 
 
 class TestParenReduce(TestCase):
+
     def testParenReduce(self):
         test_cases = (
             ("A", ["A"]),
@@ -57,8 +58,7 @@ class TestParenReduce(TestCase):
             self.assertEqual(
                 paren_reduce(dep_str, _deprecation_warn=False),
                 expected_result,
-                "input: '%s' result: %s != %s"
-                % (
+                "input: '%s' result: %s != %s" % (
                     dep_str,
                     paren_reduce(dep_str, _deprecation_warn=False),
                     expected_result,

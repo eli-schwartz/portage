@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotConflictBlockedPruneTestCase(TestCase):
+
     def testSlotConflictBlockedPrune(self):
         """
         Bug 622270
@@ -58,18 +59,18 @@ class SlotConflictBlockedPruneTestCase(TestCase):
 
         world = ["x11-base/xwayland", "dev-util/rustup"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={"--deep": True, "--update": True, "--verbose": True},
-                success=True,
-                mergelist=["x11-base/xwayland-23.1.1"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@world"],
+            options={
+                "--deep": True,
+                "--update": True,
+                "--verbose": True
+            },
+            success=True,
+            mergelist=["x11-base/xwayland-23.1.1"],
+        ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

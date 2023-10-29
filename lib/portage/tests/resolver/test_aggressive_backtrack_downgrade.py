@@ -9,13 +9,17 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class AgressiveBacktrackDowngradeTestCase(TestCase):
+
     def testAgressiveBacktrackDowngrade(self):
         ebuilds = {
             "www-client/firefox-69.0": {
                 "EAPI": "7",
                 "RDEPEND": "=media-libs/libvpx-1.7*:0=[postproc] media-video/ffmpeg",
             },
-            "www-client/firefox-60.9.0": {"EAPI": "7", "RDEPEND": ""},
+            "www-client/firefox-60.9.0": {
+                "EAPI": "7",
+                "RDEPEND": ""
+            },
             "media-libs/libvpx-1.8.0": {
                 "EAPI": "7",
                 "SLOT": "0/6",
@@ -65,15 +69,15 @@ class AgressiveBacktrackDowngradeTestCase(TestCase):
             # [ebuild  rR    ] media-video/ffmpeg-4.2
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=[],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

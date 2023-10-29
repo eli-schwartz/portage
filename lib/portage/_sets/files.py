@@ -43,11 +43,7 @@ class StaticFileSet(EditablePackageSet):
         self.loader = ItemFileLoader(self._filename, self._validate)
         if greedy and not dbapi:
             self.errors.append(
-                _(
-                    "%s configured as greedy set, but no dbapi instance passed in constructor"
-                )
-                % self._filename
-            )
+                _("%s configured as greedy set, but no dbapi instance passed in constructor") % self._filename)
             greedy = False
         self.greedy = greedy
         self.dbapi = dbapi
@@ -125,9 +121,7 @@ class StaticFileSet(EditablePackageSet):
                     filename,
                 )
             except KeyError:
-                raise SetConfigError(
-                    _("Could not find repository '%s'") % match.groupdict()["reponame"]
-                )
+                raise SetConfigError(_("Could not find repository '%s'") % match.groupdict()["reponame"])
         return StaticFileSet(filename, greedy=greedy, dbapi=trees["vartree"].dbapi)
 
     singleBuilder = classmethod(singleBuilder)
@@ -151,26 +145,17 @@ class StaticFileSet(EditablePackageSet):
                     directory,
                 )
             except KeyError:
-                raise SetConfigError(
-                    _("Could not find repository '%s'") % match.groupdict()["reponame"]
-                )
+                raise SetConfigError(_("Could not find repository '%s'") % match.groupdict()["reponame"])
 
         try:
-            directory = _unicode_decode(
-                directory, encoding=_encodings["fs"], errors="strict"
-            )
+            directory = _unicode_decode(directory, encoding=_encodings["fs"], errors="strict")
             # Now verify that we can also encode it.
             _unicode_encode(directory, encoding=_encodings["fs"], errors="strict")
         except UnicodeError:
-            directory = _unicode_decode(
-                directory, encoding=_encodings["fs"], errors="replace"
-            )
+            directory = _unicode_decode(directory, encoding=_encodings["fs"], errors="replace")
             raise SetConfigError(
-                _(
-                    "Directory path contains invalid character(s) for encoding '%s': '%s'"
-                )
-                % (_encodings["fs"], directory)
-            )
+                _("Directory path contains invalid character(s) for encoding '%s': '%s'") %
+                (_encodings["fs"], directory))
 
         vcs_dirs = [_unicode_encode(x, encoding=_encodings["fs"]) for x in VCS_DIRS]
         if os.path.isdir(directory):
@@ -186,9 +171,7 @@ class StaticFileSet(EditablePackageSet):
                 else:
                     omit_dir = lambda d: dirs.remove(d)
                 try:
-                    parent = _unicode_decode(
-                        parent, encoding=_encodings["fs"], errors="strict"
-                    )
+                    parent = _unicode_decode(parent, encoding=_encodings["fs"], errors="strict")
                 except UnicodeDecodeError:
                     continue
                 for d in dirs[:]:
@@ -196,16 +179,14 @@ class StaticFileSet(EditablePackageSet):
                         omit_dir(d)
                 for filename in files:
                     try:
-                        filename = _unicode_decode(
-                            filename, encoding=_encodings["fs"], errors="strict"
-                        )
+                        filename = _unicode_decode(filename, encoding=_encodings["fs"], errors="strict")
                     except UnicodeDecodeError:
                         continue
                     if filename.startswith(".") or filename.endswith("~"):
                         continue
                     if filename.endswith(".metadata"):
                         continue
-                    filename = os.path.join(parent, filename)[1 + len(directory) :]
+                    filename = os.path.join(parent, filename)[1 + len(directory):]
                     myname = name_pattern.replace("$name", filename)
                     myname = myname.replace("${name}", filename)
                     rValue[myname] = StaticFileSet(
@@ -219,6 +200,7 @@ class StaticFileSet(EditablePackageSet):
 
 
 class ConfigFileSet(PackageSet):
+
     def __init__(self, filename):
         super().__init__()
         self._filename = filename
@@ -238,9 +220,7 @@ class ConfigFileSet(PackageSet):
 
     def multiBuilder(self, options, settings, trees):
         rValue = {}
-        directory = options.get(
-            "directory", os.path.join(settings["PORTAGE_CONFIGROOT"], USER_CONFIG_PATH)
-        )
+        directory = options.get("directory", os.path.join(settings["PORTAGE_CONFIGROOT"], USER_CONFIG_PATH))
         name_pattern = options.get("name_pattern", "sets/package_$suffix")
         if not "$suffix" in name_pattern and not "${suffix}" in name_pattern:
             raise SetConfigError(_("name_pattern doesn't include $suffix placeholder"))
@@ -335,9 +315,7 @@ class WorldSelectedPackagesSet(EditablePackageSet):
             self._setAtoms(atoms)
 
     def _ensure_dirs(self):
-        ensure_dirs(
-            os.path.dirname(self._filename), gid=portage_gid, mode=0o2750, mask=0o2
-        )
+        ensure_dirs(os.path.dirname(self._filename), gid=portage_gid, mode=0o2750, mask=0o2)
 
     def lock(self):
         if self._lock is not None:

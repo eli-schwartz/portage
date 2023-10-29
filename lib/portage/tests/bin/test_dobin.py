@@ -6,6 +6,7 @@ from portage.tests.bin.setup_env import BinTestCase, dobin, xexists_in_D
 
 
 class DoBin(BinTestCase):
+
     def testDoBin(self):
         self.init()
         try:

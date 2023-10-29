@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SonameDepcleanTestCase(TestCase):
+
     def testSonameDepclean(self):
         installed = {
             "app-misc/A-1": {
@@ -19,10 +20,12 @@ class SonameDepcleanTestCase(TestCase):
             "dev-libs/B-1": {
                 "PROVIDES": "x86_32: libB.so.1",
             },
-            "sys-libs/glibc-2.19-r1": {"PROVIDES": "x86_32: libc.so.6"},
+            "sys-libs/glibc-2.19-r1": {
+                "PROVIDES": "x86_32: libc.so.6"
+            },
         }
 
-        world = ("app-misc/A",)
+        world = ("app-misc/A", )
 
         test_cases = (
             ResolverPlaygroundTestCase(

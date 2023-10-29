@@ -5,10 +5,7 @@ import collections
 
 from portage.versions import _pkg_str
 
-
-pkg_desc_index_node = collections.namedtuple(
-    "pkg_desc_index_node", ["cp", "cpv_list", "desc"]
-)
+pkg_desc_index_node = collections.namedtuple("pkg_desc_index_node", ["cp", "cpv_list", "desc"])
 
 
 class pkg_node(str):
@@ -27,9 +24,7 @@ class pkg_node(str):
         return str.__new__(cls, cp + "-" + version)
 
     def __setattr__(self, name, value):
-        raise AttributeError(
-            "pkg_node instances are immutable", self.__class__, name, value
-        )
+        raise AttributeError("pkg_node instances are immutable", self.__class__, name, value)
 
 
 def pkg_desc_index_line_format(cp, pkgs, desc):

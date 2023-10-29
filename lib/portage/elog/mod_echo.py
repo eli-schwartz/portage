@@ -7,7 +7,6 @@ from portage.output import EOutput, colorize
 from portage.const import EBUILD_PHASES
 from portage.localization import _
 
-
 _items = []
 
 
@@ -16,11 +15,7 @@ def process(mysettings, key, logentries, fulltext):
     logfile = None
     # output logfile explicitly only if it isn't in tempdir, otherwise
     # it will be removed anyway
-    if (
-        key == mysettings.mycpv
-        and "PORTAGE_LOGDIR" in mysettings
-        and "PORTAGE_LOG_FILE" in mysettings
-    ):
+    if (key == mysettings.mycpv and "PORTAGE_LOGDIR" in mysettings and "PORTAGE_LOG_FILE" in mysettings):
         logfile = mysettings["PORTAGE_LOG_FILE"]
 
     try:
@@ -56,9 +51,10 @@ def _finalize():
             printer.einfo(_("Messages for package %s:") % colorize(color, key))
         else:
             printer.einfo(
-                _("Messages for package %(pkg)s merged to %(root)s:")
-                % {"pkg": colorize(color, key), "root": root}
-            )
+                _("Messages for package %(pkg)s merged to %(root)s:") % {
+                    "pkg": colorize(color, key),
+                    "root": root
+                })
         if logfile is not None:
             printer.einfo(_("Log file: %s") % colorize("INFORM", logfile))
         print()

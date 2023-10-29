@@ -32,9 +32,7 @@ class database(fs_template.FsBased):
         if not default_db.startswith("."):
             default_db = "." + default_db
 
-        self._db_path = os.path.join(
-            self.location, fs_template.gen_label(self.location, self.label) + default_db
-        )
+        self._db_path = os.path.join(self.location, fs_template.gen_label(self.location, self.label) + default_db)
         self.__db = None
         mode = "w"
         if dbm.whichdb(self._db_path) in ("dbm.gnu", "gdbm"):

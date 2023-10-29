@@ -21,12 +21,14 @@ class PipeReaderTestCase(TestCase):
     _echo_cmd = "echo -n '%s'"
 
     def test_pipe(self):
+
         def make_pipes():
             return os.pipe(), None
 
         self._do_test(make_pipes)
 
     def test_pty_device(self):
+
         def make_pipes():
             try:
                 return pty.openpty(), None
@@ -36,6 +38,7 @@ class PipeReaderTestCase(TestCase):
         self._do_test(make_pipes)
 
     def test_domain_socket(self):
+
         def make_pipes():
             read_end, write_end = socket.socketpair()
             return (read_end.detach(), write_end.detach()), None
@@ -43,6 +46,7 @@ class PipeReaderTestCase(TestCase):
         self._do_test(make_pipes)
 
     def test_named_pipe(self):
+
         def make_pipes():
             tempdir = tempfile.mkdtemp()
             fifo_path = os.path.join(tempdir, "fifo")
@@ -83,8 +87,7 @@ class PipeReaderTestCase(TestCase):
                 self._echo_cmd % test_string,
                 stdout=slave_fd,
                 loop=scheduler,
-            )
-        )
+            ))
 
         os.close(slave_fd)
         scheduler.run_until_complete(producer.wait())

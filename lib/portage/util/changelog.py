@@ -2,7 +2,6 @@
 # Copyright 2009-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-
 from portage.manifest import guessManifestFileType
 from portage.versions import pkgsplit, vercmp
 
@@ -34,7 +33,7 @@ class ChangeLogTypeSort(str):
         if first == "EBUILD":
             return True
         if first == "MISC":
-            return second in ("EBUILD",)
+            return second in ("EBUILD", )
         if first == "AUX":
             return second in ("EBUILD", "MISC")
         if first == "DIST":

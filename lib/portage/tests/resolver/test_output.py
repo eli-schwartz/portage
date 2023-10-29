@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class MergelistOutputTestCase(TestCase):
+
     def testMergelistOutput(self):
         """
         This test doesn't check if the output is correct, but makes sure
@@ -20,33 +21,62 @@ class MergelistOutputTestCase(TestCase):
                 "IUSE": "+foo",
                 "EAPI": 1,
             },
-            "dev-libs/B-1": {"DEPEND": "dev-libs/D", "IUSE": "foo +bar", "EAPI": 1},
-            "dev-libs/C-1": {"DEPEND": "dev-libs/E", "IUSE": "foo bar"},
-            "dev-libs/D-1": {"IUSE": ""},
+            "dev-libs/B-1": {
+                "DEPEND": "dev-libs/D",
+                "IUSE": "foo +bar",
+                "EAPI": 1
+            },
+            "dev-libs/C-1": {
+                "DEPEND": "dev-libs/E",
+                "IUSE": "foo bar"
+            },
+            "dev-libs/D-1": {
+                "IUSE": ""
+            },
             "dev-libs/E-1": {},
             # reinstall for flags
-            "dev-libs/Z-1": {"IUSE": "+foo", "EAPI": 1},
-            "dev-libs/Y-1": {"IUSE": "foo", "EAPI": 1},
+            "dev-libs/Z-1": {
+                "IUSE": "+foo",
+                "EAPI": 1
+            },
+            "dev-libs/Y-1": {
+                "IUSE": "foo",
+                "EAPI": 1
+            },
             "dev-libs/X-1": {},
-            "dev-libs/W-1": {"IUSE": "+foo", "EAPI": 1},
+            "dev-libs/W-1": {
+                "IUSE": "+foo",
+                "EAPI": 1
+            },
         }
 
         installed = {
-            "dev-libs/Z-1": {"USE": "", "IUSE": "foo"},
-            "dev-libs/Y-1": {"USE": "foo", "IUSE": "+foo", "EAPI": 1},
-            "dev-libs/X-1": {"USE": "foo", "IUSE": "+foo", "EAPI": 1},
+            "dev-libs/Z-1": {
+                "USE": "",
+                "IUSE": "foo"
+            },
+            "dev-libs/Y-1": {
+                "USE": "foo",
+                "IUSE": "+foo",
+                "EAPI": 1
+            },
+            "dev-libs/X-1": {
+                "USE": "foo",
+                "IUSE": "+foo",
+                "EAPI": 1
+            },
             "dev-libs/W-1": {},
         }
 
         option_cobos = (
             (),
-            ("verbose",),
-            ("tree",),
+            ("verbose", ),
+            ("tree", ),
             (
                 "tree",
                 "unordered-display",
             ),
-            ("verbose",),
+            ("verbose", ),
             (
                 "verbose",
                 "tree",
@@ -77,8 +107,7 @@ class MergelistOutputTestCase(TestCase):
                         "dev-libs/B-1",
                         "dev-libs/A-1",
                     ],
-                )
-            )
+                ))
 
             test_cases.append(
                 ResolverPlaygroundTestCase(
@@ -86,8 +115,7 @@ class MergelistOutputTestCase(TestCase):
                     options=testcase_opts,
                     success=True,
                     mergelist=["dev-libs/Z-1"],
-                )
-            )
+                ))
 
             test_cases.append(
                 ResolverPlaygroundTestCase(
@@ -95,8 +123,7 @@ class MergelistOutputTestCase(TestCase):
                     options=testcase_opts,
                     success=True,
                     mergelist=["dev-libs/Y-1"],
-                )
-            )
+                ))
 
             test_cases.append(
                 ResolverPlaygroundTestCase(
@@ -104,8 +131,7 @@ class MergelistOutputTestCase(TestCase):
                     options=testcase_opts,
                     success=True,
                     mergelist=["dev-libs/X-1"],
-                )
-            )
+                ))
 
             test_cases.append(
                 ResolverPlaygroundTestCase(
@@ -113,8 +139,7 @@ class MergelistOutputTestCase(TestCase):
                     options=testcase_opts,
                     success=True,
                     mergelist=["dev-libs/W-1"],
-                )
-            )
+                ))
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed)
         try:

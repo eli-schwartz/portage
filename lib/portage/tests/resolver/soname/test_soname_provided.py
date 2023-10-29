@@ -13,6 +13,7 @@ from portage.output import colorize
 
 
 class SonameProvidedTestCase(TestCase):
+
     def testSonameProvided(self):
         binpkgs = {
             "app-misc/A-1": {
@@ -46,7 +47,7 @@ class SonameProvidedTestCase(TestCase):
         world = ["app-misc/B"]
 
         profile = {
-            "soname.provided": ("x86_32 libA.so.2",),
+            "soname.provided": ("x86_32 libA.so.2", ),
         }
 
         test_cases = (
@@ -62,8 +63,7 @@ class SonameProvidedTestCase(TestCase):
                 },
                 success=True,
                 mergelist=["[binary]app-misc/B-1"],
-            ),
-        )
+            ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -76,16 +76,14 @@ class SonameProvidedTestCase(TestCase):
                     installed=installed,
                     world=world,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     # Disable debug so that cleanup works.
                     playground.debug = False

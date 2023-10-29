@@ -14,7 +14,7 @@ class AsyncTaskFuture(AsynchronousTask):
     scheduling with TaskScheduler.
     """
 
-    __slots__ = ("future",)
+    __slots__ = ("future", )
 
     def _start(self):
         self.future = asyncio.ensure_future(self.future, self.scheduler)

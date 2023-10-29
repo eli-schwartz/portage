@@ -27,7 +27,7 @@ class AsynchronousLock(AsynchronousTask):
     signals to the main thread).
     """
 
-    __slots__ = ("path",) + (
+    __slots__ = ("path", ) + (
         "_imp",
         "_force_async",
         "_force_process",
@@ -40,9 +40,7 @@ class AsynchronousLock(AsynchronousTask):
     def _start(self):
         if not self._force_async:
             try:
-                self._imp = lockfile(
-                    self.path, wantnewlockfile=True, flags=os.O_NONBLOCK
-                )
+                self._imp = lockfile(self.path, wantnewlockfile=True, flags=os.O_NONBLOCK)
             except TryAgain:
                 pass
             else:
@@ -50,9 +48,7 @@ class AsynchronousLock(AsynchronousTask):
                 self._async_wait()
                 return
 
-        if self._force_process or (
-            not self._force_thread and self._use_process_by_default
-        ):
+        if self._force_process or (not self._force_thread and self._use_process_by_default):
             self._imp = _LockProcess(path=self.path, scheduler=self.scheduler)
         else:
             self._imp = _LockThread(path=self.path, scheduler=self.scheduler)
@@ -104,7 +100,7 @@ class _LockThread(AbstractPollTask):
     thread.
     """
 
-    __slots__ = ("path",) + ("_lock_obj", "_thread", "_unlock_future")
+    __slots__ = ("path", ) + ("_lock_obj", "_thread", "_unlock_future")
 
     def _start(self):
         self._registered = True
@@ -166,7 +162,7 @@ class _LockProcess(AbstractPollTask):
     lock and exit.
     """
 
-    __slots__ = ("path",) + (
+    __slots__ = ("path", ) + (
         "_acquired",
         "_kill_test",
         "_proc",
@@ -181,9 +177,7 @@ class _LockProcess(AbstractPollTask):
         self._files["pipe_in"] = in_pr
         self._files["pipe_out"] = out_pw
 
-        fcntl.fcntl(
-            in_pr, fcntl.F_SETFL, fcntl.fcntl(in_pr, fcntl.F_GETFL) | os.O_NONBLOCK
-        )
+        fcntl.fcntl(in_pr, fcntl.F_SETFL, fcntl.fcntl(in_pr, fcntl.F_GETFL) | os.O_NONBLOCK)
 
         self.scheduler.add_reader(in_pr, self._output_handler)
         self._registered = True
@@ -194,7 +188,11 @@ class _LockProcess(AbstractPollTask):
                 self.path,
             ],
             env=dict(os.environ, PORTAGE_PYM_PATH=portage._pym_path),
-            fd_pipes={0: out_pr, 1: in_pw, 2: sys.__stderr__.fileno()},
+            fd_pipes={
+                0: out_pr,
+                1: in_pw,
+                2: sys.__stderr__.fileno()
+            },
             scheduler=self.scheduler,
         )
         self._proc.addExitListener(self._proc_exit)
@@ -237,9 +235,7 @@ class _LockProcess(AbstractPollTask):
                 # We don't want lost locks going unnoticed, so it's
                 # only safe to ignore if either the cancel() or
                 # unlock() methods have been previously called.
-                raise AssertionError(
-                    f"lock process failed with returncode {proc.returncode}"
-                )
+                raise AssertionError(f"lock process failed with returncode {proc.returncode}")
 
         if self._unlock_future is not None:
             self._unlock_future.set_result(None)
@@ -281,9 +277,7 @@ class _LockProcess(AbstractPollTask):
         if not self._acquired:
             raise AssertionError("lock not acquired yet")
         if self.returncode != os.EX_OK:
-            raise AssertionError(
-                f"lock process failed with returncode {self.returncode}"
-            )
+            raise AssertionError(f"lock process failed with returncode {self.returncode}")
         if self._unlock_future is not None:
             raise AssertionError("already unlocked")
         self._unlock_future = self.scheduler.create_future()

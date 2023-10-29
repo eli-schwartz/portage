@@ -1,7 +1,6 @@
 # Copyright 2013-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-
 import portage
 from portage import os, _encodings
 from portage.tests import TestCase
@@ -68,9 +67,9 @@ class SecuritySetTestCase(TestCase):
 
     def write_glsa_test_case(self, glsa_dir, glsa):
         with open(
-            os.path.join(glsa_dir, "glsa-" + glsa["glsa_id"] + ".xml"),
-            encoding=_encodings["repo.content"],
-            mode="w",
+                os.path.join(glsa_dir, "glsa-" + glsa["glsa_id"] + ".xml"),
+                encoding=_encodings["repo.content"],
+                mode="w",
         ) as f:
             f.write(self.glsa_template % glsa)
 
@@ -78,13 +77,21 @@ class SecuritySetTestCase(TestCase):
         self._must_skip()
 
         ebuilds = {
-            "cat/A-vulnerable-2.2": {"KEYWORDS": "x86"},
-            "cat/B-not-vulnerable-4.5": {"KEYWORDS": "x86"},
+            "cat/A-vulnerable-2.2": {
+                "KEYWORDS": "x86"
+            },
+            "cat/B-not-vulnerable-4.5": {
+                "KEYWORDS": "x86"
+            },
         }
 
         installed = {
-            "cat/A-vulnerable-2.1": {"KEYWORDS": "x86"},
-            "cat/B-not-vulnerable-4.4": {"KEYWORDS": "x86"},
+            "cat/A-vulnerable-2.1": {
+                "KEYWORDS": "x86"
+            },
+            "cat/B-not-vulnerable-4.4": {
+                "KEYWORDS": "x86"
+            },
         }
 
         glsas = (
@@ -122,24 +129,18 @@ class SecuritySetTestCase(TestCase):
 
         world = ["cat/A"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@security"],
-                options={},
-                success=True,
-                mergelist=["cat/A-vulnerable-2.2"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@security"],
+            options={},
+            success=True,
+            mergelist=["cat/A-vulnerable-2.2"],
+        ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
 
         try:
             portdb = playground.trees[playground.eroot]["porttree"].dbapi
-            glsa_dir = os.path.join(
-                portdb.repositories["test_repo"].location, "metadata", "glsa"
-            )
+            glsa_dir = os.path.join(portdb.repositories["test_repo"].location, "metadata", "glsa")
             portage.util.ensure_dirs(glsa_dir)
             for glsa in glsas:
                 self.write_glsa_test_case(glsa_dir, glsa)
@@ -158,13 +159,21 @@ class SecuritySetTestCase(TestCase):
         self._must_skip()
 
         ebuilds = {
-            "cat/A-vulnerable-2.2": {"KEYWORDS": "x86"},
-            "cat/B-not-vulnerable-4.5": {"KEYWORDS": "x86"},
+            "cat/A-vulnerable-2.2": {
+                "KEYWORDS": "x86"
+            },
+            "cat/B-not-vulnerable-4.5": {
+                "KEYWORDS": "x86"
+            },
         }
 
         installed = {
-            "cat/A-vulnerable-2.1": {"KEYWORDS": "x86"},
-            "cat/B-not-vulnerable-4.4": {"KEYWORDS": "x86"},
+            "cat/A-vulnerable-2.1": {
+                "KEYWORDS": "x86"
+            },
+            "cat/B-not-vulnerable-4.4": {
+                "KEYWORDS": "x86"
+            },
         }
 
         glsas = (
@@ -215,25 +224,19 @@ class SecuritySetTestCase(TestCase):
 
         world = ["cat/A"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@security"],
-                success=True,
-                mergelist=["cat/A-vulnerable-2.2"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@security"],
+            success=True,
+            mergelist=["cat/A-vulnerable-2.2"],
+        ), )
 
         # Give each GLSA a clean slate
         for glsa in glsas:
-            playground = ResolverPlayground(
-                ebuilds=ebuilds, installed=installed, world=world, debug=True
-            )
+            playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=True)
 
             try:
                 portdb = playground.trees[playground.eroot]["porttree"].dbapi
-                glsa_dir = os.path.join(
-                    portdb.repositories["test_repo"].location, "metadata", "glsa"
-                )
+                glsa_dir = os.path.join(portdb.repositories["test_repo"].location, "metadata", "glsa")
                 portage.util.ensure_dirs(glsa_dir)
 
                 self.write_glsa_test_case(glsa_dir, glsa)

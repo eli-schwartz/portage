@@ -32,10 +32,12 @@ class Package:
             self.iuse = self._iuse_class([])
 
     class _use_class:
+
         def __init__(self, use):
             self.enabled = frozenset(use)
 
     class _iuse_class:
+
         def __init__(self, iuse):
             self.all = frozenset(iuse)
 
@@ -49,6 +51,7 @@ class Package:
 
 
 class Test_match_from_list(TestCase):
+
     def testMatch_from_list(self):
         tests = (
             ("=sys-apps/portage-45*", [], []),
@@ -221,7 +224,8 @@ class Test_match_from_list(TestCase):
             ),
             (
                 "dev-libs/A:1::repo2[foo]",
-                [Package("=dev-libs/A-1:1::repo1"), Package("=dev-libs/A-1:2::repo2")],
+                [Package("=dev-libs/A-1:1::repo1"),
+                 Package("=dev-libs/A-1:2::repo2")],
                 [],
             ),
             (

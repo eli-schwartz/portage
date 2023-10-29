@@ -11,12 +11,23 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class AutounmaskUseSlotConflictTestCase(TestCase):
+
     @pytest.mark.xfail()
     def testAutounmaskUseSlotConflict(self):
         ebuilds = {
-            "sci-libs/K-1": {"IUSE": "+foo", "EAPI": 1},
-            "sci-libs/L-1": {"DEPEND": "sci-libs/K[-foo]", "EAPI": 2},
-            "sci-libs/M-1": {"DEPEND": "sci-libs/K[foo=]", "IUSE": "+foo", "EAPI": 2},
+            "sci-libs/K-1": {
+                "IUSE": "+foo",
+                "EAPI": 1
+            },
+            "sci-libs/L-1": {
+                "DEPEND": "sci-libs/K[-foo]",
+                "EAPI": 2
+            },
+            "sci-libs/M-1": {
+                "DEPEND": "sci-libs/K[foo=]",
+                "IUSE": "+foo",
+                "EAPI": 2
+            },
         }
 
         installed = {}
@@ -36,11 +47,15 @@ class AutounmaskUseSlotConflictTestCase(TestCase):
                     "sci-libs/K-1",
                 ],
                 ignore_mergelist_order=True,
-                slot_collision_solutions=[
-                    {"sci-libs/K-1": {"foo": False}, "sci-libs/M-1": {"foo": False}}
-                ],
-            ),
-        )
+                slot_collision_solutions=[{
+                    "sci-libs/K-1": {
+                        "foo": False
+                    },
+                    "sci-libs/M-1": {
+                        "foo": False
+                    }
+                }],
+            ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed)
         try:

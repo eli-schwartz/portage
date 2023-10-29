@@ -16,15 +16,15 @@ from portage.exception import MissingSignature, InvalidSignature
 
 
 class test_gpkg_gpg_case(TestCase):
+
     def test_gpkg_missing_manifest_signature(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} binpkg-signing ' 'binpkg-request-signature"',
-                    'BINPKG_FORMAT="gpkg"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": (
+                'FEATURES="${FEATURES} binpkg-signing '
+                'binpkg-request-signature"',
+                'BINPKG_FORMAT="gpkg"',
+            ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -42,18 +42,12 @@ class test_gpkg_gpg_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if f.name == os.path.join("test", "Manifest"):
                             manifest = tar_1.extractfile(f).read().decode("UTF-8")
-                            manifest = manifest.replace(
-                                "-----BEGIN PGP SIGNATURE-----", ""
-                            )
-                            manifest = manifest.replace(
-                                "-----END PGP SIGNATURE-----", ""
-                            )
+                            manifest = manifest.replace("-----BEGIN PGP SIGNATURE-----", "")
+                            manifest = manifest.replace("-----END PGP SIGNATURE-----", "")
                             manifest_data = io.BytesIO(manifest.encode("UTF-8"))
                             manifest_data.seek(0, io.SEEK_END)
                             f.size = manifest_data.tell()
@@ -64,22 +58,19 @@ class test_gpkg_gpg_case(TestCase):
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(
-                InvalidSignature, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(InvalidSignature, binpkg_2.decompress, os.path.join(tmpdir, "test"))
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_missing_signature(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} binpkg-signing ' 'binpkg-request-signature"',
-                    'BINPKG_FORMAT="gpkg"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": (
+                'FEATURES="${FEATURES} binpkg-signing '
+                'binpkg-request-signature"',
+                'BINPKG_FORMAT="gpkg"',
+            ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -97,9 +88,7 @@ class test_gpkg_gpg_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if f.name.endswith(".sig"):
                             pass
@@ -107,9 +96,7 @@ class test_gpkg_gpg_case(TestCase):
                             tar_2.addfile(f, tar_1.extractfile(f))
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
-            self.assertRaises(
-                MissingSignature, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(MissingSignature, binpkg_2.decompress, os.path.join(tmpdir, "test"))
 
         finally:
             shutil.rmtree(tmpdir)
@@ -121,7 +108,8 @@ class test_gpkg_gpg_case(TestCase):
         playground = ResolverPlayground(
             user_config={
                 "make.conf": (
-                    'FEATURES="${FEATURES} binpkg-signing ' 'binpkg-ignore-signature"',
+                    'FEATURES="${FEATURES} binpkg-signing '
+                    'binpkg-ignore-signature"',
                     'BINPKG_FORMAT="gpkg"',
                     f'BINPKG_GPG_SIGNING_BASE_COMMAND="flock {gpg_test_path}/portage-binpkg-gpg.lock /usr/bin/gpg --sign --armor --batch --no-tty --yes --pinentry-mode loopback --passphrase GentooTest [PORTAGE_CONFIG]"',
                     'BINPKG_GPG_SIGNING_DIGEST="SHA512"',
@@ -130,8 +118,7 @@ class test_gpkg_gpg_case(TestCase):
                     'BINPKG_GPG_VERIFY_BASE_COMMAND="/usr/bin/gpg --verify --batch --no-tty --yes --no-auto-check-trustdb --status-fd 2 [PORTAGE_CONFIG] [SIGNATURE]"',
                     f'BINPKG_GPG_VERIFY_GPG_HOME="{gpg_test_path}"',
                 ),
-            }
-        )
+            })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -155,15 +142,13 @@ class test_gpkg_gpg_case(TestCase):
             playground.cleanup()
 
     def test_gpkg_auto_use_signature(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} binpkg-signing '
-                    '-binpkg-request-signature"',
-                    'BINPKG_FORMAT="gpkg"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": (
+                'FEATURES="${FEATURES} binpkg-signing '
+                '-binpkg-request-signature"',
+                'BINPKG_FORMAT="gpkg"',
+            ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -181,9 +166,7 @@ class test_gpkg_gpg_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if f.name.endswith(".sig"):
                             pass
@@ -191,22 +174,19 @@ class test_gpkg_gpg_case(TestCase):
                             tar_2.addfile(f, tar_1.extractfile(f))
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
-            self.assertRaises(
-                MissingSignature, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(MissingSignature, binpkg_2.decompress, os.path.join(tmpdir, "test"))
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_invalid_signature(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} binpkg-signing ' 'binpkg-request-signature"',
-                    'BINPKG_FORMAT="gpkg"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": (
+                'FEATURES="${FEATURES} binpkg-signing '
+                'binpkg-request-signature"',
+                'BINPKG_FORMAT="gpkg"',
+            ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -224,9 +204,7 @@ class test_gpkg_gpg_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if f.name == os.path.join("test", "Manifest"):
                             sig = b"""
@@ -260,9 +238,7 @@ qGAN3VUF+8EsdcsV781H0F86PANhyBgEYTGDrnItTGe3/vAPjCo=
                             tar_2.addfile(f, tar_1.extractfile(f))
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
-            self.assertRaises(
-                InvalidSignature, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(InvalidSignature, binpkg_2.decompress, os.path.join(tmpdir, "test"))
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
@@ -273,7 +249,8 @@ qGAN3VUF+8EsdcsV781H0F86PANhyBgEYTGDrnItTGe3/vAPjCo=
         playground = ResolverPlayground(
             user_config={
                 "make.conf": (
-                    'FEATURES="${FEATURES} binpkg-signing ' 'binpkg-request-signature"',
+                    'FEATURES="${FEATURES} binpkg-signing '
+                    'binpkg-request-signature"',
                     'BINPKG_FORMAT="gpkg"',
                     f'BINPKG_GPG_SIGNING_BASE_COMMAND="flock {gpg_test_path}/portage-binpkg-gpg.lock /usr/bin/gpg --sign --armor --batch --no-tty --yes --pinentry-mode loopback --passphrase GentooTest [PORTAGE_CONFIG]"',
                     'BINPKG_GPG_SIGNING_DIGEST="SHA512"',
@@ -282,8 +259,7 @@ qGAN3VUF+8EsdcsV781H0F86PANhyBgEYTGDrnItTGe3/vAPjCo=
                     'BINPKG_GPG_VERIFY_BASE_COMMAND="/usr/bin/gpg --verify --batch --no-tty --yes --no-auto-check-trustdb --status-fd 2 [PORTAGE_CONFIG] [SIGNATURE]"',
                     f'BINPKG_GPG_VERIFY_GPG_HOME="{gpg_test_path}"',
                 ),
-            }
-        )
+            })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -301,23 +277,20 @@ qGAN3VUF+8EsdcsV781H0F86PANhyBgEYTGDrnItTGe3/vAPjCo=
             binpkg_1.compress(orig_full_path, {})
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-1.gpkg.tar"))
-            self.assertRaises(
-                InvalidSignature, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(InvalidSignature, binpkg_2.decompress, os.path.join(tmpdir, "test"))
 
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_unknown_signature(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} binpkg-signing ' 'binpkg-request-signature"',
-                    'BINPKG_FORMAT="gpkg"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": (
+                'FEATURES="${FEATURES} binpkg-signing '
+                'binpkg-request-signature"',
+                'BINPKG_FORMAT="gpkg"',
+            ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -335,9 +308,7 @@ qGAN3VUF+8EsdcsV781H0F86PANhyBgEYTGDrnItTGe3/vAPjCo=
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if f.name == os.path.join("test", "Manifest"):
                             sig = b"""
@@ -365,9 +336,7 @@ EP1pgSXXGtlUnv6akg/wueFJKEr9KQs=
                             tar_2.addfile(f, tar_1.extractfile(f))
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
-            self.assertRaises(
-                InvalidSignature, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(InvalidSignature, binpkg_2.decompress, os.path.join(tmpdir, "test"))
 
         finally:
             shutil.rmtree(tmpdir)

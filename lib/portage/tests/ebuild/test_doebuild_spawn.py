@@ -28,11 +28,9 @@ class DoebuildSpawnTestCase(TestCase):
     """
 
     def testDoebuildSpawn(self):
-        ebuild_body = textwrap.dedent(
-            """
+        ebuild_body = textwrap.dedent("""
 			pkg_nofetch() { : ; }
-		"""
-        )
+		""")
 
         ebuilds = {
             "sys-apps/portage-2.1": {
@@ -52,15 +50,11 @@ class DoebuildSpawnTestCase(TestCase):
             portdb = root_config.trees["porttree"].dbapi
             settings = config(clone=playground.settings)
             if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
-                settings["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ[
-                    "__PORTAGE_TEST_HARDLINK_LOCKS"
-                ]
+                settings["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
                 settings.backup_changes("__PORTAGE_TEST_HARDLINK_LOCKS")
 
             cpv = "sys-apps/portage-2.1"
-            metadata = dict(
-                zip(Package.metadata_keys, portdb.aux_get(cpv, Package.metadata_keys))
-            )
+            metadata = dict(zip(Package.metadata_keys, portdb.aux_get(cpv, Package.metadata_keys)))
 
             pkg = Package(
                 built=False,
@@ -73,9 +67,7 @@ class DoebuildSpawnTestCase(TestCase):
             settings.setcpv(pkg)
             settings["PORTAGE_PYTHON"] = _python_interpreter
             settings["PORTAGE_BUILDDIR"] = os.path.join(settings["PORTAGE_TMPDIR"], cpv)
-            settings["PYTHONDONTWRITEBYTECODE"] = os.environ.get(
-                "PYTHONDONTWRITEBYTECODE", ""
-            )
+            settings["PYTHONDONTWRITEBYTECODE"] = os.environ.get("PYTHONDONTWRITEBYTECODE", "")
             settings["HOME"] = os.path.join(settings["PORTAGE_BUILDDIR"], "homedir")
             settings["T"] = os.path.join(settings["PORTAGE_BUILDDIR"], "temp")
             for x in ("PORTAGE_BUILDDIR", "HOME", "T"):
@@ -86,20 +78,17 @@ class DoebuildSpawnTestCase(TestCase):
             open(os.path.join(settings["T"], "environment"), "wb").close()
 
             scheduler = SchedulerInterface(global_event_loop())
-            for phase in ("_internal_test",):
+            for phase in ("_internal_test", ):
                 # Test EbuildSpawnProcess by calling doebuild.spawn() with
                 # returnpid=False. This case is no longer used by portage
                 # internals since EbuildPhase is used instead and that passes
                 # returnpid=True to doebuild.spawn().
                 rval = doebuild_spawn(
-                    "%s %s"
-                    % (
-                        _shell_quote(
-                            os.path.join(
-                                settings["PORTAGE_BIN_PATH"],
-                                os.path.basename(EBUILD_SH_BINARY),
-                            )
-                        ),
+                    "%s %s" % (
+                        _shell_quote(os.path.join(
+                            settings["PORTAGE_BIN_PATH"],
+                            os.path.basename(EBUILD_SH_BINARY),
+                        )),
                         phase,
                     ),
                     settings,

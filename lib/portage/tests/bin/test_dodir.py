@@ -6,6 +6,7 @@ from portage.tests.bin.setup_env import BinTestCase, dodir, exists_in_D
 
 
 class DoDir(BinTestCase):
+
     def testDoDir(self):
         self.init()
         try:

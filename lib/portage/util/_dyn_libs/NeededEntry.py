@@ -41,9 +41,8 @@ class NeededEntry:
         """
         fields = line.split(";")
         if len(fields) < cls._MIN_FIELDS:
-            raise InvalidData(
-                _("Wrong number of fields " "in %s: %s\n\n") % (filename, line)
-            )
+            raise InvalidData(_("Wrong number of fields "
+                                "in %s: %s\n\n") % (filename, line))
 
         obj = cls()
         # Extra fields may exist (for future extensions).
@@ -52,7 +51,7 @@ class NeededEntry:
         else:
             obj.multilib_category = None
 
-        del fields[cls._MIN_FIELDS :]
+        del fields[cls._MIN_FIELDS:]
         obj.arch, obj.filename, obj.soname, rpaths, needed = fields
         # We don't use scanelf -q, since that would omit libraries like
         # musl's /usr/lib/libc.so which do not have any DT_NEEDED or
@@ -68,20 +67,11 @@ class NeededEntry:
         """
         Format this entry for writing to a NEEDED.ELF.2 file.
         """
-        return (
-            ";".join(
-                [
-                    self.arch,
-                    self.filename,
-                    self.soname,
-                    ":".join(self.runpaths),
-                    ",".join(self.needed),
-                    (
-                        self.multilib_category
-                        if self.multilib_category is not None
-                        else ""
-                    ),
-                ]
-            )
-            + "\n"
-        )
+        return (";".join([
+            self.arch,
+            self.filename,
+            self.soname,
+            ":".join(self.runpaths),
+            ",".join(self.needed),
+            (self.multilib_category if self.multilib_category is not None else ""),
+        ]) + "\n")

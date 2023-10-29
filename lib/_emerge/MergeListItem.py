@@ -13,7 +13,6 @@ from _emerge.PackageUninstall import PackageUninstall
 
 
 class MergeListItem(CompositeTask):
-
     """
     TODO: For parallel scheduling, everything here needs asynchronous
     execution support (start, poll, and wait methods).
@@ -35,7 +34,7 @@ class MergeListItem(CompositeTask):
         "settings",
         "statusMessage",
         "world_atom",
-    ) + ("_install_task",)
+    ) + ("_install_task", )
 
     def _start(self):
         pkg = self.pkg
@@ -79,10 +78,8 @@ class MergeListItem(CompositeTask):
 
         if not build_opts.pretend:
             self.statusMessage(msg)
-            logger.log(
-                f" >>> emerge ({pkg_count.curval} of {pkg_count.maxval}) "
-                f"{pkg.cpv} to {pkg.root}"
-            )
+            logger.log(f" >>> emerge ({pkg_count.curval} of {pkg_count.maxval}) "
+                       f"{pkg.cpv} to {pkg.root}")
 
         if pkg.type_name == "ebuild":
             build = EbuildBuild(
@@ -134,9 +131,7 @@ class MergeListItem(CompositeTask):
         ldpath_mtimes = mtimedb["ldpath"]
 
         if pkg.installed:
-            if not (
-                build_opts.buildpkgonly or build_opts.fetchonly or build_opts.pretend
-            ):
+            if not (build_opts.buildpkgonly or build_opts.fetchonly or build_opts.pretend):
                 task = PackageUninstall(
                     background=self.background,
                     ldpath_mtimes=ldpath_mtimes,

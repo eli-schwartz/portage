@@ -12,6 +12,7 @@ from portage.tests import TestCase
 
 
 class TestFakedbapi(TestCase):
+
     def testFakedbapi(self):
         packages = (
             (
@@ -78,10 +79,7 @@ class TestFakedbapi(TestCase):
             os.makedirs(os.path.join(test_repo, "profiles"))
             with open(os.path.join(test_repo, "profiles", "repo_name"), "w") as f:
                 f.write("test_repo")
-            env = {
-                "PORTAGE_REPOSITORIES": "[DEFAULT]\nmain-repo = test_repo\n[test_repo]\nlocation = %s"
-                % test_repo
-            }
+            env = {"PORTAGE_REPOSITORIES": "[DEFAULT]\nmain-repo = test_repo\n[test_repo]\nlocation = %s" % test_repo}
 
             # Tests may override portage.const.EPREFIX in order to
             # simulate a prefix installation. It's reasonable to do
@@ -90,9 +88,7 @@ class TestFakedbapi(TestCase):
             # irrelevant (see bug #492932).
             portage.const.EPREFIX = tempdir
 
-            fakedb = fakedbapi(
-                settings=config(config_profile_path="", env=env, eprefix=tempdir)
-            )
+            fakedb = fakedbapi(settings=config(config_profile_path="", env=env, eprefix=tempdir))
             for cpv, metadata in packages:
                 fakedb.cpv_inject(cpv, metadata=metadata)
 

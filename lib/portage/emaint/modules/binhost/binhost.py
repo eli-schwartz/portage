@@ -127,9 +127,7 @@ class BinhostHandler:
                 # Repopulate with lock held. If _populate_local returns
                 # data then use that, since _load_pkgindex would return
                 # stale data in this case.
-                self._pkgindex = pkgindex = (
-                    bintree._populate_local() or bintree._load_pkgindex()
-                )
+                self._pkgindex = pkgindex = (bintree._populate_local() or bintree._load_pkgindex())
                 cpv_all = self._bintree.dbapi.cpv_all()
                 cpv_all.sort()
 

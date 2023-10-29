@@ -13,15 +13,24 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class OrChoicesTestCase(TestCase):
+
     def testOrChoices(self):
         ebuilds = {
-            "dev-lang/vala-0.20.0": {"EAPI": "5", "SLOT": "0.20"},
-            "dev-lang/vala-0.18.0": {"EAPI": "5", "SLOT": "0.18"},
+            "dev-lang/vala-0.20.0": {
+                "EAPI": "5",
+                "SLOT": "0.20"
+            },
+            "dev-lang/vala-0.18.0": {
+                "EAPI": "5",
+                "SLOT": "0.18"
+            },
             # "dev-libs/gobject-introspection-1.36.0" : {
             # 	"EAPI": "5",
             # 	"RDEPEND" : "!<dev-lang/vala-0.20.0",
             # },
-            "dev-libs/gobject-introspection-1.34.0": {"EAPI": "5"},
+            "dev-libs/gobject-introspection-1.34.0": {
+                "EAPI": "5"
+            },
             "sys-apps/systemd-ui-2": {
                 "EAPI": "5",
                 "RDEPEND": "|| ( dev-lang/vala:0.20 dev-lang/vala:0.18 )",
@@ -29,8 +38,13 @@ class OrChoicesTestCase(TestCase):
         }
 
         installed = {
-            "dev-lang/vala-0.18.0": {"EAPI": "5", "SLOT": "0.18"},
-            "dev-libs/gobject-introspection-1.34.0": {"EAPI": "5"},
+            "dev-lang/vala-0.18.0": {
+                "EAPI": "5",
+                "SLOT": "0.18"
+            },
+            "dev-libs/gobject-introspection-1.34.0": {
+                "EAPI": "5"
+            },
             "sys-apps/systemd-ui-2": {
                 "EAPI": "5",
                 "RDEPEND": "|| ( dev-lang/vala:0.20 dev-lang/vala:0.18 )",
@@ -43,7 +57,10 @@ class OrChoicesTestCase(TestCase):
             # Demonstrate that vala:0.20 update is pulled in, for bug #478188
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 all_permutations=True,
                 mergelist=["dev-lang/vala-0.20.0"],
@@ -59,16 +76,17 @@ class OrChoicesTestCase(TestCase):
             # Verify that vala:0.20 is not pulled in without --update
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--selective": True, "--deep": True},
+                options={
+                    "--selective": True,
+                    "--deep": True
+                },
                 success=True,
                 all_permutations=True,
                 mergelist=[],
             ),
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -78,16 +96,37 @@ class OrChoicesTestCase(TestCase):
 
     def testInitiallyUnsatisfied(self):
         ebuilds = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/A-2": {"EAPI": "5", "SLOT": "0/2"},
-            "app-misc/B-0": {"EAPI": "5", "RDEPEND": "app-misc/A:="},
-            "app-misc/C-0": {"EAPI": "5", "RDEPEND": "|| ( app-misc/X <app-misc/A-2 )"},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/A-2": {
+                "EAPI": "5",
+                "SLOT": "0/2"
+            },
+            "app-misc/B-0": {
+                "EAPI": "5",
+                "RDEPEND": "app-misc/A:="
+            },
+            "app-misc/C-0": {
+                "EAPI": "5",
+                "RDEPEND": "|| ( app-misc/X <app-misc/A-2 )"
+            },
         }
 
         installed = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/B-0": {"EAPI": "5", "RDEPEND": "app-misc/A:0/1="},
-            "app-misc/C-0": {"EAPI": "5", "RDEPEND": "|| ( app-misc/X <app-misc/A-2 )"},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/B-0": {
+                "EAPI": "5",
+                "RDEPEND": "app-misc/A:0/1="
+            },
+            "app-misc/C-0": {
+                "EAPI": "5",
+                "RDEPEND": "|| ( app-misc/X <app-misc/A-2 )"
+            },
         }
 
         world = ["app-misc/B", "app-misc/C"]
@@ -98,14 +137,9 @@ class OrChoicesTestCase(TestCase):
             # _initially_unsatisfied_deps where it is ignored, causing
             # upgrade to app-misc/A-2 (breaking a dependency of
             # app-misc/C-0).
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"], options={}, success=True, mergelist=["app-misc/A-1"]
-            ),
-        )
+            ResolverPlaygroundTestCase(["app-misc/A"], options={}, success=True, mergelist=["app-misc/A-1"]), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -115,17 +149,22 @@ class OrChoicesTestCase(TestCase):
 
     def testUseMask(self):
         profile = {
-            "use.mask": ("abi_ppc_32",),
+            "use.mask": ("abi_ppc_32", ),
         }
 
         ebuilds = {
             "sys-libs/A-1": {
                 "EAPI": "5",
-                "RDEPEND": "|| ( sys-libs/zlib[abi_ppc_32(-)] "
-                + "sys-libs/zlib[abi_x86_32(-)] )",
+                "RDEPEND": "|| ( sys-libs/zlib[abi_ppc_32(-)] " + "sys-libs/zlib[abi_x86_32(-)] )",
             },
-            "sys-libs/zlib-1.2.8-r1": {"EAPI": "5", "IUSE": "abi_ppc_32 abi_x86_32"},
-            "sys-libs/zlib-1.2.8": {"EAPI": "5", "IUSE": ""},
+            "sys-libs/zlib-1.2.8-r1": {
+                "EAPI": "5",
+                "IUSE": "abi_ppc_32 abi_x86_32"
+            },
+            "sys-libs/zlib-1.2.8": {
+                "EAPI": "5",
+                "IUSE": ""
+            },
         }
 
         test_cases = (
@@ -137,10 +176,11 @@ class OrChoicesTestCase(TestCase):
                 ["sys-libs/A"],
                 options={},
                 success=False,
-                use_changes={"sys-libs/zlib-1.2.8-r1": {"abi_x86_32": True}},
+                use_changes={"sys-libs/zlib-1.2.8-r1": {
+                    "abi_x86_32": True
+                }},
                 mergelist=["sys-libs/zlib-1.2.8-r1", "sys-libs/A-1"],
-            ),
-        )
+            ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, profile=profile, debug=False)
         try:
@@ -162,14 +202,10 @@ class OrChoicesTestCase(TestCase):
             },
             "dev-ml/lablgl-1.05": {
                 "EAPI": "5",
-                "DEPEND": (
-                    ">=dev-lang/ocaml-3.10.2:= "
-                    "|| ( dev-ml/labltk:= <dev-lang/ocaml-4.02 )"
-                ),
-                "RDEPEND": (
-                    ">=dev-lang/ocaml-3.10.2:= "
-                    "|| ( dev-ml/labltk:= <dev-lang/ocaml-4.02 )"
-                ),
+                "DEPEND": (">=dev-lang/ocaml-3.10.2:= "
+                           "|| ( dev-ml/labltk:= <dev-lang/ocaml-4.02 )"),
+                "RDEPEND": (">=dev-lang/ocaml-3.10.2:= "
+                            "|| ( dev-ml/labltk:= <dev-lang/ocaml-4.02 )"),
             },
             "dev-ml/labltk-8.06.0": {
                 "EAPI": "5",
@@ -186,14 +222,10 @@ class OrChoicesTestCase(TestCase):
             },
             "dev-ml/lablgl-1.05": {
                 "EAPI": "5",
-                "DEPEND": (
-                    ">=dev-lang/ocaml-3.10.2:0/4.01.0= "
-                    "|| ( dev-ml/labltk:= <dev-lang/ocaml-4.02 )"
-                ),
-                "RDEPEND": (
-                    ">=dev-lang/ocaml-3.10.2:0/4.01.0= "
-                    "|| ( dev-ml/labltk:= <dev-lang/ocaml-4.02 )"
-                ),
+                "DEPEND": (">=dev-lang/ocaml-3.10.2:0/4.01.0= "
+                           "|| ( dev-ml/labltk:= <dev-lang/ocaml-4.02 )"),
+                "RDEPEND": (">=dev-lang/ocaml-3.10.2:0/4.01.0= "
+                            "|| ( dev-ml/labltk:= <dev-lang/ocaml-4.02 )"),
             },
         }
 
@@ -207,19 +239,19 @@ class OrChoicesTestCase(TestCase):
             # then we need to pull in dev-ml/labltk.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=[
                     "dev-lang/ocaml-4.02.1",
                     "dev-ml/labltk-8.06.0",
                     "dev-ml/lablgl-1.05",
                 ],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -231,13 +263,25 @@ class OrChoicesTestCase(TestCase):
 
     def test_python_slot(self):
         ebuilds = {
-            "dev-lang/python-3.8": {"EAPI": "7", "SLOT": "3.8"},
-            "dev-lang/python-3.7": {"EAPI": "7", "SLOT": "3.7"},
-            "dev-lang/python-3.6": {"EAPI": "7", "SLOT": "3.6"},
-            "app-misc/bar-1": {
+            "dev-lang/python-3.8": {
                 "EAPI": "7",
-                "IUSE": "python_targets_python3_6 +python_targets_python3_7",
-                "RDEPEND": "python_targets_python3_7? ( dev-lang/python:3.7 ) python_targets_python3_6? ( dev-lang/python:3.6 )",
+                "SLOT": "3.8"
+            },
+            "dev-lang/python-3.7": {
+                "EAPI": "7",
+                "SLOT": "3.7"
+            },
+            "dev-lang/python-3.6": {
+                "EAPI": "7",
+                "SLOT": "3.6"
+            },
+            "app-misc/bar-1": {
+                "EAPI":
+                "7",
+                "IUSE":
+                "python_targets_python3_6 +python_targets_python3_7",
+                "RDEPEND":
+                "python_targets_python3_7? ( dev-lang/python:3.7 ) python_targets_python3_6? ( dev-lang/python:3.6 )",
             },
             "app-misc/foo-1": {
                 "EAPI": "7",
@@ -246,7 +290,10 @@ class OrChoicesTestCase(TestCase):
         }
 
         installed = {
-            "dev-lang/python-3.7": {"EAPI": "7", "SLOT": "3.7"},
+            "dev-lang/python-3.7": {
+                "EAPI": "7",
+                "SLOT": "3.7"
+            },
             "app-misc/bar-1": {
                 "EAPI": "7",
                 "IUSE": "python_targets_python3_6 +python_targets_python3_7",
@@ -261,18 +308,17 @@ class OrChoicesTestCase(TestCase):
 
         world = ["app-misc/foo", "app-misc/bar"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={"--update": True, "--deep": True},
-                success=True,
-                mergelist=["dev-lang/python-3.8"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@world"],
+            options={
+                "--update": True,
+                "--deep": True
+            },
+            success=True,
+            mergelist=["dev-lang/python-3.8"],
+        ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -282,8 +328,14 @@ class OrChoicesTestCase(TestCase):
             playground.cleanup()
 
         installed = {
-            "dev-lang/python-3.8": {"EAPI": "7", "SLOT": "3.8"},
-            "dev-lang/python-3.7": {"EAPI": "7", "SLOT": "3.7"},
+            "dev-lang/python-3.8": {
+                "EAPI": "7",
+                "SLOT": "3.8"
+            },
+            "dev-lang/python-3.7": {
+                "EAPI": "7",
+                "SLOT": "3.7"
+            },
             "app-misc/bar-1": {
                 "EAPI": "7",
                 "IUSE": "python_targets_python3_6 +python_targets_python3_7",
@@ -304,12 +356,9 @@ class OrChoicesTestCase(TestCase):
                 options={"--depclean": True},
                 success=True,
                 cleanlist=[],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -363,15 +412,15 @@ class OrChoicesTestCase(TestCase):
             # next emerge --depclean.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=[],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -388,8 +437,7 @@ class OrChoicesTestCase(TestCase):
                         "EAPI": "7",
                     },
                 }.items(),
-            )
-        )
+            ))
 
         test_cases = (
             # Test for bug 649622 (with www-client/w3m installed),
@@ -397,15 +445,15 @@ class OrChoicesTestCase(TestCase):
             # next emerge --depclean.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=[],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -423,8 +471,7 @@ class OrChoicesTestCase(TestCase):
                         "RDEPEND": "|| ( www-client/w3m www-client/w3mmee )",
                     },
                 }.items(),
-            )
-        )
+            ))
 
         test_cases = (
             # Test for bug 649622, where virtual/w3m is removed by
@@ -438,12 +485,9 @@ class OrChoicesTestCase(TestCase):
                 options={"--depclean": True},
                 success=True,
                 cleanlist=["virtual/w3m-0", "www-client/w3m-0.5.3_p20190105"],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -463,14 +507,11 @@ class OrChoicesTestCase(TestCase):
                 options={"--depclean": True},
                 success=True,
                 cleanlist=[],
-            ),
-        )
+            ), )
 
         world += ["www-client/w3m"]
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -485,7 +526,10 @@ class OrChoicesTestCase(TestCase):
         from real ebuilds.
         """
         ebuilds = {
-            "app-misc/neofetch-6.1.0": {"EAPI": "7", "RDEPEND": "www-client/w3m"},
+            "app-misc/neofetch-6.1.0": {
+                "EAPI": "7",
+                "RDEPEND": "www-client/w3m"
+            },
             "app-text/xmlto-0.0.28-r1": {
                 "EAPI": "7",
                 "RDEPEND": "|| ( virtual/w3m www-client/lynx www-client/elinks )",
@@ -517,7 +561,10 @@ class OrChoicesTestCase(TestCase):
         }
 
         installed = {
-            "app-misc/neofetch-6.1.0": {"EAPI": "7", "RDEPEND": "www-client/w3m"},
+            "app-misc/neofetch-6.1.0": {
+                "EAPI": "7",
+                "RDEPEND": "www-client/w3m"
+            },
             "app-text/xmlto-0.0.28-r1": {
                 "EAPI": "7",
                 "RDEPEND": "|| ( virtual/w3m www-client/lynx www-client/elinks )",
@@ -554,7 +601,10 @@ class OrChoicesTestCase(TestCase):
             # update and removal (depclean) actions.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=["virtual/w3m-0"],
                 graph_order=[
@@ -570,12 +620,9 @@ class OrChoicesTestCase(TestCase):
                     "[nomerge]www-client/w3m-0.5.3_p20190105",
                     "virtual/w3m-0",
                 ],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -593,8 +640,7 @@ class OrChoicesTestCase(TestCase):
                         "RDEPEND": "|| ( www-client/w3m www-client/w3mmee )",
                     },
                 }.items(),
-            )
-        )
+            ))
 
         test_cases = (
             # Test for bug 649622, where virtual/w3m is removed by
@@ -623,12 +669,9 @@ class OrChoicesTestCase(TestCase):
                     "[nomerge]www-client/w3m-0.5.3_p20190105",
                     "[nomerge]virtual/w3m-0",
                 ],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -639,6 +682,7 @@ class OrChoicesTestCase(TestCase):
 
 
 class OrChoicesLibpostprocTestCase(TestCase):
+
     @pytest.mark.xfail(reason="Irrelevant blocker conflict")
     def testOrChoicesLibpostproc(self):
         # This test case is expected to fail after the fix for bug 706278,
@@ -650,9 +694,17 @@ class OrChoicesLibpostprocTestCase(TestCase):
         # solve this test case, some fancy backtracking (like for bug 382421)
         # will be required.
         ebuilds = {
-            "media-video/ffmpeg-0.10": {"EAPI": "5", "SLOT": "0.10"},
-            "media-video/ffmpeg-1.2.2": {"EAPI": "5", "SLOT": "0"},
-            "media-libs/libpostproc-0.8.0.20121125": {"EAPI": "5"},
+            "media-video/ffmpeg-0.10": {
+                "EAPI": "5",
+                "SLOT": "0.10"
+            },
+            "media-video/ffmpeg-1.2.2": {
+                "EAPI": "5",
+                "SLOT": "0"
+            },
+            "media-libs/libpostproc-0.8.0.20121125": {
+                "EAPI": "5"
+            },
             "media-plugins/gst-plugins-ffmpeg-0.10.13_p201211-r1": {
                 "EAPI": "5",
                 "RDEPEND": "|| ( media-video/ffmpeg:0 media-libs/libpostproc )",
@@ -660,8 +712,13 @@ class OrChoicesLibpostprocTestCase(TestCase):
         }
 
         installed = {
-            "media-video/ffmpeg-0.10": {"EAPI": "5", "SLOT": "0.10"},
-            "media-libs/libpostproc-0.8.0.20121125": {"EAPI": "5"},
+            "media-video/ffmpeg-0.10": {
+                "EAPI": "5",
+                "SLOT": "0.10"
+            },
+            "media-libs/libpostproc-0.8.0.20121125": {
+                "EAPI": "5"
+            },
             "media-plugins/gst-plugins-ffmpeg-0.10.13_p201211-r1": {
                 "EAPI": "5",
                 "RDEPEND": "|| ( media-video/ffmpeg:0 media-libs/libpostproc )",
@@ -675,16 +732,16 @@ class OrChoicesLibpostprocTestCase(TestCase):
             # over ffmpeg:0 for bug #480736.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 all_permutations=True,
                 mergelist=[],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

@@ -9,13 +9,12 @@ import os
 import signal
 
 # For compatibility with Python < 3.8
-raise_signal = getattr(
-    signal, "raise_signal", lambda signum: os.kill(os.getpid(), signum)
-)
+raise_signal = getattr(signal, "raise_signal", lambda signum: os.kill(os.getpid(), signum))
 
 
 # Inherit from KeyboardInterrupt to avoid a traceback from asyncio.
 class SignalInterrupt(KeyboardInterrupt):
+
     def __init__(self, signum):
         self.signum = signum
 
@@ -42,24 +41,16 @@ try:
     import time
 
     if os.path.isfile(
-        os.path.join(
-            os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-            ".portage_not_installed",
-        )
-    ):
-        pym_paths = [
             os.path.join(
-                os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib"
-            )
-        ]
+                os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                ".portage_not_installed",
+            )):
+        pym_paths = [os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")]
         sys.path.insert(0, pym_paths[0])
     else:
         import sysconfig
 
-        pym_paths = [
-            os.path.join(sysconfig.get_path("purelib"), x)
-            for x in ("_emerge", "portage")
-        ]
+        pym_paths = [os.path.join(sysconfig.get_path("purelib"), x) for x in ("_emerge", "portage")]
     # Avoid sandbox violations after Python upgrade.
     if os.environ.get("SANDBOX_ON") == "1":
         sandbox_write = os.environ.get("SANDBOX_WRITE", "").split(":")
@@ -107,7 +98,7 @@ try:
             buf = self.buf
             while buf:
                 try:
-                    buf = buf[os.write(fd, buf) :]
+                    buf = buf[os.write(fd, buf):]
                 except OSError:
                     self.returncode = RETURNCODE_WRITE_FAILED
                     self._async_wait()
@@ -140,9 +131,7 @@ try:
 
         def _daemon_is_alive(self):
             try:
-                builddir_lock = portage.locks.lockfile(
-                    self.fifo_dir, wantnewlockfile=True, flags=os.O_NONBLOCK
-                )
+                builddir_lock = portage.locks.lockfile(self.fifo_dir, wantnewlockfile=True, flags=os.O_NONBLOCK)
             except portage.exception.TryAgain:
                 return True
             else:
@@ -206,9 +195,7 @@ try:
         def _receive_reply(self, input_fd):
             start_time = time.time()
 
-            pipe_reader = PipeReader(
-                input_files={"input_fd": input_fd}, scheduler=global_event_loop()
-            )
+            pipe_reader = PipeReader(input_files={"input_fd": input_fd}, scheduler=global_event_loop())
             pipe_reader.start()
 
             eof = pipe_reader.poll() is not None
@@ -218,9 +205,7 @@ try:
                 eof = pipe_reader.poll() is not None
                 if not eof:
                     if self._daemon_is_alive():
-                        self._timeout_retry_msg(
-                            start_time, portage.localization._("during read")
-                        )
+                        self._timeout_retry_msg(start_time, portage.localization._("during read"))
                     else:
                         pipe_reader.cancel()
                         self._no_daemon_msg()
@@ -245,9 +230,7 @@ try:
                 except Exception as e:
                     # The pickle module can raise practically
                     # any exception when given corrupt data.
-                    portage.util.writemsg_level(
-                        f"ebuild-ipc: {e}\n", level=logging.ERROR, noiselevel=-1
-                    )
+                    portage.util.writemsg_level(f"ebuild-ipc: {e}\n", level=logging.ERROR, noiselevel=-1)
 
                 else:
                     (out, err, retval) = reply

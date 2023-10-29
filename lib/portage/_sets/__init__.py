@@ -39,9 +39,10 @@ def get_boolean(options, name, default):
     if options[name].lower() in ("0", "no", "off", "false"):
         return False
     raise SetConfigError(
-        _("invalid value '%(value)s' for option '%(option)s'")
-        % {"value": options[name], "option": name}
-    )
+        _("invalid value '%(value)s' for option '%(option)s'") % {
+            "value": options[name],
+            "option": name
+        })
 
 
 class SetConfigError(Exception):
@@ -49,6 +50,7 @@ class SetConfigError(Exception):
 
 
 class SetConfig:
+
     def __init__(self, paths, settings, trees):
         self._parser = SafeConfigParser(
             defaults={
@@ -56,8 +58,7 @@ class SetConfig:
                 "EROOT": settings["EROOT"],
                 "PORTAGE_CONFIGROOT": settings["PORTAGE_CONFIGROOT"],
                 "ROOT": settings["ROOT"],
-            }
-        )
+            })
 
         if _ENABLE_SET_CONFIG:
             read_configs(self._parser, paths)
@@ -99,9 +100,7 @@ class SetConfig:
 
         parser.remove_section("profile")
         parser.add_section("profile")
-        parser.set(
-            "profile", "class", "portage.sets.ProfilePackageSet.ProfilePackageSet"
-        )
+        parser.set("profile", "class", "portage.sets.ProfilePackageSet.ProfilePackageSet")
 
         parser.remove_section("selected")
         parser.add_section("selected")
@@ -109,9 +108,7 @@ class SetConfig:
 
         parser.remove_section("selected-packages")
         parser.add_section("selected-packages")
-        parser.set(
-            "selected-packages", "class", "portage.sets.files.WorldSelectedPackagesSet"
-        )
+        parser.set("selected-packages", "class", "portage.sets.files.WorldSelectedPackagesSet")
 
         parser.remove_section("selected-sets")
         parser.add_section("selected-sets")
@@ -185,16 +182,13 @@ class SetConfig:
                 parser.set(setname, k, v)
         else:
             section = self.psets[setname].creator
-            if parser.has_option(section, "multiset") and parser.getboolean(
-                section, "multiset"
-            ):
+            if parser.has_option(section, "multiset") and parser.getboolean(section, "multiset"):
                 self.errors.append(
-                    _(
-                        "Invalid request to reconfigure set '%(set)s' generated "
-                        "by multiset section '%(section)s'"
-                    )
-                    % {"set": setname, "section": section}
-                )
+                    _("Invalid request to reconfigure set '%(set)s' generated "
+                      "by multiset section '%(section)s'") % {
+                          "set": setname,
+                          "section": section
+                      })
                 return
             for k, v in options.items():
                 parser.set(section, k, v)
@@ -224,9 +218,11 @@ class SetConfig:
                     setclass = load_mod("portage._sets." + classname)
                 except (ImportError, AttributeError):
                     self.errors.append(
-                        _("Could not import '%(class)s' for section " "'%(section)s'")
-                        % {"class": classname, "section": sname}
-                    )
+                        _("Could not import '%(class)s' for section "
+                          "'%(section)s'") % {
+                              "class": classname,
+                              "section": sname
+                          })
                     continue
             # prepare option dict for the current section
             optdict = {}
@@ -234,41 +230,30 @@ class SetConfig:
                 optdict[oname] = parser.get(sname, oname)
 
             # create single or multiple instances of the given class depending on configuration
-            if parser.has_option(sname, "multiset") and parser.getboolean(
-                sname, "multiset"
-            ):
+            if parser.has_option(sname, "multiset") and parser.getboolean(sname, "multiset"):
                 if hasattr(setclass, "multiBuilder"):
                     newsets = {}
                     try:
-                        newsets = setclass.multiBuilder(
-                            optdict, self.settings, self.trees
-                        )
+                        newsets = setclass.multiBuilder(optdict, self.settings, self.trees)
                     except SetConfigError as e:
-                        self.errors.append(
-                            _("Configuration error in section '%s': %s")
-                            % (sname, str(e))
-                        )
+                        self.errors.append(_("Configuration error in section '%s': %s") % (sname, str(e)))
                         continue
                     for x in newsets:
                         if x in self.psets and not update:
                             self.errors.append(
-                                _("Redefinition of set '%s' (sections: '%s', '%s')")
-                                % (x, self.psets[x].creator, sname)
-                            )
+                                _("Redefinition of set '%s' (sections: '%s', '%s')") %
+                                (x, self.psets[x].creator, sname))
                         newsets[x].creator = sname
-                        if parser.has_option(
-                            sname, "world-candidate"
-                        ) and parser.getboolean(sname, "world-candidate"):
+                        if parser.has_option(sname, "world-candidate") and parser.getboolean(sname, "world-candidate"):
                             newsets[x].world_candidate = True
                     self.psets.update(newsets)
                 else:
                     self.errors.append(
-                        _(
-                            "Section '%(section)s' is configured as multiset, but '%(class)s' "
-                            "doesn't support that configuration"
-                        )
-                        % {"section": sname, "class": classname}
-                    )
+                        _("Section '%(section)s' is configured as multiset, but '%(class)s' "
+                          "doesn't support that configuration") % {
+                              "section": sname,
+                              "class": classname
+                          })
                     continue
             else:
                 try:
@@ -277,33 +262,24 @@ class SetConfig:
                     setname = sname
                 if setname in self.psets and not update:
                     self.errors.append(
-                        _("Redefinition of set '%s' (sections: '%s', '%s')")
-                        % (setname, self.psets[setname].creator, sname)
-                    )
+                        _("Redefinition of set '%s' (sections: '%s', '%s')") %
+                        (setname, self.psets[setname].creator, sname))
                 if hasattr(setclass, "singleBuilder"):
                     try:
-                        self.psets[setname] = setclass.singleBuilder(
-                            optdict, self.settings, self.trees
-                        )
+                        self.psets[setname] = setclass.singleBuilder(optdict, self.settings, self.trees)
                         self.psets[setname].creator = sname
-                        if parser.has_option(
-                            sname, "world-candidate"
-                        ) and parser.getboolean(sname, "world-candidate"):
+                        if parser.has_option(sname, "world-candidate") and parser.getboolean(sname, "world-candidate"):
                             self.psets[setname].world_candidate = True
                     except SetConfigError as e:
-                        self.errors.append(
-                            _("Configuration error in section '%s': %s")
-                            % (sname, str(e))
-                        )
+                        self.errors.append(_("Configuration error in section '%s': %s") % (sname, str(e)))
                         continue
                 else:
                     self.errors.append(
-                        _(
-                            "'%(class)s' does not support individual set creation, section '%(section)s' "
-                            "must be configured as multiset"
-                        )
-                        % {"class": classname, "section": sname}
-                    )
+                        _("'%(class)s' does not support individual set creation, section '%(section)s' "
+                          "must be configured as multiset") % {
+                              "class": classname,
+                              "section": sname
+                          })
                     continue
         self._parsed = True
 
@@ -328,7 +304,7 @@ class SetConfig:
         ignorelist.add(setname)
         for n in myset.getNonAtoms():
             if n.startswith(SETPREFIX):
-                s = n[len(SETPREFIX) :]
+                s = n[len(SETPREFIX):]
                 if s in self.psets:
                     if s not in ignorelist:
                         myatoms.update(self.getSetAtoms(s, ignorelist=ignorelist))
@@ -344,18 +320,13 @@ def load_default_config(settings, trees):
 
     global_config_path = GLOBAL_CONFIG_PATH
     if portage.const.EPREFIX:
-        global_config_path = os.path.join(
-            portage.const.EPREFIX, GLOBAL_CONFIG_PATH.lstrip(os.sep)
-        )
+        global_config_path = os.path.join(portage.const.EPREFIX, GLOBAL_CONFIG_PATH.lstrip(os.sep))
     vcs_dirs = [_unicode_encode(x, encoding=_encodings["fs"]) for x in VCS_DIRS]
 
     def _getfiles():
         sets_config_paths = [
             os.path.join(global_config_path, "sets"),
-            *(
-                os.path.join(repo.location, "sets.conf")
-                for repo in trees["porttree"].dbapi.repositories
-            ),
+            *(os.path.join(repo.location, "sets.conf") for repo in trees["porttree"].dbapi.repositories),
             os.path.join(settings["PORTAGE_CONFIGROOT"], USER_CONFIG_PATH, "sets.conf"),
         ]
 

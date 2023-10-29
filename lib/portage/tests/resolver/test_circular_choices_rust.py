@@ -9,17 +9,24 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class CircularRustTestCase(TestCase):
+
     def testCircularPypyExe(self):
         ebuilds = {
             "dev-lang/rust-1.47.0-r2": {
-                "EAPI": "7",
-                "SLOT": "stable/1.47",
-                "BDEPEND": "|| ( =dev-lang/rust-1.46* =dev-lang/rust-bin-1.46* =dev-lang/rust-1.47* =dev-lang/rust-bin-1.47* )",
+                "EAPI":
+                "7",
+                "SLOT":
+                "stable/1.47",
+                "BDEPEND":
+                "|| ( =dev-lang/rust-1.46* =dev-lang/rust-bin-1.46* =dev-lang/rust-1.47* =dev-lang/rust-bin-1.47* )",
             },
             "dev-lang/rust-1.46.0": {
-                "EAPI": "7",
-                "SLOT": "stable/1.46",
-                "BDEPEND": "|| ( =dev-lang/rust-1.45* =dev-lang/rust-bin-1.45* =dev-lang/rust-1.46* =dev-lang/rust-bin-1.46* )",
+                "EAPI":
+                "7",
+                "SLOT":
+                "stable/1.46",
+                "BDEPEND":
+                "|| ( =dev-lang/rust-1.45* =dev-lang/rust-bin-1.45* =dev-lang/rust-1.46* =dev-lang/rust-bin-1.46* )",
             },
             "dev-lang/rust-bin-1.47.0": {
                 "EAPI": "7",
@@ -31,9 +38,12 @@ class CircularRustTestCase(TestCase):
 
         installed = {
             "dev-lang/rust-1.46.0": {
-                "EAPI": "7",
-                "SLOT": "stable/1.46",
-                "BDEPEND": "|| ( =dev-lang/rust-1.45* =dev-lang/rust-bin-1.45* =dev-lang/rust-1.46* =dev-lang/rust-bin-1.46* )",
+                "EAPI":
+                "7",
+                "SLOT":
+                "stable/1.46",
+                "BDEPEND":
+                "|| ( =dev-lang/rust-1.45* =dev-lang/rust-bin-1.45* =dev-lang/rust-1.46* =dev-lang/rust-bin-1.46* )",
             },
         }
 
@@ -56,7 +66,10 @@ class CircularRustTestCase(TestCase):
             ),
             ResolverPlaygroundTestCase(
                 ["=dev-lang/rust-1.46*"],
-                options={"--deep": True, "--update": True},
+                options={
+                    "--deep": True,
+                    "--update": True
+                },
                 mergelist=[],
                 success=True,
             ),
@@ -73,7 +86,10 @@ class CircularRustTestCase(TestCase):
             ),
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--deep": True, "--update": True},
+                options={
+                    "--deep": True,
+                    "--update": True
+                },
                 mergelist=["dev-lang/rust-1.47.0-r2"],
                 success=True,
             ),
@@ -81,9 +97,7 @@ class CircularRustTestCase(TestCase):
 
         world = ["dev-lang/rust"]
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

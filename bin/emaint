@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # Copyright 2005-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-
 """System health checks and maintenance utilities.
 """
 
@@ -9,13 +8,12 @@ import os
 import signal
 
 # For compatibility with Python < 3.8
-raise_signal = getattr(
-    signal, "raise_signal", lambda signum: os.kill(os.getpid(), signum)
-)
+raise_signal = getattr(signal, "raise_signal", lambda signum: os.kill(os.getpid(), signum))
 
 
 # Inherit from KeyboardInterrupt to avoid a traceback from asyncio.
 class SignalInterrupt(KeyboardInterrupt):
+
     def __init__(self, signum):
         self.signum = signum
 
@@ -39,14 +37,8 @@ try:
     import errno
     from os import path as osp
 
-    if osp.isfile(
-        osp.join(
-            osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed"
-        )
-    ):
-        sys.path.insert(
-            0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib")
-        )
+    if osp.isfile(osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")):
+        sys.path.insert(0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib"))
     import portage
 
     portage._internal_caller = True

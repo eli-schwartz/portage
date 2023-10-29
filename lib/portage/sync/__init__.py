@@ -9,13 +9,11 @@ from portage.module import Modules
 from portage.sync.controller import SyncManager
 from portage.sync.config_checks import check_type
 
-_SUBMODULE_PATH_MAP = OrderedDict(
-    [
-        ("glsa", ("metadata/glsa",)),
-        ("news", ("metadata/news",)),
-        ("profiles", ("metadata/layout.conf", "profiles")),
-    ]
-)
+_SUBMODULE_PATH_MAP = OrderedDict([
+    ("glsa", ("metadata/glsa", )),
+    ("news", ("metadata/news", )),
+    ("profiles", ("metadata/layout.conf", "profiles")),
+])
 
 path = os.path.join(os.path.dirname(__file__), "modules")
 # initial development debug info
@@ -35,9 +33,7 @@ def module_specific_options(repo):
 
     if repo.sync_type:
         try:
-            return frozenset(
-                module_controller.modules[repo.sync_type]["module_specific_options"]
-            )
+            return frozenset(module_controller.modules[repo.sync_type]["module_specific_options"])
         except KeyError:
             pass
     return frozenset()

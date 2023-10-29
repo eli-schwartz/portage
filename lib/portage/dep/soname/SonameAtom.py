@@ -15,9 +15,7 @@ class SonameAtom:
         object.__setattr__(self, "_hash_value", hash(self._hash_key))
 
     def __setattr__(self, name, value):
-        raise AttributeError(
-            "SonameAtom instances are immutable", self.__class__, name, value
-        )
+        raise AttributeError("SonameAtom instances are immutable", self.__class__, name, value)
 
     def __getstate__(self):
         state = {k: getattr(self, k) for k in self.__slots__}

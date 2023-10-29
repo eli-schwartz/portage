@@ -25,11 +25,7 @@ class AsyncioEventLoop(_AbstractEventLoop):
     def __init__(self, loop=None):
         loop = loop or _real_asyncio.get_event_loop()
         self._loop = loop
-        self.run_until_complete = (
-            self._run_until_complete
-            if portage._internal_caller
-            else loop.run_until_complete
-        )
+        self.run_until_complete = (self._run_until_complete if portage._internal_caller else loop.run_until_complete)
         self.call_soon = loop.call_soon
         self.call_soon_threadsafe = loop.call_soon_threadsafe
         self.call_later = loop.call_later
@@ -37,11 +33,7 @@ class AsyncioEventLoop(_AbstractEventLoop):
         self.is_running = loop.is_running
         self.is_closed = loop.is_closed
         self.close = loop.close
-        self.create_future = (
-            loop.create_future
-            if hasattr(loop, "create_future")
-            else self._create_future
-        )
+        self.create_future = (loop.create_future if hasattr(loop, "create_future") else self._create_future)
         self.create_task = loop.create_task
         self.add_reader = loop.add_reader
         self.remove_reader = loop.remove_reader

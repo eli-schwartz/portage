@@ -5,7 +5,6 @@ import ctypes
 import errno
 import re
 
-
 from portage import _encodings, _unicode_encode
 from portage.exception import FileNotFound, PermissionDenied
 
@@ -48,22 +47,15 @@ _compressors = {
         # Therefore, pass a larger --long=31 value to the decompressor
         # if the current architecture can support it, which is true when
         # sizeof(long) is at least 8 bytes.
-        "decompress": "zstd -d"
-        + (" --long=31" if ctypes.sizeof(ctypes.c_long) >= 8 else ""),
+        "decompress": "zstd -d" + (" --long=31" if ctypes.sizeof(ctypes.c_long) >= 8 else ""),
         "package": "app-arch/zstd",
     },
 }
 
-_compression_re = re.compile(
-    b"^("
-    + b"(?P<bzip2>\x42\x5a\x68\x39)|"
-    + b"(?P<gzip>\x1f\x8b)|"
-    + b"(?P<lz4>(?:\x04\x22\x4d\x18|\x02\x21\x4c\x18))|"
-    + b"(?P<lzip>LZIP)|"
-    + b"(?P<lzop>\x89LZO\x00\x0d\x0a\x1a\x0a)|"
-    + b"(?P<xz>\xfd\x37\x7a\x58\x5a\x00)|"
-    + b"(?P<zstd>([\x22-\x28]\xb5\x2f\xfd)))"
-)
+_compression_re = re.compile(b"^(" + b"(?P<bzip2>\x42\x5a\x68\x39)|" + b"(?P<gzip>\x1f\x8b)|" +
+                             b"(?P<lz4>(?:\x04\x22\x4d\x18|\x02\x21\x4c\x18))|" + b"(?P<lzip>LZIP)|" +
+                             b"(?P<lzop>\x89LZO\x00\x0d\x0a\x1a\x0a)|" + b"(?P<xz>\xfd\x37\x7a\x58\x5a\x00)|" +
+                             b"(?P<zstd>([\x22-\x28]\xb5\x2f\xfd)))")
 
 _max_compression_re_len = 9
 

@@ -32,22 +32,12 @@ try:
 
 except ImportError as e:
     sys.stderr.write("\n\n")
-    sys.stderr.write(
-        "!!! Failed to complete python imports. These are internal modules for\n"
-    )
-    sys.stderr.write(
-        "!!! python and failure here indicates that you have a problem with python\n"
-    )
-    sys.stderr.write(
-        "!!! itself and thus portage is not able to continue processing.\n\n"
-    )
+    sys.stderr.write("!!! Failed to complete python imports. These are internal modules for\n")
+    sys.stderr.write("!!! python and failure here indicates that you have a problem with python\n")
+    sys.stderr.write("!!! itself and thus portage is not able to continue processing.\n\n")
 
-    sys.stderr.write(
-        "!!! You might consider starting python with verbose flags to see what has\n"
-    )
-    sys.stderr.write(
-        "!!! gone wrong. Here is the information we got for this exception:\n"
-    )
+    sys.stderr.write("!!! You might consider starting python with verbose flags to see what has\n")
+    sys.stderr.write("!!! gone wrong. Here is the information we got for this exception:\n")
     sys.stderr.write(f"    {e}\n\n")
     raise
 
@@ -62,21 +52,18 @@ try:
         "portage.checksum:perform_checksum,perform_md5,prelink_capable",
         "portage.cvstree",
         "portage.data",
-        "portage.data:lchown,ostype,portage_gid,portage_uid,secpass,"
-        + "uid,userland,userpriv_groups,wheelgid",
+        "portage.data:lchown,ostype,portage_gid,portage_uid,secpass," + "uid,userland,userpriv_groups,wheelgid",
         "portage.dbapi",
         "portage.dbapi.bintree:bindbapi,binarytree",
         "portage.dbapi.cpv_expand:cpv_expand",
         "portage.dbapi.dep_expand:dep_expand",
-        "portage.dbapi.porttree:close_portdbapi_caches,FetchlistDict,"
-        + "portagetree,portdbapi",
+        "portage.dbapi.porttree:close_portdbapi_caches,FetchlistDict," + "portagetree,portdbapi",
         "portage.dbapi.vartree:dblink,merge,unmerge,vardbapi,vartree",
         "portage.dbapi.virtual:fakedbapi",
         "portage.debug",
         "portage.dep",
-        "portage.dep:best_match_to_list,dep_getcpv,dep_getkey,"
-        + "flatten,get_operator,isjustname,isspecific,isvalidatom,"
-        + "match_from_list,match_to_list",
+        "portage.dep:best_match_to_list,dep_getcpv,dep_getkey," +
+        "flatten,get_operator,isjustname,isspecific,isvalidatom," + "match_from_list,match_to_list",
         "portage.dep.dep_check:dep_check,dep_eval,dep_wordreduce,dep_zapdeps",
         "portage.eclass_cache",
         "portage.elog",
@@ -88,10 +75,8 @@ try:
         "portage.manifest:Manifest",
         "portage.output",
         "portage.output:bold,colorize",
-        "portage.package.ebuild.doebuild:doebuild,"
-        + "doebuild_environment,spawn,spawnebuild",
-        "portage.package.ebuild.config:autouse,best_from_dict,"
-        + "check_config_instance,config",
+        "portage.package.ebuild.doebuild:doebuild," + "doebuild_environment,spawn,spawnebuild",
+        "portage.package.ebuild.config:autouse,best_from_dict," + "check_config_instance,config",
         "portage.package.ebuild.deprecated_profile_check:deprecated_profile_check",
         "portage.package.ebuild.digestcheck:digestcheck",
         "portage.package.ebuild.digestgen:digestgen",
@@ -101,17 +86,15 @@ try:
         "portage.package.ebuild.prepare_build_dirs:prepare_build_dirs",
         "portage.process",
         "portage.process:atexit_register,run_exitfuncs",
-        "portage.update:dep_transform,fixdbentries,grab_updates,"
-        + "parse_updates,update_config_files,update_dbentries,"
-        + "update_dbentry",
+        "portage.update:dep_transform,fixdbentries,grab_updates," +
+        "parse_updates,update_config_files,update_dbentries," + "update_dbentry",
         "portage.util",
-        "portage.util:atomic_ofstream,apply_secpass_permissions,"
-        + "apply_recursive_permissions,dump_traceback,getconfig,"
-        + "grabdict,grabdict_package,grabfile,grabfile_package,"
-        + "map_dictlist_vals,new_protect_filename,normalize_path,"
-        + "pickle_read,pickle_write,stack_dictlist,stack_dicts,"
-        + "stack_lists,unique_array,varexpand,writedict,writemsg,"
-        + "writemsg_stdout,write_atomic",
+        "portage.util:atomic_ofstream,apply_secpass_permissions," +
+        "apply_recursive_permissions,dump_traceback,getconfig," +
+        "grabdict,grabdict_package,grabfile,grabfile_package," +
+        "map_dictlist_vals,new_protect_filename,normalize_path," +
+        "pickle_read,pickle_write,stack_dictlist,stack_dicts," +
+        "stack_lists,unique_array,varexpand,writedict,writemsg," + "writemsg_stdout,write_atomic",
         "portage.util.digraph:digraph",
         "portage.util.env_update:env_update",
         "portage.util.ExtractKernelVersion:ExtractKernelVersion",
@@ -119,9 +102,8 @@ try:
         "portage.util.movefile:movefile",
         "portage.util.mtimedb:MtimeDB",
         "portage.versions",
-        "portage.versions:best,catpkgsplit,catsplit,cpv_getkey,"
-        + "cpv_getkey@getCPFromCPV,endversion_keys,"
-        + "suffix_value@endversion,pkgcmp,pkgsplit,vercmp,ververify",
+        "portage.versions:best,catpkgsplit,catsplit,cpv_getkey," + "cpv_getkey@getCPFromCPV,endversion_keys," +
+        "suffix_value@endversion,pkgcmp,pkgsplit,vercmp,ververify",
         "portage.xpak",
         "portage.gpkg",
         "subprocess",
@@ -167,21 +149,11 @@ try:
 
 except ImportError as e:
     sys.stderr.write("\n\n")
-    sys.stderr.write(
-        "!!! Failed to complete portage imports. There are internal modules for\n"
-    )
-    sys.stderr.write(
-        "!!! portage and failure here indicates that you have a problem with your\n"
-    )
-    sys.stderr.write(
-        "!!! installation of portage. Please try a rescue portage located in the ebuild\n"
-    )
-    sys.stderr.write(
-        "!!! repository under '/var/db/repos/gentoo/sys-apps/portage/files/' (default).\n"
-    )
-    sys.stderr.write(
-        "!!! There is a README.RESCUE file that details the steps required to perform\n"
-    )
+    sys.stderr.write("!!! Failed to complete portage imports. There are internal modules for\n")
+    sys.stderr.write("!!! portage and failure here indicates that you have a problem with your\n")
+    sys.stderr.write("!!! installation of portage. Please try a rescue portage located in the ebuild\n")
+    sys.stderr.write("!!! repository under '/var/db/repos/gentoo/sys-apps/portage/files/' (default).\n")
+    sys.stderr.write("!!! There is a README.RESCUE file that details the steps required to perform\n")
     sys.stderr.write("!!! a recovery of portage.\n")
     sys.stderr.write(f"    {e}\n\n")
     raise
@@ -261,14 +233,9 @@ class _unicode_func_wrapper:
 
     def _process_args(self, args, kwargs):
         encoding = self._encoding
-        wrapped_args = [
-            _unicode_encode(x, encoding=encoding, errors="strict") for x in args
-        ]
+        wrapped_args = [_unicode_encode(x, encoding=encoding, errors="strict") for x in args]
         if kwargs:
-            wrapped_kwargs = {
-                k: _unicode_encode(v, encoding=encoding, errors="strict")
-                for k, v in kwargs.items()
-            }
+            wrapped_kwargs = {k: _unicode_encode(v, encoding=encoding, errors="strict") for k, v in kwargs.items()}
         else:
             wrapped_kwargs = {}
 
@@ -339,9 +306,7 @@ class _unicode_module_wrapper:
         elif isinstance(result, type):
             pass
         elif type(result) is types.ModuleType:
-            result = _unicode_module_wrapper(
-                result, encoding=encoding, overrides=overrides
-            )
+            result = _unicode_module_wrapper(result, encoding=encoding, overrides=overrides)
         elif hasattr(result, "__call__"):
             result = _unicode_func_wrapper(result, encoding=encoding)
         if cache is not None:
@@ -359,16 +324,13 @@ _os_overrides = {
     id(_os.waitpid): _os.waitpid,
 }
 
-
 _os_overrides[id(_os.mkfifo)] = _os.mkfifo
 
 if hasattr(_os, "statvfs"):
     _os_overrides[id(_os.statvfs)] = _os.statvfs
 
 os = _unicode_module_wrapper(_os, overrides=_os_overrides, encoding=_encodings["fs"])
-_os_merge = _unicode_module_wrapper(
-    _os, encoding=_encodings["merge"], overrides=_os_overrides
-)
+_os_merge = _unicode_module_wrapper(_os, encoding=_encodings["merge"], overrides=_os_overrides)
 
 import shutil as _shutil
 
@@ -393,16 +355,10 @@ except (ImportError, OSError) as e:
 # END OF IMPORTS -- END OF IMPORTS -- END OF IMPORTS -- END OF IMPORTS -- END
 # ===========================================================================
 
-_python_interpreter = (
-    sys.executable
-    if os.environ.get("VIRTUAL_ENV")
-    else os.path.realpath(sys.executable)
-)
+_python_interpreter = (sys.executable if os.environ.get("VIRTUAL_ENV") else os.path.realpath(sys.executable))
 _bin_path = PORTAGE_BIN_PATH
 _pym_path = PORTAGE_PYM_PATH
-_not_installed = os.path.isfile(
-    os.path.join(PORTAGE_BASE_PATH, ".portage_not_installed")
-)
+_not_installed = os.path.isfile(os.path.join(PORTAGE_BASE_PATH, ".portage_not_installed"))
 
 # Api consumers included in portage should set this to True.
 _internal_caller = False
@@ -411,6 +367,7 @@ _sync_mode = False
 
 
 class _ForkWatcher:
+
     @staticmethod
     def hook(_ForkWatcher):
         _ForkWatcher.current_pid = None
@@ -464,7 +421,7 @@ def _shell_quote(s):
 
 bsd_chflags = None
 
-if platform.system() in ("FreeBSD",):
+if platform.system() in ("FreeBSD", ):
     # TODO: remove this class?
     class bsd_chflags:
         chflags = os.chflags
@@ -515,28 +472,24 @@ def abssymlink(symlink, target=None):
 _doebuild_manifest_exempt_depend = 0
 
 _testing_eapis = frozenset([])
-_deprecated_eapis = frozenset(
-    [
-        "3_pre1",
-        "3_pre2",
-        "4_pre1",
-        "4-slot-abi",
-        "5_pre1",
-        "5_pre2",
-        "6_pre1",
-        "7_pre1",
-    ]
-)
+_deprecated_eapis = frozenset([
+    "3_pre1",
+    "3_pre2",
+    "4_pre1",
+    "4-slot-abi",
+    "5_pre1",
+    "5_pre2",
+    "6_pre1",
+    "7_pre1",
+])
 
 from itertools import chain
 
-_supported_eapis = frozenset(
-    chain(
-        (str(x) for x in range(portage.const.EAPI + 1)),
-        _testing_eapis,
-        _deprecated_eapis,
-    )
-)
+_supported_eapis = frozenset(chain(
+    (str(x) for x in range(portage.const.EAPI + 1)),
+    _testing_eapis,
+    _deprecated_eapis,
+))
 
 
 def _eapi_is_deprecated(eapi):
@@ -615,16 +568,10 @@ class _trees_dict(dict):
         self._target_eroot = None
 
 
-def create_trees(
-    config_root=None, target_root=None, trees=None, env=None, sysroot=None, eprefix=None
-):
+def create_trees(config_root=None, target_root=None, trees=None, env=None, sysroot=None, eprefix=None):
     if utf8_mode:
-        config_root = (
-            os.fsdecode(config_root) if isinstance(config_root, bytes) else config_root
-        )
-        target_root = (
-            os.fsdecode(target_root) if isinstance(target_root, bytes) else target_root
-        )
+        config_root = (os.fsdecode(config_root) if isinstance(config_root, bytes) else config_root)
+        target_root = (os.fsdecode(target_root) if isinstance(target_root, bytes) else target_root)
         sysroot = os.fsdecode(sysroot) if isinstance(sysroot, bytes) else sysroot
         eprefix = os.fsdecode(eprefix) if isinstance(eprefix, bytes) else eprefix
 
@@ -676,9 +623,7 @@ def create_trees(
 
         if depcachedir is not None:
             clean_env["PORTAGE_DEPCACHEDIR"] = depcachedir
-        mysettings = config(
-            config_root=None, target_root="/", env=clean_env, sysroot="/", eprefix=None
-        )
+        mysettings = config(config_root=None, target_root="/", env=clean_env, sysroot="/", eprefix=None)
         mysettings.lock()
         trees._running_eroot = mysettings["EROOT"]
         myroots.append((mysettings["EROOT"], mysettings))
@@ -697,19 +642,16 @@ def create_trees(
     for myroot, mysettings in myroots:
         trees[myroot] = portage.util.LazyItemsDict(trees.get(myroot, {}))
         trees[myroot].addLazySingleton("virtuals", mysettings.getvirtuals)
-        trees[myroot].addLazySingleton(
-            "vartree", vartree, categories=mysettings.categories, settings=mysettings
-        )
+        trees[myroot].addLazySingleton("vartree", vartree, categories=mysettings.categories, settings=mysettings)
         trees[myroot].addLazySingleton("porttree", portagetree, settings=mysettings)
-        trees[myroot].addLazySingleton(
-            "bintree", binarytree, pkgdir=mysettings["PKGDIR"], settings=mysettings
-        )
+        trees[myroot].addLazySingleton("bintree", binarytree, pkgdir=mysettings["PKGDIR"], settings=mysettings)
     return trees
 
 
 if installation.TYPE == installation.TYPES.SOURCE:
 
     class _LazyVersion(proxy.objectproxy.ObjectProxy):
+
         def _get_target(self):
             global VERSION
             if VERSION is not self:
@@ -719,19 +661,13 @@ if installation.TYPE == installation.TYPES.SOURCE:
                 cmd = [
                     BASH_BINARY,
                     "-c",
-                    (
-                        f"cd {_shell_quote(PORTAGE_BASE_PATH)} ; git describe --match 'portage-*' || exit $? ; "
-                        'if [ -n "`git diff-index --name-only --diff-filter=M HEAD`" ] ; '
-                        "then echo modified ; git rev-list --format=%%ct -n 1 HEAD ; fi ; "
-                        "exit 0"
-                    ),
+                    (f"cd {_shell_quote(PORTAGE_BASE_PATH)} ; git describe --match 'portage-*' || exit $? ; "
+                     'if [ -n "`git diff-index --name-only --diff-filter=M HEAD`" ] ; '
+                     "then echo modified ; git rev-list --format=%%ct -n 1 HEAD ; fi ; "
+                     "exit 0"),
                 ]
-                cmd = [
-                    _unicode_encode(x, encoding=encoding, errors="strict") for x in cmd
-                ]
-                proc = subprocess.Popen(
-                    cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-                )
+                cmd = [_unicode_encode(x, encoding=encoding, errors="strict") for x in cmd]
+                proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 output = _unicode_decode(proc.communicate()[0], encoding=encoding)
                 status = proc.wait()
                 if os.WIFEXITED(status) and os.WEXITSTATUS(status) == os.EX_OK:
@@ -752,10 +688,7 @@ if installation.TYPE == installation.TYPES.SOURCE:
                                     except ValueError:
                                         pass
                                 timestamp = int(time.time())
-                                if (
-                                    head_timestamp is not None
-                                    and timestamp > head_timestamp
-                                ):
+                                if (head_timestamp is not None and timestamp > head_timestamp):
                                     timestamp = timestamp - head_timestamp
                                 if not patchlevel:
                                     VERSION = f"{VERSION}_p0"
@@ -794,7 +727,7 @@ def _reset_legacy_globals():
 
 
 class _LegacyGlobalProxy(proxy.objectproxy.ObjectProxy):
-    __slots__ = ("_name",)
+    __slots__ = ("_name", )
 
     def __init__(self, name):
         proxy.objectproxy.ObjectProxy.__init__(self)

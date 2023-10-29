@@ -8,6 +8,7 @@ class CacheError(Exception):
 
 
 class InitializationError(CacheError):
+
     def __init__(self, class_name, error):
         self.error, self.class_name = error, class_name
 
@@ -16,6 +17,7 @@ class InitializationError(CacheError):
 
 
 class CacheCorruption(CacheError):
+
     def __init__(self, key, ex):
         self.key, self.ex = key, ex
 
@@ -24,6 +26,7 @@ class CacheCorruption(CacheError):
 
 
 class GeneralCacheCorruption(CacheError):
+
     def __init__(self, ex):
         self.ex = ex
 
@@ -32,6 +35,7 @@ class GeneralCacheCorruption(CacheError):
 
 
 class InvalidRestriction(CacheError):
+
     def __init__(self, key, restriction, exception=None):
         if exception is None:
             exception = ""
@@ -42,6 +46,7 @@ class InvalidRestriction(CacheError):
 
 
 class ReadOnlyRestriction(CacheError):
+
     def __init__(self, info=""):
         self.info = info
 
@@ -72,7 +77,4 @@ class StatCollision(CacheError):
 
     def __repr__(self):
         return "portage.cache.cache_errors.StatCollision({})".format(
-            ", ".join(
-                (repr(self.key), repr(self.filename), repr(self.mtime), repr(self.size))
-            ),
-        )
+            ", ".join((repr(self.key), repr(self.filename), repr(self.mtime), repr(self.size))), )

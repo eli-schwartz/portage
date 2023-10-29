@@ -29,12 +29,8 @@ except ImportError:
 
 from os import path as osp
 
-if osp.isfile(
-    osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")
-):
-    sys.path.insert(
-        0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib")
-    )
+if osp.isfile(osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")):
+    sys.path.insert(0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib"))
 import portage
 
 portage._internal_caller = True
@@ -117,9 +113,7 @@ class dispatch:
         if "log-file" in self.options:
             if os.path.isfile(self.options["log-file"]):
                 shutil.copy(self.options["log-file"], self.options["log-file"] + ".old")
-            if os.path.isfile(self.options["log-file"]) or not os.path.exists(
-                self.options["log-file"]
-            ):
+            if os.path.isfile(self.options["log-file"]) or not os.path.exists(self.options["log-file"]):
                 old_umask = os.umask(0o077)
                 open(self.options["log-file"], "w").close()  # Truncate it
                 os.umask(old_umask)
@@ -146,9 +140,7 @@ class dispatch:
         #
 
         for path in config_paths:
-            path = portage.normalize_path(
-                os.path.join(config_root, path.lstrip(os.sep))
-            )
+            path = portage.normalize_path(os.path.join(config_root, path.lstrip(os.sep)))
 
             # Protect files that don't exist (bug #523684). If the
             # parent directory doesn't exist, we can safely skip it.
@@ -216,17 +208,11 @@ class dispatch:
 
         def f(conf):
             mrgconf = re.sub(r"\._cfg", "._mrg", conf["new"])
-            archive = os.path.join(
-                self.options["archive-dir"], conf["current"].lstrip("/")
-            )
+            archive = os.path.join(self.options["archive-dir"], conf["current"].lstrip("/"))
             if self.options["use-rcs"] == "yes":
-                mrgfail = portage.dispatch_conf.rcs_archive(
-                    archive, conf["current"], conf["new"], mrgconf
-                )
+                mrgfail = portage.dispatch_conf.rcs_archive(archive, conf["current"], conf["new"], mrgconf)
             else:
-                mrgfail = portage.dispatch_conf.file_archive(
-                    archive, conf["current"], conf["new"], mrgconf
-                )
+                mrgfail = portage.dispatch_conf.file_archive(archive, conf["current"], conf["new"], mrgconf)
             if os.path.lexists(archive + ".dist"):
                 unmodified = len(diff(conf["current"], archive + ".dist")[1]) == 0
             else:
@@ -240,12 +226,8 @@ class dispatch:
             else:
                 newconf = conf["new"]
 
-            if (
-                newconf == mrgconf
-                and self.options.get("ignore-previously-merged") != "yes"
-                and os.path.lexists(archive + ".dist")
-                and len(diff(archive + ".dist", conf["new"])[1]) == 0
-            ):
+            if (newconf == mrgconf and self.options.get("ignore-previously-merged") != "yes"
+                    and os.path.lexists(archive + ".dist") and len(diff(archive + ".dist", conf["new"])[1]) == 0):
                 # The current update is identical to the archived .dist
                 # version that has previously been merged.
                 os.unlink(mrgconf)
@@ -297,12 +279,7 @@ class dispatch:
                 except OSError:
                     pass
                 return False
-            elif (
-                unmodified
-                or same_cvs
-                or same_wsc
-                or not protect_obj.isprotected(conf["current"])
-            ):
+            elif (unmodified or same_cvs or same_wsc or not protect_obj.isprotected(conf["current"])):
                 self.replace(newconf, conf["current"])
                 self.post_process(conf["current"])
                 if newconf == mrgconf:
@@ -385,9 +362,7 @@ class dispatch:
                 elif c == "m":
                     merged = SCRATCH_DIR + "/" + os.path.basename(conf["current"])
                     print()
-                    ret = os.system(
-                        self.options["merge"] % (merged, conf["current"], newconf)
-                    )
+                    ret = os.system(self.options["merge"] % (merged, conf["current"], newconf))
                     ret = os.WEXITSTATUS(ret)
                     if ret < 2:
                         ret = 0
@@ -466,9 +441,7 @@ class dispatch:
         the diff of what changed into the configured log file."""
         if "log-file" in self.options:
             status, output = diff(curconf, newconf)
-            with open(
-                self.options["log-file"], mode="a", encoding=_encodings["stdio"]
-            ) as f:
+            with open(self.options["log-file"], mode="a", encoding=_encodings["stdio"]) as f:
                 f.write(output + "\n")
 
         perform_conf_update_hooks("pre-update", curconf)
@@ -605,7 +578,7 @@ def usage(argv):
 for x in sys.argv:
     if x in ("-h", "--help"):
         usage(sys.argv)
-    elif x in ("--version",):
+    elif x in ("--version", ):
         print("Portage", portage.VERSION)
         sys.exit(os.EX_OK)
 

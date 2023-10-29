@@ -18,9 +18,7 @@ def _find_deep_system_runtime_deps(graph):
         """
         Ignore non-runtime priorities.
         """
-        if isinstance(priority, DepPriority) and (
-            priority.runtime or priority.runtime_post
-        ):
+        if isinstance(priority, DepPriority) and (priority.runtime or priority.runtime_post):
             return False
         return True
 

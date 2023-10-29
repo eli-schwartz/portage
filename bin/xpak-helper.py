@@ -40,7 +40,7 @@ def main(argv):
         for i, x in enumerate(argv):
             argv[i] = portage._unicode_decode(x, errors="strict")
 
-    valid_commands = ("recompose",)
+    valid_commands = ("recompose", )
     description = "Perform metadata operations on a binary package."
     usage = f"usage: {os.path.basename(argv[0])} COMMAND [args]"
 

@@ -40,13 +40,8 @@ class WebRsync(SyncBase):
 
     @property
     def has_bin(self):
-        if (
-            self._bin_command != "emerge-delta-webrsync"
-            and self.repo.module_specific_options.get(
-                "sync-webrsync-delta", "false"
-            ).lower()
-            in ("true", "yes")
-        ):
+        if (self._bin_command != "emerge-delta-webrsync"
+                and self.repo.module_specific_options.get("sync-webrsync-delta", "false").lower() in ("true", "yes")):
             self._bin_command = "emerge-delta-webrsync"
             self.bin_command = portage.process.find_binary(self._bin_command)
             self.bin_pkg = ">=app-portage/emerge-delta-webrsync-3.7.5"
@@ -69,9 +64,8 @@ class WebRsync(SyncBase):
         quiet = "--quiet" in self.options["emerge_config"].opts
         openpgp_env = None
         try:
-            if self.repo.module_specific_options.get(
-                "sync-webrsync-verify-signature", "false"
-            ).lower() in ("true", "yes"):
+            if self.repo.module_specific_options.get("sync-webrsync-verify-signature",
+                                                     "false").lower() in ("true", "yes"):
                 if not self.repo.sync_openpgp_key_path:
                     writemsg_level(
                         "!!! sync-openpgp-key-path is not set\n",
@@ -82,8 +76,7 @@ class WebRsync(SyncBase):
 
                 if not os.path.isfile(self.repo.sync_openpgp_key_path):
                     writemsg_level(
-                        "!!! sync-openpgp-key-path file not found: %s\n"
-                        % self.repo.sync_openpgp_key_path,
+                        "!!! sync-openpgp-key-path file not found: %s\n" % self.repo.sync_openpgp_key_path,
                         level=logging.ERROR,
                         noiselevel=-1,
                     )
@@ -98,12 +91,8 @@ class WebRsync(SyncBase):
                     return (1, False)
 
                 self.spawn_kwargs["env"]["PORTAGE_SYNC_WEBRSYNC_GPG"] = "1"
-                self.spawn_kwargs["env"][
-                    "PORTAGE_GPG_KEY"
-                ] = self.repo.sync_openpgp_key_path
-                self.spawn_kwargs["env"][
-                    "PORTAGE_GPG_KEY_SERVER"
-                ] = self.repo.sync_openpgp_keyserver
+                self.spawn_kwargs["env"]["PORTAGE_GPG_KEY"] = self.repo.sync_openpgp_key_path
+                self.spawn_kwargs["env"]["PORTAGE_GPG_KEY_SERVER"] = self.repo.sync_openpgp_keyserver
 
             webrsync_cmd = [self.bin_command]
             if verbose:
@@ -111,9 +100,8 @@ class WebRsync(SyncBase):
             elif quiet:
                 webrsync_cmd.append("-q")
 
-            if self.repo.module_specific_options.get(
-                "sync-webrsync-keep-snapshots", "false"
-            ).lower() in ("true", "yes"):
+            if self.repo.module_specific_options.get("sync-webrsync-keep-snapshots",
+                                                     "false").lower() in ("true", "yes"):
                 webrsync_cmd.append("-k")
 
             exitcode = portage.process.spawn(webrsync_cmd, **self.spawn_kwargs)
@@ -147,6 +135,4 @@ class PyWebRsync(SyncBase):
 
     def sync(self, **kwargs):
         """Sync the repository"""
-        raise NotImplementedError(
-            "Python impl. of webrsync backend is not yet implemented"
-        )
+        raise NotImplementedError("Python impl. of webrsync backend is not yet implemented")

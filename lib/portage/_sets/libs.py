@@ -33,16 +33,12 @@ class LibraryConsumerSet(PackageSet):
 
 
 class LibraryFileConsumerSet(LibraryConsumerSet):
-
     """
     Note: This does not detect libtool archive (*.la) files that consume the
     specified files (revdep-rebuild is able to detect them).
     """
 
-    description = (
-        "Package set which contains all packages "
-        + "that consume the specified library file(s)."
-    )
+    description = ("Package set which contains all packages " + "that consume the specified library file(s).")
 
     def __init__(self, vardbapi, files, **kargs):
         super().__init__(vardbapi, **kargs)
@@ -68,6 +64,7 @@ class LibraryFileConsumerSet(LibraryConsumerSet):
 
 
 class PreservedLibraryConsumerSet(LibraryConsumerSet):
+
     def load(self):
         reg = self.dbapi._plib_registry
         if reg is None:
@@ -80,14 +77,10 @@ class PreservedLibraryConsumerSet(LibraryConsumerSet):
                 for lib in libs:
                     if self.debug:
                         print(lib)
-                        for x in sorted(
-                            self.dbapi._linkmap.findConsumers(lib, greedy=False)
-                        ):
+                        for x in sorted(self.dbapi._linkmap.findConsumers(lib, greedy=False)):
                             print("    ", x)
                         print("-" * 40)
-                    consumers.update(
-                        self.dbapi._linkmap.findConsumers(lib, greedy=False)
-                    )
+                    consumers.update(self.dbapi._linkmap.findConsumers(lib, greedy=False))
             # Don't rebuild packages just because they contain preserved
             # libs that happen to be consumers of other preserved libs.
             for libs in plib_dict.values():

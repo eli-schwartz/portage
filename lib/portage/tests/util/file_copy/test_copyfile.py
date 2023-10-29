@@ -13,6 +13,7 @@ from portage.util.file_copy import copyfile
 
 
 class CopyFileTestCase(TestCase):
+
     def testCopyFile(self):
         tempdir = tempfile.mkdtemp()
         try:
@@ -31,6 +32,7 @@ class CopyFileTestCase(TestCase):
 
 
 class CopyFileSparseTestCase(TestCase):
+
     def testCopyFileSparse(self):
         tempdir = tempfile.mkdtemp()
         try:

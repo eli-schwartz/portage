@@ -7,6 +7,7 @@ from portage.exception import InvalidData
 
 
 class test_lafilefixer(TestCase):
+
     def get_test_cases_clean(self):
         yield b"dlname='libfoo.so.1'\n" + b"library_names='libfoo.so.1.0.2 libfoo.so.1 libfoo.so'\n" + b"old_library='libpdf.a'\n" + b"dependency_libs=' -lm'\n" + b"current=6\n" + b"age=0\n" + b"revision=2\n" + b"installed=yes\n" + b"dlopen=''\n" + b"dlpreopen=''\n" + b"libdir='/usr/lib64'\n"
         yield b"dlname='libfoo.so.1'\n" + b"library_names='libfoo.so.1.0.2 libfoo.so.1 libfoo.so'\n" + b"old_library='libpdf.a'\n" + b"dependency_libs=' -lm'\n" + b"current=6\n" + b"age=0\n" + b"revision=2\n" + b"installed=yes\n" + b"dlopen=''\n" + b"dlpreopen=''\n" + b"libdir='/usr/lib64'\n"

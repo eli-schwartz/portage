@@ -7,6 +7,7 @@ from portage.exception import InvalidDependString
 
 
 class TestCheckRequiredUse(TestCase):
+
     def testCheckRequiredUse(self):
         test_cases = (
             ("|| ( a b )", [], ["a", "b"], False),
@@ -106,7 +107,7 @@ class TestCheckRequiredUse(TestCase):
             ("^^ ( || ( a b ) ) ^^ ( b c ) )", [], ["a", "b", "c"]),
         )
 
-        test_cases_xfail_eapi = (("?? ( a b )", [], ["a", "b"], "4"),)
+        test_cases_xfail_eapi = (("?? ( a b )", [], ["a", "b"], "4"), )
 
         for required_use, use, iuse, expected in test_cases:
             self.assertEqual(
@@ -191,6 +192,5 @@ class TestCheckRequiredUse(TestCase):
             self.assertEqual(
                 result,
                 expected,
-                "REQUIRED_USE = '%s', USE = '%s', '%s' != '%s'"
-                % (required_use, " ".join(use), result, expected),
+                "REQUIRED_USE = '%s', USE = '%s', '%s' != '%s'" % (required_use, " ".join(use), result, expected),
             )

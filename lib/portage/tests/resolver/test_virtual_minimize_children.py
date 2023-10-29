@@ -9,9 +9,13 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class VirtualMinimizeChildrenTestCase(TestCase):
+
     def testVirtualMinimizeChildren(self):
         ebuilds = {
-            "app-misc/bar-1": {"EAPI": "6", "RDEPEND": "virtual/foo"},
+            "app-misc/bar-1": {
+                "EAPI": "6",
+                "RDEPEND": "virtual/foo"
+            },
             "virtual/foo-1": {
                 "EAPI": "6",
                 "RDEPEND": "|| ( app-misc/A app-misc/B ) || ( app-misc/B app-misc/C )",
@@ -39,8 +43,7 @@ class VirtualMinimizeChildrenTestCase(TestCase):
                     "virtual/foo-1",
                     "app-misc/bar-1",
                 ],
-            ),
-        )
+            ), )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds)
 
@@ -63,20 +66,16 @@ class VirtualMinimizeChildrenTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["app-misc/bar"],
-                success=True,
-                mergelist=[
-                    "virtual/foo-1",
-                    "app-misc/bar-1",
-                ],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["app-misc/bar"],
+            success=True,
+            mergelist=[
+                "virtual/foo-1",
+                "app-misc/bar-1",
+            ],
+        ), )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed)
 
         try:
             for test_case in test_cases:
@@ -88,7 +87,10 @@ class VirtualMinimizeChildrenTestCase(TestCase):
 
     def testOverlapSlotConflict(self):
         ebuilds = {
-            "app-misc/bar-1": {"EAPI": "6", "RDEPEND": "virtual/foo"},
+            "app-misc/bar-1": {
+                "EAPI": "6",
+                "RDEPEND": "virtual/foo"
+            },
             "virtual/foo-1": {
                 "EAPI": "6",
                 "RDEPEND": "|| ( app-misc/A >=app-misc/B-2 ) || ( <app-misc/B-2 app-misc/C )",
@@ -121,8 +123,7 @@ class VirtualMinimizeChildrenTestCase(TestCase):
                     "virtual/foo-1",
                     "app-misc/bar-1",
                 ],
-            ),
-        )
+            ), )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds)
 
@@ -137,7 +138,8 @@ class VirtualMinimizeChildrenTestCase(TestCase):
     def testVirtualPackageManager(self):
         ebuilds = {
             "app-admin/perl-cleaner-2.25": {
-                "RDEPEND": """
+                "RDEPEND":
+                """
 					|| (
 						( sys-apps/portage app-portage/portage-utils )
 						sys-apps/pkgcore
@@ -171,14 +173,12 @@ class VirtualMinimizeChildrenTestCase(TestCase):
                 all_permutations=True,
                 success=True,
                 ambiguous_merge_order=True,
-                mergelist=(
-                    (
-                        "sys-apps/portage-2.3.19-r1",
-                        "app-portage/portage-utils-0.64",
-                        "app-admin/perl-cleaner-2.25",
-                        "virtual/package-manager-0",
-                    ),
-                ),
+                mergelist=((
+                    "sys-apps/portage-2.3.19-r1",
+                    "app-portage/portage-utils-0.64",
+                    "app-admin/perl-cleaner-2.25",
+                    "virtual/package-manager-0",
+                ), ),
             ),
             # Test paludis preference. In this case, if paludis is not
             # included in the argument atoms then the result varies
@@ -277,7 +277,8 @@ class VirtualMinimizeChildrenTestCase(TestCase):
     def testVirtualWine(self):
         ebuilds = {
             "virtual/wine-0-r6": {
-                "RDEPEND": "|| ( app-emulation/wine-staging app-emulation/wine-any ) "
+                "RDEPEND":
+                "|| ( app-emulation/wine-staging app-emulation/wine-any ) "
                 "|| ( app-emulation/wine-vanilla app-emulation/wine-staging app-emulation/wine-any )"
             },
             "app-emulation/wine-staging-4": {},
@@ -298,8 +299,7 @@ class VirtualMinimizeChildrenTestCase(TestCase):
                     "app-emulation/wine-staging-4",
                     "virtual/wine-0-r6",
                 ),
-            ),
-        )
+            ), )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds)
 

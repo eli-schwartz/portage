@@ -8,12 +8,8 @@ import sys
 
 from os import path as osp
 
-if osp.isfile(
-    osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")
-):
-    sys.path.insert(
-        0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib")
-    )
+if osp.isfile(osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")):
+    sys.path.insert(0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib"))
 import portage
 
 portage._internal_caller = True
@@ -35,11 +31,8 @@ parser.parse_args()
 
 if mysettings["ROOT"] != "/":
     out = EOutput()
-    msg = (
-        "The fixpackages program is not intended for use with "
-        + 'ROOT != "/". Instead use `emaint --fix movebin` and/or '
-        + "`emaint --fix moveinst."
-    )
+    msg = ("The fixpackages program is not intended for use with " +
+           'ROOT != "/". Instead use `emaint --fix movebin` and/or ' + "`emaint --fix moveinst.")
     for line in wrap(msg, 72):
         out.eerror(line)
     sys.exit(1)
@@ -47,9 +40,7 @@ if mysettings["ROOT"] != "/":
 try:
     os.nice(int(mysettings.get("PORTAGE_NICENESS", "0")))
 except (OSError, ValueError) as e:
-    portage.writemsg(
-        f"!!! Failed to change nice value to '{mysettings['PORTAGE_NICENESS']}'\n"
-    )
+    portage.writemsg(f"!!! Failed to change nice value to '{mysettings['PORTAGE_NICENESS']}'\n")
     portage.writemsg(f"!!! {str(e)}\n")
     del e
 

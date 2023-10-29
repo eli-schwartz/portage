@@ -7,6 +7,7 @@ from portage.dep import isjustname
 
 
 class IsJustName(TestCase):
+
     def testIsJustName(self):
         cats = ("", "sys-apps/", "foo/", "virtual/")
         pkgs = ("portage", "paludis", "pkgcore", "notARealPkg")

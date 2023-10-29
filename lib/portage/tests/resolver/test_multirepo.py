@@ -13,6 +13,7 @@ from portage.output import colorize
 
 
 class MultirepoTestCase(TestCase):
+
     def testMultirepo(self):
         ebuilds = {
             # Simple repo selection
@@ -28,10 +29,20 @@ class MultirepoTestCase(TestCase):
             "dev-libs/D-1::repo2": {},
             "dev-libs/E-1": {},
             "dev-libs/E-1::repo1": {},
-            "dev-libs/E-1::repo2": {"SLOT": "1"},
-            "dev-libs/F-1::repo1": {"SLOT": "1"},
-            "dev-libs/F-1::repo2": {"SLOT": "1"},
-            "dev-libs/G-1::repo1": {"EAPI": "4", "IUSE": "+x +y", "REQUIRED_USE": ""},
+            "dev-libs/E-1::repo2": {
+                "SLOT": "1"
+            },
+            "dev-libs/F-1::repo1": {
+                "SLOT": "1"
+            },
+            "dev-libs/F-1::repo2": {
+                "SLOT": "1"
+            },
+            "dev-libs/G-1::repo1": {
+                "EAPI": "4",
+                "IUSE": "+x +y",
+                "REQUIRED_USE": ""
+            },
             "dev-libs/G-1::repo2": {
                 "EAPI": "4",
                 "IUSE": "+x +y",
@@ -42,8 +53,12 @@ class MultirepoTestCase(TestCase):
                 "EAPI": "3",
                 "RDEPEND": "|| ( dev-libs/I:2 dev-libs/I:1 )",
             },
-            "dev-libs/I-1::repo2": {"SLOT": "1"},
-            "dev-libs/I-2::repo2": {"SLOT": "2"},
+            "dev-libs/I-1::repo2": {
+                "SLOT": "1"
+            },
+            "dev-libs/I-2::repo2": {
+                "SLOT": "2"
+            },
             "dev-libs/K-1::repo2": {},
         }
 
@@ -52,17 +67,21 @@ class MultirepoTestCase(TestCase):
                 "RDEPEND": "|| ( dev-libs/I:2 dev-libs/I:1 )",
                 "EAPI": "3",
             },
-            "dev-libs/I-2::repo1": {"SLOT": "2"},
+            "dev-libs/I-2::repo1": {
+                "SLOT": "2"
+            },
             "dev-libs/K-1::repo1": {},
         }
 
         binpkgs = {
             "dev-libs/C-1::repo2": {},
-            "dev-libs/I-2::repo1": {"SLOT": "2"},
+            "dev-libs/I-2::repo1": {
+                "SLOT": "2"
+            },
             "dev-libs/K-1::repo2": {},
         }
 
-        sets = {"multirepotest": ("dev-libs/A::test_repo",)}
+        sets = {"multirepotest": ("dev-libs/A::test_repo", )}
 
         test_cases = (
             # Simple repo selection
@@ -119,7 +138,10 @@ class MultirepoTestCase(TestCase):
             # --usepkg: don't reinstall on new repo without --newrepo
             ResolverPlaygroundTestCase(
                 ["dev-libs/C"],
-                options={"--usepkg": True, "--selective": True},
+                options={
+                    "--usepkg": True,
+                    "--selective": True
+                },
                 success=True,
                 check_repo_names=True,
                 mergelist=["[binary]dev-libs/C-1::repo2"],
@@ -127,7 +149,10 @@ class MultirepoTestCase(TestCase):
             # --usepkgonly: don't reinstall on new repo without --newrepo
             ResolverPlaygroundTestCase(
                 ["dev-libs/C"],
-                options={"--usepkgonly": True, "--selective": True},
+                options={
+                    "--usepkgonly": True,
+                    "--selective": True
+                },
                 success=True,
                 check_repo_names=True,
                 mergelist=["[binary]dev-libs/C-1::repo2"],
@@ -135,7 +160,11 @@ class MultirepoTestCase(TestCase):
             # --newrepo: pick ebuild if binpkg/ebuild have different repo
             ResolverPlaygroundTestCase(
                 ["dev-libs/C"],
-                options={"--usepkg": True, "--newrepo": True, "--selective": True},
+                options={
+                    "--usepkg": True,
+                    "--newrepo": True,
+                    "--selective": True
+                },
                 success=True,
                 check_repo_names=True,
                 mergelist=["dev-libs/C-1::repo1"],
@@ -143,7 +172,11 @@ class MultirepoTestCase(TestCase):
             # --newrepo --usepkgonly: ebuild is ignored
             ResolverPlaygroundTestCase(
                 ["dev-libs/C"],
-                options={"--usepkgonly": True, "--newrepo": True, "--selective": True},
+                options={
+                    "--usepkgonly": True,
+                    "--newrepo": True,
+                    "--selective": True
+                },
                 success=True,
                 check_repo_names=True,
                 mergelist=["[binary]dev-libs/C-1::repo2"],
@@ -151,7 +184,11 @@ class MultirepoTestCase(TestCase):
             # --newrepo: pick ebuild if binpkg/ebuild have different repo
             ResolverPlaygroundTestCase(
                 ["dev-libs/I"],
-                options={"--usepkg": True, "--newrepo": True, "--selective": True},
+                options={
+                    "--usepkg": True,
+                    "--newrepo": True,
+                    "--selective": True
+                },
                 success=True,
                 check_repo_names=True,
                 mergelist=["dev-libs/I-2::repo2"],
@@ -159,14 +196,22 @@ class MultirepoTestCase(TestCase):
             # --newrepo --usepkgonly: if binpkg matches installed, do nothing
             ResolverPlaygroundTestCase(
                 ["dev-libs/I"],
-                options={"--usepkgonly": True, "--newrepo": True, "--selective": True},
+                options={
+                    "--usepkgonly": True,
+                    "--newrepo": True,
+                    "--selective": True
+                },
                 success=True,
                 mergelist=[],
             ),
             # --newrepo --usepkgonly: reinstall if binpkg has new repo.
             ResolverPlaygroundTestCase(
                 ["dev-libs/K"],
-                options={"--usepkgonly": True, "--newrepo": True, "--selective": True},
+                options={
+                    "--usepkgonly": True,
+                    "--newrepo": True,
+                    "--selective": True
+                },
                 success=True,
                 check_repo_names=True,
                 mergelist=["[binary]dev-libs/K-1::repo2"],
@@ -174,7 +219,10 @@ class MultirepoTestCase(TestCase):
             # --usepkgonly: don't reinstall on new repo without --newrepo.
             ResolverPlaygroundTestCase(
                 ["dev-libs/K"],
-                options={"--usepkgonly": True, "--selective": True},
+                options={
+                    "--usepkgonly": True,
+                    "--selective": True
+                },
                 success=True,
                 mergelist=[],
             ),
@@ -220,7 +268,10 @@ class MultirepoTestCase(TestCase):
             # reinstall the same version from a different repo.
             ResolverPlaygroundTestCase(
                 ["dev-libs/H"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=[],
             ),
@@ -228,16 +279,18 @@ class MultirepoTestCase(TestCase):
             # when --newrepo flag is used.
             ResolverPlaygroundTestCase(
                 ["dev-libs/H"],
-                options={"--update": True, "--deep": True, "--newrepo": True},
+                options={
+                    "--update": True,
+                    "--deep": True,
+                    "--newrepo": True
+                },
                 success=True,
                 check_repo_names=True,
                 mergelist=["dev-libs/I-2::repo2"],
             ),
             # Check interaction between repo priority and unsatisfied
             # REQUIRED_USE, for bug #350254.
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/G-1"], check_repo_names=True, success=False
-            ),
+            ResolverPlaygroundTestCase(["=dev-libs/G-1"], check_repo_names=True, success=False),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
@@ -250,49 +303,76 @@ class MultirepoTestCase(TestCase):
                     installed=installed,
                     sets=sets,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.cleanup()
 
     def testMultirepoUserConfig(self):
         ebuilds = {
             # package.use test
-            "dev-libs/A-1": {"IUSE": "foo"},
-            "dev-libs/A-2::repo1": {"IUSE": "foo"},
+            "dev-libs/A-1": {
+                "IUSE": "foo"
+            },
+            "dev-libs/A-2::repo1": {
+                "IUSE": "foo"
+            },
             "dev-libs/A-3::repo2": {},
-            "dev-libs/B-1": {"DEPEND": "dev-libs/A", "EAPI": 2},
-            "dev-libs/B-2": {"DEPEND": "dev-libs/A[foo]", "EAPI": 2},
-            "dev-libs/B-3": {"DEPEND": "dev-libs/A[-foo]", "EAPI": 2},
+            "dev-libs/B-1": {
+                "DEPEND": "dev-libs/A",
+                "EAPI": 2
+            },
+            "dev-libs/B-2": {
+                "DEPEND": "dev-libs/A[foo]",
+                "EAPI": 2
+            },
+            "dev-libs/B-3": {
+                "DEPEND": "dev-libs/A[-foo]",
+                "EAPI": 2
+            },
             # package.accept_keywords test
-            "dev-libs/C-1": {"KEYWORDS": "~x86"},
-            "dev-libs/C-1::repo1": {"KEYWORDS": "~x86"},
+            "dev-libs/C-1": {
+                "KEYWORDS": "~x86"
+            },
+            "dev-libs/C-1::repo1": {
+                "KEYWORDS": "~x86"
+            },
             # package.license
-            "dev-libs/D-1": {"LICENSE": "TEST"},
-            "dev-libs/D-1::repo1": {"LICENSE": "TEST"},
+            "dev-libs/D-1": {
+                "LICENSE": "TEST"
+            },
+            "dev-libs/D-1::repo1": {
+                "LICENSE": "TEST"
+            },
             # package.mask
             "dev-libs/E-1": {},
             "dev-libs/E-1::repo1": {},
             "dev-libs/H-1": {},
             "dev-libs/H-1::repo1": {},
-            "dev-libs/I-1::repo2": {"SLOT": "1"},
-            "dev-libs/I-2::repo2": {"SLOT": "2"},
+            "dev-libs/I-1::repo2": {
+                "SLOT": "1"
+            },
+            "dev-libs/I-2::repo2": {
+                "SLOT": "2"
+            },
             "dev-libs/J-1": {
                 "KEYWORDS": "x86",
                 "EAPI": "3",
                 "RDEPEND": "|| ( dev-libs/I:2 dev-libs/I:1 )",
             },
             # package.properties
-            "dev-libs/F-1": {"PROPERTIES": "bar"},
-            "dev-libs/F-1::repo1": {"PROPERTIES": "bar"},
+            "dev-libs/F-1": {
+                "PROPERTIES": "bar"
+            },
+            "dev-libs/F-1::repo1": {
+                "PROPERTIES": "bar"
+            },
             # package.unmask
             "dev-libs/G-1": {},
             "dev-libs/G-1::repo1": {},
@@ -305,13 +385,15 @@ class MultirepoTestCase(TestCase):
                 "RDEPEND": "|| ( dev-libs/I:2 dev-libs/I:1 )",
                 "EAPI": "3",
             },
-            "dev-libs/I-2::repo1": {"SLOT": "2"},
+            "dev-libs/I-2::repo1": {
+                "SLOT": "2"
+            },
         }
 
         user_config = {
-            "package.use": ("dev-libs/A::repo1 foo",),
-            "package.accept_keywords": ("=dev-libs/C-1::test_repo",),
-            "package.license": ("=dev-libs/D-1::test_repo TEST",),
+            "package.use": ("dev-libs/A::repo1 foo", ),
+            "package.accept_keywords": ("=dev-libs/C-1::test_repo", ),
+            "package.license": ("=dev-libs/D-1::test_repo TEST", ),
             "package.mask": (
                 "dev-libs/E::repo1",
                 "dev-libs/H",
@@ -321,8 +403,8 @@ class MultirepoTestCase(TestCase):
                 # wildcard test
                 "*/*::repo3",
             ),
-            "package.properties": ("dev-libs/F::repo1 -bar",),
-            "package.unmask": ("dev-libs/G::test_repo",),
+            "package.properties": ("dev-libs/F::repo1 -bar", ),
+            "package.unmask": ("dev-libs/G::test_repo", ),
         }
 
         test_cases = (
@@ -372,7 +454,10 @@ class MultirepoTestCase(TestCase):
             # a different repo (bug #351828).
             ResolverPlaygroundTestCase(
                 ["dev-libs/J"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=["dev-libs/I-2"],
             ),
@@ -390,29 +475,21 @@ class MultirepoTestCase(TestCase):
                 check_repo_names=True,
                 mergelist=["dev-libs/G-1"],
             ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/H"], options={"--autounmask": "n"}, success=False
-            ),
+            ResolverPlaygroundTestCase(["dev-libs/H"], options={"--autounmask": "n"}, success=False),
             # package.mask with wildcards
-            ResolverPlaygroundTestCase(
-                ["dev-libs/Z"], options={"--autounmask": "n"}, success=False
-            ),
+            ResolverPlaygroundTestCase(["dev-libs/Z"], options={"--autounmask": "n"}, success=False),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                user_config["make.conf"] = (f'BINPKG_FORMAT="{binpkg_format}"',)
-                playground = ResolverPlayground(
-                    ebuilds=ebuilds, installed=installed, user_config=user_config
-                )
+                user_config["make.conf"] = (f'BINPKG_FORMAT="{binpkg_format}"', )
+                playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, user_config=user_config)
 
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.cleanup()

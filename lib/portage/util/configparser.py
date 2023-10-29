@@ -71,6 +71,4 @@ def read_configs(parser, paths):
             kwargs = {source_kwarg: "<io.StringIO>"}
             read_file(p, **kwargs)
         else:
-            raise TypeError(
-                f"Unsupported type {type(p)!r} of element {p!r} of 'paths' argument"
-            )
+            raise TypeError(f"Unsupported type {type(p)!r} of element {p!r} of 'paths' argument")

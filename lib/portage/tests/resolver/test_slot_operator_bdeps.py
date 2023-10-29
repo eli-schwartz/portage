@@ -11,6 +11,7 @@ from portage.output import colorize
 
 
 class SlotOperatorBdependTestCase(TestCase):
+
     def testSlotOperatorBdepend(self):
         """
         Test regular dev-lang/go upgrade, with rebuild of packages
@@ -26,8 +27,14 @@ class SlotOperatorBdependTestCase(TestCase):
                 "EAPI": "7",
                 "BDEPEND": "dev-lang/go:=",
             },
-            "dev-lang/go-1.15.5": {"EAPI": "7", "SLOT": "0/1.15.5"},
-            "dev-lang/go-1.14.12": {"EAPI": "7", "SLOT": "0/1.14.12"},
+            "dev-lang/go-1.15.5": {
+                "EAPI": "7",
+                "SLOT": "0/1.15.5"
+            },
+            "dev-lang/go-1.14.12": {
+                "EAPI": "7",
+                "SLOT": "0/1.14.12"
+            },
         }
 
         binpkgs = {
@@ -39,7 +46,10 @@ class SlotOperatorBdependTestCase(TestCase):
                 "EAPI": "7",
                 "BDEPEND": "dev-lang/go:0/1.14.12=",
             },
-            "dev-lang/go-1.14.12": {"EAPI": "7", "SLOT": "0/1.14.12"},
+            "dev-lang/go-1.14.12": {
+                "EAPI": "7",
+                "SLOT": "0/1.14.12"
+            },
         }
 
         installed = {
@@ -51,7 +61,10 @@ class SlotOperatorBdependTestCase(TestCase):
                 "EAPI": "7",
                 "BDEPEND": "dev-lang/go:0/1.14.12=",
             },
-            "dev-lang/go-1.14.12": {"EAPI": "7", "SLOT": "0/1.14.12"},
+            "dev-lang/go-1.14.12": {
+                "EAPI": "7",
+                "SLOT": "0/1.14.12"
+            },
         }
 
         world = ["app-emulation/buildah", "app-emulation/libpod"]
@@ -100,15 +113,13 @@ class SlotOperatorBdependTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.debug = False
                     playground.cleanup()
@@ -129,8 +140,14 @@ class SlotOperatorBdependTestCase(TestCase):
                 "EAPI": "7",
                 "BDEPEND": "dev-lang/go:=",
             },
-            "dev-lang/go-1.15.5": {"EAPI": "7", "SLOT": "0/1.15.5"},
-            "dev-lang/go-1.14.12": {"EAPI": "7", "SLOT": "0/1.14.12"},
+            "dev-lang/go-1.15.5": {
+                "EAPI": "7",
+                "SLOT": "0/1.15.5"
+            },
+            "dev-lang/go-1.14.12": {
+                "EAPI": "7",
+                "SLOT": "0/1.14.12"
+            },
         }
 
         binpkgs = {
@@ -142,8 +159,14 @@ class SlotOperatorBdependTestCase(TestCase):
                 "EAPI": "7",
                 "BDEPEND": "dev-lang/go:0/1.14.12=",
             },
-            "dev-lang/go-1.14.12": {"EAPI": "7", "SLOT": "0/1.14.12"},
-            "dev-lang/go-1.15.5": {"EAPI": "7", "SLOT": "0/1.15.5"},
+            "dev-lang/go-1.14.12": {
+                "EAPI": "7",
+                "SLOT": "0/1.14.12"
+            },
+            "dev-lang/go-1.15.5": {
+                "EAPI": "7",
+                "SLOT": "0/1.15.5"
+            },
         }
 
         installed = {
@@ -155,7 +178,10 @@ class SlotOperatorBdependTestCase(TestCase):
                 "EAPI": "7",
                 "BDEPEND": "dev-lang/go:0/1.14.12=",
             },
-            "dev-lang/go-1.15.5": {"EAPI": "7", "SLOT": "0/1.15.5"},
+            "dev-lang/go-1.15.5": {
+                "EAPI": "7",
+                "SLOT": "0/1.15.5"
+            },
         }
 
         world = ["app-emulation/buildah", "app-emulation/libpod"]
@@ -202,15 +228,13 @@ class SlotOperatorBdependTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.debug = False
                     playground.cleanup()

@@ -86,7 +86,7 @@ class Socks5Server:
                 addr = socket.inet_ntoa(data)
             elif atyp == 0x03:  # domain name
                 data = await reader.readexactly(1)
-                (addr_len,) = struct.unpack("!B", data)
+                (addr_len, ) = struct.unpack("!B", data)
                 addr = await reader.readexactly(addr_len)
                 try:
                     addr = addr.decode("idna")
@@ -102,13 +102,11 @@ class Socks5Server:
             # try to connect if we can handle it
             if rpl == 0x00:
                 data = await reader.readexactly(2)
-                (port,) = struct.unpack("!H", data)
+                (port, ) = struct.unpack("!H", data)
 
                 try:
                     # open a proxied connection
-                    proxied_reader, proxied_writer = await asyncio.open_connection(
-                        addr, port
-                    )
+                    proxied_reader, proxied_writer = await asyncio.open_connection(addr, port)
                 except (socket.gaierror, socket.herror):
                     # DNS failure
                     rpl = 0x04  # host unreachable
@@ -157,9 +155,7 @@ class Socks5Server:
 
             # otherwise, start two loops:
             # remote -> local...
-            t = asyncio_ensure_future(
-                self.handle_proxied_conn(proxied_reader, writer, current_task())
-            )
+            t = asyncio_ensure_future(self.handle_proxied_conn(proxied_reader, writer, current_task()))
 
             # and local -> remote...
             try:
@@ -225,9 +221,7 @@ if __name__ == "__main__":
 
     loop = asyncio.new_event_loop()
     s = Socks5Server()
-    server = loop.run_until_complete(
-        asyncio.start_unix_server(s.handle_proxy_conn, sys.argv[1])
-    )
+    server = loop.run_until_complete(asyncio.start_unix_server(s.handle_proxy_conn, sys.argv[1]))
 
     ret = 0
     try:

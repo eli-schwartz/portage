@@ -19,6 +19,7 @@ from urllib.request import urlopen
 
 
 class _Handler(BaseHTTPRequestHandler):
+
     def __init__(self, content, *args, **kwargs):
         self.content = content
         BaseHTTPRequestHandler.__init__(self, *args, **kwargs)
@@ -49,6 +50,7 @@ class _Handler(BaseHTTPRequestHandler):
 
 
 class AsyncHTTPServer:
+
     def __init__(self, host, content, loop):
         self._host = host
         self._content = content
@@ -57,13 +59,9 @@ class AsyncHTTPServer:
         self._httpd = None
 
     def __enter__(self):
-        httpd = self._httpd = HTTPServer(
-            (self._host, 0), functools.partial(_Handler, self._content)
-        )
+        httpd = self._httpd = HTTPServer((self._host, 0), functools.partial(_Handler, self._content))
         self.server_port = httpd.server_port
-        self._loop.add_reader(
-            httpd.socket.fileno(), self._httpd._handle_request_noblock
-        )
+        self._loop.add_reader(httpd.socket.fileno(), self._httpd._handle_request_noblock)
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
@@ -74,15 +72,13 @@ class AsyncHTTPServer:
 
 
 class AsyncHTTPServerTestCase(TestCase):
+
     @staticmethod
     def _fetch_directly(host, port, path):
         # NOTE: python2.7 does not have context manager support here
         try:
-            f = urlopen(
-                "http://{host}:{port}{path}".format(  # nosec
-                    host=host, port=port, path=path
-                )
-            )
+            f = urlopen("http://{host}:{port}{path}".format(  # nosec
+                host=host, port=port, path=path))
             return f.read()
         finally:
             if f is not None:
@@ -97,10 +93,7 @@ class AsyncHTTPServerTestCase(TestCase):
             with AsyncHTTPServer(host, {path: content}, loop) as server:
                 for j in range(2):
                     result = loop.run_until_complete(
-                        loop.run_in_executor(
-                            None, self._fetch_directly, host, server.server_port, path
-                        )
-                    )
+                        loop.run_in_executor(None, self._fetch_directly, host, server.server_port, path))
                     self.assertEqual(result, content)
 
 
@@ -155,11 +148,8 @@ def socks5_http_get_ipv4(proxy, host, port, path):
         if reply != (0x05, 0x00, 0x00):
             raise AssertionError(repr(reply))
         struct.unpack("!B4sH", s.recv(7))  # contains proxied address info
-        s.send(
-            "GET {} HTTP/1.1\r\nHost: {}:{}\r\nAccept: */*\r\nConnection: close\r\n\r\n".format(
-                path, host, port
-            ).encode()
-        )
+        s.send("GET {} HTTP/1.1\r\nHost: {}:{}\r\nAccept: */*\r\nConnection: close\r\n\r\n".format(path, host,
+                                                                                                   port).encode())
         headers = []
         while True:
             headers.append(f.readline())
@@ -171,6 +161,7 @@ def socks5_http_get_ipv4(proxy, host, port, path):
 
 
 class Socks5ServerTestCase(TestCase):
+
     @staticmethod
     def _fetch_via_proxy(proxy, host, port, path):
         with socks5_http_get_ipv4(proxy, host, port, path) as f:
@@ -203,8 +194,7 @@ class Socks5ServerTestCase(TestCase):
                         host,
                         server.server_port,
                         path,
-                    )
-                )
+                    ))
 
                 self.assertEqual(result, content)
         finally:

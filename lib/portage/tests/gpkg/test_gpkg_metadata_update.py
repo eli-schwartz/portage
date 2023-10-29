@@ -13,12 +13,11 @@ from portage.gpkg import gpkg
 
 
 class test_gpkg_metadata_case(TestCase):
+
     def test_gpkg_update_metadata(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": ('BINPKG_COMPRESS="gzip"',),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": ('BINPKG_COMPRESS="gzip"', ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:

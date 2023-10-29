@@ -80,11 +80,8 @@ class EbuildFetcher(CompositeTask):
         # First get the SRC_URI metadata (it's not cached in self.pkg.metadata
         # because some packages have an extremely large SRC_URI value).
         self._start_task(
-            AsyncTaskFuture(
-                future=self.pkg.root_config.trees["porttree"].dbapi.async_aux_get(
-                    self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler
-                )
-            ),
+            AsyncTaskFuture(future=self.pkg.root_config.trees["porttree"].dbapi.async_aux_get(
+                self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler)),
             self._start_with_metadata,
         )
 
@@ -94,7 +91,7 @@ class EbuildFetcher(CompositeTask):
             self._default_final_exit(aux_get_task)
             return
 
-        (self._fetcher_proc.src_uri,) = aux_get_task.future.result()
+        (self._fetcher_proc.src_uri, ) = aux_get_task.future.result()
         self._start_task(self._fetcher_proc, self._default_final_exit)
 
 
@@ -133,9 +130,7 @@ class _EbuildFetcherProcess(ForkProcess):
                 result.set_result(True)
 
         uri_map_future = self._async_uri_map()
-        result.add_done_callback(
-            lambda result: uri_map_future.cancel() if result.cancelled() else None
-        )
+        result.add_done_callback(lambda result: uri_map_future.cancel() if result.cancelled() else None)
         uri_map_future.add_done_callback(uri_map_done)
         return result
 
@@ -276,11 +271,11 @@ class _EbuildFetcherProcess(ForkProcess):
         rval = 1
         allow_missing = manifest.allow_missing or "digest" in settings.features
         if fetch(
-            uri_map,
-            settings,
-            fetchonly=fetchonly,
-            digests=copy.deepcopy(manifest.getTypeDigests("DIST")),
-            allow_missing_digests=allow_missing,
+                uri_map,
+                settings,
+                fetchonly=fetchonly,
+                digests=copy.deepcopy(manifest.getTypeDigests("DIST")),
+                allow_missing_digests=allow_missing,
         ):
             rval = os.EX_OK
         return rval
@@ -297,11 +292,8 @@ class _EbuildFetcherProcess(ForkProcess):
     def _get_manifest(self):
         if self._manifest is None:
             pkgdir = os.path.dirname(self._get_ebuild_path())
-            self._manifest = (
-                self.pkg.root_config.settings.repositories.get_repo_for_location(
-                    os.path.dirname(os.path.dirname(pkgdir))
-                ).load_manifest(pkgdir, None)
-            )
+            self._manifest = (self.pkg.root_config.settings.repositories.get_repo_for_location(
+                os.path.dirname(os.path.dirname(pkgdir))).load_manifest(pkgdir, None))
         return self._manifest
 
     def _get_digests(self):
@@ -333,9 +325,7 @@ class _EbuildFetcherProcess(ForkProcess):
                 # The caller handles this when it retrieves the result.
                 pass
 
-        result = portdb.async_fetch_map(
-            self.pkg.cpv, useflags=use, mytree=mytree, loop=self.scheduler
-        )
+        result = portdb.async_fetch_map(self.pkg.cpv, useflags=use, mytree=mytree, loop=self.scheduler)
         result.add_done_callback(cache_result)
         return result
 
@@ -367,19 +357,13 @@ class _EbuildFetcherProcess(ForkProcess):
         # output here.
         if self.logfile is not None:
             f = open(
-                _unicode_encode(
-                    self.logfile, encoding=_encodings["fs"], errors="strict"
-                ),
+                _unicode_encode(self.logfile, encoding=_encodings["fs"], errors="strict"),
                 mode="a",
                 encoding=_encodings["content"],
                 errors="backslashreplace",
             )
             for filename in uri_map:
-                f.write(
-                    _unicode_decode(
-                        f" * {filename} size ;-) ...".ljust(73) + "[ ok ]\n"
-                    )
-                )
+                f.write(_unicode_decode(f" * {filename} size ;-) ...".ljust(73) + "[ ok ]\n"))
             f.close()
 
         return True

@@ -47,10 +47,8 @@ module_spec = {
             "opt_desc": {
                 "sync-submodule": {
                     "long": "--sync-submodule",
-                    "help": (
-                        "(sync module only): Restrict sync "
-                        "to the specified submodule(s)"
-                    ),
+                    "help": ("(sync module only): Restrict sync "
+                             "to the specified submodule(s)"),
                     "choices": tuple(_SUBMODULE_PATH_MAP),
                     "action": "append",
                     "dest": "sync_submodule",

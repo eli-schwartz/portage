@@ -25,9 +25,7 @@ class AsyncFunction(ForkProcess):
 
     def _start(self):
         pr, pw = multiprocessing.Pipe(duplex=False)
-        self._async_func_reader = PipeReader(
-            input_files={"input": pr}, scheduler=self.scheduler
-        )
+        self._async_func_reader = PipeReader(input_files={"input": pr}, scheduler=self.scheduler)
         self._async_func_reader.addExitListener(self._async_func_reader_exit)
         self._async_func_reader.start()
         # args and kwargs are passed as additional args by ForkProcess._bootstrap.
@@ -41,7 +39,7 @@ class AsyncFunction(ForkProcess):
             result = target(*args, **kwargs)
             result_bytes = pickle.dumps(result)
             while result_bytes:
-                result_bytes = result_bytes[os.write(pw.fileno(), result_bytes) :]
+                result_bytes = result_bytes[os.write(pw.fileno(), result_bytes):]
         except Exception:
             traceback.print_exc()
             return 1

@@ -10,7 +10,6 @@ from portage import os
 from portage import _encodings
 from portage import _unicode_encode
 
-
 # [D]/Name/Version/Date/Flags/Tags
 
 

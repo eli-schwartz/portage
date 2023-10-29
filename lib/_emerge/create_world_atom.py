@@ -1,7 +1,6 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-
 from portage.dep import Atom, _repo_separator
 from portage.exception import InvalidData
 
@@ -42,17 +41,11 @@ def create_world_atom(pkg, args_set, root_config, before_install=False):
             except (KeyError, InvalidData):
                 pass
 
-    slotted = len(available_slots) > 1 or (
-        len(available_slots) == 1 and "0" not in available_slots
-    )
+    slotted = len(available_slots) > 1 or (len(available_slots) == 1 and "0" not in available_slots)
     if not slotted:
         # check the vdb in case this is multislot
-        available_slots = {
-            vardb._pkg_str(cpv, None).slot for cpv in vardb.match(Atom(cp))
-        }
-        slotted = len(available_slots) > 1 or (
-            len(available_slots) == 1 and "0" not in available_slots
-        )
+        available_slots = {vardb._pkg_str(cpv, None).slot for cpv in vardb.match(Atom(cp))}
+        slotted = len(available_slots) > 1 or (len(available_slots) == 1 and "0" not in available_slots)
     if slotted and arg_atom.without_repo != cp:
         # If the user gave a specific atom, store it as a
         # slot atom in the world file.

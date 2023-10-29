@@ -61,9 +61,7 @@ class IndexedPortdb:
 
         streams = []
         for repo_path in self._portdb.porttrees:
-            outside_repo = os.path.join(
-                self._portdb.depcachedir, repo_path.lstrip(os.sep)
-            )
+            outside_repo = os.path.join(self._portdb.depcachedir, repo_path.lstrip(os.sep))
             filenames = []
             for parent_dir in (repo_path, outside_repo):
                 filenames.append(os.path.join(parent_dir, "metadata", "pkg_desc_index"))
@@ -85,13 +83,10 @@ class IndexedPortdb:
                     raise FileNotFound(filename)
 
                 streams.append(
-                    iter(
-                        IndexStreamIterator(
-                            f,
-                            functools.partial(pkg_desc_index_line_read, repo=repo_name),
-                        )
-                    )
-                )
+                    iter(IndexStreamIterator(
+                        f,
+                        functools.partial(pkg_desc_index_line_read, repo=repo_name),
+                    )))
             except FileNotFound:
                 index_missing.append(repo_path)
 
@@ -99,6 +94,7 @@ class IndexedPortdb:
             self._unindexed_cp_map = {}
 
             class _NonIndexedStream:
+
                 def __iter__(self_):
                     for cp in self._portdb.cp_all(trees=index_missing):
                         # Don't call cp_list yet, since it's a waste

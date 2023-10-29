@@ -20,6 +20,7 @@ def set_trace(on=True):
 
 
 class trace_handler:
+
     def __init__(self):
         python_system_paths = []
         for x in sys.path:
@@ -30,9 +31,7 @@ class trace_handler:
         for x in python_system_paths:
             self.ignore_prefixes.append(x + os.sep)
 
-        self.trim_filename = prefix_trimmer(
-            os.path.join(portage.const.PORTAGE_BASE_PATH, "lib") + os.sep
-        ).trim
+        self.trim_filename = prefix_trimmer(os.path.join(portage.const.PORTAGE_BASE_PATH, "lib") + os.sep).trim
         self.show_local_lines = False
         self.max_repr_length = 200
 
@@ -47,17 +46,14 @@ class trace_handler:
                 return self.event_handler
 
     def trace_event(self, frame, event, arg):
-        writemsg(
-            "%s line=%d name=%s event=%s %slocals=%s\n"
-            % (
-                self.trim_filename(frame.f_code.co_filename),
-                frame.f_lineno,
-                frame.f_code.co_name,
-                event,
-                self.arg_repr(frame, event, arg),
-                self.locals_repr(frame, event, arg),
-            )
-        )
+        writemsg("%s line=%d name=%s event=%s %slocals=%s\n" % (
+            self.trim_filename(frame.f_code.co_filename),
+            frame.f_lineno,
+            frame.f_code.co_name,
+            event,
+            self.arg_repr(frame, event, arg),
+            self.locals_repr(frame, event, arg),
+        ))
 
     def arg_repr(self, _frame, event, arg):
         my_repr = None
@@ -75,10 +71,7 @@ class trace_handler:
         return ""
 
     def trace_line(self, frame, _event, _arg):
-        writemsg(
-            "%s line=%d\n"
-            % (self.trim_filename(frame.f_code.co_filename), frame.f_lineno)
-        )
+        writemsg("%s line=%d\n" % (self.trim_filename(frame.f_code.co_filename), frame.f_lineno))
 
     def ignore_filename(self, filename):
         if filename:
@@ -108,6 +101,7 @@ class trace_handler:
 
 
 class prefix_trimmer:
+
     def __init__(self, prefix):
         self.prefix = prefix
         self.cut_index = len(prefix)
@@ -121,7 +115,7 @@ class prefix_trimmer:
             return self.previous_trimmed
 
         if s.startswith(self.prefix):
-            self.previous_trimmed = s[self.cut_index :]
+            self.previous_trimmed = s[self.cut_index:]
         else:
             self.previous_trimmed = s
         return self.previous_trimmed

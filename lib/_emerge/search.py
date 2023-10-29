@@ -104,9 +104,7 @@ class search:
         raise KeyError(args[0])
 
     def _aux_get_error(self, cpv):
-        portage.writemsg(
-            f"emerge: search: aux_get('{cpv}') failed, skipping\n", noiselevel=-1
-        )
+        portage.writemsg(f"emerge: search: aux_get('{cpv}') failed, skipping\n", noiselevel=-1)
 
     def _findname(self, *args, **kwargs):
         for db in self._dbs:
@@ -269,11 +267,8 @@ class search:
             match_category = 1
         fuzzy = False
 
-        if (
-            self.regex_auto
-            and not regexsearch
-            and re.search(r"[\^\$\*\[\]\{\}\|\?]|\.\+", self.searchkey) is not None
-        ):
+        if (self.regex_auto and not regexsearch
+                and re.search(r"[\^\$\*\[\]\{\}\|\?]|\.\+", self.searchkey) is not None):
             try:
                 re.compile(self.searchkey, re.I)
             except Exception:
@@ -299,7 +294,7 @@ class search:
                     # category name.
                     part_split = portage.catsplit
                 else:
-                    part_split = lambda match_string: (match_string,)
+                    part_split = lambda match_string: (match_string, )
 
                 part_matchers = []
                 for part in part_split(self.searchkey):
@@ -309,19 +304,13 @@ class search:
 
                 def fuzzy_search_part(seq_match, match_string):
                     seq_match.set_seq1(match_string.lower())
-                    return (
-                        seq_match.real_quick_ratio() >= cutoff
-                        and seq_match.quick_ratio() >= cutoff
-                        and seq_match.ratio() >= cutoff
-                    )
+                    return (seq_match.real_quick_ratio() >= cutoff and seq_match.quick_ratio() >= cutoff
+                            and seq_match.ratio() >= cutoff)
 
                 def fuzzy_search(match_string):
                     return all(
                         fuzzy_search_part(seq_match, part)
-                        for seq_match, part in zip(
-                            part_matchers, part_split(match_string)
-                        )
-                    )
+                        for seq_match, part in zip(part_matchers, part_split(match_string)))
 
         for package in self._cp_all():
             self._spinner_update()
@@ -381,13 +370,12 @@ class search:
         """Outputs the results of the search."""
 
         class msg:
+
             @staticmethod
             def append(msg):
                 writemsg_stdout(msg, noiselevel=-1)
 
-        msg.append(
-            "\b\b  \n[ Results for search key : " + bold(self.searchkey) + " ]\n"
-        )
+        msg.append("\b\b  \n[ Results for search key : " + bold(self.searchkey) + " ]\n")
         vardb = self._vardb
         metadata_keys = set(Package.metadata_keys)
         metadata_keys.update(["DESCRIPTION", "HOMEPAGE", "LICENSE", "SRC_URI"])
@@ -420,18 +408,11 @@ class search:
             elif mtype == "set":
                 msg.append(green("*") + "  " + bold(match) + "\n")
                 if self.verbose:
-                    msg.append(
-                        "      "
-                        + darkgreen("Description:")
-                        + "   "
-                        + self.sdict[match].getMetadata("DESCRIPTION")
-                        + "\n\n"
-                    )
+                    msg.append("      " + darkgreen("Description:") + "   " +
+                               self.sdict[match].getMetadata("DESCRIPTION") + "\n\n")
             if full_package:
                 try:
-                    metadata = dict(
-                        zip(metadata_keys, self._aux_get(full_package, metadata_keys))
-                    )
+                    metadata = dict(zip(metadata_keys, self._aux_get(full_package, metadata_keys)))
                 except KeyError:
                     self._aux_get_error(full_package)
                     continue
@@ -441,9 +422,7 @@ class search:
                 license = metadata["LICENSE"]  # pylint: disable=redefined-builtin
 
                 if masked:
-                    msg.append(
-                        green("*") + "  " + bold(match) + " " + red("[ Masked ]") + "\n"
-                    )
+                    msg.append(green("*") + "  " + bold(match) + " " + red("[ Masked ]") + "\n")
                 else:
                     msg.append(green("*") + "  " + bold(match) + "\n")
                 myversion = self.getVersion(full_package, search.VERSION_RELEASE)
@@ -464,9 +443,7 @@ class search:
                         type_name="ebuild",
                     )
                     pkgdir = os.path.dirname(myebuild)
-                    mf = self.settings.repositories.get_repo_for_location(
-                        os.path.dirname(os.path.dirname(pkgdir))
-                    )
+                    mf = self.settings.repositories.get_repo_for_location(os.path.dirname(os.path.dirname(pkgdir)))
                     mf = mf.load_manifest(pkgdir, self.settings["DISTDIR"])
                     try:
                         uri_map = _parse_uri_map(mycpv, metadata, use=pkg.use.enabled)
@@ -500,25 +477,13 @@ class search:
 
                 if self.verbose:
                     if available:
-                        msg.append(
-                            f"      {darkgreen('Latest version available:')} {myversion}\n"
-                        )
-                    msg.append(
-                        f"      {self.getInstallationStatus(mycat + '/' + mypkg)}\n"
-                    )
+                        msg.append(f"      {darkgreen('Latest version available:')} {myversion}\n")
+                    msg.append(f"      {self.getInstallationStatus(mycat + '/' + mypkg)}\n")
                     if myebuild:
-                        msg.append(
-                            f"      {darkgreen('Size of files:')} {file_size_str}\n"
-                        )
-                    msg.append(
-                        "      " + darkgreen("Homepage:") + "      " + homepage + "\n"
-                    )
-                    msg.append(
-                        "      " + darkgreen("Description:") + "   " + desc + "\n"
-                    )
-                    msg.append(
-                        "      " + darkgreen("License:") + "       " + license + "\n\n"
-                    )
+                        msg.append(f"      {darkgreen('Size of files:')} {file_size_str}\n")
+                    msg.append("      " + darkgreen("Homepage:") + "      " + homepage + "\n")
+                    msg.append("      " + darkgreen("Description:") + "   " + desc + "\n")
+                    msg.append("      " + darkgreen("License:") + "       " + license + "\n\n")
 
         msg.append("[ Applications found : " + bold(str(mlen)) + " ]\n\n")
 

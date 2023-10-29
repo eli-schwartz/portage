@@ -7,6 +7,7 @@ from portage.exception import InvalidDependString
 
 
 class TestCheckRequiredUse(TestCase):
+
     def testCheckRequiredUse(self):
         test_cases = (
             ("a b c", ["a", "b", "c"]),
@@ -35,8 +36,7 @@ class TestCheckRequiredUse(TestCase):
             self.assertEqual(
                 result,
                 expected,
-                "REQUIRED_USE: '%s', expected: '%s', got: '%s'"
-                % (required_use, expected, result),
+                "REQUIRED_USE: '%s', expected: '%s', got: '%s'" % (required_use, expected, result),
             )
 
         for required_use in test_cases_xfail:

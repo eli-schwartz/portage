@@ -1,7 +1,7 @@
 # Copyright 2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = ("VirtualsManager",)
+__all__ = ("VirtualsManager", )
 
 from copy import deepcopy
 
@@ -14,15 +14,13 @@ from portage.versions import cpv_getkey
 
 
 class VirtualsManager:
+
     def __init__(self, *args, **kwargs):
         if kwargs.get("_copy"):
             return
 
         assert len(args) == 1, "VirtualsManager.__init__ takes one positional argument"
-        assert not kwargs, (
-            "unknown keyword argument(s) '%s' passed to VirtualsManager.__init__"
-            % ", ".join(kwargs)
-        )
+        assert not kwargs, ("unknown keyword argument(s) '%s' passed to VirtualsManager.__init__" % ", ".join(kwargs))
 
         profiles = args[0]
         self._virtuals = None
@@ -78,8 +76,7 @@ class VirtualsManager:
                             atom = None
                     if atom is None:
                         writemsg(
-                            _("--- Invalid atom in %s: %s\n")
-                            % (virtuals_file, atom_orig),
+                            _("--- Invalid atom in %s: %s\n") % (virtuals_file, atom_orig),
                             noiselevel=-1,
                         )
                     else:
@@ -131,10 +128,8 @@ class VirtualsManager:
         3. profile only
         """
 
-        assert self._treeVirtuals is not None, (
-            "_populate_treeVirtuals() must be called before "
-            + "any query about virtuals"
-        )
+        assert self._treeVirtuals is not None, ("_populate_treeVirtuals() must be called before " +
+                                                "any query about virtuals")
 
         # Virtuals by profile+tree preferences.
         ptVirtuals = {}
@@ -148,9 +143,7 @@ class VirtualsManager:
                     ptVirtuals.setdefault(virt, [])
                     ptVirtuals[virt].append(cp)
 
-        virtuals = stack_dictlist(
-            [ptVirtuals, self._treeVirtuals, self._dirVirtuals, self._depgraphVirtuals]
-        )
+        virtuals = stack_dictlist([ptVirtuals, self._treeVirtuals, self._dirVirtuals, self._depgraphVirtuals])
         self._virtuals = virtuals
         self._virts_p = None
 

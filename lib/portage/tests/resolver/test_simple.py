@@ -13,16 +13,23 @@ from portage.output import colorize
 
 
 class SimpleResolverTestCase(TestCase):
+
     def testSimple(self):
         ebuilds = {
-            "dev-libs/A-1": {"KEYWORDS": "x86"},
-            "dev-libs/A-2": {"KEYWORDS": "~x86"},
+            "dev-libs/A-1": {
+                "KEYWORDS": "x86"
+            },
+            "dev-libs/A-2": {
+                "KEYWORDS": "~x86"
+            },
             "dev-libs/B-1.2": {},
             "app-misc/Z-1": {
                 "DEPEND": "|| ( app-misc/Y ( app-misc/X app-misc/W ) )",
                 "RDEPEND": "",
             },
-            "app-misc/Y-1": {"KEYWORDS": "~x86"},
+            "app-misc/Y-1": {
+                "KEYWORDS": "~x86"
+            },
             "app-misc/X-1": {},
             "app-misc/W-1": {},
         }
@@ -35,12 +42,8 @@ class SimpleResolverTestCase(TestCase):
         }
 
         test_cases = (
-            ResolverPlaygroundTestCase(
-                ["dev-libs/A"], success=True, mergelist=["dev-libs/A-1"]
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-2"], options={"--autounmask": "n"}, success=False
-            ),
+            ResolverPlaygroundTestCase(["dev-libs/A"], success=True, mergelist=["dev-libs/A-1"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-2"], options={"--autounmask": "n"}, success=False),
             ResolverPlaygroundTestCase(
                 ["dev-libs/A"],
                 options={"--noreplace": True},
@@ -61,13 +64,19 @@ class SimpleResolverTestCase(TestCase):
             ),
             ResolverPlaygroundTestCase(
                 ["dev-libs/B"],
-                options={"--update": True, "--usepkg": True},
+                options={
+                    "--update": True,
+                    "--usepkg": True
+                },
                 success=True,
                 mergelist=["[binary]dev-libs/B-1.2"],
             ),
             ResolverPlaygroundTestCase(
                 ["dev-libs/B"],
-                options={"--update": True, "--usepkgonly": True},
+                options={
+                    "--update": True,
+                    "--usepkgonly": True
+                },
                 success=True,
                 mergelist=["[binary]dev-libs/B-1.2"],
             ),
@@ -88,14 +97,12 @@ class SimpleResolverTestCase(TestCase):
                     binpkgs=binpkgs,
                     installed=installed,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.cleanup()

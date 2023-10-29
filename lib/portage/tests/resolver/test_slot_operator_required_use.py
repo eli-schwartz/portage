@@ -9,10 +9,17 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotOperatorRequiredUseTestCase(TestCase):
+
     def testSlotOperatorRequiredUse(self):
         ebuilds = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/A-2": {"EAPI": "5", "SLOT": "0/2"},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/A-2": {
+                "EAPI": "5",
+                "SLOT": "0/2"
+            },
             "app-misc/B-0": {
                 "EAPI": "5",
                 "RDEPEND": "app-misc/A:=",
@@ -22,7 +29,10 @@ class SlotOperatorRequiredUseTestCase(TestCase):
         }
 
         installed = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
             "app-misc/B-0": {
                 "EAPI": "5",
                 "RDEPEND": "app-misc/A:0/1=",
@@ -37,14 +47,9 @@ class SlotOperatorRequiredUseTestCase(TestCase):
             # bug 523048
             # Ensure that unsatisfied REQUIRED_USE is reported when
             # it blocks necessary slot-operator rebuilds.
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"], success=False, required_use_unsatisfied=["app-misc/B:0"]
-            ),
-        )
+            ResolverPlaygroundTestCase(["app-misc/A"], success=False, required_use_unsatisfied=["app-misc/B:0"]), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

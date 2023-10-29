@@ -16,9 +16,7 @@ def get_vm_info():
 
     if platform.system() == "Linux":
         try:
-            proc = subprocess.Popen(
-                ["free"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env
-            )
+            proc = subprocess.Popen(["free"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env)
         except OSError:
             pass
         else:

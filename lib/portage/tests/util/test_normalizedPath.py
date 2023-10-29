@@ -6,6 +6,7 @@ from portage.tests import TestCase
 
 
 class NormalizePathTestCase(TestCase):
+
     def testNormalizePath(self):
         from portage.util import normalize_path
 

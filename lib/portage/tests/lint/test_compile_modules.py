@@ -15,10 +15,9 @@ from portage import _unicode_decode, _unicode_encode
 
 
 class CompileModulesTestCase(TestCase):
+
     def testCompileModules(self):
-        iters = [
-            os.walk(os.path.join(PORTAGE_PYM_PATH, x)) for x in PORTAGE_PYM_PACKAGES
-        ]
+        iters = [os.walk(os.path.join(PORTAGE_PYM_PATH, x)) for x in PORTAGE_PYM_PACKAGES]
         iters.append(os.walk(PORTAGE_BIN_PATH))
 
         for parent, _dirs, files in itertools.chain(*iters):
@@ -37,9 +36,7 @@ class CompileModulesTestCase(TestCase):
 
                 meta = module_metadata.get(mod_path) or script_metadata.get(bin_path)
                 if meta:
-                    req_py = tuple(
-                        int(x) for x in meta.get("required_python", "0.0").split(".")
-                    )
+                    req_py = tuple(int(x) for x in meta.get("required_python", "0.0").split("."))
                     if sys.version_info < req_py:
                         continue
 
@@ -50,10 +47,8 @@ class CompileModulesTestCase(TestCase):
                     # Check for python shebang.
                     try:
                         with open(
-                            _unicode_encode(
-                                x, encoding=_encodings["fs"], errors="strict"
-                            ),
-                            "rb",
+                                _unicode_encode(x, encoding=_encodings["fs"], errors="strict"),
+                                "rb",
                         ) as f:
                             line = _unicode_decode(
                                 f.readline(),
@@ -70,7 +65,7 @@ class CompileModulesTestCase(TestCase):
                         do_compile = True
                 if do_compile:
                     with open(
-                        _unicode_encode(x, encoding=_encodings["fs"], errors="strict"),
-                        "rb",
+                            _unicode_encode(x, encoding=_encodings["fs"], errors="strict"),
+                            "rb",
                     ) as f:
                         compile(f.read(), x, "exec")

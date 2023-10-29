@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class CompleteGraphTestCase(TestCase):
+
     def testCompleteGraphUseChange(self):
         """
         Prevent reverse dependency breakage triggered by USE changes.
@@ -49,7 +50,11 @@ class CompleteGraphTestCase(TestCase):
                 ["dev-libs/libxml2"],
                 options={"--complete-graph-if-new-use": "y"},
                 mergelist=["dev-libs/libxml2-2.8.0"],
-                slot_collision_solutions=[{"dev-libs/libxml2-2.8.0": {"icu": False}}],
+                slot_collision_solutions=[{
+                    "dev-libs/libxml2-2.8.0": {
+                        "icu": False
+                    }
+                }],
                 success=False,
             ),
             ResolverPlaygroundTestCase(
@@ -66,9 +71,7 @@ class CompleteGraphTestCase(TestCase):
             ),
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
 
         try:
             for test_case in test_cases:
@@ -86,12 +89,16 @@ class CompleteGraphTestCase(TestCase):
             "sys-libs/x-0.1": {},
             "sys-libs/x-1": {},
             "sys-libs/x-2": {},
-            "sys-apps/a-1": {"RDEPEND": ">=sys-libs/x-1 <sys-libs/x-2"},
+            "sys-apps/a-1": {
+                "RDEPEND": ">=sys-libs/x-1 <sys-libs/x-2"
+            },
         }
 
         installed = {
             "sys-libs/x-1": {},
-            "sys-apps/a-1": {"RDEPEND": ">=sys-libs/x-1 <sys-libs/x-2"},
+            "sys-apps/a-1": {
+                "RDEPEND": ">=sys-libs/x-1 <sys-libs/x-2"
+            },
         }
 
         world = ["sys-apps/a"]
@@ -143,9 +150,7 @@ class CompleteGraphTestCase(TestCase):
             ),
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
 
         try:
             for test_case in test_cases:

@@ -35,9 +35,10 @@ from _emerge.Package import Package
 
 
 class EbuildFetchTestCase(TestCase):
+
     def testEbuildFetch(self):
         user_config = {
-            "make.conf": ('GENTOO_MIRRORS="{scheme}://{host}:{port}"',),
+            "make.conf": ('GENTOO_MIRRORS="{scheme}://{host}:{port}"', ),
         }
 
         distfiles = {
@@ -47,8 +48,10 @@ class EbuildFetchTestCase(TestCase):
 
         ebuilds = {
             "dev-libs/A-1": {
-                "EAPI": "7",
-                "SRC_URI": """{scheme}://{host}:{port}/distfiles/bar.txt -> bar
+                "EAPI":
+                "7",
+                "SRC_URI":
+                """{scheme}://{host}:{port}/distfiles/bar.txt -> bar
 					{scheme}://{host}:{port}/distfiles/foo.txt -> foo""",
             },
         }
@@ -63,18 +66,14 @@ class EbuildFetchTestCase(TestCase):
             ebuilds_subst = {}
             for cpv, metadata in ebuilds.items():
                 metadata = metadata.copy()
-                metadata["SRC_URI"] = metadata["SRC_URI"].format(
-                    scheme=scheme, host=host, port=server.server_port
-                )
+                metadata["SRC_URI"] = metadata["SRC_URI"].format(scheme=scheme, host=host, port=server.server_port)
                 ebuilds_subst[cpv] = metadata
 
             user_config_subst = user_config.copy()
             for configname, configdata in user_config.items():
                 configdata_sub = []
                 for line in configdata:
-                    configdata_sub.append(
-                        line.format(scheme=scheme, host=host, port=server.server_port)
-                    )
+                    configdata_sub.append(line.format(scheme=scheme, host=host, port=server.server_port))
                 user_config_subst[configname] = tuple(configdata_sub)
 
             playground = ResolverPlayground(
@@ -132,17 +131,13 @@ class EbuildFetchTestCase(TestCase):
         fetchcommand = portage.util.shlex_split(playground.settings["FETCHCOMMAND"])
         fetch_bin = portage.process.find_binary(fetchcommand[0])
         if fetch_bin is None:
-            self.skipTest(
-                f"FETCHCOMMAND not found: {playground.settings['FETCHCOMMAND']}"
-            )
+            self.skipTest(f"FETCHCOMMAND not found: {playground.settings['FETCHCOMMAND']}")
         eubin = os.path.join(playground.eprefix, "usr", "bin")
         os.symlink(fetch_bin, os.path.join(eubin, os.path.basename(fetch_bin)))
         resumecommand = portage.util.shlex_split(playground.settings["RESUMECOMMAND"])
         resume_bin = portage.process.find_binary(resumecommand[0])
         if resume_bin is None:
-            self.skipTest(
-                f"RESUMECOMMAND not found: {playground.settings['RESUMECOMMAND']}"
-            )
+            self.skipTest(f"RESUMECOMMAND not found: {playground.settings['RESUMECOMMAND']}")
         if resume_bin != fetch_bin:
             os.symlink(resume_bin, os.path.join(eubin, os.path.basename(resume_bin)))
         root_config = playground.trees[playground.eroot]["root_config"]
@@ -150,11 +145,7 @@ class EbuildFetchTestCase(TestCase):
 
         def run_async(func, *args, **kwargs):
             with ForkExecutor(loop=loop) as executor:
-                return loop.run_until_complete(
-                    loop.run_in_executor(
-                        executor, functools.partial(func, *args, **kwargs)
-                    )
-                )
+                return loop.run_until_complete(loop.run_in_executor(executor, functools.partial(func, *args, **kwargs)))
 
         for layout_lines in mirror_layouts:
             settings = config(clone=playground.settings)
@@ -167,10 +158,8 @@ class EbuildFetchTestCase(TestCase):
             for k, v in orig_distfiles.items():
                 filename = DistfileName(
                     k,
-                    digests={
-                        algo: checksum_str(v, hashname=algo)
-                        for algo in MANIFEST2_HASH_DEFAULTS
-                    },
+                    digests={algo: checksum_str(v, hashname=algo)
+                             for algo in MANIFEST2_HASH_DEFAULTS},
                 )
                 distfiles[filename] = v
 
@@ -186,9 +175,7 @@ class EbuildFetchTestCase(TestCase):
                 f.write(layout_data)
 
             if any(isinstance(layout, ContentHashLayout) for layout in layouts):
-                content_db = os.path.join(
-                    playground.eprefix, "var/db/emirrordist/content.db"
-                )
+                content_db = os.path.join(playground.eprefix, "var/db/emirrordist/content.db")
                 os.makedirs(os.path.dirname(content_db), exist_ok=True)
                 try:
                     os.unlink(content_db)
@@ -198,17 +185,13 @@ class EbuildFetchTestCase(TestCase):
                 content_db = None
 
             # Demonstrate that fetch preserves a stale file in DISTDIR when no digests are given.
-            foo_uri = {
-                "foo": (f"{scheme}://{host}:{server.server_port}/distfiles/foo",)
-            }
+            foo_uri = {"foo": (f"{scheme}://{host}:{server.server_port}/distfiles/foo", )}
             foo_path = os.path.join(settings["DISTDIR"], "foo")
             foo_stale_content = b"stale content\n"
             with open(foo_path, "wb") as f:
                 f.write(b"stale content\n")
 
-            self.assertTrue(
-                bool(run_async(fetch, foo_uri, settings, try_mirrors=False))
-            )
+            self.assertTrue(bool(run_async(fetch, foo_uri, settings, try_mirrors=False)))
 
             with open(foo_path, "rb") as f:
                 self.assertEqual(f.read(), foo_stale_content)
@@ -216,9 +199,7 @@ class EbuildFetchTestCase(TestCase):
                 self.assertNotEqual(f.read(), distfiles["foo"])
 
             # Use force=True to update the stale file.
-            self.assertTrue(
-                bool(run_async(fetch, foo_uri, settings, try_mirrors=False, force=True))
-            )
+            self.assertTrue(bool(run_async(fetch, foo_uri, settings, try_mirrors=False, force=True)))
 
             with open(foo_path, "rb") as f:
                 self.assertEqual(f.read(), distfiles["foo"])
@@ -233,8 +214,7 @@ class EbuildFetchTestCase(TestCase):
             orig_distdir_mode = os.stat(settings["DISTDIR"]).st_mode
             temp_fetchcommand = os.path.join(eubin, "fetchcommand")
             with open(temp_fetchcommand, "w") as f:
-                f.write(
-                    """
+                f.write("""
 					set -e
 					URI=$1
 					DISTDIR=$2
@@ -243,12 +223,8 @@ class EbuildFetchTestCase(TestCase):
 					chmod ug+w "${DISTDIR}"
 					%s
 					mv -f "${DISTDIR}/${FILE}.__download__" "${DISTDIR}/${FILE}"
-				"""
-                    % orig_fetchcommand.replace("${FILE}", "${FILE}.__download__")
-                )
-            settings[
-                "FETCHCOMMAND"
-            ] = '"{}" "{}" "${{URI}}" "${{DISTDIR}}" "${{FILE}}"'.format(
+				""" % orig_fetchcommand.replace("${FILE}", "${FILE}.__download__"))
+            settings["FETCHCOMMAND"] = '"{}" "{}" "${{URI}}" "${{DISTDIR}}" "${{FILE}}"'.format(
                 BASH_BINARY,
                 temp_fetchcommand,
             )
@@ -256,13 +232,7 @@ class EbuildFetchTestCase(TestCase):
             settings.features.remove("distlocks")
             os.chmod(settings["DISTDIR"], 0o555)
             try:
-                self.assertTrue(
-                    bool(
-                        run_async(
-                            fetch, foo_uri, settings, try_mirrors=False, force=True
-                        )
-                    )
-                )
+                self.assertTrue(bool(run_async(fetch, foo_uri, settings, try_mirrors=False, force=True)))
             finally:
                 settings["FETCHCOMMAND"] = orig_fetchcommand
                 os.chmod(settings["DISTDIR"], orig_distdir_mode)
@@ -302,8 +272,7 @@ class EbuildFetchTestCase(TestCase):
                 filter(
                     None,
                     [PORTAGE_PYM_PATH] + os.environ.get("PYTHONPATH", "").split(":"),
-                )
-            )
+                ))
 
             for k in distfiles:
                 try:
@@ -311,15 +280,11 @@ class EbuildFetchTestCase(TestCase):
                 except OSError:
                     pass
 
-            proc = loop.run_until_complete(
-                asyncio.create_subprocess_exec(*emirrordist_cmd, env=env)
-            )
+            proc = loop.run_until_complete(asyncio.create_subprocess_exec(*emirrordist_cmd, env=env))
             self.assertEqual(loop.run_until_complete(proc.wait()), 0)
 
             for k in distfiles:
-                with open(
-                    os.path.join(settings["DISTDIR"], layouts[0].get_path(k)), "rb"
-                ) as f:
+                with open(os.path.join(settings["DISTDIR"], layouts[0].get_path(k)), "rb") as f:
                     self.assertEqual(f.read(), distfiles[k])
 
             if content_db is not None:
@@ -332,8 +297,7 @@ class EbuildFetchTestCase(TestCase):
                         distfiles,
                         settings,
                         portdb,
-                    )
-                )
+                    ))
 
             config_pool = config_pool_cls(settings)
 
@@ -350,12 +314,10 @@ class EbuildFetchTestCase(TestCase):
                 return fetcher.async_wait()
 
             for cpv in ebuilds:
-                metadata = dict(
-                    zip(
-                        Package.metadata_keys,
-                        portdb.aux_get(cpv, Package.metadata_keys),
-                    )
-                )
+                metadata = dict(zip(
+                    Package.metadata_keys,
+                    portdb.aux_get(cpv, Package.metadata_keys),
+                ))
 
                 pkg = Package(
                     built=False,
@@ -368,16 +330,12 @@ class EbuildFetchTestCase(TestCase):
 
                 settings.setcpv(pkg)
                 ebuild_path = portdb.findname(pkg.cpv)
-                portage.doebuild_environment(
-                    ebuild_path, "fetch", settings=settings, db=portdb
-                )
+                portage.doebuild_environment(ebuild_path, "fetch", settings=settings, db=portdb)
 
                 # Test good files in DISTDIR
                 for k in settings["AA"].split():
                     os.stat(os.path.join(settings["DISTDIR"], k))
-                self.assertEqual(
-                    loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                )
+                self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                 for k in settings["AA"].split():
                     with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                         self.assertEqual(f.read(), distfiles[k])
@@ -392,13 +350,8 @@ class EbuildFetchTestCase(TestCase):
                             loop.run_until_complete(
                                 loop.run_in_executor(
                                     executor,
-                                    functools.partial(
-                                        digestgen, mysettings=settings, myportdb=portdb
-                                    ),
-                                )
-                            )
-                        )
-                    )
+                                    functools.partial(digestgen, mysettings=settings, myportdb=portdb),
+                                ))))
                 for k in settings["AA"].split():
                     with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                         self.assertEqual(f.read(), distfiles[k])
@@ -406,9 +359,7 @@ class EbuildFetchTestCase(TestCase):
                 # Test missing files in DISTDIR
                 for k in settings["AA"].split():
                     os.unlink(os.path.join(settings["DISTDIR"], k))
-                self.assertEqual(
-                    loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                )
+                self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                 for k in settings["AA"].split():
                     with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                         self.assertEqual(f.read(), distfiles[k])
@@ -419,9 +370,7 @@ class EbuildFetchTestCase(TestCase):
                     with open(file_path, "wb") as f:
                         pass
                     self.assertEqual(os.stat(file_path).st_size, 0)
-                self.assertEqual(
-                    loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                )
+                self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                 for k in settings["AA"].split():
                     with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                         self.assertEqual(f.read(), distfiles[k])
@@ -432,9 +381,7 @@ class EbuildFetchTestCase(TestCase):
                     with open(file_path, "wb") as f:
                         f.write(len(distfiles[k]) * b"\0")
                     self.assertEqual(os.stat(file_path).st_size, len(distfiles[k]))
-                self.assertEqual(
-                    loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                )
+                self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                 for k in settings["AA"].split():
                     with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                         self.assertEqual(f.read(), distfiles[k])
@@ -448,9 +395,7 @@ class EbuildFetchTestCase(TestCase):
                     for k in settings["AA"].split():
                         file_path = os.path.join(settings["DISTDIR"], k)
                         os.rename(file_path, os.path.join(ro_distdir, k))
-                    self.assertEqual(
-                        loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                    )
+                    self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                     for k in settings["AA"].split():
                         file_path = os.path.join(settings["DISTDIR"], k)
                         self.assertTrue(os.path.islink(file_path))
@@ -468,9 +413,7 @@ class EbuildFetchTestCase(TestCase):
                 try:
                     settings["GENTOO_MIRRORS"] = ro_distdir
                     settings["FETCHCOMMAND"] = settings["RESUMECOMMAND"] = ""
-                    self.assertEqual(
-                        loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                    )
+                    self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                     for k in settings["AA"].split():
                         with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                             self.assertEqual(f.read(), distfiles[k])
@@ -483,9 +426,7 @@ class EbuildFetchTestCase(TestCase):
                 orig_distdir_mode = os.stat(settings["DISTDIR"]).st_mode
                 try:
                     os.chmod(settings["DISTDIR"], 0o555)
-                    self.assertEqual(
-                        loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                    )
+                    self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                     for k in settings["AA"].split():
                         with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                             self.assertEqual(f.read(), distfiles[k])
@@ -495,17 +436,13 @@ class EbuildFetchTestCase(TestCase):
                 # Test parallel-fetch mode
                 settings["PORTAGE_PARALLEL_FETCHONLY"] = "1"
                 try:
-                    self.assertEqual(
-                        loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                    )
+                    self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                     for k in settings["AA"].split():
                         with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                             self.assertEqual(f.read(), distfiles[k])
                     for k in settings["AA"].split():
                         os.unlink(os.path.join(settings["DISTDIR"], k))
-                    self.assertEqual(
-                        loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                    )
+                    self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                     for k in settings["AA"].split():
                         with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                             self.assertEqual(f.read(), distfiles[k])
@@ -521,9 +458,7 @@ class EbuildFetchTestCase(TestCase):
                         os.unlink(file_path)
                         with open(file_path + _download_suffix, "wb") as f:
                             f.write(distfiles[k][:2])
-                    self.assertEqual(
-                        loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                    )
+                    self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                     for k in settings["AA"].split():
                         with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                             self.assertEqual(f.read(), distfiles[k])
@@ -539,54 +474,35 @@ class EbuildFetchTestCase(TestCase):
                     os.chmod(settings["DISTDIR"], 0o555)
                     settings["FETCHCOMMAND"] = (
                         '"%s" -c "chmod ug+w \\"${DISTDIR}\\"; %s; status=\\$?; chmod a-w \\"${DISTDIR}\\"; exit \\$status"'
-                        % (BASH_BINARY, orig_fetchcommand.replace('"', '\\"'))
-                    )
+                        % (BASH_BINARY, orig_fetchcommand.replace('"', '\\"')))
                     settings.features.add("skiprocheck")
                     settings.features.remove("distlocks")
-                    self.assertEqual(
-                        loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0
-                    )
+                    self.assertEqual(loop.run_until_complete(async_fetch(pkg, ebuild_path)), 0)
                 finally:
                     settings["FETCHCOMMAND"] = orig_fetchcommand
                     os.chmod(settings["DISTDIR"], orig_distdir_mode)
                     settings.features.remove("skiprocheck")
                     settings.features.add("distlocks")
 
-    async def _test_content_db(
-        self, emirrordist_cmd, env, layouts, content_db, distfiles, settings, portdb
-    ):
+    async def _test_content_db(self, emirrordist_cmd, env, layouts, content_db, distfiles, settings, portdb):
         # Simulate distfile digest change for ContentDB.
-        emdisopts = types.SimpleNamespace(
-            content_db=content_db, distfiles=settings["DISTDIR"]
-        )
-        with EmirrordistConfig(
-            emdisopts, portdb, asyncio.get_event_loop()
-        ) as emdisconf:
+        emdisopts = types.SimpleNamespace(content_db=content_db, distfiles=settings["DISTDIR"])
+        with EmirrordistConfig(emdisopts, portdb, asyncio.get_event_loop()) as emdisconf:
             # Copy revisions from bar to foo.
             for revision_key in emdisconf.content_db["filename:bar"]:
-                emdisconf.content_db.add(
-                    DistfileName("foo", digests=dict(revision_key))
-                )
+                emdisconf.content_db.add(DistfileName("foo", digests=dict(revision_key)))
 
             # Copy revisions from foo to bar.
             for revision_key in emdisconf.content_db["filename:foo"]:
-                emdisconf.content_db.add(
-                    DistfileName("bar", digests=dict(revision_key))
-                )
+                emdisconf.content_db.add(DistfileName("bar", digests=dict(revision_key)))
 
             content_db_state = dict(emdisconf.content_db.items())
             self.assertEqual(content_db_state, dict(emdisconf.content_db.items()))
             self.assertEqual(
-                [
-                    k[len("filename:") :]
-                    for k in content_db_state
-                    if k.startswith("filename:")
-                ],
+                [k[len("filename:"):] for k in content_db_state if k.startswith("filename:")],
                 ["bar", "foo"],
             )
-            self.assertEqual(
-                content_db_state["filename:foo"], content_db_state["filename:bar"]
-            )
+            self.assertEqual(content_db_state["filename:foo"], content_db_state["filename:bar"])
             self.assertEqual(len(content_db_state["filename:foo"]), 2)
 
         for k in distfiles:
@@ -599,14 +515,10 @@ class EbuildFetchTestCase(TestCase):
         self.assertEqual(await proc.wait(), 0)
 
         for k in distfiles:
-            with open(
-                os.path.join(settings["DISTDIR"], layouts[0].get_path(k)), "rb"
-            ) as f:
+            with open(os.path.join(settings["DISTDIR"], layouts[0].get_path(k)), "rb") as f:
                 self.assertEqual(f.read(), distfiles[k])
 
-        with EmirrordistConfig(
-            emdisopts, portdb, asyncio.get_event_loop()
-        ) as emdisconf:
+        with EmirrordistConfig(emdisopts, portdb, asyncio.get_event_loop()) as emdisconf:
             self.assertEqual(content_db_state, dict(emdisconf.content_db.items()))
 
             # Verify that remove works as expected
@@ -615,44 +527,30 @@ class EbuildFetchTestCase(TestCase):
             emdisconf.content_db.remove(filename)
             # foo should still have a content revision corresponding to bar's content.
             self.assertEqual(
-                [
-                    k[len("filename:") :]
-                    for k in emdisconf.content_db
-                    if k.startswith("filename:")
-                ],
+                [k[len("filename:"):] for k in emdisconf.content_db if k.startswith("filename:")],
                 ["bar", "foo"],
             )
             self.assertEqual(len(emdisconf.content_db["filename:foo"]), 1)
             self.assertEqual(
-                len(
-                    [
-                        revision_key
-                        for revision_key in emdisconf.content_db["filename:foo"]
-                        if not filename.digests_equal(
-                            DistfileName(
-                                "foo",
-                                digests=dict(revision_key),
-                            )
-                        )
-                    ]
-                ),
+                len([
+                    revision_key for revision_key in emdisconf.content_db["filename:foo"]
+                    if not filename.digests_equal(DistfileName(
+                        "foo",
+                        digests=dict(revision_key),
+                    ))
+                ]),
                 1,
             )
             # bar should still have a content revision corresponding to foo's content.
             self.assertEqual(len(emdisconf.content_db["filename:bar"]), 2)
             self.assertEqual(
-                len(
-                    [
-                        revision_key
-                        for revision_key in emdisconf.content_db["filename:bar"]
-                        if filename.digests_equal(
-                            DistfileName(
-                                "bar",
-                                digests=dict(revision_key),
-                            )
-                        )
-                    ]
-                ),
+                len([
+                    revision_key for revision_key in emdisconf.content_db["filename:bar"]
+                    if filename.digests_equal(DistfileName(
+                        "bar",
+                        digests=dict(revision_key),
+                    ))
+                ]),
                 1,
             )
             # remove the foo which refers to bar's content
@@ -660,47 +558,29 @@ class EbuildFetchTestCase(TestCase):
             foo_remaining = DistfileName("foo", digests=bar.digests)
             emdisconf.content_db.remove(foo_remaining)
             self.assertEqual(
-                [
-                    k[len("filename:") :]
-                    for k in emdisconf.content_db
-                    if k.startswith("filename:")
-                ],
+                [k[len("filename:"):] for k in emdisconf.content_db if k.startswith("filename:")],
                 ["bar"],
             )
-            self.assertRaises(
-                KeyError, emdisconf.content_db.__getitem__, "filename:foo"
-            )
+            self.assertRaises(KeyError, emdisconf.content_db.__getitem__, "filename:foo")
             # bar should still have a content revision corresponding to foo's content.
             self.assertEqual(len(emdisconf.content_db["filename:bar"]), 2)
 
     def test_flat_layout(self):
-        self.assertTrue(FlatLayout.verify_args(("flat",)))
+        self.assertTrue(FlatLayout.verify_args(("flat", )))
         self.assertFalse(FlatLayout.verify_args(("flat", "extraneous-arg")))
         self.assertEqual(FlatLayout().get_path("foo-1.tar.gz"), "foo-1.tar.gz")
 
     def test_filename_hash_layout(self):
-        self.assertFalse(FilenameHashLayout.verify_args(("filename-hash",)))
+        self.assertFalse(FilenameHashLayout.verify_args(("filename-hash", )))
         self.assertTrue(FilenameHashLayout.verify_args(("filename-hash", "SHA1", "8")))
-        self.assertFalse(
-            FilenameHashLayout.verify_args(("filename-hash", "INVALID-HASH", "8"))
-        )
-        self.assertTrue(
-            FilenameHashLayout.verify_args(("filename-hash", "SHA1", "4:8:12"))
-        )
+        self.assertFalse(FilenameHashLayout.verify_args(("filename-hash", "INVALID-HASH", "8")))
+        self.assertTrue(FilenameHashLayout.verify_args(("filename-hash", "SHA1", "4:8:12")))
         self.assertFalse(FilenameHashLayout.verify_args(("filename-hash", "SHA1", "3")))
-        self.assertFalse(
-            FilenameHashLayout.verify_args(("filename-hash", "SHA1", "junk"))
-        )
-        self.assertFalse(
-            FilenameHashLayout.verify_args(("filename-hash", "SHA1", "4:8:junk"))
-        )
+        self.assertFalse(FilenameHashLayout.verify_args(("filename-hash", "SHA1", "junk")))
+        self.assertFalse(FilenameHashLayout.verify_args(("filename-hash", "SHA1", "4:8:junk")))
 
-        self.assertEqual(
-            FilenameHashLayout("SHA1", "4").get_path("foo-1.tar.gz"), "1/foo-1.tar.gz"
-        )
-        self.assertEqual(
-            FilenameHashLayout("SHA1", "8").get_path("foo-1.tar.gz"), "19/foo-1.tar.gz"
-        )
+        self.assertEqual(FilenameHashLayout("SHA1", "4").get_path("foo-1.tar.gz"), "1/foo-1.tar.gz")
+        self.assertEqual(FilenameHashLayout("SHA1", "8").get_path("foo-1.tar.gz"), "19/foo-1.tar.gz")
         self.assertEqual(
             FilenameHashLayout("SHA1", "8:16").get_path("foo-1.tar.gz"),
             "19/c3b6/foo-1.tar.gz",
@@ -711,37 +591,25 @@ class EbuildFetchTestCase(TestCase):
         )
 
     def test_content_hash_layout(self):
-        self.assertFalse(ContentHashLayout.verify_args(("content-hash",)))
+        self.assertFalse(ContentHashLayout.verify_args(("content-hash", )))
         self.assertTrue(ContentHashLayout.verify_args(("content-hash", "SHA1", "8")))
-        self.assertFalse(
-            ContentHashLayout.verify_args(("content-hash", "INVALID-HASH", "8"))
-        )
-        self.assertTrue(
-            ContentHashLayout.verify_args(("content-hash", "SHA1", "4:8:12"))
-        )
+        self.assertFalse(ContentHashLayout.verify_args(("content-hash", "INVALID-HASH", "8")))
+        self.assertTrue(ContentHashLayout.verify_args(("content-hash", "SHA1", "4:8:12")))
         self.assertFalse(ContentHashLayout.verify_args(("content-hash", "SHA1", "3")))
-        self.assertFalse(
-            ContentHashLayout.verify_args(("content-hash", "SHA1", "junk"))
-        )
-        self.assertFalse(
-            ContentHashLayout.verify_args(("content-hash", "SHA1", "4:8:junk"))
-        )
+        self.assertFalse(ContentHashLayout.verify_args(("content-hash", "SHA1", "junk")))
+        self.assertFalse(ContentHashLayout.verify_args(("content-hash", "SHA1", "4:8:junk")))
 
         filename = DistfileName(
             "foo-1.tar.gz",
-            digests={
-                algo: checksum_str(b"", hashname=algo)
-                for algo in MANIFEST2_HASH_DEFAULTS
-            },
+            digests={algo: checksum_str(b"", hashname=algo)
+                     for algo in MANIFEST2_HASH_DEFAULTS},
         )
 
         # Raise KeyError for a hash algorithm SHA1 which is not in MANIFEST2_HASH_DEFAULTS.
         self.assertRaises(KeyError, ContentHashLayout("SHA1", "4").get_path, filename)
 
         # Raise AttributeError for a plain string argument.
-        self.assertRaises(
-            AttributeError, ContentHashLayout("SHA512", "4").get_path, str(filename)
-        )
+        self.assertRaises(AttributeError, ContentHashLayout("SHA512", "4").get_path, str(filename))
 
         self.assertEqual(
             ContentHashLayout("SHA512", "4").get_path(filename),
@@ -770,11 +638,9 @@ class EbuildFetchTestCase(TestCase):
 0=flat
 """
         mlc.read_from_file(io.StringIO(conf))
-        self.assertEqual(mlc.serialize(), (("flat",),))
+        self.assertEqual(mlc.serialize(), (("flat", ), ))
         self.assertIsInstance(mlc.get_best_supported_layout(), FlatLayout)
-        self.assertEqual(
-            mlc.get_best_supported_layout().get_path("foo-1.tar.gz"), "foo-1.tar.gz"
-        )
+        self.assertEqual(mlc.get_best_supported_layout().get_path("foo-1.tar.gz"), "foo-1.tar.gz")
 
         conf = """
 [structure]
@@ -782,9 +648,7 @@ class EbuildFetchTestCase(TestCase):
 1=flat
 """
         mlc.read_from_file(io.StringIO(conf))
-        self.assertEqual(
-            mlc.serialize(), (("filename-hash", "SHA1", "8:16"), ("flat",))
-        )
+        self.assertEqual(mlc.serialize(), (("filename-hash", "SHA1", "8:16"), ("flat", )))
         self.assertIsInstance(mlc.get_best_supported_layout(), FilenameHashLayout)
         self.assertEqual(
             mlc.get_best_supported_layout().get_path("foo-1.tar.gz"),
@@ -805,7 +669,7 @@ class EbuildFetchTestCase(TestCase):
             (
                 ("filename-hash", "INVALID-HASH", "8:16"),
                 ("filename-hash", "SHA1", "32"),
-                ("flat",),
+                ("flat", ),
             ),
         )
         self.assertIsInstance(mlc.get_best_supported_layout(), FilenameHashLayout)
@@ -816,9 +680,7 @@ class EbuildFetchTestCase(TestCase):
 
         # test deserialization
         mlc.deserialize(serialized)
-        self.assertEqual(
-            mlc.serialize(), (("filename-hash", "SHA1", "8:16"), ("flat",))
-        )
+        self.assertEqual(mlc.serialize(), (("filename-hash", "SHA1", "8:16"), ("flat", )))
         self.assertIsInstance(mlc.get_best_supported_layout(), FilenameHashLayout)
         self.assertEqual(
             mlc.get_best_supported_layout().get_path("foo-1.tar.gz"),
@@ -836,10 +698,8 @@ class EbuildFetchTestCase(TestCase):
     def test_filename_hash_layout_get_filenames(self):
         filename = DistfileName(
             "foo-1.tar.gz",
-            digests={
-                algo: checksum_str(b"", hashname=algo)
-                for algo in MANIFEST2_HASH_DEFAULTS
-            },
+            digests={algo: checksum_str(b"", hashname=algo)
+                     for algo in MANIFEST2_HASH_DEFAULTS},
         )
         layouts = (
             FlatLayout(),
@@ -876,6 +736,7 @@ class EbuildFetchTestCase(TestCase):
 # Tests only work with one ebuild at a time, so the config
 # pool only needs a single config instance.
 class config_pool_cls:
+
     def __init__(self, settings):
         self._settings = settings
 

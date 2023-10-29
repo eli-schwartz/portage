@@ -19,9 +19,7 @@ def chk_updated_info_files(root, infodirs, prev_mtimes):
             if z == "":
                 continue
             inforoot = portage.util.normalize_path(root + z)
-            if os.path.isdir(inforoot) and not [
-                x for x in os.listdir(inforoot) if x.startswith(".keepinfodir")
-            ]:
+            if os.path.isdir(inforoot) and not [x for x in os.listdir(inforoot) if x.startswith(".keepinfodir")]:
                 infomtime = os.stat(inforoot)[stat.ST_MTIME]
                 if inforoot not in prev_mtimes or prev_mtimes[inforoot] != infomtime:
                     regen_infodirs.append(inforoot)
@@ -86,18 +84,14 @@ def chk_updated_info_files(root, infodirs, prev_mtimes):
                     except OSError:
                         myso = None
                     else:
-                        myso = portage._unicode_decode(proc.communicate()[0]).rstrip(
-                            "\n"
-                        )
+                        myso = portage._unicode_decode(proc.communicate()[0]).rstrip("\n")
                         proc.wait()
                     existsstr = "already exists, for file `"
                     if myso:
                         if re.search(existsstr, myso):
                             # Already exists... Don't increment the count for this.
                             pass
-                        elif (
-                            myso[:44] == "install-info: warning: no info dir entry in "
-                        ):
+                        elif (myso[:44] == "install-info: warning: no info dir entry in "):
                             # This info file doesn't contain a DIR-header: install-info produces this
                             # (harmless) warning (the --quiet switch doesn't seem to work).
                             # Don't increment the count for this.
@@ -136,4 +130,4 @@ def chk_updated_info_files(root, infodirs, prev_mtimes):
                 portage.util.writemsg_level(errmsg, level=logging.ERROR, noiselevel=-1)
             else:
                 if icount > 0 and portage.util.noiselimit >= 0:
-                    out.einfo("Processed %d info files." % (icount,))
+                    out.einfo("Processed %d info files." % (icount, ))

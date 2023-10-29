@@ -11,12 +11,8 @@ import sys
 
 from os import path as osp
 
-if osp.isfile(
-    osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")
-):
-    sys.path.insert(
-        0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib")
-    )
+if osp.isfile(osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")):
+    sys.path.insert(0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib"))
 import portage
 
 portage._internal_caller = True
@@ -101,9 +97,7 @@ def quickpkg_atom(options, infos, arg, eout):
             try:
                 restrict = use_reduce(restrict, uselist=use, flat=True)
             except InvalidDependString as e:
-                eout.eerror(
-                    "Invalid RESTRICT metadata " + f"for '{cpv}': {str(e)}; skipping"
-                )
+                eout.eerror("Invalid RESTRICT metadata " + f"for '{cpv}': {str(e)}; skipping")
                 del e
                 continue
             if "bindist" in iuse and "bindist" not in use:
@@ -114,9 +108,7 @@ def quickpkg_atom(options, infos, arg, eout):
                 eout.ewarn(f"{cpv}: it might not be legal to redistribute this.")
             eout.ebegin(f"Building package for {cpv}")
             pkgs_for_arg += 1
-            existing_metadata = dict(
-                zip(fix_metadata_keys, vardb.aux_get(cpv, fix_metadata_keys))
-            )
+            existing_metadata = dict(zip(fix_metadata_keys, vardb.aux_get(cpv, fix_metadata_keys)))
             category, pf = portage.catsplit(cpv)
             required_metadata = {}
             required_metadata["CATEGORY"] = category
@@ -128,23 +120,17 @@ def quickpkg_atom(options, infos, arg, eout):
             if update_metadata:
                 vardb.aux_update(cpv, update_metadata)
 
-            binpkg_format = settings.get(
-                "BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0]
-            )
+            binpkg_format = settings.get("BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0])
             if binpkg_format == "xpak":
                 xpdata = xpak.xpak(dblnk.dbdir)
-                binpkg_tmpfile = os.path.join(
-                    bintree.pkgdir, cpv + ".tbz2." + str(portage.getpid())
-                )
+                binpkg_tmpfile = os.path.join(bintree.pkgdir, cpv + ".tbz2." + str(portage.getpid()))
                 ensure_dirs(os.path.dirname(binpkg_tmpfile))
                 binpkg_compression = settings.get("BINPKG_COMPRESS", "bzip2")
                 try:
                     compression = _compressors[binpkg_compression]
                 except KeyError as e:
                     if binpkg_compression:
-                        eout.eerror(
-                            f"Invalid or unsupported compression method: {e.args[0]}"
-                        )
+                        eout.eerror(f"Invalid or unsupported compression method: {e.args[0]}")
                         return 1
                     # Empty BINPKG_COMPRESS disables compression.
                     binpkg_compression = "none"
@@ -153,31 +139,21 @@ def quickpkg_atom(options, infos, arg, eout):
                         "package": "sys-apps/coreutils",
                     }
 
-                if (
-                    settings.get(
-                        f"BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}", None
-                    )
-                    is not None
-                ):
+                if (settings.get(f"BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}", None) is not None):
                     compression["compress"] = compression["compress"].replace(
                         "${BINPKG_COMPRESS_FLAGS}",
                         f"${{BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}}}",
                     )
 
                 try:
-                    compression_binary = shlex_split(
-                        varexpand(compression["compress"], mydict=settings)
-                    )[0]
+                    compression_binary = shlex_split(varexpand(compression["compress"], mydict=settings))[0]
                 except IndexError as e:
-                    eout.eerror(
-                        f"Invalid or unsupported compression method: {e.args[0]}"
-                    )
+                    eout.eerror(f"Invalid or unsupported compression method: {e.args[0]}")
                     return 1
                 if find_binary(compression_binary) is None:
                     missing_package = compression["package"]
                     eout.eerror(
-                        f"File compression unsupported {binpkg_compression} (missing package: {missing_package})"
-                    )
+                        f"File compression unsupported {binpkg_compression} (missing package: {missing_package})")
                     return 1
 
                 cmd = compression["compress"].replace(
@@ -208,9 +184,7 @@ def quickpkg_atom(options, infos, arg, eout):
                 xpak.tbz2(binpkg_tmpfile).recompose_mem(xpdata)
             elif binpkg_format == "gpkg":
                 metadata = gpkg.gpkg(settings)._generate_metadata_from_dir(dblnk.dbdir)
-                binpkg_tmpfile = os.path.join(
-                    bintree.pkgdir, cpv + ".gpkg.tar." + str(os.getpid())
-                )
+                binpkg_tmpfile = os.path.join(bintree.pkgdir, cpv + ".gpkg.tar." + str(os.getpid()))
                 ensure_dirs(os.path.dirname(binpkg_tmpfile))
                 excluded_config_files = dblnk.quickpkg(
                     binpkg_tmpfile,
@@ -276,10 +250,8 @@ def quickpkg_set(options, infos, arg, eout):
     try:
         atoms = setconfig.getSetAtoms(set_name)
     except PackageSetNotFound as e:
-        eout.eerror(
-            f"Failed to process package set '{set_name}' because "
-            + f"it contains the non-existent package set '{e}'; skipping"
-        )
+        eout.eerror(f"Failed to process package set '{set_name}' because " +
+                    f"it contains the non-existent package set '{e}'; skipping")
         infos["missing"].append(arg)
         return 1
     retval = os.EX_OK
@@ -334,9 +306,8 @@ def quickpkg_main(options, args, eout):
         return errno.EACCES
 
     if "xattr" in portage.settings.features and not _xattr.XATTRS_WORKS:
-        eout.eerror(
-            "No xattr support library was found, " "so xattrs will not be preserved!"
-        )
+        eout.eerror("No xattr support library was found, "
+                    "so xattrs will not be preserved!")
         portage.settings.unlock()
         portage.settings.features.remove("xattr")
         portage.settings.lock()
@@ -425,7 +396,8 @@ if __name__ == "__main__":
         choices=["y", "n"],
         default="n",
         metavar="<y|n>",
-        help="include files protected by CONFIG_PROTECT that have not been modified since installation (as a security precaution, default is 'n')",
+        help=
+        "include files protected by CONFIG_PROTECT that have not been modified since installation (as a security precaution, default is 'n')",
     )
     options, args = parser.parse_known_args(sys.argv[1:])
     if not options.ignore_default_opts:

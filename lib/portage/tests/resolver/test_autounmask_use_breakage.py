@@ -9,16 +9,29 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class AutounmaskUseBreakageTestCase(TestCase):
+
     def testAutounmaskUseBreakage(self):
         ebuilds = {
             "app-misc/A-0": {
                 "EAPI": "5",
                 "RDEPEND": "app-misc/D[-foo]",
             },
-            "app-misc/B-0": {"EAPI": "5", "RDEPEND": "app-misc/D[foo]"},
-            "app-misc/C-0": {"EAPI": "5", "RDEPEND": ">=app-misc/D-1"},
-            "app-misc/D-0": {"EAPI": "5", "IUSE": "foo"},
-            "app-misc/D-1": {"EAPI": "5", "IUSE": "bar"},
+            "app-misc/B-0": {
+                "EAPI": "5",
+                "RDEPEND": "app-misc/D[foo]"
+            },
+            "app-misc/C-0": {
+                "EAPI": "5",
+                "RDEPEND": ">=app-misc/D-1"
+            },
+            "app-misc/D-0": {
+                "EAPI": "5",
+                "IUSE": "foo"
+            },
+            "app-misc/D-1": {
+                "EAPI": "5",
+                "IUSE": "bar"
+            },
         }
 
         test_cases = (

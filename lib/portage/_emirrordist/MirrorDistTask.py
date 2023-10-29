@@ -111,9 +111,7 @@ class MirrorDistTask(CompositeTask):
                             os.unlink(recycle_file)
                         except OSError as e:
                             if e.errno not in (errno.ENOENT, errno.ESTALE):
-                                logger.error(
-                                    f"delete '{filename}' from recycle failed: {e}"
-                                )
+                                logger.error(f"delete '{filename}' from recycle failed: {e}")
                         else:
                             logger.debug(f"delete '{filename}' from recycle")
                             try:
@@ -153,18 +151,14 @@ class MirrorDistTask(CompositeTask):
             date_files.append(filename)
 
         if dry_run:
-            logger.warning(
-                "dry-run: scheduled-deletions log "
-                "will be summarized via logging.info"
-            )
+            logger.warning("dry-run: scheduled-deletions log "
+                           "will be summarized via logging.info")
 
         lines = []
         for date in sorted(date_map):
             date_files = date_map[date]
             if dry_run:
-                logger.info(
-                    f"dry-run: scheduled deletions for {date}: {len(date_files)} files"
-                )
+                logger.info(f"dry-run: scheduled deletions for {date}: {len(date_files)} files")
             lines.append(f"{date}\n")
             for filename in date_files:
                 cpv = "unknown"
@@ -173,9 +167,7 @@ class MirrorDistTask(CompositeTask):
                 lines.append(f"\t{filename}\t{cpv}\n")
 
         if not dry_run:
-            portage.util.write_atomic(
-                self._config.options.scheduled_deletion_log, "".join(lines)
-            )
+            portage.util.write_atomic(self._config.options.scheduled_deletion_log, "".join(lines))
 
     def _summary(self):
         elapsed_time = time.time() - self._config.start_time
@@ -210,9 +202,7 @@ class MirrorDistTask(CompositeTask):
     def terminate(self):
         with self._term_rlock:
             if self._term_callback_handle is None:
-                self._term_callback_handle = self.scheduler.call_soon_threadsafe(
-                    self._term_callback
-                )
+                self._term_callback_handle = self.scheduler.call_soon_threadsafe(self._term_callback)
 
     def _term_callback(self):
         if self._fetch_iterator is not None:

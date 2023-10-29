@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SimpleDepcleanTestCase(TestCase):
+
     def testSimpleDepclean(self):
         ebuilds = {
             "dev-libs/A-1": {
@@ -34,7 +35,7 @@ class SimpleDepcleanTestCase(TestCase):
             "dev-libs/C-1": {},
         }
 
-        world = ("dev-libs/C",)
+        world = ("dev-libs/C", )
 
         test_cases = (
             # Remove dev-libs/A-1 first because of dev-libs/B:0/0= (built
@@ -45,12 +46,9 @@ class SimpleDepcleanTestCase(TestCase):
                 success=True,
                 ordered=True,
                 cleanlist=["dev-libs/A-1", "dev-libs/B-1"],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

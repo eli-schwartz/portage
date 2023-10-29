@@ -13,6 +13,7 @@ from portage.util.futures import asyncio
 
 
 class ForkProcessTestCase(TestCase):
+
     @staticmethod
     def _test_spawn_logfile(logfile, target):
         multiprocessing.set_start_method("spawn", force=True)
@@ -40,7 +41,5 @@ class ForkProcessTestCase(TestCase):
                 self.assertEqual(output.read(), test_string.encode("utf-8"))
 
     def test_spawn_logfile_no_send_handle(self):
-        with patch(
-            "portage.util._async.ForkProcess.ForkProcess._HAVE_SEND_HANDLE", new=False
-        ):
+        with patch("portage.util._async.ForkProcess.ForkProcess._HAVE_SEND_HANDLE", new=False):
             self.test_spawn_logfile()

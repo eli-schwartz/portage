@@ -91,17 +91,13 @@ def prepare_build_dirs(myroot=None, settings=None, cleanup=False):
         for mydir in mydirs:
             ensure_dirs(mydir)
             try:
-                apply_secpass_permissions(
-                    mydir, gid=portage_gid, uid=portage_uid, mode=0o700, mask=0
-                )
+                apply_secpass_permissions(mydir, gid=portage_gid, uid=portage_uid, mode=0o700, mask=0)
             except PortageException:
                 if not os.path.isdir(mydir):
                     raise
         for dir_key in ("HOME", "PKG_LOGDIR", "T"):
             ensure_dirs(mysettings[dir_key], mode=0o755)
-            apply_secpass_permissions(
-                mysettings[dir_key], uid=portage_uid, gid=portage_gid
-            )
+            apply_secpass_permissions(mysettings[dir_key], uid=portage_uid, gid=portage_gid)
         # The setgid bit prevents a lockfile group permission race for bug #468990.
         ipc_kwargs = {}
         if portage.data.secpass >= 1:
@@ -122,7 +118,7 @@ def prepare_build_dirs(myroot=None, settings=None, cleanup=False):
         return 1
 
     # Reset state for things like noauto and keepwork in FEATURES.
-    for x in (".die_hooks",):
+    for x in (".die_hooks", ):
         try:
             os.unlink(os.path.join(mysettings["PORTAGE_BUILDDIR"], x))
         except OSError:
@@ -136,6 +132,7 @@ def prepare_build_dirs(myroot=None, settings=None, cleanup=False):
 
 
 def _adjust_perms_msg(settings, msg):
+
     def write(msg):
         writemsg(msg, noiselevel=-1)
 
@@ -199,11 +196,7 @@ def _prepare_features_dirs(mysettings):
     filemode = 0o60
     modemask = 0o2
     restrict = mysettings.get("PORTAGE_RESTRICT", "").split()
-    droppriv = (
-        secpass >= 2
-        and "userpriv" in mysettings.features
-        and "userpriv" not in restrict
-    )
+    droppriv = (secpass >= 2 and "userpriv" in mysettings.features and "userpriv" not in restrict)
     for myfeature, kwargs in features_dirs.items():
         if myfeature in mysettings.features:
             failure = False
@@ -224,9 +217,7 @@ def _prepare_features_dirs(mysettings):
                     droppriv_fix = False
                     if droppriv:
                         st = os.stat(mydir)
-                        if st.st_gid != portage_gid or not dirmode == (
-                            stat.S_IMODE(st.st_mode) & dirmode
-                        ):
+                        if st.st_gid != portage_gid or not dirmode == (stat.S_IMODE(st.st_mode) & dirmode):
                             droppriv_fix = True
                         if not droppriv_fix:
                             # Check permissions of files in the directory.
@@ -235,29 +226,22 @@ def _prepare_features_dirs(mysettings):
                                     subdir_st = os.lstat(os.path.join(mydir, filename))
                                 except OSError:
                                     continue
-                                if subdir_st.st_gid != portage_gid or (
-                                    stat.S_ISDIR(subdir_st.st_mode)
-                                    and not dirmode
-                                    == (stat.S_IMODE(subdir_st.st_mode) & dirmode)
-                                ):
+                                if subdir_st.st_gid != portage_gid or (stat.S_ISDIR(subdir_st.st_mode) and not dirmode
+                                                                       == (stat.S_IMODE(subdir_st.st_mode) & dirmode)):
                                     droppriv_fix = True
                                     break
 
                     if droppriv_fix:
                         _adjust_perms_msg(
                             mysettings,
-                            colorize("WARN", " * ")
-                            + _(
-                                "Adjusting permissions " "for FEATURES=userpriv: '%s'\n"
-                            )
-                            % mydir,
+                            colorize("WARN", " * ") + _("Adjusting permissions "
+                                                        "for FEATURES=userpriv: '%s'\n") % mydir,
                         )
                     elif modified:
                         _adjust_perms_msg(
                             mysettings,
-                            colorize("WARN", " * ")
-                            + _("Adjusting permissions " "for FEATURES=%s: '%s'\n")
-                            % (myfeature, mydir),
+                            colorize("WARN", " * ") + _("Adjusting permissions "
+                                                        "for FEATURES=%s: '%s'\n") % (myfeature, mydir),
                         )
 
                     if modified or kwargs["always_recurse"] or droppriv_fix:
@@ -267,33 +251,27 @@ def _prepare_features_dirs(mysettings):
                             # occurs during permissions adjustment.
 
                         if not apply_recursive_permissions(
-                            mydir,
-                            gid=portage_gid,
-                            dirmode=dirmode,
-                            dirmask=modemask,
-                            filemode=filemode,
-                            filemask=modemask,
-                            onerror=onerror,
+                                mydir,
+                                gid=portage_gid,
+                                dirmode=dirmode,
+                                dirmask=modemask,
+                                filemode=filemode,
+                                filemask=modemask,
+                                onerror=onerror,
                         ):
                             raise OperationNotPermitted(
-                                _(
-                                    "Failed to apply recursive permissions for the portage group."
-                                )
-                            )
+                                _("Failed to apply recursive permissions for the portage group."))
 
             except DirectoryNotFound as e:
                 failure = True
-                writemsg(
-                    _("\n!!! Directory does not exist: '%s'\n") % (e,), noiselevel=-1
-                )
+                writemsg(_("\n!!! Directory does not exist: '%s'\n") % (e, ), noiselevel=-1)
                 writemsg(_("!!! Disabled FEATURES='%s'\n") % myfeature, noiselevel=-1)
 
             except PortageException as e:
                 failure = True
                 writemsg(f"\n!!! {str(e)}\n", noiselevel=-1)
                 writemsg(
-                    _("!!! Failed resetting perms on %s='%s'\n")
-                    % (kwargs["basedir_var"], basedir),
+                    _("!!! Failed resetting perms on %s='%s'\n") % (kwargs["basedir_var"], basedir),
                     noiselevel=-1,
                 )
                 writemsg(_("!!! Disabled FEATURES='%s'\n") % myfeature, noiselevel=-1)
@@ -318,16 +296,13 @@ def _prepare_workdir(mysettings):
         else:
             workdir_mode = parsed_mode
     except KeyError as e:
-        writemsg(
-            _("!!! PORTAGE_WORKDIR_MODE is unset, using %s.\n") % oct(workdir_mode)
-        )
+        writemsg(_("!!! PORTAGE_WORKDIR_MODE is unset, using %s.\n") % oct(workdir_mode))
     except ValueError as e:
         if len(str(e)) > 0:
             writemsg(f"{e}\n")
         writemsg(
-            _("!!! Unable to parse PORTAGE_WORKDIR_MODE='%s', using %s.\n")
-            % (mysettings["PORTAGE_WORKDIR_MODE"], oct(workdir_mode))
-        )
+            _("!!! Unable to parse PORTAGE_WORKDIR_MODE='%s', using %s.\n") %
+            (mysettings["PORTAGE_WORKDIR_MODE"], oct(workdir_mode)))
     mysettings["PORTAGE_WORKDIR_MODE"] = oct(workdir_mode).replace("o", "")
 
     permissions = {"mode": workdir_mode}
@@ -363,8 +338,7 @@ def _prepare_workdir(mysettings):
         except PortageException as e:
             writemsg(f"!!! {str(e)}\n", noiselevel=-1)
             writemsg(
-                _("!!! Permission issues with PORTAGE_LOGDIR='%s'\n")
-                % mysettings["PORTAGE_LOGDIR"],
+                _("!!! Permission issues with PORTAGE_LOGDIR='%s'\n") % mysettings["PORTAGE_LOGDIR"],
                 noiselevel=-1,
             )
             writemsg(_("!!! Disabling logging.\n"), noiselevel=-1)
@@ -376,9 +350,7 @@ def _prepare_workdir(mysettings):
         compress_log_ext = ".gz"
 
     logdir_subdir_ok = False
-    if "PORTAGE_LOGDIR" in mysettings and os.access(
-        mysettings["PORTAGE_LOGDIR"], os.W_OK
-    ):
+    if "PORTAGE_LOGDIR" in mysettings and os.access(mysettings["PORTAGE_LOGDIR"], os.W_OK):
         logdir = normalize_path(mysettings["PORTAGE_LOGDIR"])
         logid_path = os.path.join(mysettings["PORTAGE_BUILDDIR"], ".logid")
         if not os.path.exists(logid_path):
@@ -399,8 +371,7 @@ def _prepare_workdir(mysettings):
             log_subdir = logdir
             mysettings["PORTAGE_LOG_FILE"] = os.path.join(
                 logdir,
-                "%s:%s:%s.log%s"
-                % (
+                "%s:%s:%s.log%s" % (
                     mysettings["CATEGORY"],
                     mysettings["PF"],
                     logid_time,

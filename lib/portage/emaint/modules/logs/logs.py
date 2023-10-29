@@ -98,8 +98,6 @@ class CleanLogs:
                 msg.append(ERROR_MESSAGES[rval])
             else:
                 msg.append(f"PORTAGE_LOGDIR_CLEAN command returned {rval}")
-            msg.append(
-                "See the make.conf(5) man page for "
-                "PORTAGE_LOGDIR_CLEAN usage instructions."
-            )
+            msg.append("See the make.conf(5) man page for "
+                       "PORTAGE_LOGDIR_CLEAN usage instructions.")
         return msg

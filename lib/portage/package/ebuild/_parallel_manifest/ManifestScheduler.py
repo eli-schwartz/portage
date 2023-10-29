@@ -11,6 +11,7 @@ from .ManifestTask import ManifestTask
 
 
 class ManifestScheduler(AsyncScheduler):
+
     def __init__(
         self,
         portdb,
@@ -40,7 +41,7 @@ class ManifestScheduler(AsyncScheduler):
         # and in order to reduce latency in case of a signal interrupt.
         cp_all = self._portdb.cp_all
         for category in sorted(self._portdb.categories):
-            yield from cp_all(categories=(category,))
+            yield from cp_all(categories=(category, ))
 
     def _iter_tasks(self):
         portdb = self._portdb
@@ -60,11 +61,8 @@ class ManifestScheduler(AsyncScheduler):
                     if repo_config.name not in disabled_repos:
                         disabled_repos.add(repo_config.name)
                         portage.writemsg(
-                            _(
-                                ">>> Skipping creating Manifest for %s%s%s; "
-                                "repository is configured to not use them\n"
-                            )
-                            % (cp, _repo_separator, repo_config.name),
+                            _(">>> Skipping creating Manifest for %s%s%s; "
+                              "repository is configured to not use them\n") % (cp, _repo_separator, repo_config.name),
                             noiselevel=-1,
                         )
                     continue
@@ -95,8 +93,7 @@ class ManifestScheduler(AsyncScheduler):
         if task.returncode != os.EX_OK:
             if not self._terminated_tasks:
                 portage.writemsg(
-                    "Error processing %s%s%s, continuing...\n"
-                    % (task.cp, _repo_separator, task.repo_config.name),
+                    "Error processing %s%s%s, continuing...\n" % (task.cp, _repo_separator, task.repo_config.name),
                     noiselevel=-1,
                 )
 

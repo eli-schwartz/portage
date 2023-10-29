@@ -13,6 +13,7 @@ from portage.util._eventloop.global_event_loop import global_event_loop
 
 
 class FileCopierTestCase(TestCase):
+
     def testFileCopier(self):
         loop = global_event_loop()
         tempdir = tempfile.mkdtemp()
@@ -41,8 +42,6 @@ class FileCopierTestCase(TestCase):
             loop.run_until_complete(copier.async_wait())
             self.assertEqual(copier.returncode, 1)
             self.assertEqual(copier.future.exception().errno, errno.ENOENT)
-            self.assertEqual(
-                copier.future.exception().filename, src_path.encode("utf8")
-            )
+            self.assertEqual(copier.future.exception().filename, src_path.encode("utf8"))
         finally:
             shutil.rmtree(tempdir)

@@ -22,7 +22,6 @@ from portage.data import portage_gid, uid
 from portage.localization import _
 from portage.util import apply_secpass_permissions, atomic_ofstream, writemsg
 
-
 _MTIMEDBKEYS = {
     "info",
     "ldpath",
@@ -79,11 +78,7 @@ class MtimeDB(dict):
         d = {}
         if content:
             try:
-                d = json.loads(
-                    _unicode_decode(
-                        content, encoding=_encodings["repo.content"], errors="strict"
-                    )
-                )
+                d = json.loads(_unicode_decode(content, encoding=_encodings["repo.content"], errors="strict"))
             except SystemExit:
                 raise
             except Exception as e:
@@ -140,12 +135,9 @@ class MtimeDB(dict):
                         json.dumps(d, **self._json_write_opts),
                         encoding=_encodings["repo.content"],
                         errors="strict",
-                    )
-                )
+                    ))
             else:
                 pickle.dump(d, f, protocol=2)
             f.close()
-            apply_secpass_permissions(
-                self.filename, uid=uid, gid=portage_gid, mode=0o644
-            )
+            apply_secpass_permissions(self.filename, uid=uid, gid=portage_gid, mode=0o644)
             self._clean_data = copy.deepcopy(d)

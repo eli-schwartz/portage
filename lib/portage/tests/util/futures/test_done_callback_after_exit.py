@@ -7,6 +7,7 @@ from portage.util.futures import asyncio
 
 
 class DoneCallbackAfterExitTestCase(TestCase):
+
     def test_done_callback_after_exit(self):
         """
         Test that callbacks can be registered via the Future

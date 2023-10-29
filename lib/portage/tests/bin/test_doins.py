@@ -15,6 +15,7 @@ exists_in_D = setup_env.exists_in_D
 
 
 class DoIns(setup_env.BinTestCase):
+
     def testDoIns(self):
         """Tests the most basic senario."""
         self.init()

@@ -130,12 +130,10 @@ class FakeVartree(vartree):
         pkg = self.dbapi._cpv_map[cpv]
 
         try:
-            live_metadata = dict(
-                zip(
-                    self._portdb_keys,
-                    self._portdb.aux_get(cpv, self._portdb_keys, myrepo=pkg.repo),
-                )
-            )
+            live_metadata = dict(zip(
+                self._portdb_keys,
+                self._portdb.aux_get(cpv, self._portdb_keys, myrepo=pkg.repo),
+            ))
         except (KeyError, portage.exception.PortageException):
             live_metadata = None
 
@@ -155,18 +153,12 @@ class FakeVartree(vartree):
             # are supported then go ahead and use the live_metadata, in
             # order to respect dep updates without revision bump or EAPI
             # bump, as in bug #368725.
-            if not (
-                portage.eapi_is_supported(live_metadata["EAPI"])
-                and portage.eapi_is_supported(pkg.eapi)
-            ):
+            if not (portage.eapi_is_supported(live_metadata["EAPI"]) and portage.eapi_is_supported(pkg.eapi)):
                 raise _DynamicDepsNotApplicable()
 
             # preserve built slot/sub-slot := operator deps
             built_slot_operator_atoms = None
-            if (
-                not self._ignore_built_slot_operator_deps
-                and _get_eapi_attrs(pkg.eapi).slot_operator
-            ):
+            if (not self._ignore_built_slot_operator_deps and _get_eapi_attrs(pkg.eapi).slot_operator):
                 try:
                     built_slot_operator_atoms = find_built_slot_operator_atoms(pkg)
                 except InvalidDependString:
@@ -247,9 +239,10 @@ class FakeVartree(vartree):
         root_config = self._pkg_root_config
         validation_keys = ["COUNTER", "_mtime_"]
         for cpv in current_cpv_set:
-            pkg_hash_key = Package._gen_hash_key(
-                cpv=cpv, installed=True, root_config=root_config, type_name="installed"
-            )
+            pkg_hash_key = Package._gen_hash_key(cpv=cpv,
+                                                 installed=True,
+                                                 root_config=root_config,
+                                                 type_name="installed")
             pkg = pkg_vardb.get(pkg_hash_key)
             if pkg is not None:
                 counter, mtime = real_vardb.aux_get(cpv, validation_keys)

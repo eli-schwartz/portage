@@ -38,13 +38,9 @@ class ManifestTask(CompositeTask):
     _gpg_key_id_lengths = (8, 16, 24, 32, 40)
 
     def _start(self):
-        self._manifest_path = os.path.join(
-            self.repo_config.location, self.cp, "Manifest"
-        )
+        self._manifest_path = os.path.join(self.repo_config.location, self.cp, "Manifest")
 
-        self._start_task(
-            AsyncTaskFuture(future=self.fetchlist_dict), self._start_with_fetchlist
-        )
+        self._start_task(AsyncTaskFuture(future=self.fetchlist_dict), self._start_with_fetchlist)
 
     def _start_with_fetchlist(self, fetchlist_task):
         if self._default_exit(fetchlist_task) != os.EX_OK:
@@ -53,8 +49,7 @@ class ManifestTask(CompositeTask):
                     self.fetchlist_dict.result()
                 except InvalidDependString as e:
                     writemsg(
-                        _("!!! %s%s%s: SRC_URI: %s\n")
-                        % (self.cp, _repo_separator, self.repo_config.name, e),
+                        _("!!! %s%s%s: SRC_URI: %s\n") % (self.cp, _repo_separator, self.repo_config.name, e),
                         noiselevel=-1,
                     )
             self._async_wait()
@@ -82,11 +77,7 @@ class ManifestTask(CompositeTask):
 
         if not modified and sign:
             sign = self._need_signature()
-            if (
-                not sign
-                and self.force_sign_key is not None
-                and os.path.exists(self._manifest_path)
-            ):
+            if (not sign and self.force_sign_key is not None and os.path.exists(self._manifest_path)):
                 self._check_sig_key()
                 return
 
@@ -142,12 +133,9 @@ class ManifestTask(CompositeTask):
     def _check_sig_key_exit(self, proc):
         self._assert_current(proc)
 
-        parsed_key = self._parse_gpg_key(
-            proc.pipe_reader.getvalue().decode("utf_8", "replace")
-        )
-        if parsed_key is not None and self._normalize_gpg_key(
-            parsed_key
-        ) == self._normalize_gpg_key(self.force_sign_key):
+        parsed_key = self._parse_gpg_key(proc.pipe_reader.getvalue().decode("utf_8", "replace"))
+        if parsed_key is not None and self._normalize_gpg_key(parsed_key) == self._normalize_gpg_key(
+                self.force_sign_key):
             self.returncode = os.EX_OK
             self._current_task = None
             self.wait()
@@ -188,11 +176,7 @@ class ManifestTask(CompositeTask):
         gpg_vars["FILE"] = self._manifest_path
         gpg_cmd = varexpand(self.gpg_cmd, mydict=gpg_vars)
         gpg_cmd = shlex_split(gpg_cmd)
-        gpg_proc = PopenProcess(
-            proc=subprocess.Popen(
-                gpg_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-            )
-        )
+        gpg_proc = PopenProcess(proc=subprocess.Popen(gpg_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT))
         # PipeLogger echos output and efficiently monitors for process
         # exit by listening for the stdout EOF event.
         gpg_proc.pipe_reader = PipeLogger(
@@ -211,7 +195,7 @@ class ManifestTask(CompositeTask):
         try:
             os.rename(*rename_args)
         except OSError as e:
-            writemsg("!!! rename('%s', '%s'): %s\n" % rename_args + (e,), noiselevel=-1)
+            writemsg("!!! rename('%s', '%s'): %s\n" % rename_args + (e, ), noiselevel=-1)
             try:
                 os.unlink(self._manifest_path + ".asc")
             except OSError:
@@ -226,10 +210,8 @@ class ManifestTask(CompositeTask):
     def _need_signature(self):
         try:
             with open(
-                _unicode_encode(
-                    self._manifest_path, encoding=_encodings["fs"], errors="strict"
-                ),
-                "rb",
+                    _unicode_encode(self._manifest_path, encoding=_encodings["fs"], errors="strict"),
+                    "rb",
             ) as f:
                 return self._PGP_HEADER not in f.readline()
         except OSError as e:

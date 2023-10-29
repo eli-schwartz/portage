@@ -9,10 +9,17 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotOperatorUnsatisfiedTestCase(TestCase):
+
     def testSlotOperatorUnsatisfied(self):
         ebuilds = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/A-2": {"EAPI": "5", "SLOT": "0/2"},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/A-2": {
+                "EAPI": "5",
+                "SLOT": "0/2"
+            },
             "app-misc/B-0": {
                 "EAPI": "5",
                 "DEPEND": "app-misc/A:=",
@@ -21,7 +28,10 @@ class SlotOperatorUnsatisfiedTestCase(TestCase):
         }
 
         installed = {
-            "app-misc/A-2": {"EAPI": "5", "SLOT": "0/2"},
+            "app-misc/A-2": {
+                "EAPI": "5",
+                "SLOT": "0/2"
+            },
             "app-misc/B-0": {
                 "EAPI": "5",
                 "DEPEND": "app-misc/A:0/1=",
@@ -36,7 +46,10 @@ class SlotOperatorUnsatisfiedTestCase(TestCase):
             # sub-slot dependency needs to trigger a rebuild.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 mergelist=["app-misc/B-0"],
             ),
@@ -51,9 +64,7 @@ class SlotOperatorUnsatisfiedTestCase(TestCase):
             ),
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class UseDepDefaultsTestCase(TestCase):
+
     def testUseDepDefaultse(self):
         ebuilds = {
             "dev-libs/A-1": {
@@ -26,7 +27,10 @@ class UseDepDefaultsTestCase(TestCase):
                 "RDEPEND": "dev-libs/B[foo(-)]",
                 "EAPI": "4",
             },
-            "dev-libs/B-1": {"IUSE": "+foo", "EAPI": "1"},
+            "dev-libs/B-1": {
+                "IUSE": "+foo",
+                "EAPI": "1"
+            },
             "dev-libs/B-2": {},
         }
 

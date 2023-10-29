@@ -5,12 +5,8 @@
 import sys
 from os import path as osp
 
-if osp.isfile(
-    osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")
-):
-    sys.path.insert(
-        0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib")
-    )
+if osp.isfile(osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")):
+    sys.path.insert(0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib"))
 import portage
 
 portage._internal_caller = True
@@ -22,9 +18,7 @@ import tempfile
 import textwrap
 
 __candidatematcher__ = re.compile("^[0-9]+: \\*\\*\\* emerge ")
-__noncandidatematcher__ = re.compile(
-    " sync( |$)| clean( |$)| search( |$)|--oneshot|--fetchonly| unmerge( |$)"
-)
+__noncandidatematcher__ = re.compile(" sync( |$)| clean( |$)| search( |$)|--oneshot|--fetchonly| unmerge( |$)")
 
 
 def issyspkg(pkgline):
@@ -32,9 +26,7 @@ def issyspkg(pkgline):
 
 
 def iscandidate(logline):
-    return __candidatematcher__.match(logline) and not __noncandidatematcher__.search(
-        logline
-    )
+    return __candidatematcher__.match(logline) and not __noncandidatematcher__.search(logline)
 
 
 def getpkginfo(logline):
@@ -74,9 +66,7 @@ worldlist = portage.grabfile(world_file)
 syslist = [x for x in portage.settings.packages if issyspkg(x)]
 
 if portage.settings.get("EMERGE_LOG_DIR"):
-    logfile = portage.grabfile(
-        os.path.join(portage.settings["EMERGE_LOG_DIR"], "emerge.log")
-    )
+    logfile = portage.grabfile(os.path.join(portage.settings["EMERGE_LOG_DIR"], "emerge.log"))
 else:
     logfile = portage.grabfile(os.path.join(eroot, "var/log/emerge.log"))
 biglist = [getpkginfo(x) for x in logfile if iscandidate(x)]
@@ -146,10 +136,7 @@ else:
         else:
             new_set.write()
 
-            msg = (
-                "Please review differences between old and new files, "
-                + "and replace the old file if desired."
-            )
+            msg = ("Please review differences between old and new files, " + "and replace the old file if desired.")
 
             portage.util.writemsg_stdout("\n", noiselevel=-1)
             for line in textwrap.wrap(msg, 65):

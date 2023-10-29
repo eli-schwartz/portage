@@ -16,8 +16,7 @@ import portage
 portage.proxy.lazyimport.lazyimport(
     globals(),
     "portage.dep:Atom,dep_getkey,isvalidatom,match_from_list",
-    "portage.util:ConfigProtect,new_protect_filename,"
-    + "normalize_path,write_atomic,writemsg",
+    "portage.util:ConfigProtect,new_protect_filename," + "normalize_path,write_atomic,writemsg",
     "portage.versions:_get_slot_re",
 )
 
@@ -25,7 +24,6 @@ from portage.const import USER_CONFIG_PATH, VCS_DIRS
 from portage.eapi import _get_eapi_attrs
 from portage.exception import DirectoryNotFound, InvalidAtom, PortageException
 from portage.localization import _
-
 
 ignored_dbentries = ("CONTENTS", "environment.bz2")
 
@@ -57,12 +55,8 @@ def update_dbentry(update_cmd, mycontent, eapi=None, parent=None):
                 new_atom = Atom(token.replace(old_value, new_value, 1), eapi=eapi)
 
                 # Avoid creating self-blockers for bug #367215.
-                if (
-                    new_atom.blocker
-                    and parent is not None
-                    and parent.cp == new_atom.cp
-                    and match_from_list(new_atom, [parent])
-                ):
+                if (new_atom.blocker and parent is not None and parent.cp == new_atom.cp
+                        and match_from_list(new_atom, [parent])):
                     continue
 
                 split_content[i] = str(new_atom)
@@ -118,20 +112,14 @@ def update_dbentries(update_iter, mydata, eapi=None, parent=None):
     dict containing only the updated items."""
     updated_items = {}
     for k, mycontent in mydata.items():
-        k_unicode = _unicode_decode(
-            k, encoding=_encodings["repo.content"], errors="replace"
-        )
+        k_unicode = _unicode_decode(k, encoding=_encodings["repo.content"], errors="replace")
         if k_unicode not in ignored_dbentries:
             orig_content = mycontent
-            mycontent = _unicode_decode(
-                mycontent, encoding=_encodings["repo.content"], errors="replace"
-            )
+            mycontent = _unicode_decode(mycontent, encoding=_encodings["repo.content"], errors="replace")
             is_encoded = mycontent is not orig_content
             orig_content = mycontent
             for update_cmd in update_iter:
-                mycontent = update_dbentry(
-                    update_cmd, mycontent, eapi=eapi, parent=parent
-                )
+                mycontent = update_dbentry(update_cmd, mycontent, eapi=eapi, parent=parent)
             if mycontent != orig_content:
                 if is_encoded:
                     mycontent = _unicode_encode(
@@ -148,17 +136,15 @@ def fixdbentries(update_iter, dbdir, eapi=None, parent=None):
     for each of the files in dbdir (excluding CONTENTS and environment.bz2).
     Returns True when actual modifications are necessary and False otherwise."""
 
-    warnings.warn(
-        "portage.update.fixdbentries() is deprecated", DeprecationWarning, stacklevel=2
-    )
+    warnings.warn("portage.update.fixdbentries() is deprecated", DeprecationWarning, stacklevel=2)
 
     mydata = {}
     for myfile in [f for f in os.listdir(dbdir) if f not in ignored_dbentries]:
         file_path = os.path.join(dbdir, myfile)
         with open(
-            _unicode_encode(file_path, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["repo.content"],
-            errors="replace",
+                _unicode_encode(file_path, encoding=_encodings["fs"], errors="strict"),
+                encoding=_encodings["repo.content"],
+                errors="replace",
         ) as f:
             mydata[myfile] = f.read()
     updated_items = update_dbentries(update_iter, mydata, eapi=eapi, parent=parent)
@@ -324,8 +310,7 @@ def update_config_files(
         "sets",
     ]
     myxfiles += [
-        os.path.join("profile", x)
-        for x in (
+        os.path.join("profile", x) for x in (
             "packages",
             "package.accept_keywords",
             "package.keywords",
@@ -345,16 +330,12 @@ def update_config_files(
         if os.path.isdir(config_file):
             for parent, dirs, files in os.walk(config_file):
                 try:
-                    parent = _unicode_decode(
-                        parent, encoding=_encodings["fs"], errors="strict"
-                    )
+                    parent = _unicode_decode(parent, encoding=_encodings["fs"], errors="strict")
                 except UnicodeDecodeError:
                     continue
                 for y_enc in list(dirs):
                     try:
-                        y = _unicode_decode(
-                            y_enc, encoding=_encodings["fs"], errors="strict"
-                        )
+                        y = _unicode_decode(y_enc, encoding=_encodings["fs"], errors="strict")
                     except UnicodeDecodeError:
                         dirs.remove(y_enc)
                         continue
@@ -362,16 +343,12 @@ def update_config_files(
                         dirs.remove(y_enc)
                 for y in files:
                     try:
-                        y = _unicode_decode(
-                            y, encoding=_encodings["fs"], errors="strict"
-                        )
+                        y = _unicode_decode(y, encoding=_encodings["fs"], errors="strict")
                     except UnicodeDecodeError:
                         continue
                     if y.startswith("."):
                         continue
-                    recursivefiles.append(
-                        os.path.join(parent, y)[len(abs_user_config) + 1 :]
-                    )
+                    recursivefiles.append(os.path.join(parent, y)[len(abs_user_config) + 1:])
         else:
             recursivefiles.append(x)
     myxfiles = recursivefiles
@@ -423,9 +400,7 @@ def update_config_files(
                         if match_callback(repo_name, atom, new_atom):
                             # add a comment with the update command, so
                             # the user can clearly see what happened
-                            contents[pos] = "# {}\n".format(
-                                " ".join(f"{x}" for x in update_cmd)
-                            )
+                            contents[pos] = "# {}\n".format(" ".join(f"{x}" for x in update_cmd))
                             contents.insert(
                                 pos + 1,
                                 line.replace(f"{atom}", f"{new_atom}", 1),
@@ -437,9 +412,7 @@ def update_config_files(
                             sys.stdout.write("p")
                             sys.stdout.flush()
 
-    protect_obj = ConfigProtect(
-        config_root, protect, protect_mask, case_insensitive=case_insensitive
-    )
+    protect_obj = ConfigProtect(config_root, protect, protect_mask, case_insensitive=case_insensitive)
     for x in update_files:
         updating_file = os.path.join(abs_user_config, x)
         if protect_obj.isprotected(updating_file):
@@ -449,8 +422,7 @@ def update_config_files(
         except PortageException as e:
             writemsg(f"\n!!! {str(e)}\n", noiselevel=-1)
             writemsg(
-                _("!!! An error occurred while updating a config file:")
-                + f" '{updating_file}'\n",
+                _("!!! An error occurred while updating a config file:") + f" '{updating_file}'\n",
                 noiselevel=-1,
             )
             continue

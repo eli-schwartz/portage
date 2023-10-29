@@ -5,6 +5,7 @@ import time
 
 
 class ProgressHandler:
+
     def __init__(self):
         self.curval = 0
         self.maxval = 0

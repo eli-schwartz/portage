@@ -74,9 +74,7 @@ class SpawnNofetchWithoutBuilddir(CompositeTask):
         # private temp dir was just created, so it's not locked yet
         settings.pop("PORTAGE_BUILDDIR_LOCKED", None)
 
-        doebuild_environment(
-            self.ebuild_path, "nofetch", settings=settings, db=self.portdb
-        )
+        doebuild_environment(self.ebuild_path, "nofetch", settings=settings, db=self.portdb)
         restrict = settings["PORTAGE_RESTRICT"].split()
         defined_phases = settings["DEFINED_PHASES"].split()
         if not defined_phases:

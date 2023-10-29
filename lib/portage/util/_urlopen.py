@@ -9,7 +9,6 @@ from urllib.request import urlopen as _urlopen
 import urllib.parse as urllib_parse
 import urllib.request as urllib_request
 
-
 # to account for the difference between TIMESTAMP of the index' contents
 #  and the file-'mtime'
 TIMESTAMP_TOLERANCE = 5
@@ -32,16 +31,14 @@ def urlopen(url, if_modified_since=None, headers={}, proxies=None):
         return _urlopen(url)
 
     netloc = parse_result.netloc.rpartition("@")[-1]
-    url = urllib_parse.urlunparse(
-        (
-            parse_result.scheme,
-            netloc,
-            parse_result.path,
-            parse_result.params,
-            parse_result.query,
-            parse_result.fragment,
-        )
-    )
+    url = urllib_parse.urlunparse((
+        parse_result.scheme,
+        netloc,
+        parse_result.path,
+        parse_result.params,
+        parse_result.query,
+        parse_result.fragment,
+    ))
     password_manager = urllib_request.HTTPPasswordMgrWithDefaultRealm()
     request = urllib_request.Request(url)
     request.add_header("User-Agent", "Gentoo Portage")
@@ -50,9 +47,7 @@ def urlopen(url, if_modified_since=None, headers={}, proxies=None):
     if if_modified_since:
         request.add_header("If-Modified-Since", _timestamp_to_http(if_modified_since))
     if parse_result.username is not None:
-        password_manager.add_password(
-            None, url, parse_result.username, parse_result.password
-        )
+        password_manager.add_password(None, url, parse_result.username, parse_result.password)
 
     handlers = [CompressedResponseProcessor(password_manager)]
     if proxies:
@@ -106,14 +101,11 @@ class CompressedResponseProcessor(urllib_request.HTTPBasicAuthHandler):
             try:
                 decompressed = io.BytesIO(zlib.decompress(response.read()))
             except zlib.error:  # they ignored RFC1950
-                decompressed = io.BytesIO(
-                    zlib.decompress(response.read(), -zlib.MAX_WBITS)
-                )
+                decompressed = io.BytesIO(zlib.decompress(response.read(), -zlib.MAX_WBITS))
         if decompressed:
             old_response = response
-            response = urllib_request.addinfourl(
-                decompressed, old_response.headers, old_response.url, old_response.code
-            )
+            response = urllib_request.addinfourl(decompressed, old_response.headers, old_response.url,
+                                                 old_response.code)
             response.msg = old_response.msg
         return response
 

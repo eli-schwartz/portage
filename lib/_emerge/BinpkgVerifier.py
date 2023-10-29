@@ -74,9 +74,7 @@ class BinpkgVerifier(CompositeTask):
 
         for hash_name in digester.hash_names:
             if digester.digests[hash_name] != self._digests[hash_name]:
-                self._digest_exception(
-                    hash_name, digester.digests[hash_name], self._digests[hash_name]
-                )
+                self._digest_exception(hash_name, digester.digests[hash_name], self._digests[hash_name])
                 self.returncode = 1
                 self.wait()
                 return
@@ -100,11 +98,9 @@ class BinpkgVerifier(CompositeTask):
 
             path = self._pkg_path
             if path.endswith(".partial"):
-                path = path[: -len(".partial")]
+                path = path[:-len(".partial")]
             eout = EOutput()
-            eout.ebegin(
-                f"{os.path.basename(path)} {' '.join(sorted(self._digests))} ;-)"
-            )
+            eout.ebegin(f"{os.path.basename(path)} {' '.join(sorted(self._digests))} ;-)")
             eout.eend(0)
 
         finally:
@@ -112,15 +108,11 @@ class BinpkgVerifier(CompositeTask):
             sys.stderr = stderr_orig
             portage.output.havecolor = global_havecolor
 
-        self.scheduler.output(
-            out.getvalue(), log_path=self.logfile, background=self.background
-        )
+        self.scheduler.output(out.getvalue(), log_path=self.logfile, background=self.background)
 
     def _digest_exception(self, name, value, expected):
         head, tail = os.path.split(self._pkg_path)
-        temp_filename = _checksum_failure_temp_file(
-            self.pkg.root_config.settings, head, tail
-        )
+        temp_filename = _checksum_failure_temp_file(self.pkg.root_config.settings, head, tail)
 
         self.scheduler.output(
             "\n!!! Digest verification failed:\n"

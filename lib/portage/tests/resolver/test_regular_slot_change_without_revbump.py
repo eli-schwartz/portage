@@ -13,9 +13,12 @@ from portage.output import colorize
 
 
 class RegularSlotChangeWithoutRevBumpTestCase(TestCase):
+
     def testRegularSlotChangeWithoutRevBumpTestCase(self):
         ebuilds = {
-            "dev-libs/boost-1.52.0": {"SLOT": "0"},
+            "dev-libs/boost-1.52.0": {
+                "SLOT": "0"
+            },
             "app-office/libreoffice-4.0.0.2": {
                 "EAPI": "5",
                 "DEPEND": ">=dev-libs/boost-1.46:=",
@@ -24,11 +27,15 @@ class RegularSlotChangeWithoutRevBumpTestCase(TestCase):
         }
 
         binpkgs = {
-            "dev-libs/boost-1.52.0": {"SLOT": "1.52"},
+            "dev-libs/boost-1.52.0": {
+                "SLOT": "1.52"
+            },
         }
 
         installed = {
-            "dev-libs/boost-1.52.0": {"SLOT": "1.52"},
+            "dev-libs/boost-1.52.0": {
+                "SLOT": "1.52"
+            },
         }
 
         world = []
@@ -39,11 +46,13 @@ class RegularSlotChangeWithoutRevBumpTestCase(TestCase):
             # different from the installed slot (0 instead of 1.52).
             ResolverPlaygroundTestCase(
                 ["app-office/libreoffice"],
-                options={"--oneshot": True, "--usepkg": True},
+                options={
+                    "--oneshot": True,
+                    "--usepkg": True
+                },
                 success=True,
                 mergelist=["dev-libs/boost-1.52.0", "app-office/libreoffice-4.0.0.2"],
-            ),
-        )
+            ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -56,15 +65,13 @@ class RegularSlotChangeWithoutRevBumpTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.cleanup()

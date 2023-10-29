@@ -1,7 +1,6 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-
 import portage
 from portage import os
 from portage import digraph
@@ -14,6 +13,7 @@ from _emerge.show_invalid_depstring_notice import show_invalid_depstring_notice
 
 
 class BlockerDB:
+
     def __init__(self, fake_vartree):
         root_config = fake_vartree._root_config
         self._root_config = root_config
@@ -47,10 +47,7 @@ class BlockerDB:
         for inst_pkg in installed_pkgs:
             stale_cache.discard(inst_pkg.cpv)
             cached_blockers = blocker_cache.get(inst_pkg.cpv)
-            if (
-                cached_blockers is not None
-                and cached_blockers.counter != inst_pkg.counter
-            ):
+            if (cached_blockers is not None and cached_blockers.counter != inst_pkg.counter):
                 cached_blockers = None
             if cached_blockers is not None:
                 blocker_atoms = cached_blockers.atoms
@@ -67,9 +64,7 @@ class BlockerDB:
                     myroot=inst_pkg.root,
                 )
                 if not success:
-                    pkg_location = os.path.join(
-                        inst_pkg.root, portage.VDB_PATH, inst_pkg.category, inst_pkg.pf
-                    )
+                    pkg_location = os.path.join(inst_pkg.root, portage.VDB_PATH, inst_pkg.category, inst_pkg.pf)
                     portage.writemsg(
                         f"!!! {pkg_location}/*DEPEND: {atoms}\n",
                         noiselevel=-1,
@@ -78,9 +73,7 @@ class BlockerDB:
 
                 blocker_atoms = [atom for atom in atoms if atom.startswith("!")]
                 blocker_atoms.sort()
-                blocker_cache[inst_pkg.cpv] = blocker_cache.BlockerData(
-                    inst_pkg.counter, blocker_atoms
-                )
+                blocker_cache[inst_pkg.cpv] = blocker_cache.BlockerData(inst_pkg.counter, blocker_atoms)
         for cpv in stale_cache:
             del blocker_cache[cpv]
         blocker_cache.flush()

@@ -8,6 +8,7 @@ import portage
 
 
 class ProgressHandler:
+
     def __init__(self):
         self.reset()
 

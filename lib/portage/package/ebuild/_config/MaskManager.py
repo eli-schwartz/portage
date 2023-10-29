@@ -1,7 +1,7 @@
 # Copyright 2010-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = ("MaskManager",)
+__all__ = ("MaskManager", )
 
 import warnings
 
@@ -14,6 +14,7 @@ from portage.versions import _pkg_str
 
 
 class MaskManager:
+
     def __init__(
         self,
         repositories,
@@ -53,16 +54,12 @@ class MaskManager:
                 )
                 if repo_config.portage1_profiles_compat and os.path.isdir(path):
                     warnings.warn(
-                        _(
-                            "Repository '%(repo_name)s' is implicitly using "
-                            "'portage-1' profile format in its profiles/package.mask, but "
-                            "the repository profiles are not marked as that format.  This will break "
-                            "in the future.  Please either convert the following paths "
-                            "to files, or add\nprofile-formats = portage-1\nto the "
-                            "repository's layout.conf.\n"
-                        )
-                        % dict(repo_name=repo_config.name)
-                    )
+                        _("Repository '%(repo_name)s' is implicitly using "
+                          "'portage-1' profile format in its profiles/package.mask, but "
+                          "the repository profiles are not marked as that format.  This will break "
+                          "in the future.  Please either convert the following paths "
+                          "to files, or add\nprofile-formats = portage-1\nto the "
+                          "repository's layout.conf.\n") % dict(repo_name=repo_config.name))
 
             return pmask_cache[loc]
 
@@ -70,9 +67,7 @@ class MaskManager:
         for repo in repositories.repos_with_profiles():
             lines = []
             repo_lines = grab_pmask(repo.location, repo)
-            removals = frozenset(
-                line[0][1:] for line in repo_lines if line[0][:1] == "-"
-            )
+            removals = frozenset(line[0][1:] for line in repo_lines if line[0][:1] == "-")
             matched_removals = set()
             for master in repo.masters:
                 master_lines = grab_pmask(master.location, master)
@@ -91,8 +86,7 @@ class MaskManager:
                         incremental=1,
                         remember_source_file=True,
                         warn_for_unmatched_removal=False,
-                    )
-                )
+                    ))
 
             # It's safe to warn for unmatched removal if masters have not
             # been overridden by the user, which is guaranteed when
@@ -100,14 +94,11 @@ class MaskManager:
             if repo.masters:
                 unmatched_removals = removals.difference(matched_removals)
                 if unmatched_removals and not user_config:
-                    source_file = os.path.join(
-                        repo.location, "profiles", "package.mask"
-                    )
+                    source_file = os.path.join(repo.location, "profiles", "package.mask")
                     unmatched_removals = list(unmatched_removals)
                     if len(unmatched_removals) > 3:
                         writemsg(
-                            _("--- Unmatched removal atoms in %s: %s and %s more\n")
-                            % (
+                            _("--- Unmatched removal atoms in %s: %s and %s more\n") % (
                                 source_file,
                                 ", ".join("-" + x for x in unmatched_removals[:3]),
                                 len(unmatched_removals) - 3,
@@ -116,8 +107,7 @@ class MaskManager:
                         )
                     else:
                         writemsg(
-                            _("--- Unmatched removal atom(s) in %s: %s\n")
-                            % (
+                            _("--- Unmatched removal atom(s) in %s: %s\n") % (
                                 source_file,
                                 ", ".join("-" + x for x in unmatched_removals),
                             ),
@@ -132,11 +122,8 @@ class MaskManager:
                         remember_source_file=True,
                         warn_for_unmatched_removal=not user_config,
                         strict_warn_for_unmatched_removal=strict_umatched_removal,
-                    )
-                )
-            repo_pkgmasklines.extend(
-                append_repo(stack_lists(lines), repo.name, remember_source_file=True)
-            )
+                    ))
+            repo_pkgmasklines.extend(append_repo(stack_lists(lines), repo.name, remember_source_file=True))
 
         repo_pkgunmasklines = []
         for repo in repositories.repos_with_profiles():
@@ -158,9 +145,7 @@ class MaskManager:
                 warn_for_unmatched_removal=True,
                 strict_warn_for_unmatched_removal=strict_umatched_removal,
             )
-            repo_pkgunmasklines.extend(
-                append_repo(lines, repo.name, remember_source_file=True)
-            )
+            repo_pkgunmasklines.extend(append_repo(lines, repo.name, remember_source_file=True))
 
         # Read package.mask from the user's profile. Stack them in the end
         # to allow profiles to override masks from their parent profiles.
@@ -177,8 +162,7 @@ class MaskManager:
                     eapi_default=None,
                     allow_repo=allow_profile_repo_deps(x),
                     allow_build_id=x.allow_build_id,
-                )
-            )
+                ))
             if x.portage1_directories:
                 profile_pkgunmasklines.append(
                     grabfile_package(
@@ -190,8 +174,7 @@ class MaskManager:
                         eapi_default=None,
                         allow_repo=allow_profile_repo_deps(x),
                         allow_build_id=x.allow_build_id,
-                    )
-                )
+                    ))
         profile_pkgmasklines = stack_lists(
             profile_pkgmasklines,
             incremental=1,

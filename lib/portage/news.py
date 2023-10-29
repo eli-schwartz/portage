@@ -95,11 +95,9 @@ class NewsManager:
             profiles_base = os.path.join(portdir, ("profiles" + os.path.sep))
         profile_path: Optional[str] = None
         if profiles_base is not None and portdb.settings.profile_path:
-            profile_path = normalize_path(
-                os.path.realpath(portdb.settings.profile_path)
-            )
+            profile_path = normalize_path(os.path.realpath(portdb.settings.profile_path))
             if profile_path.startswith(profiles_base):
-                profile_path = profile_path[len(profiles_base) :]
+                profile_path = profile_path[len(profiles_base):]
         self._profile_path = profile_path
 
     def _unread_filename(self, repoid: str) -> str:
@@ -139,9 +137,7 @@ class NewsManager:
 
         news_dir: str = self._news_dir(repoid)
         try:
-            news: list[str] = _os.listdir(
-                _unicode_encode(news_dir, encoding=_encodings["fs"], errors="strict")
-            )
+            news: list[str] = _os.listdir(_unicode_encode(news_dir, encoding=_encodings["fs"], errors="strict"))
         except OSError:
             return
 
@@ -159,13 +155,9 @@ class NewsManager:
 
             for itemid in news:
                 try:
-                    itemid = _unicode_decode(
-                        itemid, encoding=_encodings["fs"], errors="strict"
-                    )
+                    itemid = _unicode_decode(itemid, encoding=_encodings["fs"], errors="strict")
                 except UnicodeDecodeError:
-                    itemid = _unicode_decode(
-                        itemid, encoding=_encodings["fs"], errors="replace"
-                    )
+                    itemid = _unicode_decode(itemid, encoding=_encodings["fs"], errors="replace")
                     writemsg_level(
                         _("!!! Invalid encoding in news item name: '%s'\n") % itemid,
                         level=logging.ERROR,
@@ -175,17 +167,13 @@ class NewsManager:
 
                 if itemid in skip:
                     continue
-                filename = os.path.join(
-                    news_dir, itemid, f"{itemid}.{self.language_id}.txt"
-                )
+                filename = os.path.join(news_dir, itemid, f"{itemid}.{self.language_id}.txt")
                 if not os.path.isfile(filename):
                     continue
                 item = NewsItem(filename, itemid)
                 if not item.isValid():
                     continue
-                if item.isRelevant(
-                    profile=self._profile_path, config=self.config, vardb=self.vdb
-                ):
+                if item.isRelevant(profile=self._profile_path, config=self.config, vardb=self.vdb):
                     unread.add(item.name)
                     skip.add(item.name)
 
@@ -228,10 +216,10 @@ class NewsManager:
         try:
             unread_lock = lockfile(unread_filename, wantnewlockfile=1)
         except (
-            InvalidLocation,
-            OperationNotPermitted,
-            PermissionDenied,
-            ReadOnlyFileSystem,
+                InvalidLocation,
+                OperationNotPermitted,
+                PermissionDenied,
+                ReadOnlyFileSystem,
         ):
             pass
         try:
@@ -317,9 +305,9 @@ class NewsItem:
 
     def parse(self) -> None:
         with open(
-            _unicode_encode(self.path, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["content"],
-            errors="replace",
+                _unicode_encode(self.path, encoding=_encodings["fs"], errors="strict"),
+                encoding=_encodings["content"],
+                errors="replace",
         ) as f:
             lines = f.readlines()
         self.restrictions = {}
@@ -356,9 +344,7 @@ class NewsItem:
                         if not restrict.isValid():
                             invalids.append((i + 1, line.rstrip("\n")))
                         else:
-                            self.restrictions.setdefault(id(restriction), []).append(
-                                restrict
-                            )
+                            self.restrictions.setdefault(id(restriction), []).append(restrict)
                         continue
 
         if invalids:
@@ -367,9 +353,7 @@ class NewsItem:
                 _(f"Invalid news item: {self.path}"),
                 *(_(f"  line {lineno}: {line}") for lineno, line in invalids),
             ]
-            writemsg_level(
-                "".join(f"!!! {x}\n" for x in msg), level=logging.ERROR, noiselevel=-1
-            )
+            writemsg_level("".join(f"!!! {x}\n" for x in msg), level=logging.ERROR, noiselevel=-1)
 
         self._parsed = True
 
@@ -401,12 +385,9 @@ class DisplayProfileRestriction(DisplayRestriction):
         self.format = news_format
 
     def isValid(self) -> bool:
-        return (
-            not fnmatch.fnmatch(self.format, "1.*")
-            or "*" not in self.profile
-            and not fnmatch.fnmatch(self.format, "2.*")
-            or _valid_profile_RE.match(self.profile)
-        )
+        return (not fnmatch.fnmatch(self.format, "1.*")
+                or "*" not in self.profile and not fnmatch.fnmatch(self.format, "2.*")
+                or _valid_profile_RE.match(self.profile))
 
     def checkRestriction(self, **kwargs) -> bool:
         if fnmatch.fnmatch(self.format, "2.*") and self.profile.endswith("/*"):

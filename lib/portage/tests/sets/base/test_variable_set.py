@@ -9,20 +9,21 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class VariableSetTestCase(TestCase):
+
     def testVariableSetEmerge(self):
         ebuilds = {
-            "dev-go/go-pkg-1": {"BDEPEND": "dev-lang/go"},
+            "dev-go/go-pkg-1": {
+                "BDEPEND": "dev-lang/go"
+            },
         }
         installed = ebuilds
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed)
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@golang-rebuild"],
-                mergelist=["dev-go/go-pkg-1"],
-                success=True,
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@golang-rebuild"],
+            mergelist=["dev-go/go-pkg-1"],
+            success=True,
+        ), )
 
         try:
             for test_case in test_cases:

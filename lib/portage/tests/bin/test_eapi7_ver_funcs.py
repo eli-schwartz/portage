@@ -9,6 +9,7 @@ from portage.tests import TestCase
 
 
 class TestEAPI7VerFuncs(TestCase):
+
     def _test_output(self, test_cases):
         """
         Test that commands in test_cases produce expected output.
@@ -64,9 +65,7 @@ source "{PORTAGE_BIN_PATH}"/eapi7-ver-funcs.sh
 die() {{ exit 1; }}
 {cmd}"""
 
-            s = subprocess.Popen(
-                ["bash", "-c", test], stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
+            s = subprocess.Popen(["bash", "-c", test], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             sout, serr = s.communicate()
             self.assertEqual(
                 s.returncode,

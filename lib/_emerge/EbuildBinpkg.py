@@ -23,9 +23,7 @@ class EbuildBinpkg(CompositeTask):
         pkg = self.pkg
         root_config = pkg.root_config
         bintree = root_config.trees["bintree"]
-        pkg_allocated_path, build_id = bintree.getname_build_id(
-            pkg.cpv, allocate_new=True
-        )
+        pkg_allocated_path, build_id = bintree.getname_build_id(pkg.cpv, allocate_new=True)
 
         self.pkg_allocated_path = pkg_allocated_path
         self._binpkg_tmpfile = self.pkg_allocated_path + "." + str(portage.getpid())

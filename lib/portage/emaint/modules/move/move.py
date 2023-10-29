@@ -10,6 +10,7 @@ from portage.versions import _pkg_str
 
 
 class MoveHandler:
+
     def __init__(self, tree, porttree):
         self._tree = tree
         self._portdb = porttree.dbapi
@@ -64,9 +65,7 @@ class MoveHandler:
                 continue
 
             def repo_match(repository):
-                return repository == repo or (
-                    repo == self._master_repo and repository not in allupdates
-                )
+                return repository == repo or (repo == self._master_repo and repository not in allupdates)
 
             for i, update_cmd in enumerate(updates):
                 if update_cmd[0] == "move":
@@ -81,9 +80,7 @@ class MoveHandler:
                             if build_time is not None:
                                 # If this update has already been applied to the same
                                 # package build then silently continue.
-                                for maybe_applied in match(
-                                    f"={cpv.replace(cpv.cp, str(newcp), 1)}"
-                                ):
+                                for maybe_applied in match(f"={cpv.replace(cpv.cp, str(newcp), 1)}"):
                                     if maybe_applied.build_time == build_time:
                                         break
                                 else:
@@ -97,9 +94,7 @@ class MoveHandler:
                         except (KeyError, InvalidData):
                             continue
                         if repo_match(cpv.repo):
-                            errors.append(
-                                f"'{cpv}' slot moved from '{origslot}' to '{newslot}'"
-                            )
+                            errors.append(f"'{cpv}' slot moved from '{origslot}' to '{newslot}'")
                 if onProgress:
                     onProgress(0, 0)
 
@@ -156,9 +151,7 @@ class MoveHandler:
                 continue
 
             def repo_match(repository):
-                return repository == repo or (
-                    repo == self._master_repo and repository not in allupdates
-                )
+                return repository == repo or (repo == self._master_repo and repository not in allupdates)
 
             for i, update_cmd in enumerate(updates):
                 if update_cmd[0] == "move":
@@ -185,9 +178,7 @@ class MoveInstalled(MoveHandler):
 
     def __init__(self):
         eroot = portage.settings["EROOT"]
-        MoveHandler.__init__(
-            self, portage.db[eroot]["vartree"], portage.db[eroot]["porttree"]
-        )
+        MoveHandler.__init__(self, portage.db[eroot]["vartree"], portage.db[eroot]["porttree"])
 
 
 class MoveBinary(MoveHandler):
@@ -199,6 +190,4 @@ class MoveBinary(MoveHandler):
 
     def __init__(self):
         eroot = portage.settings["EROOT"]
-        MoveHandler.__init__(
-            self, portage.db[eroot]["bintree"], portage.db[eroot]["porttree"]
-        )
+        MoveHandler.__init__(self, portage.db[eroot]["bintree"], portage.db[eroot]["porttree"])

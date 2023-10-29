@@ -51,8 +51,8 @@ class IterCompletedTestCase(TestCase):
                 yield task.future
 
         for seconds, future in zip(
-            expected_order,
-            iter_completed(future_generator(), max_jobs=True, max_load=None, loop=loop),
+                expected_order,
+                iter_completed(future_generator(), max_jobs=True, max_load=None, loop=loop),
         ):
             self.assertEqual(seconds, future.result())
 
@@ -71,9 +71,7 @@ class IterCompletedTestCase(TestCase):
                 input_futures.add(future)
                 yield future
 
-        for future_done_set in async_iter_completed(
-            future_generator(), max_jobs=True, max_load=True, loop=loop
-        ):
+        for future_done_set in async_iter_completed(future_generator(), max_jobs=True, max_load=True, loop=loop):
             future_done_set.cancel()
             break
 

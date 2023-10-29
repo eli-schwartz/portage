@@ -1,7 +1,6 @@
 # Copyright 2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-
 from portage import os, _encodings
 from portage.tests import TestCase
 from portage.tests.resolver.ResolverPlayground import (
@@ -12,10 +11,11 @@ from portage.util import ensure_dirs
 
 
 class ProfilePackageSetTestCase(TestCase):
+
     def testProfilePackageSet(self):
         repo_configs = {
             "test_repo": {
-                "layout.conf": ("profile-formats = profile-set",),
+                "layout.conf": ("profile-formats = profile-set", ),
             }
         }
 
@@ -23,7 +23,7 @@ class ProfilePackageSetTestCase(TestCase):
             (
                 "default/linux",
                 {
-                    "eapi": ("5",),
+                    "eapi": ("5", ),
                     "packages": (
                         "*sys-libs/A",
                         "app-misc/A",
@@ -34,7 +34,11 @@ class ProfilePackageSetTestCase(TestCase):
             ),
             (
                 "default/linux/x86",
-                {"eapi": ("5",), "packages": ("-app-misc/B",), "parent": ("..",)},
+                {
+                    "eapi": ("5", ),
+                    "packages": ("-app-misc/B", ),
+                    "parent": ("..", )
+                },
             ),
         )
 
@@ -71,7 +75,10 @@ class ProfilePackageSetTestCase(TestCase):
         test_cases = (
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 mergelist=[],
                 success=True,
             ),
@@ -83,13 +90,9 @@ class ProfilePackageSetTestCase(TestCase):
             ),
         )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed, repo_configs=repo_configs
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, repo_configs=repo_configs)
         try:
-            repo_dir = playground.settings.repositories.get_location_for_name(
-                "test_repo"
-            )
+            repo_dir = playground.settings.repositories.get_location_for_name("test_repo")
             profile_root = os.path.join(repo_dir, "profiles")
 
             for p, data in profiles:
@@ -97,9 +100,9 @@ class ProfilePackageSetTestCase(TestCase):
                 ensure_dirs(prof_path)
                 for k, v in data.items():
                     with open(
-                        os.path.join(prof_path, k),
-                        mode="w",
-                        encoding=_encodings["repo.content"],
+                            os.path.join(prof_path, k),
+                            mode="w",
+                            encoding=_encodings["repo.content"],
                     ) as f:
                         for line in v:
                             f.write(f"{line}\n")

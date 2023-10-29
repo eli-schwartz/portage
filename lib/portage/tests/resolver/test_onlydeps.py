@@ -9,28 +9,27 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class OnlydepsTestCase(TestCase):
+
     def testOnlydeps(self):
         ebuilds = {
-            "dev-libs/A-1": {"DEPEND": "dev-libs/B"},
+            "dev-libs/A-1": {
+                "DEPEND": "dev-libs/B"
+            },
             "dev-libs/B-1": {},
         }
         installed = {
             "dev-libs/B-1": {},
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["dev-libs/A", "dev-libs/B"],
-                all_permutations=True,
-                success=True,
-                options={"--onlydeps": True},
-                mergelist=["dev-libs/B-1"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["dev-libs/A", "dev-libs/B"],
+            all_permutations=True,
+            success=True,
+            options={"--onlydeps": True},
+            mergelist=["dev-libs/B-1"],
+        ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

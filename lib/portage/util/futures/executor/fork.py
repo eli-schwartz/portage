@@ -1,7 +1,7 @@
 # Copyright 2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = ("ForkExecutor",)
+__all__ = ("ForkExecutor", )
 
 import collections
 import functools
@@ -39,22 +39,14 @@ class ForkExecutor:
                 A Future representing the given call.
         """
         future = self._loop.create_future()
-        proc = AsyncFunction(
-            target=functools.partial(self._guarded_fn_call, fn, args, kwargs)
-        )
+        proc = AsyncFunction(target=functools.partial(self._guarded_fn_call, fn, args, kwargs))
         self._submit_queue.append((future, proc))
         self._schedule()
         return future
 
     def _schedule(self):
-        while (
-            not self._shutdown
-            and self._submit_queue
-            and (
-                self._max_workers is True
-                or len(self._running_tasks) < self._max_workers
-            )
-        ):
+        while (not self._shutdown and self._submit_queue
+               and (self._max_workers is True or len(self._running_tasks) < self._max_workers)):
             future, proc = self._submit_queue.popleft()
             future.add_done_callback(functools.partial(self._cancel_cb, proc))
             proc.addExitListener(functools.partial(self._proc_exit, future))
@@ -89,11 +81,7 @@ class ForkExecutor:
             else:
                 # TODO: add special exception class for this, maybe
                 # distinguish between kill and crash
-                future.set_exception(
-                    Exception(
-                        f"pid {proc.pid} crashed or killed, exitcode {proc.returncode}"
-                    )
-                )
+                future.set_exception(Exception(f"pid {proc.pid} crashed or killed, exitcode {proc.returncode}"))
 
         del self._running_tasks[id(proc)]
         self._schedule()
@@ -116,6 +104,7 @@ class ForkExecutor:
 
 
 class _ExceptionWithTraceback:
+
     def __init__(self, exc):
         tb = traceback.format_exception(type(exc), exc, exc.__traceback__)
         tb = "".join(tb)
@@ -127,6 +116,7 @@ class _ExceptionWithTraceback:
 
 
 class _RemoteTraceback(Exception):
+
     def __init__(self, tb):
         self.tb = tb
 

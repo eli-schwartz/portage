@@ -31,7 +31,7 @@ class EbuildIpcDaemon(FifoIpcDaemon):
     4) Detect cases in which bash has exited unexpectedly (as in bug #190128).
     """
 
-    __slots__ = ("commands",)
+    __slots__ = ("commands", )
 
     def _input_handler(self):
         # Read the whole pickle in a single atomic read() call.

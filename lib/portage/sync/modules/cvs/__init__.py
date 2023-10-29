@@ -11,6 +11,7 @@ from portage.util import writemsg_level
 
 
 class CheckCVSConfig(CheckSyncConfig):
+
     def __init__(self, repo, logger):
         CheckSyncConfig.__init__(self, repo, logger)
         self.checks.append("check_cvs_repo")
@@ -18,11 +19,8 @@ class CheckCVSConfig(CheckSyncConfig):
     def check_cvs_repo(self):
         if self.repo.module_specific_options.get("sync-cvs-repo") is None:
             writemsg_level(
-                "!!! %s\n"
-                % _(
-                    "Repository '%s' has sync-type=cvs, but is missing sync-cvs-repo attribute"
-                )
-                % self.repo.name,
+                "!!! %s\n" % _("Repository '%s' has sync-type=cvs, but is missing sync-cvs-repo attribute") %
+                self.repo.name,
                 level=self.logger.ERROR,
                 noiselevel=-1,
             )
@@ -41,11 +39,10 @@ module_spec = {
             "func_desc": {
                 "sync": "Performs a cvs up on the repository",
                 "new": "Creates the new repository at the specified location",
-                "exists": "Returns a boolean of whether the specified dir "
-                + "exists and is a valid CVS repository",
+                "exists": "Returns a boolean of whether the specified dir " + "exists and is a valid CVS repository",
             },
             "validate_config": CheckCVSConfig,
-            "module_specific_options": ("sync-cvs-repo",),
+            "module_specific_options": ("sync-cvs-repo", ),
         }
     },
 }

@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class AutounmaskKeepKeywordsTestCase(TestCase):
+
     def testAutounmaskKeepKeywordsTestCase(self):
         ebuilds = {
             "app-misc/A-2": {
@@ -56,7 +57,9 @@ class AutounmaskKeepKeywordsTestCase(TestCase):
                     "app-misc/C-1",
                     "app-misc/A-1",
                 ],
-                use_changes={"app-misc/C-1": {"foo": True}},
+                use_changes={"app-misc/C-1": {
+                    "foo": True
+                }},
             ),
         )
 

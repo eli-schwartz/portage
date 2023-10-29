@@ -18,13 +18,16 @@ class VdbMetadataDelta:
 
     def initialize(self, timestamp):
         with atomic_ofstream(
-            self._vardb._cache_delta_filename,
-            "w",
-            encoding=_encodings["repo.content"],
-            errors="strict",
+                self._vardb._cache_delta_filename,
+                "w",
+                encoding=_encodings["repo.content"],
+                errors="strict",
         ) as f:
             json.dump(
-                {"version": self._format_version, "timestamp": timestamp},
+                {
+                    "version": self._format_version,
+                    "timestamp": timestamp
+                },
                 f,
                 ensure_ascii=False,
             )
@@ -37,9 +40,9 @@ class VdbMetadataDelta:
 
         try:
             with open(
-                self._vardb._cache_delta_filename,
-                encoding=_encodings["repo.content"],
-                errors="strict",
+                    self._vardb._cache_delta_filename,
+                    encoding=_encodings["repo.content"],
+                    errors="strict",
             ) as f:
                 cache_obj = json.load(f)
         except OSError as e:
@@ -84,9 +87,8 @@ class VdbMetadataDelta:
         while tries:
             tries -= 1
             cache_delta = self.load()
-            if cache_delta is not None and cache_delta.get(
-                "timestamp"
-            ) != self._vardb._aux_cache.get("timestamp", False):
+            if cache_delta is not None and cache_delta.get("timestamp") != self._vardb._aux_cache.get(
+                    "timestamp", False):
                 self._vardb._aux_cache_obj = None
             else:
                 return cache_delta
@@ -166,11 +168,8 @@ class VdbMetadataDelta:
 
                 removed = False
                 for cpv, delta in deltas.items():
-                    if (
-                        cached_cpv.startswith(delta["package"])
-                        and metadata.get("SLOT") == delta["slot"]
-                        and cpv_getkey(cached_cpv) == delta["package"]
-                    ):
+                    if (cached_cpv.startswith(delta["package"]) and metadata.get("SLOT") == delta["slot"]
+                            and cpv_getkey(cached_cpv) == delta["package"]):
                         removed = True
                         break
 

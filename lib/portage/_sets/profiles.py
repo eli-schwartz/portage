@@ -46,8 +46,7 @@ class PackagesSystemSet(PackageSet):
                 eapi_default=None,
                 allow_build_id=x.allow_build_id,
                 allow_repo=allow_profile_repo_deps(x),
-            )
-            for x in self._profiles
+            ) for x in self._profiles
         ]
 
         if debug:
@@ -70,8 +69,6 @@ class PackagesSystemSet(PackageSet):
 
     def singleBuilder(self, options, settings, trees):
         debug = get_boolean(options, "debug", False)
-        return PackagesSystemSet(
-            settings._locations_manager.profiles_complex, debug=debug
-        )
+        return PackagesSystemSet(settings._locations_manager.profiles_complex, debug=debug)
 
     singleBuilder = classmethod(singleBuilder)

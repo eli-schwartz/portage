@@ -40,9 +40,10 @@ def emergelog(xterm_titles, mystr, short_msg=None):
             errors="backslashreplace",
         )
         if not existing_log:
-            portage.util.apply_secpass_permissions(
-                file_path, uid=portage.portage_uid, gid=portage.portage_gid, mode=0o660
-            )
+            portage.util.apply_secpass_permissions(file_path,
+                                                   uid=portage.portage_uid,
+                                                   gid=portage.portage_gid,
+                                                   mode=0o660)
         mylock = portage.locks.lockfile(file_path)
         try:
             mylogfile.write(f"{time.time():.0f}: {mystr}\n")

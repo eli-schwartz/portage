@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class WithTestDepsTestCase(TestCase):
+
     def testWithTestDeps(self):
         ebuilds = {
             "app-misc/A-0": {
@@ -52,7 +53,10 @@ class WithTestDepsTestCase(TestCase):
             ResolverPlaygroundTestCase(
                 ["app-misc/A"],
                 success=True,
-                options={"--onlydeps": True, "--with-test-deps": True},
+                options={
+                    "--onlydeps": True,
+                    "--with-test-deps": True
+                },
                 mergelist=["app-misc/B-0"],
             ),
             # Test that --with-test-deps allows circular dependencies.

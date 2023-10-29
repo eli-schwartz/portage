@@ -138,7 +138,7 @@ class database(fs_template.FsBased):
                 # Write out the rest
                 for i in range(1, parts):
                     start = i * max_len
-                    val = s[start : start + max_len]
+                    val = s[start:start + max_len]
                     self.__set(path, key + str(i), val)
             else:
                 self.__set(path, key, f"{1}:{s}")
@@ -153,9 +153,7 @@ class database(fs_template.FsBased):
         for root, dirs, files in os.walk(self.portdir):
             for file in files:
                 try:
-                    file = _unicode_decode(
-                        file, encoding=_encodings["fs"], errors="strict"
-                    )
+                    file = _unicode_decode(file, encoding=_encodings["fs"], errors="strict")
                 except UnicodeDecodeError:
                     continue
                 if file[-7:] == ".ebuild":

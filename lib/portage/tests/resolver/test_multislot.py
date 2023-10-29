@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class MultSlotTestCase(TestCase):
+
     def testMultiSlotSelective(self):
         """
         Test that a package isn't reinstalled due to SLOT dependency
@@ -16,7 +17,9 @@ class MultSlotTestCase(TestCase):
         """
 
         ebuilds = {
-            "sys-devel/gcc-4.4.4": {"SLOT": "4.4"},
+            "sys-devel/gcc-4.4.4": {
+                "SLOT": "4.4"
+            },
             "dev-util/nvidia-cuda-toolkit-4.0": {
                 "EAPI": "1",
                 "RDEPEND": "sys-devel/gcc:4.4",
@@ -24,30 +27,26 @@ class MultSlotTestCase(TestCase):
         }
 
         installed = {
-            "sys-devel/gcc-4.4.4": {"SLOT": "i686-pc-linux-gnu-4.4.4"},
+            "sys-devel/gcc-4.4.4": {
+                "SLOT": "i686-pc-linux-gnu-4.4.4"
+            },
             "dev-util/nvidia-cuda-toolkit-4.0": {
                 "EAPI": "1",
                 "RDEPEND": "sys-devel/gcc:4.4",
             },
         }
 
-        world = ("dev-util/nvidia-cuda-toolkit",)
+        world = ("dev-util/nvidia-cuda-toolkit", )
 
         options = {"--update": True, "--deep": True, "--selective": True}
 
         test_cases = (
-            ResolverPlaygroundTestCase(
-                ["sys-devel/gcc:4.4"], options=options, mergelist=[], success=True
-            ),
+            ResolverPlaygroundTestCase(["sys-devel/gcc:4.4"], options=options, mergelist=[], success=True),
             # depclean test for bug #382823
-            ResolverPlaygroundTestCase(
-                [], options={"--depclean": True}, success=True, cleanlist=[]
-            ),
+            ResolverPlaygroundTestCase([], options={"--depclean": True}, success=True, cleanlist=[]),
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
 
         try:
             for test_case in test_cases:

@@ -14,6 +14,7 @@ from _emerge.SpawnProcess import SpawnProcess
 
 
 class SpawnTestCase(TestCase):
+
     def testLogfile(self):
         logfile = None
         try:
@@ -24,7 +25,11 @@ class SpawnTestCase(TestCase):
             proc = SpawnProcess(
                 args=[BASH_BINARY, "-c", f"echo -n '{test_string}'"],
                 env={},
-                fd_pipes={0: portage._get_stdin().fileno(), 1: null_fd, 2: null_fd},
+                fd_pipes={
+                    0: portage._get_stdin().fileno(),
+                    1: null_fd,
+                    2: null_fd
+                },
                 scheduler=global_event_loop(),
                 logfile=logfile,
             )

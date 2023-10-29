@@ -83,7 +83,6 @@ portage.proxy.lazyimport.lazyimport(
     "subprocess",
 )
 
-
 noiselimit = 0
 
 
@@ -112,13 +111,9 @@ def writemsg(mystr: str, noiselevel: int = 0, fd: Optional[TextIO] = None) -> No
     if noiselevel <= noiselimit:
         # avoid potential UnicodeEncodeError
         if isinstance(fd, io.StringIO):
-            mystr = _unicode_decode(
-                mystr, encoding=_encodings["content"], errors="replace"
-            )
+            mystr = _unicode_decode(mystr, encoding=_encodings["content"], errors="replace")
         else:
-            mystr = _unicode_encode(
-                mystr, encoding=_encodings["stdio"], errors="backslashreplace"
-            )
+            mystr = _unicode_encode(mystr, encoding=_encodings["stdio"], errors="backslashreplace")
             if fd in (sys.stdout, sys.stderr):
                 fd = fd.buffer
         fd.write(mystr)
@@ -303,15 +298,9 @@ def append_repo(atom_list, repo_name, remember_source_file=False):
     If an atom already has a repo part, then it is preserved (see bug #461948).
     """
     if remember_source_file:
-        return [
-            (atom.repo is not None and atom or atom.with_repo(repo_name), source)
-            for atom, source in atom_list
-        ]
+        return [(atom.repo is not None and atom or atom.with_repo(repo_name), source) for atom, source in atom_list]
 
-    return [
-        atom.repo is not None and atom or atom.with_repo(repo_name)
-        for atom in atom_list
-    ]
+    return [atom.repo is not None and atom or atom.with_repo(repo_name) for atom in atom_list]
 
 
 def stack_lists(
@@ -355,9 +344,7 @@ def stack_lists(
                                 # Atom.without_repo instantiates a new Atom,
                                 # which is unnecessary here, so use string
                                 # replacement instead.
-                                atom_without_repo = atom.replace(
-                                    "::" + atom.repo, "", 1
-                                )
+                                atom_without_repo = atom.replace("::" + atom.repo, "", 1)
                             if atom_without_repo == token_slice:
                                 to_be_removed.append(atom)
                         if to_be_removed:
@@ -372,10 +359,7 @@ def stack_lists(
                             pass
 
                     if not matched:
-                        if source_file and (
-                            strict_warn_for_unmatched_removal
-                            or token_key not in matched_removals
-                        ):
+                        if source_file and (strict_warn_for_unmatched_removal or token_key not in matched_removals):
                             unmatched_removals.setdefault(source_file, set()).add(token)
                     else:
                         matched_removals.add(token_key)
@@ -389,14 +373,13 @@ def stack_lists(
             if len(tokens) > 3:
                 selected = [tokens.pop(), tokens.pop(), tokens.pop()]
                 writemsg(
-                    _("--- Unmatched removal atoms in %s: %s and %s more\n")
-                    % (source_file, ", ".join(selected), len(tokens)),
+                    _("--- Unmatched removal atoms in %s: %s and %s more\n") %
+                    (source_file, ", ".join(selected), len(tokens)),
                     noiselevel=-1,
                 )
             else:
                 writemsg(
-                    _("--- Unmatched removal atom(s) in %s: %s\n")
-                    % (source_file, ", ".join(tokens)),
+                    _("--- Unmatched removal atom(s) in %s: %s\n") % (source_file, ", ".join(tokens)),
                     noiselevel=-1,
                 )
 
@@ -405,9 +388,7 @@ def stack_lists(
     return list(new_list)
 
 
-def grabdict(
-    myfilename, juststrings=0, empty=0, recursive=0, incremental=1, newlines=0
-):
+def grabdict(myfilename, juststrings=0, empty=0, recursive=0, incremental=1, newlines=0):
     """
     This function grabs the lines in a file, normalizes whitespace and returns lines in a dictionary
 
@@ -481,17 +462,16 @@ def read_corresponding_eapi_file(filename, default="0"):
     eapi = None
     try:
         with open(
-            _unicode_encode(eapi_file, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["repo.content"],
-            errors="replace",
+                _unicode_encode(eapi_file, encoding=_encodings["fs"], errors="strict"),
+                encoding=_encodings["repo.content"],
+                errors="replace",
         ) as f:
             lines = f.readlines()
         if len(lines) == 1:
             eapi = lines[0].rstrip("\n")
         else:
             writemsg(
-                _("--- Invalid 'eapi' file (doesn't contain exactly one line): %s\n")
-                % (eapi_file),
+                _("--- Invalid 'eapi' file (doesn't contain exactly one line): %s\n") % (eapi_file),
                 noiselevel=-1,
             )
     except OSError:
@@ -549,14 +529,11 @@ def grabdict_package(
                     eapi=eapi,
                 )
             except InvalidAtom as e:
-                writemsg(
-                    _("--- Invalid atom in %s: %s\n") % (filename, e), noiselevel=-1
-                )
+                writemsg(_("--- Invalid atom in %s: %s\n") % (filename, e), noiselevel=-1)
             else:
                 if not allow_use and k.use:
                     writemsg(
-                        _("--- Atom is not allowed to have USE flag(s) in %s: %s\n")
-                        % (filename, k),
+                        _("--- Atom is not allowed to have USE flag(s) in %s: %s\n") % (filename, k),
                         noiselevel=-1,
                     )
                     continue
@@ -581,9 +558,7 @@ def grabfile_package(
     eapi=None,
     eapi_default="0",
 ):
-    pkgs = grabfile(
-        myfilename, compatlevel, recursive=recursive, remember_source_file=True
-    )
+    pkgs = grabfile(myfilename, compatlevel, recursive=recursive, remember_source_file=True)
     if not pkgs:
         return pkgs
     if verify_eapi and eapi is None:
@@ -613,9 +588,7 @@ def grabfile_package(
                 eapi=eapi,
             )
         except InvalidAtom as e:
-            writemsg(
-                _("--- Invalid atom in %s: %s\n") % (source_file, e), noiselevel=-1
-            )
+            writemsg(_("--- Invalid atom in %s: %s\n") % (source_file, e), noiselevel=-1)
         else:
             if pkg_orig == str(pkg):
                 # normal atom, so return as Atom instance
@@ -679,16 +652,14 @@ def grablines(myfilename, recursive=0, remember_source_file=False):
     mylines = []
     if recursive:
         for f in _recursive_file_list(myfilename):
-            mylines.extend(
-                grablines(f, recursive=False, remember_source_file=remember_source_file)
-            )
+            mylines.extend(grablines(f, recursive=False, remember_source_file=remember_source_file))
 
     else:
         try:
             with open(
-                _unicode_encode(myfilename, encoding=_encodings["fs"], errors="strict"),
-                encoding=_encodings["content"],
-                errors="replace",
+                    _unicode_encode(myfilename, encoding=_encodings["fs"], errors="strict"),
+                    encoding=_encodings["content"],
+                    errors="replace",
             ) as myfile:
                 if remember_source_file:
                     mylines = [(line, myfilename) for line in myfile.readlines()]
@@ -727,6 +698,7 @@ def shlex_split(s):
 
 
 class _getconfig_shlex(shlex.shlex):
+
     def __init__(self, portage_tolerant=False, **kwargs):
         shlex.shlex.__init__(self, **kwargs)
         self.__portage_tolerant = portage_tolerant
@@ -762,9 +734,7 @@ class _getconfig_shlex(shlex.shlex):
 _invalid_var_name_re = re.compile(r"^\d|\W")
 
 
-def getconfig(
-    mycfg, tolerant=False, allow_sourcing=False, expand=True, recursive=False
-):
+def getconfig(mycfg, tolerant=False, allow_sourcing=False, expand=True, recursive=False):
     if isinstance(expand, dict):
         # Some existing variable definitions have been
         # passed in, for use in substitutions.
@@ -788,9 +758,7 @@ def getconfig(
                     allow_sourcing=allow_sourcing,
                     expand=expand_map,
                     recursive=False,
-                )
-                or {}
-            )
+                ) or {})
         if fname is None:
             return None
         return mykeys
@@ -808,7 +776,7 @@ def getconfig(
             raise PermissionDenied(mycfg)
         if e.errno != errno.ENOENT:
             writemsg(f"open('{mycfg}', 'r'): {e}\n", noiselevel=-1)
-            if e.errno not in (errno.EISDIR,):
+            if e.errno not in (errno.EISDIR, ):
                 raise
         return None
     finally:
@@ -829,15 +797,7 @@ def getconfig(
     # people from being able to source them with bash.
     if portage._native_string("\r") in content:
         writemsg(
-            (
-                "!!! "
-                + _(
-                    "Please use dos2unix to convert line endings "
-                    + "in config file: '%s'"
-                )
-                + "\n"
-            )
-            % mycfg,
+            ("!!! " + _("Please use dos2unix to convert line endings " + "in config file: '%s'") + "\n") % mycfg,
             noiselevel=-1,
         )
 
@@ -846,12 +806,8 @@ def getconfig(
         # The default shlex.sourcehook() implementation
         # only joins relative paths when the infile
         # attribute is properly set.
-        lex = _getconfig_shlex(
-            instream=content, infile=mycfg, posix=True, portage_tolerant=tolerant
-        )
-        lex.wordchars = portage._native_string(
-            string.digits + string.ascii_letters + r"~!@#$%*_\:;?,./-+{}"
-        )
+        lex = _getconfig_shlex(instream=content, infile=mycfg, posix=True, portage_tolerant=tolerant)
+        lex.wordchars = portage._native_string(string.digits + string.ascii_letters + r"~!@#$%*_\:;?,./-+{}")
         lex.quotes = portage._native_string("\"'")
         if allow_sourcing:
             lex.allow_sourcing(expand_map)
@@ -874,7 +830,7 @@ def getconfig(
                     return mykeys
 
             elif equ != "=":
-                msg = lex.error_leader() + _("Invalid token '%s' (not '=')") % (equ,)
+                msg = lex.error_leader() + _("Invalid token '%s' (not '=')") % (equ, )
                 if not tolerant:
                     raise ParseError(msg)
                 else:
@@ -883,9 +839,7 @@ def getconfig(
 
             val = _unicode_decode(lex.get_token())
             if val is None:
-                msg = lex.error_leader() + _(
-                    "Unexpected end of config file: variable '%s'"
-                ) % (key,)
+                msg = lex.error_leader() + _("Unexpected end of config file: variable '%s'") % (key, )
                 if not tolerant:
                     raise ParseError(msg)
                 else:
@@ -893,16 +847,14 @@ def getconfig(
                     return mykeys
 
             if _invalid_var_name_re.search(key) is not None:
-                msg = lex.error_leader() + _("Invalid variable name '%s'") % (key,)
+                msg = lex.error_leader() + _("Invalid variable name '%s'") % (key, )
                 if not tolerant:
                     raise ParseError(msg)
                 writemsg(f"{msg}\n", noiselevel=-1)
                 continue
 
             if expand:
-                mykeys[key] = varexpand(
-                    val, mydict=expand_map, error_leader=lex.error_leader
-                )
+                mykeys[key] = varexpand(val, mydict=expand_map, error_leader=lex.error_leader)
                 expand_map[key] = mykeys[key]
             else:
                 mykeys[key] = val
@@ -925,7 +877,6 @@ _varexpand_unexpected_eof_msg = "unexpected EOF while looking for matching `}'"
 def varexpand(mystring, mydict=None, error_leader=None):
     if mydict is None:
         mydict = {}
-
     """
 	new variable expansion code.  Preserves quotes, handles \n, etc.
 	This code is used by the configfile code, as well as others (parser)
@@ -989,7 +940,7 @@ def varexpand(mystring, mydict=None, error_leader=None):
                     elif current == "\n":
                         pass
                     else:
-                        newstring.append(mystring[pos - 2 : pos])
+                        newstring.append(mystring[pos - 2:pos])
                     continue
             elif current == "$":
                 pos += 1
@@ -1063,9 +1014,7 @@ def pickle_read(filename, default=None, debug=0):
         return default
     data = None
     try:
-        myf = open(
-            _unicode_encode(filename, encoding=_encodings["fs"], errors="strict"), "rb"
-        )
+        myf = open(_unicode_encode(filename, encoding=_encodings["fs"], errors="strict"), "rb")
         mypickle = pickle.Unpickler(myf)
         data = mypickle.load()
         myf.close()
@@ -1109,7 +1058,7 @@ class cmp_sort_key:
     by functools.cmp_to_key().
     """
 
-    __slots__ = ("_cmp_func",)
+    __slots__ = ("_cmp_func", )
 
     def __init__(self, cmp_func):
         """
@@ -1130,9 +1079,7 @@ class cmp_sort_key:
 
         def __lt__(self, other):
             if other.__class__ is not self.__class__:
-                raise TypeError(
-                    f"Expected type {self.__class__}, got {other.__class__}"
-                )
+                raise TypeError(f"Expected type {self.__class__}, got {other.__class__}")
             return self._cmp_func(self._obj, other._obj) < 0
 
 
@@ -1208,9 +1155,7 @@ def _do_stat(filename, follow_links=True):
         raise
 
 
-def apply_permissions(
-    filename, uid=-1, gid=-1, mode=-1, mask=-1, stat_cached=None, follow_links=True
-):
+def apply_permissions(filename, uid=-1, gid=-1, mode=-1, mask=-1, stat_cached=None, follow_links=True):
     """Apply user, group, and mode bits to a file if the existing bits do not
     already match.  The default behavior is to force an exact match of mode
     bits.  When mask=0 is specified, mode bits on the target file are allowed
@@ -1228,9 +1173,7 @@ def apply_permissions(
     if stat_cached is None:
         stat_cached = _do_stat(filename, follow_links=follow_links)
 
-    if (uid != -1 and uid != stat_cached.st_uid) or (
-        gid != -1 and gid != stat_cached.st_gid
-    ):
+    if (uid != -1 and uid != stat_cached.st_uid) or (gid != -1 and gid != stat_cached.st_gid):
         try:
             if follow_links:
                 os.chown(filename, uid, gid)
@@ -1267,11 +1210,7 @@ def apply_permissions(
 
     # The chown system call may clear S_ISUID and S_ISGID
     # bits, so those bits are restored if necessary.
-    if (
-        modified
-        and new_mode == -1
-        and (st_mode & stat.S_ISUID or st_mode & stat.S_ISGID)
-    ):
+    if (modified and new_mode == -1 and (st_mode & stat.S_ISUID or st_mode & stat.S_ISGID)):
         if mode == -1:
             new_mode = st_mode
         else:
@@ -1309,14 +1248,10 @@ def apply_permissions(
 def apply_stat_permissions(filename, newstat, **kwargs):
     """A wrapper around apply_secpass_permissions that gets
     uid, gid, and mode from a stat object"""
-    return apply_secpass_permissions(
-        filename, uid=newstat.st_uid, gid=newstat.st_gid, mode=newstat.st_mode, **kwargs
-    )
+    return apply_secpass_permissions(filename, uid=newstat.st_uid, gid=newstat.st_gid, mode=newstat.st_mode, **kwargs)
 
 
-def apply_recursive_permissions(
-    top, uid=-1, gid=-1, dirmode=-1, dirmask=-1, filemode=-1, filemask=-1, onerror=None
-):
+def apply_recursive_permissions(top, uid=-1, gid=-1, dirmode=-1, dirmask=-1, filemode=-1, filemask=-1, onerror=None):
     """A wrapper around apply_secpass_permissions that applies permissions
     recursively.  If optional argument onerror is specified, it should be a
     function; it will be called with one argument, a PortageException instance.
@@ -1396,9 +1331,7 @@ def apply_recursive_permissions(
     return all_applied
 
 
-def apply_secpass_permissions(
-    filename, uid=-1, gid=-1, mode=-1, mask=-1, stat_cached=None, follow_links=True
-):
+def apply_secpass_permissions(filename, uid=-1, gid=-1, mode=-1, mask=-1, stat_cached=None, follow_links=True):
     """A wrapper around apply_permissions that uses secpass and simple
     logic to apply as much of the permissions as possible without
     generating an obviously avoidable permission exception. Despite
@@ -1461,9 +1394,7 @@ class atomic_ofstream(AbstractContextManager, ObjectProxy):
                     self,
                     "_file",
                     open_func(
-                        _unicode_encode(
-                            tmp_name, encoding=_encodings["fs"], errors="strict"
-                        ),
+                        _unicode_encode(tmp_name, encoding=_encodings["fs"], errors="strict"),
                         mode=mode,
                         **kargs,
                     ),
@@ -1595,7 +1526,7 @@ def ensure_dirs(dir_path, **kwargs):
         created_dir = True
     except OSError as oe:
         func_call = f"makedirs('{dir_path}')"
-        if oe.errno in (errno.EEXIST,):
+        if oe.errno in (errno.EEXIST, ):
             pass
         else:
             if os.path.isdir(dir_path):
@@ -1624,7 +1555,7 @@ class LazyItemsDict(UserDict):
     for lazy initialization of values via callable objects.  Lazy items can be
     overwritten and deleted just as normal items."""
 
-    __slots__ = ("lazy_items",)
+    __slots__ = ("lazy_items", )
 
     def __init__(self, *args, **kwargs):
         self.lazy_items = {}
@@ -1646,9 +1577,7 @@ class LazyItemsDict(UserDict):
 
     def update(self, *args, **kwargs):
         if len(args) > 1:
-            raise TypeError(
-                "expected at most 1 positional argument, got " + repr(len(args))
-            )
+            raise TypeError("expected at most 1 positional argument, got " + repr(len(args)))
         if args:
             map_obj = args[0]
         else:
@@ -1719,11 +1648,8 @@ class LazyItemsDict(UserDict):
             lazy_item = self.lazy_items.get(k)
             if lazy_item is not None:
                 if not lazy_item.singleton:
-                    raise TypeError(
-                        "LazyItemsDict "
-                        + "deepcopy is unsafe with lazy items that are "
-                        + f"not singletons: key={k} value={lazy_item}"
-                    )
+                    raise TypeError("LazyItemsDict " + "deepcopy is unsafe with lazy items that are " +
+                                    f"not singletons: key={k} value={lazy_item}")
             UserDict.__setitem__(result, k_copy, deepcopy(self[k], memo))
         return result
 
@@ -1761,6 +1687,7 @@ class LazyItemsDict(UserDict):
 
 
 class ConfigProtect:
+
     def __init__(self, myroot, protect_list, mask_list, case_insensitive=False):
         self.myroot = myroot
         self.protect_list = protect_list
@@ -1879,11 +1806,7 @@ def new_protect_filename(mydest, newmd5=None, force=False):
             continue
     prot_num = prot_num + 1
 
-    new_pfile = normalize_path(
-        os.path.join(
-            real_dirname, "._cfg" + str(prot_num).zfill(4) + "_" + real_filename
-        )
-    )
+    new_pfile = normalize_path(os.path.join(real_dirname, "._cfg" + str(prot_num).zfill(4) + "_" + real_filename))
     old_pfile = normalize_path(os.path.join(real_dirname, last_pfile))
     if last_pfile and newmd5:
         try:
@@ -1896,18 +1819,12 @@ def new_protect_filename(mydest, newmd5=None, force=False):
                 try:
                     # Read symlink target as bytes, in case the
                     # target path has a bad encoding.
-                    pfile_link = os.readlink(
-                        _unicode_encode(
-                            old_pfile, encoding=_encodings["merge"], errors="strict"
-                        )
-                    )
+                    pfile_link = os.readlink(_unicode_encode(old_pfile, encoding=_encodings["merge"], errors="strict"))
                 except OSError:
                     if e.errno != errno.ENOENT:
                         raise
                 else:
-                    pfile_link = _unicode_decode(
-                        pfile_link, encoding=_encodings["merge"], errors="replace"
-                    )
+                    pfile_link = _unicode_decode(pfile_link, encoding=_encodings["merge"], errors="replace")
                     if pfile_link == newmd5:
                         return old_pfile
             else:
@@ -1959,23 +1876,14 @@ def find_updated_config_files(target_root, config_protect):
                     pass
 
             if stat.S_ISDIR(mymode):
-                mycommand = (
-                    f"find '{x}' -name '.*' -type d -prune -o -name '._cfg????_*'"
-                )
+                mycommand = (f"find '{x}' -name '.*' -type d -prune -o -name '._cfg????_*'")
             else:
-                mycommand = (
-                    "find '%s' -maxdepth 1 -name '._cfg????_%s'"
-                    % os.path.split(x.rstrip(os.path.sep))
-                )
+                mycommand = ("find '%s' -maxdepth 1 -name '._cfg????_%s'" % os.path.split(x.rstrip(os.path.sep)))
             mycommand += " ! -name '.*~' ! -iname '.*.bak' -print0"
             cmd = shlex_split(mycommand)
 
-            cmd = [
-                _unicode_encode(arg, encoding=encoding, errors="strict") for arg in cmd
-            ]
-            proc = subprocess.Popen(
-                cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-            )
+            cmd = [_unicode_encode(arg, encoding=encoding, errors="strict") for arg in cmd]
+            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             output = _unicode_decode(proc.communicate()[0], encoding=encoding)
             status = proc.wait()
             if os.WIFEXITED(status) and os.WEXITSTATUS(status) == os.EX_OK:
@@ -1994,6 +1902,7 @@ _ld_so_include_re = re.compile(r"^include\s+(\S.*)")
 
 
 def getlibpaths(root, env=None):
+
     def read_ld_so_conf(path):
         for l in grabfile(path):
             include_match = _ld_so_include_re.match(l)

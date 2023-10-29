@@ -9,18 +9,27 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class UnnecessarySlotrUpgradeTestCase(TestCase):
+
     def testUnnecessarySlotUpgrade(self):
         ebuilds = {
             "app-misc/a-1": {
-                "EAPI": "8",
-                "RDEPEND": "|| ( dev-lang/python:3.10 dev-lang/python:3.9 ) || ( dev-lang/python:3.10 dev-lang/python:3.9 )",
+                "EAPI":
+                "8",
+                "RDEPEND":
+                "|| ( dev-lang/python:3.10 dev-lang/python:3.9 ) || ( dev-lang/python:3.10 dev-lang/python:3.9 )",
             },
-            "dev-lang/python-3.9": {"SLOT": "3.9"},
-            "dev-lang/python-3.10": {"SLOT": "3.10"},
+            "dev-lang/python-3.9": {
+                "SLOT": "3.9"
+            },
+            "dev-lang/python-3.10": {
+                "SLOT": "3.10"
+            },
         }
 
         installed = {
-            "dev-lang/python-3.9": {"SLOT": "3.9"},
+            "dev-lang/python-3.9": {
+                "SLOT": "3.9"
+            },
         }
 
         test_cases = (
@@ -35,12 +44,9 @@ class UnnecessarySlotrUpgradeTestCase(TestCase):
                     "dev-lang/python-3.10",
                     "app-misc/a-1",
                 ),
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed)
 
         try:
             for test_case in test_cases:

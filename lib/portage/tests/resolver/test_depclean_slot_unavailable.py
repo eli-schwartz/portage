@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class DepcleanUnavailableSlotTestCase(TestCase):
+
     def testDepcleanUnavailableSlot(self):
         """
         Test bug #445506, where we want to remove the slot
@@ -17,28 +18,33 @@ class DepcleanUnavailableSlotTestCase(TestCase):
         """
 
         ebuilds = {
-            "sys-kernel/gentoo-sources-3.0.53": {"SLOT": "3.0.53", "KEYWORDS": "x86"},
+            "sys-kernel/gentoo-sources-3.0.53": {
+                "SLOT": "3.0.53",
+                "KEYWORDS": "x86"
+            },
         }
 
         installed = {
-            "sys-kernel/gentoo-sources-3.0.53": {"SLOT": "3.0.53", "KEYWORDS": "x86"},
-            "sys-kernel/gentoo-sources-3.2.21": {"SLOT": "3.2.21", "KEYWORDS": "x86"},
+            "sys-kernel/gentoo-sources-3.0.53": {
+                "SLOT": "3.0.53",
+                "KEYWORDS": "x86"
+            },
+            "sys-kernel/gentoo-sources-3.2.21": {
+                "SLOT": "3.2.21",
+                "KEYWORDS": "x86"
+            },
         }
 
         world = ["sys-kernel/gentoo-sources"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                [],
-                options={"--depclean": True},
-                success=True,
-                cleanlist=["sys-kernel/gentoo-sources-3.2.21"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            [],
+            options={"--depclean": True},
+            success=True,
+            cleanlist=["sys-kernel/gentoo-sources-3.2.21"],
+        ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -48,27 +54,21 @@ class DepcleanUnavailableSlotTestCase(TestCase):
 
         # Now make the newer version availale and verify that
         # the lower version is depcleaned.
-        ebuilds.update(
-            {
-                "sys-kernel/gentoo-sources-3.2.21": {
-                    "SLOT": "3.2.21",
-                    "KEYWORDS": "x86",
-                },
-            }
-        )
+        ebuilds.update({
+            "sys-kernel/gentoo-sources-3.2.21": {
+                "SLOT": "3.2.21",
+                "KEYWORDS": "x86",
+            },
+        })
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                [],
-                options={"--depclean": True},
-                success=True,
-                cleanlist=["sys-kernel/gentoo-sources-3.0.53"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            [],
+            options={"--depclean": True},
+            success=True,
+            cleanlist=["sys-kernel/gentoo-sources-3.0.53"],
+        ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

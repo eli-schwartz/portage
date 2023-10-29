@@ -13,9 +13,7 @@ portage.proxy.lazyimport.lazyimport(
     "portage.versions:vercmp",
 )
 
-_PackageConflict = collections.namedtuple(
-    "_PackageConflict", ["root", "pkgs", "atom", "description"]
-)
+_PackageConflict = collections.namedtuple("_PackageConflict", ["root", "pkgs", "atom", "description"])
 
 
 class PackageConflict(_PackageConflict):
@@ -195,11 +193,7 @@ class PackageTracker:
         if not self._cp_pkg_map[cp_key]:
             del self._cp_pkg_map[cp_key]
         elif len(self._cp_pkg_map[cp_key]) == 1:
-            self._multi_pkgs = [
-                other_cp_key
-                for other_cp_key in self._multi_pkgs
-                if other_cp_key != cp_key
-            ]
+            self._multi_pkgs = [other_cp_key for other_cp_key in self._multi_pkgs if other_cp_key != cp_key]
 
         for installed in self._replacing[pkg]:
             self._replaced_by[installed].remove(pkg)
@@ -288,8 +282,7 @@ class PackageTracker:
                                 root=slot_key[0],
                                 atom=slot_key[1],
                                 pkgs=tuple(slot_pkgs),
-                            )
-                        )
+                            ))
 
                 # CPV conflicts.
                 for cpv_key in cpv_map:
@@ -305,8 +298,7 @@ class PackageTracker:
                                     root=cpv_key[0],
                                     atom=cpv_key[1],
                                     pkgs=tuple(cpv_pkgs),
-                                )
-                            )
+                                ))
 
         return iter(self._conflicts_cache)
 
@@ -317,11 +309,7 @@ class PackageTracker:
         updated to deal with other kinds of conflicts.
         This function should be removed once all consumers are updated.
         """
-        return (
-            conflict
-            for conflict in self.conflicts()
-            if conflict.description == "slot conflict"
-        )
+        return (conflict for conflict in self.conflicts() if conflict.description == "slot conflict")
 
     def all_pkgs(self, root):
         """

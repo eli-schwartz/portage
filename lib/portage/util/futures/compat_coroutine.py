@@ -79,6 +79,7 @@ def _generator_future(generator_func, *args, **kwargs):
 
 
 class _CoroutineReturnValue(Exception):
+
     def __init__(self, result):
         self.result = result
 

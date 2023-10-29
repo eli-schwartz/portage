@@ -9,7 +9,6 @@ import threading
 
 from portage.proxy.objectproxy import ObjectProxy
 
-
 _module_proxies = {}
 _module_proxies_lock = threading.RLock()
 
@@ -103,15 +102,13 @@ class _LazyImport(ObjectProxy):
         __import__(name)
         target = sys.modules[name]
         object.__setattr__(self, "_target", target)
-        object.__getattribute__(self, "_scope")[
-            object.__getattribute__(self, "_alias")
-        ] = target
+        object.__getattribute__(self, "_scope")[object.__getattribute__(self, "_alias")] = target
         _unregister_module_proxy(name)
         return target
 
 
 class _LazyImportFrom(_LazyImport):
-    __slots__ = ("_attr_name",)
+    __slots__ = ("_attr_name", )
 
     def __init__(self, scope, name, attr_name, alias):
         object.__setattr__(self, "_attr_name", attr_name)
@@ -139,9 +136,7 @@ class _LazyImportFrom(_LazyImport):
             target = getattr(sys.modules[name], attr_name)
 
         object.__setattr__(self, "_target", target)
-        object.__getattribute__(self, "_scope")[
-            object.__getattribute__(self, "_alias")
-        ] = target
+        object.__getattribute__(self, "_scope")[object.__getattribute__(self, "_alias")] = target
         _unregister_module_proxy(name)
         return target
 
@@ -176,7 +171,7 @@ def lazyimport(scope, *args):
             for i in range(len(components)):
                 alias = components[i]
                 if i < len(components) - 1:
-                    parent_name = ".".join(components[: i + 1])
+                    parent_name = ".".join(components[:i + 1])
                     __import__(parent_name)
                     mod = modules.get(parent_name)
                     if not isinstance(mod, types.ModuleType):

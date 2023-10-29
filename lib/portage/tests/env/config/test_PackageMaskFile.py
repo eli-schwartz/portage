@@ -9,6 +9,7 @@ from tempfile import mkstemp
 
 
 class PackageMaskFileTestCase(TestCase):
+
     def testPackageMaskFile(self):
         self.BuildFile()
         try:

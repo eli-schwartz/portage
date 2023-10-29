@@ -59,11 +59,11 @@ def preexec_fn(uid, gid, groups, umask):
     # CPython >= 3 subprocess.Popen handles this internally.
     if platform.python_implementation() != "CPython":
         for signum in (
-            signal.SIGHUP,
-            signal.SIGINT,
-            signal.SIGPIPE,
-            signal.SIGQUIT,
-            signal.SIGTERM,
+                signal.SIGHUP,
+                signal.SIGINT,
+                signal.SIGPIPE,
+                signal.SIGQUIT,
+                signal.SIGTERM,
         ):
             signal.signal(signum, signal.SIG_DFL)
 
@@ -71,8 +71,7 @@ def preexec_fn(uid, gid, groups, umask):
 def main(argv):
     if len(argv) < 2:
         return "Usage: {} <main-child-pid> or <uid> <gid> <groups> <umask> <pass_fds> <binary> <argv0> [arg]..".format(
-            argv[0]
-        )
+            argv[0])
 
     if len(argv) == 2:
         # The child process is init (pid 1) in a child pid namespace, and
@@ -138,16 +137,12 @@ def main(argv):
 
     # If setsid has been called, use kill(0, signum) to
     # forward signals to the entire process group.
-    sig_handler = functools.partial(
-        forward_kill_signal, 0 if setsid else main_child_pid
-    )
+    sig_handler = functools.partial(forward_kill_signal, 0 if setsid else main_child_pid)
     for signum in KILL_SIGNALS:
         signal.signal(signum, sig_handler)
 
     # For correct operation of Ctrl+Z, forward SIGTSTP and SIGCONT.
-    sigtstp_sigcont_handler = functools.partial(
-        forward_sigtstp_sigcont, 0 if setsid else main_child_pid
-    )
+    sigtstp_sigcont_handler = functools.partial(forward_sigtstp_sigcont, 0 if setsid else main_child_pid)
     for signum in SIGTSTP_SIGCONT:
         signal.signal(signum, sigtstp_sigcont_handler)
 

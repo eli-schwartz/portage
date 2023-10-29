@@ -15,7 +15,7 @@ class TaskSequence(CompositeTask):
     a means to trigger movement from one task to the next.
     """
 
-    __slots__ = ("_task_queue",)
+    __slots__ = ("_task_queue", )
 
     def __init__(self, **kwargs):
         AsynchronousTask.__init__(self, **kwargs)

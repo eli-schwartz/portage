@@ -62,9 +62,7 @@ class dbapi:
     def _cmp_cpv(cpv1, cpv2) -> int:
         result = vercmp(cpv1.version, cpv2.version)
         if result == 0 and cpv1.build_time is not None and cpv2.build_time is not None:
-            result = (cpv1.build_time > cpv2.build_time) - (
-                cpv1.build_time < cpv2.build_time
-            )
+            result = (cpv1.build_time > cpv2.build_time) - (cpv1.build_time < cpv2.build_time)
         return result
 
     @staticmethod
@@ -105,9 +103,7 @@ class dbapi:
         """
         raise NotImplementedError
 
-    def aux_get(
-        self, mycpv: str, mylist: str, myrepo: Optional[str] = None
-    ) -> list[str]:
+    def aux_get(self, mycpv: str, mylist: str, myrepo: Optional[str] = None) -> list[str]:
         """Return the metadata keys in mylist for mycpv
         Args:
                 mycpv - "sys-apps/foo-1.0"
@@ -139,9 +135,7 @@ class dbapi:
                 a list of packages that match origdep
         """
         mydep = _dep_expand(origdep, mydb=self, settings=self.settings)
-        return list(
-            self._iter_match(mydep, self.cp_list(mydep.cp, use_cache=use_cache))
-        )
+        return list(self._iter_match(mydep, self.cp_list(mydep.cp, use_cache=use_cache)))
 
     def _iter_match(self, atom: str, cpv_iter):
         cpv_iter = iter(match_from_list(atom, cpv_iter))
@@ -167,12 +161,10 @@ class dbapi:
         else:
             return cpv
 
-        metadata = dict(
-            zip(
-                self._pkg_str_aux_keys,
-                self.aux_get(cpv, self._pkg_str_aux_keys, myrepo=repo),
-            )
-        )
+        metadata = dict(zip(
+            self._pkg_str_aux_keys,
+            self.aux_get(cpv, self._pkg_str_aux_keys, myrepo=repo),
+        ))
 
         return _pkg_str(cpv, metadata=metadata, settings=self.settings, db=self)
 
@@ -205,9 +197,7 @@ class dbapi:
         aux_keys = ["EAPI", "IUSE", "KEYWORDS", "SLOT", "USE", "repository"]
         for cpv in cpv_iter:
             try:
-                metadata = dict(
-                    zip(aux_keys, self.aux_get(cpv, aux_keys, myrepo=atom.repo))
-                )
+                metadata = dict(zip(aux_keys, self.aux_get(cpv, aux_keys, myrepo=atom.repo)))
             except KeyError:
                 continue
 
@@ -293,15 +283,9 @@ class dbapi:
             # data corruption). The enabled flags must be consistent
             # with implicit IUSE, in order to avoid potential
             # inconsistencies in USE dep matching (see bug #453400).
-            use = frozenset(
-                x for x in metadata["USE"].split() if iuse.get_flag(x) is not None
-            )
-            missing_enabled = frozenset(
-                x for x in atom.use.missing_enabled if iuse.get_flag(x) is None
-            )
-            missing_disabled = frozenset(
-                x for x in atom.use.missing_disabled if iuse.get_flag(x) is None
-            )
+            use = frozenset(x for x in metadata["USE"].split() if iuse.get_flag(x) is not None)
+            missing_enabled = frozenset(x for x in atom.use.missing_enabled if iuse.get_flag(x) is None)
+            missing_disabled = frozenset(x for x in atom.use.missing_disabled if iuse.get_flag(x) is None)
             enabled = frozenset((iuse.get_flag(x) or x) for x in atom.use.enabled)
             disabled = frozenset((iuse.get_flag(x) or x) for x in atom.use.disabled)
 
@@ -324,35 +308,21 @@ class dbapi:
         elif not self.settings.local_config:
             if not ignore_profile:
                 # Check masked and forced flags for repoman.
-                usemask = self.settings._getUseMask(
-                    pkg, stable=self.settings._parent_stable
-                )
-                if any(
-                    x in usemask and iuse.get_flag(x) is not None
-                    for x in atom.use.enabled
-                ):
+                usemask = self.settings._getUseMask(pkg, stable=self.settings._parent_stable)
+                if any(x in usemask and iuse.get_flag(x) is not None for x in atom.use.enabled):
                     return False
 
-                useforce = self.settings._getUseForce(
-                    pkg, stable=self.settings._parent_stable
-                )
-                if any(
-                    x in useforce and x not in usemask and iuse.get_flag(x) is not None
-                    for x in atom.use.disabled
-                ):
+                useforce = self.settings._getUseForce(pkg, stable=self.settings._parent_stable)
+                if any(x in useforce and x not in usemask and iuse.get_flag(x) is not None for x in atom.use.disabled):
                     return False
 
             # Check unsatisfied use-default deps
             if atom.use.enabled:
-                missing_disabled = frozenset(
-                    x for x in atom.use.missing_disabled if iuse.get_flag(x) is None
-                )
+                missing_disabled = frozenset(x for x in atom.use.missing_disabled if iuse.get_flag(x) is None)
                 if any(x in atom.use.enabled for x in missing_disabled):
                     return False
             if atom.use.disabled:
-                missing_enabled = frozenset(
-                    x for x in atom.use.missing_enabled if iuse.get_flag(x) is None
-                )
+                missing_enabled = frozenset(x for x in atom.use.missing_enabled if iuse.get_flag(x) is None)
                 if any(x in atom.use.disabled for x in missing_enabled):
                     return False
 
@@ -418,9 +388,7 @@ class dbapi:
             if not updates_list:
                 continue
 
-            metadata_updates = portage.update_dbentries(
-                updates_list, metadata, parent=pkg
-            )
+            metadata_updates = portage.update_dbentries(updates_list, metadata, parent=pkg)
             if metadata_updates:
                 try:
                     aux_update(cpv, metadata_updates)
@@ -463,11 +431,7 @@ class dbapi:
             if repo_match is not None and not repo_match(mycpv.repo):
                 continue
             moves += 1
-            if (
-                "/" not in newslot
-                and mycpv.sub_slot
-                and mycpv.sub_slot not in (mycpv.slot, newslot)
-            ):
+            if ("/" not in newslot and mycpv.sub_slot and mycpv.sub_slot not in (mycpv.slot, newslot)):
                 newslot = f"{newslot}/{mycpv.sub_slot}"
             mydata = {"SLOT": newslot + "\n"}
             self.aux_update(mycpv, mydata)

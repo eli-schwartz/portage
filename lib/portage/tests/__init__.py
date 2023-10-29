@@ -18,13 +18,12 @@ from portage import _unicode_decode
 from portage.output import colorize
 from portage.proxy.objectproxy import ObjectProxy
 
-
 # This remains constant when the real value is a mock.
 EPREFIX_ORIG = portage.const.EPREFIX
 
 
 class lazy_value(ObjectProxy):
-    __slots__ = ("_func",)
+    __slots__ = ("_func", )
 
     def __init__(self, func):
         ObjectProxy.__init__(self)
@@ -38,9 +37,7 @@ class lazy_value(ObjectProxy):
 def cnf_path():
     if portage._not_installed:
         return os.path.join(portage.const.PORTAGE_BASE_PATH, "cnf")
-    return os.path.join(
-        EPREFIX_ORIG or "/", portage.const.GLOBAL_CONFIG_PATH.lstrip(os.sep)
-    )
+    return os.path.join(EPREFIX_ORIG or "/", portage.const.GLOBAL_CONFIG_PATH.lstrip(os.sep))
 
 
 @lazy_value

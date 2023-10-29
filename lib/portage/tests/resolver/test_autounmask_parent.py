@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class AutounmaskParentTestCase(TestCase):
+
     def testAutounmaskParentUse(self):
         ebuilds = {
             "dev-libs/B-1": {
@@ -25,14 +26,11 @@ class AutounmaskParentTestCase(TestCase):
                 ["=dev-libs/B-1"],
                 options={"--autounmask": True},
                 success=False,
-                use_changes={
-                    "dev-libs/B-1": {
-                        "foo": False,
-                        "bar": False,
-                    }
-                },
-            ),
-        )
+                use_changes={"dev-libs/B-1": {
+                    "foo": False,
+                    "bar": False,
+                }},
+            ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:

@@ -33,36 +33,25 @@ class BinpkgExtractorAsync(SpawnProcess):
         if binpkg_format == "xpak":
             self._xpak_start()
         else:
-            raise InvalidBinaryPackageFormat(
-                f"{self.pkg_path} is not a valid xpak binary package"
-            )
+            raise InvalidBinaryPackageFormat(f"{self.pkg_path} is not a valid xpak binary package")
 
     def _xpak_start(self):
         tar_options = ""
         if "xattr" in self.features:
-            process = subprocess.Popen(
-                ["tar", "--help"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
+            process = subprocess.Popen(["tar", "--help"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = process.communicate()[0]
             if b"--xattrs" in output:
                 tar_options = ["--xattrs", "--xattrs-include='*'"]
-                for x in portage.util.shlex_split(
-                    self.env.get("PORTAGE_XATTR_EXCLUDE", "")
-                ):
+                for x in portage.util.shlex_split(self.env.get("PORTAGE_XATTR_EXCLUDE", "")):
                     tar_options.append(portage._shell_quote(f"--xattrs-exclude={x}"))
                 tar_options = " ".join(tar_options)
 
         decomp = _compressors.get(compression_probe(self.pkg_path))
         if decomp is not None:
             decomp_cmd = decomp.get("decompress")
-            decomp_cmd = decomp_cmd.replace(
-                "{JOBS}", str(makeopts_to_job_count(self.env.get("MAKEOPTS", "1")))
-            )
+            decomp_cmd = decomp_cmd.replace("{JOBS}", str(makeopts_to_job_count(self.env.get("MAKEOPTS", "1"))))
         elif tarfile.is_tarfile(
-            portage._unicode_encode(
-                self.pkg_path, encoding=portage._encodings["fs"], errors="strict"
-            )
-        ):
+                portage._unicode_encode(self.pkg_path, encoding=portage._encodings["fs"], errors="strict")):
             decomp_cmd = "cat"
             decomp = {
                 "compress": "cat",
@@ -82,9 +71,7 @@ class BinpkgExtractorAsync(SpawnProcess):
             return
 
         try:
-            decompression_binary = shlex_split(varexpand(decomp_cmd, mydict=self.env))[
-                0
-            ]
+            decompression_binary = shlex_split(varexpand(decomp_cmd, mydict=self.env))[0]
         except IndexError:
             decompression_binary = ""
 
@@ -93,9 +80,7 @@ class BinpkgExtractorAsync(SpawnProcess):
             if decomp.get("decompress_alt"):
                 decomp_cmd = decomp.get("decompress_alt")
             try:
-                decompression_binary = shlex_split(
-                    varexpand(decomp_cmd, mydict=self.env)
-                )[0]
+                decompression_binary = shlex_split(varexpand(decomp_cmd, mydict=self.env))[0]
             except IndexError:
                 decompression_binary = ""
 
@@ -121,30 +106,26 @@ class BinpkgExtractorAsync(SpawnProcess):
         self.args = [
             self._shell_binary,
             "-c",
-            textwrap.dedent(
-                f"""
+            textwrap.dedent(f"""
                     cmd0=(head -c {pkg_xpak.filestat.st_size - pkg_xpak.xpaksize} -- {portage._shell_quote(self.pkg_path)})
                     cmd1=({decomp_cmd})
                     cmd2=(tar -xp {tar_options} -C {portage._shell_quote(self.image_dir)} -f -);
                 """
-                """
+                            """
                     "${cmd0[@]}" | "${cmd1[@]}" | "${cmd2[@]}";
                     p=(${PIPESTATUS[@]}) ; for i in {0..2}; do
                 """
-                f"""
+                            f"""
                     if [[ ${{p[$i]}} != 0 && ${{p[$i]}} != {128 + signal.SIGPIPE} ]] ; then
                 """
-                """
+                            """
                     echo command $(eval "echo \\"'\\${cmd$i[*]}'\\"") failed with status ${p[$i]} ;
                     exit ${p[$i]} ; fi ; done;
                     if [ ${p[$i]} != 0 ] ; then
                     echo command $(eval "echo \\"'\\${cmd$i[*]}'\\"") failed with status ${p[$i]} ;
                     exit ${p[$i]} ; fi ;
                     exit 0 ;
-                """
-            )
-            .replace("\n", " ")
-            .strip(),
+                """).replace("\n", " ").strip(),
         ]
 
         SpawnProcess._start(self)

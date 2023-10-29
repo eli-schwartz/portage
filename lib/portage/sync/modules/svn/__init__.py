@@ -9,7 +9,6 @@ from portage.localization import _
 from portage.sync.config_checks import CheckSyncConfig
 from portage.util import writemsg_level
 
-
 module_spec = {
     "name": "svn",
     "description": doc,
@@ -23,8 +22,7 @@ module_spec = {
             "func_desc": {
                 "sync": "Performs a svn up on the repository",
                 "new": "Creates the new repository at the specified location",
-                "exists": "Returns a boolean of whether the specified dir "
-                + "exists and is a valid SVN repository",
+                "exists": "Returns a boolean of whether the specified dir " + "exists and is a valid SVN repository",
             },
             "validate_config": CheckSyncConfig,
             "module_specific_options": (),

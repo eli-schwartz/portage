@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class RuntimeCycleMergeOrderTestCase(TestCase):
+
     def testRuntimeCycleMergeOrder(self):
         ebuilds = {
             "app-misc/plugins-consumer-1": {
@@ -47,22 +48,20 @@ class RuntimeCycleMergeOrderTestCase(TestCase):
             "app-misc/leaf-e-1": {},
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["app-misc/plugin-b"],
-                success=True,
-                ambiguous_merge_order=True,
-                mergelist=[
-                    ("app-misc/leaf-b-1", "app-misc/leaf-d-1", "app-misc/leaf-e-1"),
-                    ("app-misc/branch-d-1", "app-misc/branch-e-1"),
-                    "app-misc/runtime-c-1",
-                    ("app-misc/runtime-cycle-c-1", "app-misc/branch-c-1"),
-                    "app-misc/branch-b-1",
-                    ("app-misc/runtime-cycle-b-1", "app-misc/plugin-b-1"),
-                    "app-misc/plugins-consumer-1",
-                ],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["app-misc/plugin-b"],
+            success=True,
+            ambiguous_merge_order=True,
+            mergelist=[
+                ("app-misc/leaf-b-1", "app-misc/leaf-d-1", "app-misc/leaf-e-1"),
+                ("app-misc/branch-d-1", "app-misc/branch-e-1"),
+                "app-misc/runtime-c-1",
+                ("app-misc/runtime-cycle-c-1", "app-misc/branch-c-1"),
+                "app-misc/branch-b-1",
+                ("app-misc/runtime-cycle-b-1", "app-misc/plugin-b-1"),
+                "app-misc/plugins-consumer-1",
+            ],
+        ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:

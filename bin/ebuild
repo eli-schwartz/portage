@@ -6,13 +6,12 @@ import os
 import signal
 
 # For compatibility with Python < 3.8
-raise_signal = getattr(
-    signal, "raise_signal", lambda signum: os.kill(os.getpid(), signum)
-)
+raise_signal = getattr(signal, "raise_signal", lambda signum: os.kill(os.getpid(), signum))
 
 
 # Inherit from KeyboardInterrupt to avoid a traceback from asyncio.
 class SignalInterrupt(KeyboardInterrupt):
+
     def __init__(self, signum):
         self.signum = signum
 
@@ -37,12 +36,8 @@ from os import path as osp
 import sys
 import textwrap
 
-if osp.isfile(
-    osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")
-):
-    sys.path.insert(
-        0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib")
-    )
+if osp.isfile(osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")):
+    sys.path.insert(0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib"))
 import portage
 
 portage._internal_caller = True
@@ -71,17 +66,13 @@ def main():
     usage = "Usage: ebuild <ebuild file> <command> [command] ..."
     parser = argparse.ArgumentParser(description=description, usage=usage)
 
-    force_help = (
-        "When used together with the digest or manifest "
-        + "command, this option forces regeneration of digests for all "
-        + "distfiles associated with the current ebuild. Any distfiles "
-        + "that do not already exist in ${DISTDIR} will be automatically fetched."
-    )
+    force_help = ("When used together with the digest or manifest " +
+                  "command, this option forces regeneration of digests for all " +
+                  "distfiles associated with the current ebuild. Any distfiles " +
+                  "that do not already exist in ${DISTDIR} will be automatically fetched.")
 
     parser.add_argument("--force", help=force_help, action="store_true")
-    parser.add_argument(
-        "--color", help="enable or disable color output", choices=("y", "n")
-    )
+    parser.add_argument("--color", help="enable or disable color output", choices=("y", "n"))
     parser.add_argument("--debug", help="show debug output", action="store_true")
     parser.add_argument("--version", help="show version and exit", action="store_true")
     parser.add_argument(
@@ -89,9 +80,7 @@ def main():
         action="store_true",
         help="do not use the EBUILD_DEFAULT_OPTS environment variable",
     )
-    parser.add_argument(
-        "--skip-manifest", help="skip all manifest checks", action="store_true"
-    )
+    parser.add_argument("--skip-manifest", help="skip all manifest checks", action="store_true")
 
     opts, pargs = parser.parse_known_args(args=sys.argv[1:])
 
@@ -107,9 +96,7 @@ def main():
         parser.error("missing required args")
 
     if not opts.ignore_default_opts:
-        default_opts = portage.util.shlex_split(
-            portage.settings.get("EBUILD_DEFAULT_OPTS", "")
-        )
+        default_opts = portage.util.shlex_split(portage.settings.get("EBUILD_DEFAULT_OPTS", ""))
         opts, pargs = parser.parse_known_args(default_opts + sys.argv[1:])
 
     debug = opts.debug
@@ -125,12 +112,8 @@ def main():
     if debug and "python-trace" in portage.features:
         portage.debug.set_trace(True)
 
-    if not opts.color == "y" and (
-        opts.color == "n"
-        or portage.util.no_color(portage.settings)
-        or portage.settings.get("TERM") == "dumb"
-        or not sys.stdout.isatty()
-    ):
+    if not opts.color == "y" and (opts.color == "n" or portage.util.no_color(portage.settings)
+                                  or portage.settings.get("TERM") == "dumb" or not sys.stdout.isatty()):
         portage.output.nocolor()
         portage.settings.unlock()
         portage.settings["NO_COLOR"] = "true"
@@ -160,18 +143,14 @@ def main():
     ebuild = portage.normalize_path(ebuild)
     # portdbapi uses the canonical path for the base of the ebuild repository, but
     # subdirectories of the base can be built from symlinks (like crossdev does).
-    ebuild_portdir = os.path.realpath(
-        os.path.dirname(os.path.dirname(os.path.dirname(ebuild)))
-    )
+    ebuild_portdir = os.path.realpath(os.path.dirname(os.path.dirname(os.path.dirname(ebuild))))
     ebuild = os.path.join(ebuild_portdir, *ebuild.split(os.path.sep)[-3:])
     vdb_path = os.path.realpath(os.path.join(portage.settings["EROOT"], VDB_PATH))
 
     # Make sure that portdb.findname() returns the correct ebuild.
     if ebuild_portdir != vdb_path and ebuild_portdir not in portage.portdb.porttrees:
         portdir_overlay = portage.settings.get("PORTDIR_OVERLAY", "")
-        os.environ["PORTDIR_OVERLAY"] = (
-            portdir_overlay + " " + _shell_quote(ebuild_portdir)
-        )
+        os.environ["PORTDIR_OVERLAY"] = (portdir_overlay + " " + _shell_quote(ebuild_portdir))
 
         print(f"Appending {ebuild_portdir} to PORTDIR_OVERLAY...")
         portage._reset_legacy_globals()
@@ -187,9 +166,9 @@ def main():
     cpv = f"{ebuild_split[-3]}/{pf}"
 
     with open(
-        _unicode_encode(ebuild, encoding=_encodings["fs"], errors="strict"),
-        encoding=_encodings["repo.content"],
-        errors="replace",
+            _unicode_encode(ebuild, encoding=_encodings["fs"], errors="strict"),
+            encoding=_encodings["repo.content"],
+            errors="replace",
     ) as f:
         eapi = portage._parse_eapi_ebuild_head(f)[0]
     if eapi is None:
@@ -201,9 +180,7 @@ def main():
         mytree = "vartree"
         pkg_type = "installed"
 
-        portage_ebuild = portage.db[portage.root][mytree].dbapi.findname(
-            cpv, myrepo=myrepo
-        )
+        portage_ebuild = portage.db[portage.root][mytree].dbapi.findname(cpv, myrepo=myrepo)
 
         if os.path.realpath(portage_ebuild) != ebuild:
             err(f"Portage seems to think that {cpv} is at {portage_ebuild}")
@@ -232,12 +209,8 @@ def main():
             portage._doebuild_manifest_exempt_depend += 1
             pkgdir = os.path.dirname(myebuild)
             fetchlist_dict = portage.FetchlistDict(pkgdir, mysettings, mydbapi)
-            mf = mysettings.repositories.get_repo_for_location(
-                os.path.dirname(os.path.dirname(pkgdir))
-            )
-            mf = mf.load_manifest(
-                pkgdir, mysettings["DISTDIR"], fetchlist_dict=fetchlist_dict
-            )
+            mf = mysettings.repositories.get_repo_for_location(os.path.dirname(os.path.dirname(pkgdir)))
+            mf = mf.load_manifest(pkgdir, mysettings["DISTDIR"], fetchlist_dict=fetchlist_dict)
             mf.create(
                 requiredDistfiles=None,
                 assumeDistHashesSometimes=True,
@@ -273,9 +246,7 @@ def main():
     # sourced again even if ${T}/environment already exists.
     ebuild_changed = False
     if mytree == "porttree" and build_dir_phases.intersection(pargs):
-        ebuild_changed = (
-            portage.portdb._pull_valid_cache(cpv, ebuild, ebuild_portdir)[0] is None
-        )
+        ebuild_changed = (portage.portdb._pull_valid_cache(cpv, ebuild, ebuild_portdir)[0] is None)
 
     # Make configuration adjustments to portage.portdb.doebuild_settings,
     # in order to enforce consistency for EBUILD_FORCE_TEST support
@@ -289,12 +260,7 @@ def main():
         tmpsettings["EBUILD_SKIP_MANIFEST"] = "1"
         tmpsettings.backup_changes("EBUILD_SKIP_MANIFEST")
 
-    if (
-        opts.skip_manifest
-        or "digest" in tmpsettings.features
-        or "digest" in pargs
-        or "manifest" in pargs
-    ):
+    if (opts.skip_manifest or "digest" in tmpsettings.features or "digest" in pargs or "manifest" in pargs):
         portage._doebuild_manifest_exempt_depend += 1
 
     if "test" in pargs:
@@ -327,18 +293,13 @@ def main():
         metadata = dict(
             zip(
                 Package.metadata_keys,
-                portage.db[portage.settings["EROOT"]][mytree].dbapi.aux_get(
-                    cpv, Package.metadata_keys, myrepo=myrepo
-                ),
-            )
-        )
+                portage.db[portage.settings["EROOT"]][mytree].dbapi.aux_get(cpv, Package.metadata_keys, myrepo=myrepo),
+            ))
     except PortageKeyError:
         # aux_get failure, message should have been shown on stderr.
         sys.exit(1)
 
-    root_config = RootConfig(
-        portage.settings, portage.db[portage.settings["EROOT"]], None
-    )
+    root_config = RootConfig(portage.settings, portage.db[portage.settings["EROOT"]], None)
 
     cpv = portage.versions._pkg_str(
         cpv,
@@ -365,29 +326,19 @@ def main():
     tmpsettings.setcpv(pkg)
 
     def stale_env_warning():
-        if (
-            "clean" not in pargs
-            and "noauto" not in tmpsettings.features
-            and build_dir_phases.intersection(pargs)
-        ):
-            portage.doebuild_environment(
-                ebuild, "setup", portage.root, tmpsettings, debug, 1, portage.portdb
-            )
+        if ("clean" not in pargs and "noauto" not in tmpsettings.features and build_dir_phases.intersection(pargs)):
+            portage.doebuild_environment(ebuild, "setup", portage.root, tmpsettings, debug, 1, portage.portdb)
             env_filename = os.path.join(tmpsettings["T"], "environment")
             if os.path.exists(env_filename):
-                msg = (
-                    f"Existing ${{T}}/environment for '{tmpsettings['PF']}' will be sourced. "
-                    "Run 'clean' to start with a fresh environment."
-                )
+                msg = (f"Existing ${{T}}/environment for '{tmpsettings['PF']}' will be sourced. "
+                       "Run 'clean' to start with a fresh environment.")
                 msg = textwrap.wrap(msg, 70)
                 for x in msg:
                     portage.writemsg(f">>> {x}\n")
 
                 if ebuild_changed:
                     open(
-                        os.path.join(
-                            tmpsettings["PORTAGE_BUILDDIR"], ".ebuild_changed"
-                        ),
+                        os.path.join(tmpsettings["PORTAGE_BUILDDIR"], ".ebuild_changed"),
                         "w",
                     ).close()
 

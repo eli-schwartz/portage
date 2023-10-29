@@ -7,6 +7,7 @@ from portage.util import varexpand
 
 
 class VarExpandTestCase(TestCase):
+
     def testVarExpandPass(self):
         varDict = {"a": "5", "b": "7", "c": "-5"}
         for key in varDict:
@@ -14,14 +15,12 @@ class VarExpandTestCase(TestCase):
 
             self.assertFalse(
                 result != varDict[key],
-                msg="Got %s != %s, from varexpand(%s, %s)"
-                % (result, varDict[key], "$%s" % key, varDict),
+                msg="Got %s != %s, from varexpand(%s, %s)" % (result, varDict[key], "$%s" % key, varDict),
             )
             result = varexpand("${%s}" % key, varDict)
             self.assertFalse(
                 result != varDict[key],
-                msg="Got %s != %s, from varexpand(%s, %s)"
-                % (result, varDict[key], "${%s}" % key, varDict),
+                msg="Got %s != %s, from varexpand(%s, %s)" % (result, varDict[key], "${%s}" % key, varDict),
             )
 
     def testVarExpandBackslashes(self):
@@ -87,13 +86,11 @@ class VarExpandTestCase(TestCase):
             result = varexpand(f"${var}", varDict)
             self.assertFalse(
                 len(result),
-                msg="Got %s == %s, from varexpand(%s, %s)"
-                % (result, var, "$%s" % var, varDict),
+                msg="Got %s == %s, from varexpand(%s, %s)" % (result, var, "$%s" % var, varDict),
             )
 
             result = varexpand("${%s}" % var, varDict)
             self.assertFalse(
                 len(result),
-                msg="Got %s == %s, from varexpand(%s, %s)"
-                % (result, var, "${%s}" % var, varDict),
+                msg="Got %s == %s, from varexpand(%s, %s)" % (result, var, "${%s}" % var, varDict),
             )

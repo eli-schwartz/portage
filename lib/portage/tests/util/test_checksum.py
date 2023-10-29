@@ -12,17 +12,11 @@ class ChecksumTestCase(TestCase):
 
     def test_md5(self):
         self.assertEqual(checksum_str(b"", "MD5"), "d41d8cd98f00b204e9800998ecf8427e")
-        self.assertEqual(
-            checksum_str(self.text, "MD5"), "094c3bf4732f59b39d577e9726f1e934"
-        )
+        self.assertEqual(checksum_str(self.text, "MD5"), "094c3bf4732f59b39d577e9726f1e934")
 
     def test_sha1(self):
-        self.assertEqual(
-            checksum_str(b"", "SHA1"), "da39a3ee5e6b4b0d3255bfef95601890afd80709"
-        )
-        self.assertEqual(
-            checksum_str(self.text, "SHA1"), "5c572017d4e4d49e4aa03a2eda12dbb54a1e2e4f"
-        )
+        self.assertEqual(checksum_str(b"", "SHA1"), "da39a3ee5e6b4b0d3255bfef95601890afd80709")
+        self.assertEqual(checksum_str(self.text, "SHA1"), "5c572017d4e4d49e4aa03a2eda12dbb54a1e2e4f")
 
     def test_sha256(self):
         self.assertEqual(
@@ -46,9 +40,7 @@ class ChecksumTestCase(TestCase):
 
     def test_rmd160(self):
         try:
-            self.assertEqual(
-                checksum_str(b"", "RMD160"), "9c1185a5c5e9fc54612808977ee8f548b2258d31"
-            )
+            self.assertEqual(checksum_str(b"", "RMD160"), "9c1185a5c5e9fc54612808977ee8f548b2258d31")
             self.assertEqual(
                 checksum_str(self.text, "RMD160"),
                 "fc453174f63fc011d6f64abd2c45fb6a53c8239b",
@@ -123,6 +115,7 @@ class ChecksumTestCase(TestCase):
 
 
 class ApplyHashFilterTestCase(TestCase):
+
     def test_apply_hash_filter(self):
         indict = {"MD5": "", "SHA1": "", "SHA256": "", "size": ""}
 
@@ -130,9 +123,7 @@ class ApplyHashFilterTestCase(TestCase):
             sorted(_apply_hash_filter(indict, lambda x: True)),
             ["MD5", "SHA1", "SHA256", "size"],
         )
-        self.assertEqual(
-            sorted(_apply_hash_filter(indict, lambda x: x == "MD5")), ["MD5", "size"]
-        )
+        self.assertEqual(sorted(_apply_hash_filter(indict, lambda x: x == "MD5")), ["MD5", "size"])
         self.assertEqual(
             sorted(_apply_hash_filter(indict, lambda x: x != "MD5")),
             ["SHA1", "SHA256", "size"],

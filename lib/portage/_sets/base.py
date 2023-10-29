@@ -5,7 +5,6 @@ from portage.dep import Atom, ExtendedAtomDict, best_match_to_list, match_from_l
 from portage.exception import InvalidAtom
 from portage.versions import cpv_getkey
 
-
 OPERATIONS = ["merge", "unmerge"]
 
 
@@ -127,13 +126,11 @@ class PackageSet:
             if atom.cp == pkg.cp:
                 rev_transform[atom] = atom
             else:
-                rev_transform[
-                    Atom(
-                        atom.replace(atom.cp, pkg.cp, 1),
-                        allow_wildcard=True,
-                        allow_repo=True,
-                    )
-                ] = atom
+                rev_transform[Atom(
+                    atom.replace(atom.cp, pkg.cp, 1),
+                    allow_wildcard=True,
+                    allow_repo=True,
+                )] = atom
         best_match = best_match_to_list(pkg, iter(rev_transform))
         if best_match:
             return rev_transform[best_match]
@@ -157,6 +154,7 @@ class PackageSet:
 
 
 class EditablePackageSet(PackageSet):
+
     def __init__(self, allow_wildcard=False, allow_repo=False):
         super().__init__(allow_wildcard=allow_wildcard, allow_repo=allow_repo)
 
@@ -212,6 +210,7 @@ class EditablePackageSet(PackageSet):
 
 
 class InternalPackageSet(EditablePackageSet):
+
     def __init__(self, initial_atoms=None, allow_wildcard=False, allow_repo=True):
         """
         Repo atoms are allowed more often than not, so it makes sense for this
@@ -235,6 +234,7 @@ class InternalPackageSet(EditablePackageSet):
 
 
 class DummyPackageSet(PackageSet):
+
     def __init__(self, atoms=None):
         super().__init__()
         if atoms:

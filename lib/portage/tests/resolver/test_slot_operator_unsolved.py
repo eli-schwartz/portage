@@ -23,7 +23,10 @@ class SlotOperatorUnsolvedTestCase(TestCase):
 
     def testSlotOperatorUnsolved(self):
         ebuilds = {
-            "dev-libs/icu-50.1.2": {"EAPI": "5", "SLOT": "0/50.1.2"},
+            "dev-libs/icu-50.1.2": {
+                "EAPI": "5",
+                "SLOT": "0/50.1.2"
+            },
             "net-libs/webkit-gtk-1.10.2-r300": {
                 "EAPI": "5",
                 "DEPEND": ">=dev-libs/icu-3.8.1-r1:=",
@@ -51,7 +54,10 @@ class SlotOperatorUnsolvedTestCase(TestCase):
         }
 
         installed = {
-            "dev-libs/icu-50.1.2": {"EAPI": "5", "SLOT": "0/50.1.2"},
+            "dev-libs/icu-50.1.2": {
+                "EAPI": "5",
+                "SLOT": "0/50.1.2"
+            },
             "net-libs/webkit-gtk-1.10.2-r300": {
                 "EAPI": "5",
                 "DEPEND": ">=dev-libs/icu-3.8.1-r1:0/50=",
@@ -59,28 +65,30 @@ class SlotOperatorUnsolvedTestCase(TestCase):
             },
         }
 
-        user_config = {"make.conf": ("FEATURES=test",)}
+        user_config = {"make.conf": ("FEATURES=test", )}
 
         world = ["net-libs/webkit-gtk", "dev-ruby/hoe"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={"--update": True, "--deep": True, "--usepkg": True},
-                circular_dependency_solutions={
-                    "dev-ruby/hoe-2.13.0": frozenset([frozenset([("test", False)])]),
-                    "dev-ruby/rdoc-3.12.1": frozenset([frozenset([("test", False)])]),
-                },
-                success=False,
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@world"],
+            options={
+                "--update": True,
+                "--deep": True,
+                "--usepkg": True
+            },
+            circular_dependency_solutions={
+                "dev-ruby/hoe-2.13.0": frozenset([frozenset([("test", False)])]),
+                "dev-ruby/rdoc-3.12.1": frozenset([frozenset([("test", False)])]),
+            },
+            success=False,
+        ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
                 _user_config = user_config.copy()
-                _user_config["make.conf"] += (f'BINPKG_FORMAT="{binpkg_format}"',)
+                _user_config["make.conf"] += (f'BINPKG_FORMAT="{binpkg_format}"', )
                 playground = ResolverPlayground(
                     ebuilds=ebuilds,
                     binpkgs=binpkgs,
@@ -92,8 +100,6 @@ class SlotOperatorUnsolvedTestCase(TestCase):
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.cleanup()

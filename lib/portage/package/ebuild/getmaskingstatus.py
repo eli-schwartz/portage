@@ -34,10 +34,7 @@ def getmaskingstatus(mycpv, settings=None, portdb=None, myrepo=None):
     if portdb is None:
         portdb = portage.portdb
 
-    return [
-        mreason.message
-        for mreason in _getmaskingstatus(mycpv, settings, portdb, myrepo)
-    ]
+    return [mreason.message for mreason in _getmaskingstatus(mycpv, settings, portdb, myrepo)]
 
 
 def _getmaskingstatus(mycpv, settings, portdb, myrepo=None):
@@ -76,9 +73,7 @@ def _getmaskingstatus(mycpv, settings, portdb, myrepo=None):
 
     # package.mask checking
     if settings._getMaskAtom(mycpv, metadata):
-        rValue.append(
-            _MaskReason("package.mask", "package.mask", _UnmaskHint("p_mask", None))
-        )
+        rValue.append(_MaskReason("package.mask", "package.mask", _UnmaskHint("p_mask", None)))
 
     # keywords checking
     eapi = metadata["EAPI"]
@@ -100,9 +95,8 @@ def _getmaskingstatus(mycpv, settings, portdb, myrepo=None):
         myarch = pgroups[0].lstrip("~")
 
     # NOTE: This logic is copied from KeywordsManager.getMissingKeywords().
-    unmaskgroups = settings._keywords_manager.getPKeywords(
-        mycpv, metadata["SLOT"], metadata["repository"], global_accept_keywords
-    )
+    unmaskgroups = settings._keywords_manager.getPKeywords(mycpv, metadata["SLOT"], metadata["repository"],
+                                                           global_accept_keywords)
     pgroups.extend(unmaskgroups)
     if unmaskgroups or egroups:
         pgroups = settings._keywords_manager._getEgroups(egroups, pgroups)
@@ -152,13 +146,11 @@ def _getmaskingstatus(mycpv, settings, portdb, myrepo=None):
             license_split = [x for x in license_split if x in allowed_tokens]
             msg = license_split[:]
             msg.append("license(s)")
-            rValue.append(
-                _MaskReason(
-                    "LICENSE",
-                    " ".join(msg),
-                    _UnmaskHint("license", set(missing_licenses)),
-                )
-            )
+            rValue.append(_MaskReason(
+                "LICENSE",
+                " ".join(msg),
+                _UnmaskHint("license", set(missing_licenses)),
+            ))
     except portage.exception.InvalidDependString as e:
         rValue.append(_MaskReason("invalid", "LICENSE: " + str(e)))
 
@@ -187,8 +179,6 @@ def _getmaskingstatus(mycpv, settings, portdb, myrepo=None):
     # Only show KEYWORDS masks for installed packages
     # if they're not masked for any other reason.
     if kmask and (not installed or not rValue):
-        rValue.append(
-            _MaskReason("KEYWORDS", kmask + " keyword", unmask_hint=kmask_hint)
-        )
+        rValue.append(_MaskReason("KEYWORDS", kmask + " keyword", unmask_hint=kmask_hint))
 
     return rValue

@@ -6,16 +6,13 @@ Performs a http download of a portage snapshot, verifies and
 unpacks it to the repo location."""
 __doc__ = doc[:]
 
-
 import os
 
 from portage.sync.config_checks import CheckSyncConfig
 
-
 DEFAULT_CLASS = "WebRsync"
 AVAILABLE_CLASSES = ["WebRsync", "PyWebRsync"]
 options = {"1": "WebRsync", "2": "PyWebRsync"}
-
 
 config_class = DEFAULT_CLASS
 try:
@@ -25,26 +22,32 @@ try:
 except KeyError:
     pass
 
-
 module_spec = {
     "name": "webrsync",
     "description": doc,
     "provides": {
         "webrsync-module": {
-            "name": "webrsync",
-            "sourcefile": "webrsync",
-            "class": config_class,
-            "description": doc,
+            "name":
+            "webrsync",
+            "sourcefile":
+            "webrsync",
+            "class":
+            config_class,
+            "description":
+            doc,
             "functions": ["sync", "new", "exists"],
             "func_desc": {
-                "sync": "Performs an archived http download of the "
-                + "repository, then unpacks it.  Optionally it performs a "
-                + "gpg verification of the downloaded file(s)",
-                "new": "Creates the new repository at the specified location",
-                "exists": "Returns a boolean of whether the specified dir "
-                + "exists and is a valid repository",
+                "sync":
+                "Performs an archived http download of the " +
+                "repository, then unpacks it.  Optionally it performs a " +
+                "gpg verification of the downloaded file(s)",
+                "new":
+                "Creates the new repository at the specified location",
+                "exists":
+                "Returns a boolean of whether the specified dir " + "exists and is a valid repository",
             },
-            "validate_config": CheckSyncConfig,
+            "validate_config":
+            CheckSyncConfig,
             "module_specific_options": (
                 "sync-webrsync-delta",
                 "sync-webrsync-keep-snapshots",

@@ -34,9 +34,7 @@ class TaskHandler:
         self.verbose = verbose
         self.callback = callback
         self.isatty = os.environ.get("TERM") != "dumb" and sys.stdout.isatty()
-        self.progress_bar = ProgressBar(
-            self.isatty, title="Portage-Sync", max_desc_length=27
-        )
+        self.progress_bar = ProgressBar(self.isatty, title="Portage-Sync", max_desc_length=27)
 
     def run_tasks(self, tasks, func, status=None, verbose=True, options=None):
         """Runs the module tasks"""
@@ -128,9 +126,7 @@ class SyncManager:
         return SyncRepo(
             sync_task=AsyncFunction(
                 target=self.sync,
-                kwargs=dict(
-                    emerge_config=emerge_config, repo=repo, master_hooks=master_hooks
-                ),
+                kwargs=dict(emerge_config=emerge_config, repo=repo, master_hooks=master_hooks),
             ),
             sync_callback=self._sync_callback,
         )
@@ -210,8 +206,7 @@ class SyncManager:
                 retval = portage.process.spawn([filepath], env=self.settings.environ())
             if retval != os.EX_OK:
                 writemsg_level(
-                    " %s Spawn failed for: %s, %s\n"
-                    % (bad("*"), _unicode_decode(_hooks[filepath]), filepath),
+                    " %s Spawn failed for: %s, %s\n" % (bad("*"), _unicode_decode(_hooks[filepath]), filepath),
                     level=logging.ERROR,
                     noiselevel=-1,
                 )
@@ -308,17 +303,8 @@ class SyncManager:
             portage.util.ensure_dirs(repo.location, **perms)
             st = os.stat(repo.location)
 
-        if (
-            repo.sync_user is None
-            and "usersync" in self.settings.features
-            and portage.data.secpass >= 2
-            and (
-                st.st_uid != os.getuid()
-                and st.st_mode & 0o700
-                or st.st_gid != os.getgid()
-                and st.st_mode & 0o070
-            )
-        ):
+        if (repo.sync_user is None and "usersync" in self.settings.features and portage.data.secpass >= 2 and
+            (st.st_uid != os.getuid() and st.st_mode & 0o700 or st.st_gid != os.getgid() and st.st_mode & 0o070)):
             try:
                 pw = pwd.getpwuid(st.st_uid)
             except KeyError:
@@ -368,9 +354,7 @@ class SyncManager:
         if updatecache_flg and "metadata-transfer" not in self.settings.features:
             updatecache_flg = False
 
-        if updatecache_flg and os.path.exists(
-            os.path.join(repo.location, "metadata", "md5-cache")
-        ):
+        if updatecache_flg and os.path.exists(os.path.join(repo.location, "metadata", "md5-cache")):
             # Only update cache for repo.location since that's
             # the only one that's been synced here.
             action_metadata(

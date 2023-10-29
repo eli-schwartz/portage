@@ -31,9 +31,7 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
     def __init__(self, myroot, vardb):
         """myroot is ignored in favour of EROOT"""
         self._vardb = vardb
-        self._cache_filename = os.path.join(
-            vardb.settings["EROOT"], portage.CACHE_PATH, "vdb_blockers.pickle"
-        )
+        self._cache_filename = os.path.join(vardb.settings["EROOT"], portage.CACHE_PATH, "vdb_blockers.pickle")
         self._cache_version = "1"
         self._cache_data = None
         self._modified = set()
@@ -55,8 +53,8 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
             raise
         except Exception as e:
             if isinstance(e, EnvironmentError) and getattr(e, "errno", None) in (
-                errno.ENOENT,
-                errno.EACCES,
+                    errno.ENOENT,
+                    errno.EACCES,
             ):
                 pass
             else:
@@ -66,12 +64,9 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
                 )
             del e
 
-        cache_valid = (
-            self._cache_data
-            and isinstance(self._cache_data, dict)
-            and self._cache_data.get("version") == self._cache_version
-            and isinstance(self._cache_data.get("blockers"), dict)
-        )
+        cache_valid = (self._cache_data and isinstance(self._cache_data, dict)
+                       and self._cache_data.get("version") == self._cache_version
+                       and isinstance(self._cache_data.get("blockers"), dict))
         if cache_valid:
             # Validate all the atoms and counters so that
             # corruption is detected as soon as possible.
@@ -102,9 +97,7 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
                     if not isinstance(atom, str):
                         invalid_atom = True
                         break
-                    if atom[:1] != "!" or not portage.isvalidatom(
-                        atom, allow_blockers=True
-                    ):
+                    if atom[:1] != "!" or not portage.isvalidatom(atom, allow_blockers=True):
                         invalid_atom = True
                         break
                 if invalid_atom:
@@ -141,9 +134,7 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
                 with portage.util.atomic_ofstream(self._cache_filename, mode="wb") as f:
                     pickle.dump(self._cache_data, f, protocol=2)
 
-                portage.util.apply_secpass_permissions(
-                    self._cache_filename, gid=portage.portage_gid, mode=0o644
-                )
+                portage.util.apply_secpass_permissions(self._cache_filename, gid=portage.portage_gid, mode=0o644)
             except OSError:
                 pass
             self._modified.clear()

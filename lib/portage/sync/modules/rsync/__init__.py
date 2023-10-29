@@ -7,16 +7,19 @@ __doc__ = doc[:]
 
 from portage.sync.config_checks import CheckSyncConfig
 
-
 module_spec = {
     "name": "rsync",
     "description": doc,
     "provides": {
         "rsync-module": {
-            "name": "rsync",
-            "sourcefile": "rsync",
-            "class": "RsyncSync",
-            "description": doc,
+            "name":
+            "rsync",
+            "sourcefile":
+            "rsync",
+            "class":
+            "RsyncSync",
+            "description":
+            doc,
             "functions": ["sync", "new", "exists", "retrieve_head"],
             "func_desc": {
                 "sync": "Performs rsync transfers on the repository",
@@ -24,7 +27,8 @@ module_spec = {
                 "exists": "Returns a boolean if the specified directory exists",
                 "retrieve_head": "Returns the head commit based on metadata/timestamp.commit",
             },
-            "validate_config": CheckSyncConfig,
+            "validate_config":
+            CheckSyncConfig,
             "module_specific_options": (
                 "sync-rsync-extra-opts",
                 "sync-rsync-vcs-ignore",

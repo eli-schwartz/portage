@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class BacktrackMissedUpdateTestCase(TestCase):
+
     def testBacktrackMissedUpdateTestCase(self):
         ebuilds = {
             "dev-lang/python-2.7.18-r2": {
@@ -54,9 +55,12 @@ class BacktrackMissedUpdateTestCase(TestCase):
                 "RDEPEND": "python_targets_pypy3? ( dev-python/pypy3:= )",
             },
             "dev-vcs/mercurial-5.5.1": {
-                "EAPI": "7",
-                "IUSE": "+python_targets_pypy3 +python_targets_python2_7",
-                "RDEPEND": "dev-python/setuptools[python_targets_pypy3?,python_targets_python2_7?] python_targets_python2_7? ( dev-lang/python:2.7 ) python_targets_pypy3? ( dev-python/pypy3:= )",
+                "EAPI":
+                "7",
+                "IUSE":
+                "+python_targets_pypy3 +python_targets_python2_7",
+                "RDEPEND":
+                "dev-python/setuptools[python_targets_pypy3?,python_targets_python2_7?] python_targets_python2_7? ( dev-lang/python:2.7 ) python_targets_pypy3? ( dev-python/pypy3:= )",
             },
         }
 
@@ -76,10 +80,14 @@ class BacktrackMissedUpdateTestCase(TestCase):
                 "RDEPEND": "dev-python/pypy3:0/pypy36-pp73=",
             },
             "dev-vcs/mercurial-5.5.1": {
-                "EAPI": "7",
-                "IUSE": "+python_targets_pypy3 +python_targets_python2_7",
-                "USE": "python_targets_pypy3 python_targets_python2_7",
-                "RDEPEND": "dev-python/setuptools[python_targets_pypy3,python_targets_python2_7] dev-python/pypy3:0/pypy36-pp73=",
+                "EAPI":
+                "7",
+                "IUSE":
+                "+python_targets_pypy3 +python_targets_python2_7",
+                "USE":
+                "python_targets_pypy3 python_targets_python2_7",
+                "RDEPEND":
+                "dev-python/setuptools[python_targets_pypy3,python_targets_python2_7] dev-python/pypy3:0/pypy36-pp73=",
             },
         }
 
@@ -89,19 +97,20 @@ class BacktrackMissedUpdateTestCase(TestCase):
             # Bug 743115: missed updates trigger excessive backtracking
             ResolverPlaygroundTestCase(
                 [">=dev-python/pypy3-7.3.2_rc", "@world"],
-                options={"--update": True, "--deep": True, "--backtrack": 4},
+                options={
+                    "--update": True,
+                    "--deep": True,
+                    "--backtrack": 4
+                },
                 success=True,
                 mergelist=[
                     "dev-python/pypy3-7.3.2_rc2_p37-r1",
                     "dev-python/setuptools-46.4.0-r2",
                     "dev-vcs/mercurial-5.5.1",
                 ],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

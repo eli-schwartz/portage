@@ -27,58 +27,34 @@ def compare_files(file1, file2, skipped_types=()):
     @return: Tuple of strings specifying types of properties different between compared files
     """
 
-    file1_stat = os.lstat(
-        _unicode_encode(file1, encoding=_encodings["fs"], errors="strict")
-    )
-    file2_stat = os.lstat(
-        _unicode_encode(file2, encoding=_encodings["fs"], errors="strict")
-    )
+    file1_stat = os.lstat(_unicode_encode(file1, encoding=_encodings["fs"], errors="strict"))
+    file2_stat = os.lstat(_unicode_encode(file2, encoding=_encodings["fs"], errors="strict"))
 
     differences = []
 
     if (file1_stat.st_dev, file1_stat.st_ino) == (file2_stat.st_dev, file2_stat.st_ino):
         return ()
 
-    if "type" not in skipped_types and stat.S_IFMT(file1_stat.st_mode) != stat.S_IFMT(
-        file2_stat.st_mode
-    ):
+    if "type" not in skipped_types and stat.S_IFMT(file1_stat.st_mode) != stat.S_IFMT(file2_stat.st_mode):
         differences.append("type")
-    if "mode" not in skipped_types and stat.S_IMODE(file1_stat.st_mode) != stat.S_IMODE(
-        file2_stat.st_mode
-    ):
+    if "mode" not in skipped_types and stat.S_IMODE(file1_stat.st_mode) != stat.S_IMODE(file2_stat.st_mode):
         differences.append("mode")
     if "owner" not in skipped_types and file1_stat.st_uid != file2_stat.st_uid:
         differences.append("owner")
     if "group" not in skipped_types and file1_stat.st_gid != file2_stat.st_gid:
         differences.append("group")
-    if (
-        "device_number" not in skipped_types
-        and file1_stat.st_rdev != file2_stat.st_rdev
-    ):
+    if ("device_number" not in skipped_types and file1_stat.st_rdev != file2_stat.st_rdev):
         differences.append("device_number")
 
-    if (
-        XATTRS_WORKS
-        and "xattr" not in skipped_types
-        and sorted(xattr.get_all(file1, nofollow=True))
-        != sorted(xattr.get_all(file2, nofollow=True))
-    ):
+    if (XATTRS_WORKS and "xattr" not in skipped_types
+            and sorted(xattr.get_all(file1, nofollow=True)) != sorted(xattr.get_all(file2, nofollow=True))):
         differences.append("xattr")
 
-    if (
-        "atime" not in skipped_types
-        and file1_stat.st_atime_ns != file2_stat.st_atime_ns
-    ):
+    if ("atime" not in skipped_types and file1_stat.st_atime_ns != file2_stat.st_atime_ns):
         differences.append("atime")
-    if (
-        "mtime" not in skipped_types
-        and file1_stat.st_mtime_ns != file2_stat.st_mtime_ns
-    ):
+    if ("mtime" not in skipped_types and file1_stat.st_mtime_ns != file2_stat.st_mtime_ns):
         differences.append("mtime")
-    if (
-        "ctime" not in skipped_types
-        and file1_stat.st_ctime_ns != file2_stat.st_ctime_ns
-    ):
+    if ("ctime" not in skipped_types and file1_stat.st_ctime_ns != file2_stat.st_ctime_ns):
         differences.append("ctime")
 
     if "type" in differences:
@@ -92,12 +68,7 @@ def compare_files(file1, file2, skipped_types=()):
         if "content" not in skipped_types:
             if stat.S_ISLNK(file1_stat.st_mode):
                 file1_stream = io.BytesIO(
-                    os.readlink(
-                        _unicode_encode(
-                            file1, encoding=_encodings["fs"], errors="strict"
-                        )
-                    )
-                )
+                    os.readlink(_unicode_encode(file1, encoding=_encodings["fs"], errors="strict")))
             else:
                 file1_stream = open(
                     _unicode_encode(file1, encoding=_encodings["fs"], errors="strict"),
@@ -105,12 +76,7 @@ def compare_files(file1, file2, skipped_types=()):
                 )
             if stat.S_ISLNK(file2_stat.st_mode):
                 file2_stream = io.BytesIO(
-                    os.readlink(
-                        _unicode_encode(
-                            file2, encoding=_encodings["fs"], errors="strict"
-                        )
-                    )
-                )
+                    os.readlink(_unicode_encode(file2, encoding=_encodings["fs"], errors="strict")))
             else:
                 file2_stream = open(
                     _unicode_encode(file2, encoding=_encodings["fs"], errors="strict"),

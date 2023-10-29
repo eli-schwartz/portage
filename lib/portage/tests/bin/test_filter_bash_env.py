@@ -11,11 +11,11 @@ from portage.tests import TestCase
 
 
 class TestFilterBashEnv(TestCase):
+
     def testTestFilterBashEnv(self):
-        test_cases = (
-            (
-                "RDEPEND BASH.* _EPATCH_ECLASS",
-                rb"""declare -ir BASHPID="28997"
+        test_cases = ((
+            "RDEPEND BASH.* _EPATCH_ECLASS",
+            rb"""declare -ir BASHPID="28997"
 declare -rx A="portage-2.3.24.tar.bz2"
 declare -- DESKTOP_DATABASE_DIR="/usr/share/applications"
 declare PDEPEND="
@@ -50,7 +50,7 @@ use_if_iuse ()
     use $1
 }
 """,
-                rb"""declare -x A="portage-2.3.24.tar.bz2"
+            rb"""declare -x A="portage-2.3.24.tar.bz2"
 declare -- DESKTOP_DATABASE_DIR="/usr/share/applications"
 declare PDEPEND="
         !build? (
@@ -80,8 +80,7 @@ use_if_iuse ()
     use $1
 }
 """,
-            ),
-        )
+        ), )
 
         for filter_vars, env_in, env_out in test_cases:
             proc = None
@@ -108,7 +107,6 @@ use_if_iuse ()
                 difflib.unified_diff(
                     env_out.decode("utf_8").splitlines(),
                     result.decode("utf_8").splitlines(),
-                )
-            )
+                ))
 
             self.assertEqual(diff, [])

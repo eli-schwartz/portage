@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotOperatorExclusiveSlotsTestCase(TestCase):
+
     def testSlotOperatorExclusiveSlots(self):
         ebuilds = {
             "media-libs/mesa-17.0.1": {
@@ -19,9 +20,8 @@ class SlotOperatorExclusiveSlotsTestCase(TestCase):
             "sys-devel/clang-4.0.0": {
                 "EAPI": "6",
                 "SLOT": "4",
-                "RDEPEND": (
-                    "~sys-devel/llvm-4.0.0:4= " "!sys-devel/llvm:0 !sys-devel/clang:0"
-                ),
+                "RDEPEND": ("~sys-devel/llvm-4.0.0:4= "
+                            "!sys-devel/llvm:0 !sys-devel/clang:0"),
             },
             "sys-devel/clang-3.9.1-r100": {
                 "EAPI": "6",
@@ -69,7 +69,10 @@ class SlotOperatorExclusiveSlotsTestCase(TestCase):
             # unsolved blockers.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 ambiguous_merge_order=True,
                 mergelist=[
@@ -83,12 +86,9 @@ class SlotOperatorExclusiveSlotsTestCase(TestCase):
                         "!sys-devel/clang:0",
                     ),
                 ],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -108,7 +108,10 @@ class SlotOperatorExclusiveSlotsTestCase(TestCase):
             # explains why clang does not appear in the mergelist.
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True},
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
                 success=True,
                 ambiguous_merge_order=True,
                 mergelist=[
@@ -119,12 +122,9 @@ class SlotOperatorExclusiveSlotsTestCase(TestCase):
                         "!sys-devel/llvm:0",
                     ),
                 ],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

@@ -42,14 +42,10 @@ class IpcDaemonTestCase(TestCase):
             env["PORTAGE_BIN_PATH"] = PORTAGE_BIN_PATH
             env["PORTAGE_PYM_PATH"] = PORTAGE_PYM_PATH
             env["PORTAGE_BUILDDIR"] = os.path.join(tmpdir, "cat", "pkg-1")
-            env["PYTHONDONTWRITEBYTECODE"] = os.environ.get(
-                "PYTHONDONTWRITEBYTECODE", ""
-            )
+            env["PYTHONDONTWRITEBYTECODE"] = os.environ.get("PYTHONDONTWRITEBYTECODE", "")
 
             if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
-                env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ[
-                    "__PORTAGE_TEST_HARDLINK_LOCKS"
-                ]
+                env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
 
             build_dir = EbuildBuildDir(scheduler=event_loop, settings=env)
             event_loop.run_until_complete(build_dir.async_lock())
@@ -63,9 +59,7 @@ class IpcDaemonTestCase(TestCase):
             for exitcode in (0, 1, 2):
                 exit_command = ExitCommand()
                 commands = {"exit": exit_command}
-                daemon = EbuildIpcDaemon(
-                    commands=commands, input_fifo=input_fifo, output_fifo=output_fifo
-                )
+                daemon = EbuildIpcDaemon(commands=commands, input_fifo=input_fifo, output_fifo=output_fifo)
                 proc = SpawnProcess(
                     args=[
                         BASH_BINARY,
@@ -74,9 +68,7 @@ class IpcDaemonTestCase(TestCase):
                     ],
                     env=env,
                 )
-                task_scheduler = TaskScheduler(
-                    iter([daemon, proc]), max_jobs=2, event_loop=event_loop
-                )
+                task_scheduler = TaskScheduler(iter([daemon, proc]), max_jobs=2, event_loop=event_loop)
 
                 self.received_command = False
 
@@ -93,8 +85,7 @@ class IpcDaemonTestCase(TestCase):
                 self.assertEqual(
                     self.received_command,
                     True,
-                    "command not received after %d seconds"
-                    % (time.time() - start_time,),
+                    "command not received after %d seconds" % (time.time() - start_time, ),
                 )
                 self.assertEqual(proc.isAlive(), False)
                 self.assertEqual(daemon.isAlive(), False)
@@ -109,15 +100,11 @@ class IpcDaemonTestCase(TestCase):
             for i in range(3):
                 exit_command = ExitCommand()
                 commands = {"exit": exit_command}
-                daemon = EbuildIpcDaemon(
-                    commands=commands, input_fifo=input_fifo, output_fifo=output_fifo
-                )
+                daemon = EbuildIpcDaemon(commands=commands, input_fifo=input_fifo, output_fifo=output_fifo)
                 # Emulate the sleep command, in order to ensure a consistent
                 # return code when it is killed by SIGTERM (see bug #437180).
-                proc = ForkProcess(target=time.sleep, args=(sleep_time_s,))
-                task_scheduler = TaskScheduler(
-                    iter([daemon, proc]), max_jobs=2, event_loop=event_loop
-                )
+                proc = ForkProcess(target=time.sleep, args=(sleep_time_s, ))
+                task_scheduler = TaskScheduler(iter([daemon, proc]), max_jobs=2, event_loop=event_loop)
 
                 self.received_command = False
 
@@ -134,7 +121,7 @@ class IpcDaemonTestCase(TestCase):
                 self.assertEqual(
                     self.received_command,
                     False,
-                    "command received after %d seconds" % (time.time() - start_time,),
+                    "command received after %d seconds" % (time.time() - start_time, ),
                 )
                 self.assertEqual(proc.isAlive(), False)
                 self.assertEqual(daemon.isAlive(), False)
@@ -155,9 +142,7 @@ class IpcDaemonTestCase(TestCase):
 
     def _run(self, event_loop, task_scheduler, timeout):
         self._run_done = event_loop.create_future()
-        timeout_handle = event_loop.call_later(
-            timeout, self._timeout_callback, task_scheduler
-        )
+        timeout_handle = event_loop.call_later(timeout, self._timeout_callback, task_scheduler)
         task_scheduler.addExitListener(self._exit_callback)
 
         async def start_task_scheduler():

@@ -9,13 +9,22 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
+
     def testSlotConflictUnsatisfiedDeepDeps(self):
         ebuilds = {
             "dev-libs/A-1": {},
-            "dev-libs/A-2": {"KEYWORDS": "~x86"},
-            "dev-libs/B-1": {"DEPEND": "dev-libs/A"},
-            "dev-libs/C-1": {"DEPEND": ">=dev-libs/A-2"},
-            "dev-libs/D-1": {"DEPEND": "dev-libs/A"},
+            "dev-libs/A-2": {
+                "KEYWORDS": "~x86"
+            },
+            "dev-libs/B-1": {
+                "DEPEND": "dev-libs/A"
+            },
+            "dev-libs/C-1": {
+                "DEPEND": ">=dev-libs/A-2"
+            },
+            "dev-libs/D-1": {
+                "DEPEND": "dev-libs/A"
+            },
         }
 
         installed = {
@@ -39,7 +48,10 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
             ResolverPlaygroundTestCase(
                 ["dev-libs/B", "dev-libs/C", "dev-libs/D"],
                 all_permutations=True,
-                options={"--autounmask": "y", "--complete-graph": True},
+                options={
+                    "--autounmask": "y",
+                    "--complete-graph": True
+                },
                 mergelist=[
                     "dev-libs/A-2",
                     "dev-libs/B-1",
@@ -53,7 +65,10 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
             ),
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--autounmask": "y", "--complete-graph": True},
+                options={
+                    "--autounmask": "y",
+                    "--complete-graph": True
+                },
                 mergelist=[
                     "dev-libs/A-2",
                     "dev-libs/B-1",
@@ -185,9 +200,7 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
             # --autounmask-backtrack=n.
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, world=world, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

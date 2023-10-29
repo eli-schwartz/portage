@@ -7,13 +7,12 @@ import signal
 import sys
 
 # For compatibility with Python < 3.8
-raise_signal = getattr(
-    signal, "raise_signal", lambda signum: os.kill(os.getpid(), signum)
-)
+raise_signal = getattr(signal, "raise_signal", lambda signum: os.kill(os.getpid(), signum))
 
 
 # Inherit from KeyboardInterrupt to avoid a traceback from asyncio.
 class SignalInterrupt(KeyboardInterrupt):
+
     def __init__(self, signum):
         self.signum = signum
 
@@ -35,12 +34,8 @@ signal.signal(signal.SIGUSR1, debug_signal)
 
 from os import path as osp
 
-if osp.isfile(
-    osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")
-):
-    sys.path.insert(
-        0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib")
-    )
+if osp.isfile(osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")):
+    sys.path.insert(0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib"))
 import portage
 
 portage._internal_caller = True
@@ -59,11 +54,9 @@ def main():
         sys.stderr.write(f"Permission denied: '{str(e)}'\n")
         sys.exit(e.errno)
     except IsADirectory as e:
-        sys.stderr.write(
-            f"'{str(e)}' is a directory, but should be a file!\n"
-            "See portage man page for information on "
-            "which files may be directories.\n"
-        )
+        sys.stderr.write(f"'{str(e)}' is a directory, but should be a file!\n"
+                         "See portage man page for information on "
+                         "which files may be directories.\n")
         sys.exit(e.errno)
     except ParseError as e:
         sys.stderr.write(f"{str(e)}\n")

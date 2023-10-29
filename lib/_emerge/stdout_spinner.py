@@ -34,9 +34,7 @@ class stdout_spinner:
     def __init__(self):
         self.spinpos = 0
         self.update = self.update_twirl
-        self.scroll_sequence = self.scroll_msgs[
-            int(time.time() * 100) % len(self.scroll_msgs)
-        ]
+        self.scroll_sequence = self.scroll_msgs[int(time.time() * 100) % len(self.scroll_msgs)]
         self.last_update = 0
         self.min_display_latency = 0.05
         self.start_time = None
@@ -70,15 +68,8 @@ class stdout_spinner:
             return True
         if self.spinpos >= len(self.scroll_sequence):
             sys.stdout.write(
-                darkgreen(
-                    " \b\b\b"
-                    + self.scroll_sequence[
-                        len(self.scroll_sequence)
-                        - 1
-                        - (self.spinpos % len(self.scroll_sequence))
-                    ]
-                )
-            )
+                darkgreen(" \b\b\b" + self.scroll_sequence[len(self.scroll_sequence) - 1 -
+                                                           (self.spinpos % len(self.scroll_sequence))]))
         else:
             sys.stdout.write(green("\b " + self.scroll_sequence[self.spinpos]))
         sys.stdout.flush()

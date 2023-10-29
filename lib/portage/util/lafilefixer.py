@@ -44,9 +44,7 @@ pkgconfig_sub1 = re.compile(rb"usr/lib[^/]*/pkgconfig/\.\./\.\.")
 pkgconfig_sub2 = re.compile(rb"(?P<usrlib>usr/lib[^/]*)/pkgconfig/\.\.")
 
 # detect flags that should go into inherited_linker_flags instead of dependency_libs
-flag_re = re.compile(
-    b"-mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe|-threads"
-)
+flag_re = re.compile(b"-mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe|-threads")
 
 
 def _parse_lafile_contents(contents):
@@ -155,10 +153,7 @@ def rewrite_lafile(contents):
                     new_dep_libs.append(dep_libs_entry)
 
         else:
-            raise InvalidData(
-                "Error: Unexpected entry '%s' in 'dependency_libs'"
-                % _unicode_decode(dep_libs_entry)
-            )
+            raise InvalidData("Error: Unexpected entry '%s' in 'dependency_libs'" % _unicode_decode(dep_libs_entry))
 
     # What should 'dependency_libs' and 'inherited_linker_flags' look like?
     expected_dep_libs = b""

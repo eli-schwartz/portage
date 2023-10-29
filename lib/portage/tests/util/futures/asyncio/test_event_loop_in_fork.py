@@ -22,9 +22,7 @@ def async_main(fork_exitcode, loop=None):
     loop = asyncio._wrap_loop(loop)
     proc = AsyncFunction(scheduler=loop, target=fork_main)
     proc.start()
-    proc.async_wait().add_done_callback(
-        lambda future: fork_exitcode.set_result(future.result())
-    )
+    proc.async_wait().add_done_callback(lambda future: fork_exitcode.set_result(future.result()))
 
 
 class EventLoopInForkTestCase(TestCase):

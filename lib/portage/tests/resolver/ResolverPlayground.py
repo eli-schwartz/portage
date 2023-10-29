@@ -44,31 +44,29 @@ class ResolverPlayground:
     its work.
     """
 
-    config_files = frozenset(
-        (
-            "eapi",
-            "layout.conf",
-            "make.conf",
-            "modules",
-            "package.accept_keywords",
-            "package.keywords",
-            "package.license",
-            "package.mask",
-            "package.properties",
-            "package.provided",
-            "packages",
-            "package.unmask",
-            "package.use",
-            "package.use.force",
-            "package.use.mask",
-            "package.use.stable.force",
-            "package.use.stable.mask",
-            "soname.provided",
-            "use.force",
-            "use.mask",
-            "layout.conf",
-        )
-    )
+    config_files = frozenset((
+        "eapi",
+        "layout.conf",
+        "make.conf",
+        "modules",
+        "package.accept_keywords",
+        "package.keywords",
+        "package.license",
+        "package.mask",
+        "package.properties",
+        "package.provided",
+        "packages",
+        "package.unmask",
+        "package.use",
+        "package.use.force",
+        "package.use.mask",
+        "package.use.stable.force",
+        "package.use.stable.mask",
+        "soname.provided",
+        "use.force",
+        "use.mask",
+        "layout.conf",
+    ))
 
     metadata_xml_template = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
@@ -225,9 +223,7 @@ class ResolverPlayground:
         self._create_distfiles(distfiles)
         self._create_ebuilds(ebuilds)
         self._create_installed(installed)
-        self._create_profile(
-            ebuilds, eclasses, installed, profile, repo_configs, user_config, sets
-        )
+        self._create_profile(ebuilds, eclasses, installed, profile, repo_configs, user_config, sets)
         self._create_world(world, world_sets)
 
         self.settings, self.trees = self._load_config()
@@ -295,10 +291,7 @@ class ResolverPlayground:
 
             unknown_keys = set(metadata).difference(portage.dbapi.dbapi._known_keys)
             if unknown_keys:
-                raise ValueError(
-                    "metadata of ebuild '%s' contains unknown keys: %s"
-                    % (cpv, sorted(unknown_keys))
-                )
+                raise ValueError("metadata of ebuild '%s' contains unknown keys: %s" % (cpv, sorted(unknown_keys)))
 
             repo_dir = self._get_repo_dir(repo)
             ebuild_dir = os.path.join(repo_dir, a.cp)
@@ -341,9 +334,7 @@ class ResolverPlayground:
         # a dict.
         items = getattr(binpkgs, "items", None)
         items = items() if items is not None else binpkgs
-        binpkg_format = self.settings.get(
-            "BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0]
-        )
+        binpkg_format = self.settings.get("BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0])
         if binpkg_format == "gpkg":
             if self.gpg is None:
                 self.gpg = GPG(self.settings)
@@ -369,9 +360,7 @@ class ResolverPlayground:
             category_dir = os.path.join(repo_dir, cat)
             if "BUILD_ID" in metadata:
                 if binpkg_format == "xpak":
-                    binpkg_path = os.path.join(
-                        category_dir, pn, f"{pf}-{metadata['BUILD_ID']}.xpak"
-                    )
+                    binpkg_path = os.path.join(category_dir, pn, f"{pf}-{metadata['BUILD_ID']}.xpak")
                 elif binpkg_format == "gpkg":
                     binpkg_path = os.path.join(
                         category_dir,
@@ -429,10 +418,7 @@ class ResolverPlayground:
             unknown_keys.discard("PROVIDES")
             unknown_keys.discard("REQUIRES")
             if unknown_keys:
-                raise ValueError(
-                    "metadata of installed '%s' contains unknown keys: %s"
-                    % (cpv, sorted(unknown_keys))
-                )
+                raise ValueError("metadata of installed '%s' contains unknown keys: %s" % (cpv, sorted(unknown_keys)))
 
             metadata["repository"] = repo
             for k, v in metadata.items():
@@ -450,9 +436,7 @@ class ResolverPlayground:
                 with open(ebuild_path, "rb") as inputfile:
                     f.write(inputfile.read())
 
-    def _create_profile(
-        self, ebuilds, eclasses, installed, profile, repo_configs, user_config, sets
-    ):
+    def _create_profile(self, ebuilds, eclasses, installed, profile, repo_configs, user_config, sets):
         user_config_dir = os.path.join(self.eroot, USER_CONFIG_PATH)
 
         try:
@@ -492,18 +476,14 @@ class ResolverPlayground:
             if repo_config:
                 for config_file, lines in repo_config.items():
                     if config_file not in self.config_files and not any(
-                        fnmatch.fnmatch(config_file, os.path.join(x, "*"))
-                        for x in self.config_files
-                    ):
+                            fnmatch.fnmatch(config_file, os.path.join(x, "*")) for x in self.config_files):
                         raise ValueError(f"Unknown config file: '{config_file}'")
 
-                    if config_file in ("layout.conf",):
+                    if config_file in ("layout.conf", ):
                         file_name = os.path.join(repo_dir, "metadata", config_file)
                     else:
                         file_name = os.path.join(profile_dir, config_file)
-                        if "/" in config_file and not os.path.isdir(
-                            os.path.dirname(file_name)
-                        ):
+                        if "/" in config_file and not os.path.isdir(os.path.dirname(file_name)):
                             os.makedirs(os.path.dirname(file_name))
                     with open(file_name, "w") as f:
                         for line in lines:
@@ -511,9 +491,7 @@ class ResolverPlayground:
                         # Temporarily write empty value of masters until it becomes default.
                         # TODO: Delete all references to "# use implicit masters" when empty value becomes default.
                         if config_file == "layout.conf" and not any(
-                            line.startswith(("masters =", "# use implicit masters"))
-                            for line in lines
-                        ):
+                                line.startswith(("masters =", "# use implicit masters")) for line in lines):
                             f.write("masters =\n")
 
             # Create $profile_dir/eclass (we fail to digest the ebuilds if it's not there)
@@ -535,9 +513,7 @@ class ResolverPlayground:
 
             if repo == "test_repo":
                 # Create a minimal profile in /var/db/repos/gentoo
-                sub_profile_dir = os.path.join(
-                    profile_dir, "default", "linux", "x86", "test_profile"
-                )
+                sub_profile_dir = os.path.join(profile_dir, "default", "linux", "x86", "test_profile")
                 os.makedirs(sub_profile_dir)
 
                 if not (profile and "eapi" in profile):
@@ -569,15 +545,14 @@ class ResolverPlayground:
                                 f.write(f"{line}\n")
 
                 # Create profile symlink
-                os.symlink(
-                    sub_profile_dir, os.path.join(user_config_dir, "make.profile")
-                )
+                os.symlink(sub_profile_dir, os.path.join(user_config_dir, "make.profile"))
 
         gpg_test_path = os.environ["PORTAGE_GNUPGHOME"]
 
         make_conf = {
             "ACCEPT_KEYWORDS": "x86",
-            "BINPKG_GPG_SIGNING_BASE_COMMAND": f"flock {gpg_test_path}/portage-binpkg-gpg.lock /usr/bin/gpg --sign --armor --yes --pinentry-mode loopback --passphrase GentooTest [PORTAGE_CONFIG]",
+            "BINPKG_GPG_SIGNING_BASE_COMMAND":
+            f"flock {gpg_test_path}/portage-binpkg-gpg.lock /usr/bin/gpg --sign --armor --yes --pinentry-mode loopback --passphrase GentooTest [PORTAGE_CONFIG]",
             "BINPKG_GPG_SIGNING_GPG_HOME": gpg_test_path,
             "BINPKG_GPG_SIGNING_KEY": "0x5D90EA06352177F6",
             "BINPKG_GPG_VERIFY_GPG_HOME": gpg_test_path,
@@ -608,9 +583,7 @@ class ResolverPlayground:
         if "make.conf" in user_config:
             make_conf_lines.extend(user_config["make.conf"])
             if "BINPKG_FORMAT=gpkg" in user_config["make.conf"]:
-                make_conf_lines.append(
-                    'FEATURES="${FEATURES} binpkg-request-signature"'
-                )
+                make_conf_lines.append('FEATURES="${FEATURES} binpkg-request-signature"')
 
         if not portage.process.sandbox_capable or os.environ.get("SANDBOX_ON") == "1":
             # avoid problems from nested sandbox instances
@@ -629,16 +602,12 @@ class ResolverPlayground:
                     f.write(f"{line}\n")
 
         # Create /usr/share/portage/config/make.globals
-        make_globals_path = os.path.join(
-            self.eroot, GLOBAL_CONFIG_PATH.lstrip(os.sep), "make.globals"
-        )
+        make_globals_path = os.path.join(self.eroot, GLOBAL_CONFIG_PATH.lstrip(os.sep), "make.globals")
         ensure_dirs(os.path.dirname(make_globals_path))
         os.symlink(os.path.join(str(cnf_path), "make.globals"), make_globals_path)
 
         # Create /usr/share/portage/config/sets/portage.conf
-        default_sets_conf_dir = os.path.join(
-            self.eroot, "usr/share/portage/config/sets"
-        )
+        default_sets_conf_dir = os.path.join(self.eroot, "usr/share/portage/config/sets")
 
         try:
             os.makedirs(default_sets_conf_dir)
@@ -686,23 +655,19 @@ class ResolverPlayground:
             create_trees_kwargs["target_root"] = self.target_root
 
         env = {
-            "PATH": os.environ["PATH"],
-            "PORTAGE_REPOSITORIES": "\n".join(
-                "[%s]\n%s"
-                % (
-                    repo_name,
-                    "\n".join(f"{k} = {v}" for k, v in repo_config.items()),
-                )
-                for repo_name, repo_config in self._repositories.items()
-            ),
+            "PATH":
+            os.environ["PATH"],
+            "PORTAGE_REPOSITORIES":
+            "\n".join("[%s]\n%s" % (
+                repo_name,
+                "\n".join(f"{k} = {v}" for k, v in repo_config.items()),
+            ) for repo_name, repo_config in self._repositories.items()),
         }
 
         if self.debug:
             env["PORTAGE_DEBUG"] = "1"
 
-        trees = portage.create_trees(
-            env=env, eprefix=self.eprefix, **create_trees_kwargs
-        )
+        trees = portage.create_trees(env=env, eprefix=self.eprefix, **create_trees_kwargs)
 
         for root, root_trees in trees.items():
             settings = root_trees["vartree"].settings
@@ -754,9 +719,8 @@ class ResolverPlayground:
                 )
             else:
                 params = create_depgraph_params(options, action)
-                success, depgraph, favorites = backtrack_depgraph(
-                    self.settings, self.trees, options, params, action, atoms, None
-                )
+                success, depgraph, favorites = backtrack_depgraph(self.settings, self.trees, options, params, action,
+                                                                  atoms, None)
                 depgraph._show_merge_list()
                 depgraph.display_problems()
                 result = ResolverPlaygroundResult(atoms, success, depgraph, favorites)
@@ -789,14 +753,13 @@ class ResolverPlayground:
 
 
 class ResolverPlaygroundTestCase:
+
     def __init__(self, request, **kwargs):
         self.all_permutations = kwargs.pop("all_permutations", False)
         self.ignore_mergelist_order = kwargs.pop("ignore_mergelist_order", False)
         self.ignore_cleanlist_order = kwargs.pop("ignore_cleanlist_order", False)
         self.ambiguous_merge_order = kwargs.pop("ambiguous_merge_order", False)
-        self.ambiguous_slot_collision_solutions = kwargs.pop(
-            "ambiguous_slot_collision_solutions", False
-        )
+        self.ambiguous_slot_collision_solutions = kwargs.pop("ambiguous_slot_collision_solutions", False)
         self.check_repo_names = kwargs.pop("check_repo_names", False)
         self.merge_order_assertions = kwargs.pop("merge_order_assertions", False)
 
@@ -905,58 +868,35 @@ class ResolverPlaygroundTestCase:
                     if match and self.merge_order_assertions:
                         for node1, node2 in self.merge_order_assertions:
                             if not got.index(node1) < got.index(node2):
-                                fail_msgs.append(
-                                    "atoms: ("
-                                    + ", ".join(result.atoms)
-                                    + "), key: "
-                                    + (
-                                        "merge_order_assertions, expected: %s"
-                                        % str((node1, node2))
-                                    )
-                                    + ", got: "
-                                    + str(got)
-                                )
+                                fail_msgs.append("atoms: (" + ", ".join(result.atoms) + "), key: " +
+                                                 ("merge_order_assertions, expected: %s" % str((node1, node2))) +
+                                                 ", got: " + str(got))
 
             elif key == "cleanlist" and self.ignore_cleanlist_order:
                 got = set(got)
                 expected = set(expected)
 
-            elif (
-                key == "slot_collision_solutions"
-                and self.ambiguous_slot_collision_solutions
-            ):
+            elif (key == "slot_collision_solutions" and self.ambiguous_slot_collision_solutions):
                 # Tests that use all_permutations can have multiple
                 # outcomes here.
                 for x in expected:
                     if x == got:
                         expected = x
                         break
-            elif (
-                key
-                in (
+            elif (key in (
                     "unstable_keywords",
                     "needed_p_mask_changes",
                     "unsatisfied_deps",
                     "required_use_unsatisfied",
-                )
-                and expected is not None
-            ):
+            ) and expected is not None):
                 expected = set(expected)
 
             elif key == "forced_rebuilds" and expected is not None:
                 expected = {k: set(v) for k, v in expected.items()}
 
             if got != expected:
-                fail_msgs.append(
-                    "atoms: ("
-                    + ", ".join(result.atoms)
-                    + "), key: "
-                    + key
-                    + ", expected: "
-                    + str(expected)
-                    + ", got: "
-                    + str(got)
-                )
+                fail_msgs.append("atoms: (" + ", ".join(result.atoms) + "), key: " + key + ", expected: " +
+                                 str(expected) + ", got: " + str(got))
         if fail_msgs:
             self.test_success = False
             self.fail_msg = "\n".join(fail_msgs)
@@ -1026,10 +966,7 @@ class ResolverPlaygroundResult:
         self.forced_rebuilds = None
         self.required_use_unsatisfied = None
 
-        self.graph_order = [
-            _mergelist_str(node, self.depgraph)
-            for node in self.depgraph._dynamic_config.digraph
-        ]
+        self.graph_order = [_mergelist_str(node, self.depgraph) for node in self.depgraph._dynamic_config.digraph]
 
         if self.depgraph._dynamic_config._serialized_tasks_cache is not None:
             self.mergelist = []
@@ -1039,8 +976,8 @@ class ResolverPlaygroundResult:
         if self.depgraph._dynamic_config._needed_use_config_changes:
             self.use_changes = {}
             for (
-                pkg,
-                needed_use_config_changes,
+                    pkg,
+                    needed_use_config_changes,
             ) in self.depgraph._dynamic_config._needed_use_config_changes.items():
                 new_use, changes = needed_use_config_changes
                 self.use_changes[pkg.cpv] = changes
@@ -1058,8 +995,8 @@ class ResolverPlaygroundResult:
         if self.depgraph._dynamic_config._needed_license_changes:
             self.license_changes = {}
             for (
-                pkg,
-                missing_licenses,
+                    pkg,
+                    missing_licenses,
             ) in self.depgraph._dynamic_config._needed_license_changes.items():
                 self.license_changes[pkg.cpv] = missing_licenses
 
@@ -1076,9 +1013,7 @@ class ResolverPlaygroundResult:
         if self.depgraph._dynamic_config._circular_dependency_handler is not None:
             handler = self.depgraph._dynamic_config._circular_dependency_handler
             sol = handler.solutions
-            self.circular_dependency_solutions = dict(
-                zip([x.cpv for x in sol.keys()], sol.values())
-            )
+            self.circular_dependency_solutions = dict(zip([x.cpv for x in sol.keys()], sol.values()))
 
         if self.depgraph._dynamic_config._unsatisfied_deps_for_display:
             self.unsatisfied_deps = {
@@ -1088,15 +1023,16 @@ class ResolverPlaygroundResult:
 
         if self.depgraph._forced_rebuilds:
             self.forced_rebuilds = {
-                child.cpv: {parent.cpv for parent in parents}
+                child.cpv: {parent.cpv
+                            for parent in parents}
                 for child_dict in self.depgraph._forced_rebuilds.values()
                 for child, parents in child_dict.items()
             }
 
         required_use_unsatisfied = []
         for (
-            pargs,
-            kwargs,
+                pargs,
+                kwargs,
         ) in self.depgraph._dynamic_config._unsatisfied_deps_for_display:
             if "show_req_use" in kwargs:
                 required_use_unsatisfied.append(pargs[1])
@@ -1124,6 +1060,4 @@ class ResolverPlaygroundDepcleanResult:
         self.cleanlist = cleanlist
         self.ordered = ordered
         self.req_pkg_count = req_pkg_count
-        self.graph_order = [
-            _mergelist_str(node, depgraph) for node in depgraph._dynamic_config.digraph
-        ]
+        self.graph_order = [_mergelist_str(node, depgraph) for node in depgraph._dynamic_config.digraph]

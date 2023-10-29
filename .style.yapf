@@ -1,0 +1,5 @@
+[style]
+based_on_style = pep8
+
+# The column limit.
+column_limit=120

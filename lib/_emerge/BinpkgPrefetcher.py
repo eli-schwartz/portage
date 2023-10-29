@@ -8,7 +8,7 @@ from portage import os
 
 
 class BinpkgPrefetcher(CompositeTask):
-    __slots__ = ("pkg",) + (
+    __slots__ = ("pkg", ) + (
         "pkg_path",
         "pkg_allocated_path",
         "_bintree",

@@ -10,7 +10,6 @@ import portage
 from portage.data import portage_gid, uid
 from portage.util.mtimedb import MtimeDB, _MTIMEDBKEYS
 
-
 # Some data for the fixtures:
 
 _ONE_RESUME_LIST_JSON = b"""{
@@ -223,17 +222,13 @@ class MtimeDBTestCase(TestCase):
         self.assertEqual(mtimedb["updates"], {})
 
     def test_instances_keep_a_deepcopy_of_clean_data(self):
-        with patch(
-            "portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)
-        ):
+        with patch("portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)):
             mtimedb = MtimeDB("/some/path/mtimedb")
         self.assertEqual(dict(mtimedb), dict(mtimedb._clean_data))
         self.assertIsNot(mtimedb, mtimedb._clean_data)
 
     def test_load_data_called_at_instance_creation_time(self):
-        with patch(
-            "portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)
-        ):
+        with patch("portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)):
             mtimedb = MtimeDB("/some/path/mtimedb")
         self.assertEqual(
             mtimedb["info"],
@@ -318,9 +313,7 @@ class MtimeDBTestCase(TestCase):
         pwrite2disk.assert_not_called()
 
     def test_is_readonly_attribute(self):
-        with patch(
-            "portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)
-        ):
+        with patch("portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)):
             mtimedb = MtimeDB("/some/path/mtimedb")
         self.assertFalse(mtimedb.is_readonly)
 
@@ -331,9 +324,7 @@ class MtimeDBTestCase(TestCase):
         self.assertFalse(mtimedb.is_readonly)
 
     def test_make_readonly(self):
-        with patch(
-            "portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)
-        ):
+        with patch("portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)):
             mtimedb = MtimeDB("/some/path/mtimedb")
         mtimedb.make_readonly()
         self.assertTrue(mtimedb.is_readonly)
@@ -342,9 +333,7 @@ class MtimeDBTestCase(TestCase):
     @patch("portage.util.mtimedb.apply_secpass_permissions")
     @patch("portage.util.mtimedb.atomic_ofstream")
     def test_write_to_disk(self, matomic_ofstream, mapply_perms):
-        with patch(
-            "portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)
-        ):
+        with patch("portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)):
             mtimedb = MtimeDB("/some/path/mtimedb")
         d = {"z": "zome", "a": "AAA"}
         encoding = portage._encodings["repo.content"]
@@ -353,10 +342,7 @@ class MtimeDBTestCase(TestCase):
         mtimedb._MtimeDB__write_to_disk(d)
         self.assertEqual(d["version"], str(portage.VERSION))
         matomic_ofstream.return_value.write.assert_called_once_with(
-            json.dumps(d, **mtimedb._json_write_opts).encode(encoding)
-        )
-        mapply_perms.assert_called_once_with(
-            mtimedb.filename, uid=uid, gid=portage_gid, mode=0o644
-        )
+            json.dumps(d, **mtimedb._json_write_opts).encode(encoding))
+        mapply_perms.assert_called_once_with(mtimedb.filename, uid=uid, gid=portage_gid, mode=0o644)
         self.assertEqual(d, mtimedb._clean_data)
         self.assertIsNot(d, mtimedb._clean_data)

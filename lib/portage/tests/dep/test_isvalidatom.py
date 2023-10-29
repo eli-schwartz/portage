@@ -6,6 +6,7 @@ from portage.dep import isvalidatom
 
 
 class IsValidAtomTestCase:
+
     def __init__(
         self,
         atom,
@@ -24,6 +25,7 @@ class IsValidAtomTestCase:
 
 
 class IsValidAtom(TestCase):
+
     def testIsValidAtom(self):
         test_cases = (
             IsValidAtomTestCase("sys-apps/portage", True),
@@ -46,9 +48,7 @@ class IsValidAtom(TestCase):
             IsValidAtomTestCase("sys-apps/portage", True),
             IsValidAtomTestCase("sys-apps/portage", True),
             IsValidAtomTestCase("sys-apps/portage", True),
-            IsValidAtomTestCase(
-                "=sys-apps/portage-2.2*:foo[bar?,!baz?,!doc=,build=]", True
-            ),
+            IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[bar?,!baz?,!doc=,build=]", True),
             IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[doc?]", True),
             IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[!doc?]", True),
             IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[doc=]", True),
@@ -61,21 +61,11 @@ class IsValidAtom(TestCase):
             IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[-doc=]", False),
             IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[-doc!=]", False),
             IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[-doc=]", False),
-            IsValidAtomTestCase(
-                "=sys-apps/portage-2.2*:foo[bar][-baz][doc?][!build?]", False
-            ),
-            IsValidAtomTestCase(
-                "=sys-apps/portage-2.2*:foo[bar,-baz,doc?,!build?]", True
-            ),
-            IsValidAtomTestCase(
-                "=sys-apps/portage-2.2*:foo[bar,-baz,doc?,!build?,]", False
-            ),
-            IsValidAtomTestCase(
-                "=sys-apps/portage-2.2*:foo[,bar,-baz,doc?,!build?]", False
-            ),
-            IsValidAtomTestCase(
-                "=sys-apps/portage-2.2*:foo[bar,-baz][doc?,!build?]", False
-            ),
+            IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[bar][-baz][doc?][!build?]", False),
+            IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[bar,-baz,doc?,!build?]", True),
+            IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[bar,-baz,doc?,!build?,]", False),
+            IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[,bar,-baz,doc?,!build?]", False),
+            IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[bar,-baz][doc?,!build?]", False),
             IsValidAtomTestCase("=sys-apps/portage-2.2*:foo[bar][doc,build]", False),
             IsValidAtomTestCase(">~cate-gory/foo-1.0", False),
             IsValidAtomTestCase(">~category/foo-1.0", False),
@@ -127,80 +117,50 @@ class IsValidAtom(TestCase):
             IsValidAtomTestCase("foo/666", True),
             IsValidAtomTestCase("=dev-libs/poppler-qt3-0.11*", True),
             # Testing atoms with repositories
-            IsValidAtomTestCase(
-                "sys-apps/portage::repo_123-name", True, allow_repo=True
-            ),
+            IsValidAtomTestCase("sys-apps/portage::repo_123-name", True, allow_repo=True),
             IsValidAtomTestCase("=sys-apps/portage-2.1::repo", True, allow_repo=True),
             IsValidAtomTestCase("=sys-apps/portage-2.1*::repo", True, allow_repo=True),
             IsValidAtomTestCase("sys-apps/portage:foo::repo", True, allow_repo=True),
-            IsValidAtomTestCase(
-                "sys-apps/portage-2.1:foo::repo", False, allow_repo=True
-            ),
+            IsValidAtomTestCase("sys-apps/portage-2.1:foo::repo", False, allow_repo=True),
             IsValidAtomTestCase("sys-apps/portage-2.1:::repo", False, allow_repo=True),
-            IsValidAtomTestCase(
-                "sys-apps/portage-2.1:::repo[foo]", False, allow_repo=True
-            ),
+            IsValidAtomTestCase("sys-apps/portage-2.1:::repo[foo]", False, allow_repo=True),
             IsValidAtomTestCase(
                 "=sys-apps/portage-2.2*:foo::repo[bar?,!baz?,!doc=,build=]",
                 True,
                 allow_repo=True,
             ),
-            IsValidAtomTestCase(
-                "=sys-apps/portage-2.2*:foo::repo[doc?]", True, allow_repo=True
-            ),
-            IsValidAtomTestCase(
-                "=sys-apps/portage-2.2*:foo::repo[!doc]", False, allow_repo=True
-            ),
+            IsValidAtomTestCase("=sys-apps/portage-2.2*:foo::repo[doc?]", True, allow_repo=True),
+            IsValidAtomTestCase("=sys-apps/portage-2.2*:foo::repo[!doc]", False, allow_repo=True),
             IsValidAtomTestCase("###cat/foo-1.0::repo", False, allow_repo=True),
             IsValidAtomTestCase("~sys-apps/portage::repo", False, allow_repo=True),
             IsValidAtomTestCase("portage::repo", False, allow_repo=True),
             IsValidAtomTestCase("=portage::repo", False, allow_repo=True),
             IsValidAtomTestCase("null/portage::repo", True, allow_repo=True),
-            IsValidAtomTestCase(
-                "app-doc/php-docs-20071125::repo", False, allow_repo=True
-            ),
+            IsValidAtomTestCase("app-doc/php-docs-20071125::repo", False, allow_repo=True),
             IsValidAtomTestCase("=foo/bar-1-r1-1-r1::repo", False, allow_repo=True),
-            IsValidAtomTestCase(
-                "sys-apps/portage::repo_123-name", False, allow_repo=False
-            ),
+            IsValidAtomTestCase("sys-apps/portage::repo_123-name", False, allow_repo=False),
             IsValidAtomTestCase("=sys-apps/portage-2.1::repo", False, allow_repo=False),
-            IsValidAtomTestCase(
-                "=sys-apps/portage-2.1*::repo", False, allow_repo=False
-            ),
+            IsValidAtomTestCase("=sys-apps/portage-2.1*::repo", False, allow_repo=False),
             IsValidAtomTestCase("sys-apps/portage:foo::repo", False, allow_repo=False),
             IsValidAtomTestCase(
                 "=sys-apps/portage-2.2*:foo::repo[bar?,!baz?,!doc=,build=]",
                 False,
                 allow_repo=False,
             ),
-            IsValidAtomTestCase(
-                "=sys-apps/portage-2.2*:foo::repo[doc?]", False, allow_repo=False
-            ),
+            IsValidAtomTestCase("=sys-apps/portage-2.2*:foo::repo[doc?]", False, allow_repo=False),
             IsValidAtomTestCase("null/portage::repo", False, allow_repo=False),
             # Testing repo atoms with eapi
             # If allow_repo is None, it should be overwritten by eapi
             IsValidAtomTestCase("sys-apps/portage::repo", True, allow_repo=None),
-            IsValidAtomTestCase(
-                "sys-apps/portage::repo", False, allow_repo=None, eapi="5"
-            ),
-            IsValidAtomTestCase(
-                "sys-apps/portage::repo", False, allow_repo=None, eapi="7"
-            ),
+            IsValidAtomTestCase("sys-apps/portage::repo", False, allow_repo=None, eapi="5"),
+            IsValidAtomTestCase("sys-apps/portage::repo", False, allow_repo=None, eapi="7"),
             # If allow_repo is not None, it should not be overwritten by eapi
             IsValidAtomTestCase("sys-apps/portage::repo", False, allow_repo=False),
-            IsValidAtomTestCase(
-                "sys-apps/portage::repo", False, allow_repo=False, eapi="5"
-            ),
-            IsValidAtomTestCase(
-                "sys-apps/portage::repo", False, allow_repo=False, eapi="7"
-            ),
+            IsValidAtomTestCase("sys-apps/portage::repo", False, allow_repo=False, eapi="5"),
+            IsValidAtomTestCase("sys-apps/portage::repo", False, allow_repo=False, eapi="7"),
             IsValidAtomTestCase("sys-apps/portage::repo", True, allow_repo=True),
-            IsValidAtomTestCase(
-                "sys-apps/portage::repo", True, allow_repo=True, eapi="5"
-            ),
-            IsValidAtomTestCase(
-                "sys-apps/portage::repo", True, allow_repo=True, eapi="7"
-            ),
+            IsValidAtomTestCase("sys-apps/portage::repo", True, allow_repo=True, eapi="5"),
+            IsValidAtomTestCase("sys-apps/portage::repo", True, allow_repo=True, eapi="7"),
             IsValidAtomTestCase("virtual/ffmpeg:0/53", True),
             IsValidAtomTestCase("virtual/ffmpeg:0/53=", True),
             IsValidAtomTestCase("virtual/ffmpeg:0/53*", False),
@@ -226,8 +186,7 @@ class IsValidAtom(TestCase):
                         allow_repo=test_case.allow_repo,
                         allow_build_id=test_case.allow_build_id,
                         eapi=test_case.eapi,
-                    )
-                ),
+                    )),
                 test_case.expected,
                 msg=f"isvalidatom({test_case.atom}) != {test_case.expected}",
             )

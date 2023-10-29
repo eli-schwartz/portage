@@ -35,6 +35,7 @@ _pattern = collections.namedtuple(
 
 
 class InstallMask:
+
     def __init__(self, install_mask):
         """
         @param install_mask: INSTALL_MASK value
@@ -55,9 +56,7 @@ class InstallMask:
             is_inclusive = not pattern.startswith("-")
             if not is_inclusive:
                 pattern = pattern[1:]
-            pattern_obj = _pattern(
-                orig_index, is_inclusive, pattern, pattern.startswith("/")
-            )
+            pattern_obj = _pattern(orig_index, is_inclusive, pattern, pattern.startswith("/"))
             # absolute path pattern
             if pattern_obj.leading_slash:
                 current_dir = self._anchored
@@ -119,9 +118,7 @@ class InstallMask:
                     pattern = pattern.rstrip("/") + "/"
                 # match either exact path or one of parent dirs
                 # the latter is done via matching pattern/*
-                if fnmatch.fnmatch(path, pattern[1:]) or fnmatch.fnmatch(
-                    path, pattern[1:].rstrip("/") + "/*"
-                ):
+                if fnmatch.fnmatch(path, pattern[1:]) or fnmatch.fnmatch(path, pattern[1:].rstrip("/") + "/*"):
                     ret = is_inclusive
             # filename
             else:

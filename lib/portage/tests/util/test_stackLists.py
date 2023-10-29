@@ -7,6 +7,7 @@ from portage.util import stack_lists
 
 
 class StackListsTestCase(TestCase):
+
     def testStackLists(self):
         tests = [
             ([["a", "b", "c"], ["d", "e", "f"]], ["a", "c", "b", "e", "d", "f"], False),

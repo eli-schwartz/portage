@@ -2,7 +2,6 @@
 # Copyright 1998-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-
 import atexit
 import errno
 import fcntl
@@ -47,7 +46,6 @@ try:
 except ImportError:
     max_fd_limit = 256
 
-
 # Support PEP 446 for Python >=3.4
 try:
     _set_inheritable = _os.set_inheritable
@@ -68,7 +66,7 @@ for _fd_dir in ("/proc/self/fd", "/dev/fd"):
         _fd_dir = None
 
 # /dev/fd does not work on FreeBSD, see bug #478446
-if platform.system() in ("FreeBSD",) and _fd_dir == "/dev/fd":
+if platform.system() in ("FreeBSD", ) and _fd_dir == "/dev/fd":
     _fd_dir = None
 
 if _fd_dir is not None:
@@ -92,9 +90,7 @@ elif os.path.isdir(f"/proc/{portage.getpid()}/fd"):
     # In order for this function to work in forked subprocesses,
     # os.getpid() must be called from inside the function.
     def get_open_fds():
-        return (
-            int(fd) for fd in os.listdir(f"/proc/{portage.getpid()}/fd") if fd.isdigit()
-        )
+        return (int(fd) for fd in os.listdir(f"/proc/{portage.getpid()}/fd") if fd.isdigit())
 
 else:
 
@@ -104,9 +100,7 @@ else:
 
 sandbox_capable = os.path.isfile(SANDBOX_BINARY) and os.access(SANDBOX_BINARY, os.X_OK)
 
-fakeroot_capable = os.path.isfile(FAKEROOT_BINARY) and os.access(
-    FAKEROOT_BINARY, os.X_OK
-)
+fakeroot_capable = os.path.isfile(FAKEROOT_BINARY) and os.access(FAKEROOT_BINARY, os.X_OK)
 
 
 def sanitize_fds():
@@ -117,13 +111,11 @@ def sanitize_fds():
     not be inherited by child processes.
     """
     if _set_inheritable is not None:
-        whitelist = frozenset(
-            [
-                portage._get_stdin().fileno(),
-                sys.__stdout__.fileno(),
-                sys.__stderr__.fileno(),
-            ]
-        )
+        whitelist = frozenset([
+            portage._get_stdin().fileno(),
+            sys.__stdout__.fileno(),
+            sys.__stderr__.fileno(),
+        ])
 
         for fd in get_open_fds():
             if fd not in whitelist:
@@ -229,6 +221,7 @@ atexit.register(run_exitfuncs)
 
 
 class _dummy_list(list):
+
     def remove(self, item):
         # TODO: Trigger a DeprecationWarning here, after stable portage
         # has dummy spawned_pids.
@@ -253,6 +246,7 @@ class EnvStats:
 
 
 def calc_env_stats(env) -> EnvStats:
+
     @lru_cache(1024)
     def encoded_length(s):
         return len(os.fsencode(s))
@@ -370,11 +364,9 @@ def spawn(
     # If an absolute path to an executable file isn't given
     # search for it unless we've been told not to.
     binary = mycommand[0]
-    if binary not in (BASH_BINARY, SANDBOX_BINARY, FAKEROOT_BINARY) and (
-        not os.path.isabs(binary)
-        or not os.path.isfile(binary)
-        or not os.access(binary, os.X_OK)
-    ):
+    if binary not in (BASH_BINARY, SANDBOX_BINARY, FAKEROOT_BINARY) and (not os.path.isabs(binary)
+                                                                         or not os.path.isfile(binary)
+                                                                         or not os.access(binary, os.X_OK)):
         binary = path_lookup and find_binary(binary) or None
         if not binary:
             raise CommandNotFound(mycommand[0])
@@ -406,9 +398,12 @@ def spawn(
             spawn(
                 ("tee", "-i", "-a", logfile),
                 returnpid=True,
-                fd_pipes={0: pr, 1: fd_pipes[1], 2: fd_pipes[2]},
-            )
-        )
+                fd_pipes={
+                    0: pr,
+                    1: fd_pipes[1],
+                    2: fd_pipes[2]
+                },
+            ))
 
         # We don't need the read end of the pipe, so close it.
         os.close(pr)
@@ -629,9 +624,7 @@ def _configure_loopback_interface():
             if _has_ipv6():
                 rtnl.add_address(ifindex, socket.AF_INET6, "fd::1", 8)
     except OSError as e:
-        writemsg(
-            f"Unable to configure loopback interface: {e.strerror}\n", noiselevel=-1
-        )
+        writemsg(f"Unable to configure loopback interface: {e.strerror}\n", noiselevel=-1)
 
 
 def _exec(
@@ -708,9 +701,7 @@ def _exec(
     myargs.extend(mycommand[1:])
 
     # Avoid a potential UnicodeEncodeError from os.execve().
-    myargs = [
-        _unicode_encode(x, encoding=_encodings["fs"], errors="strict") for x in myargs
-    ]
+    myargs = [_unicode_encode(x, encoding=_encodings["fs"], errors="strict") for x in myargs]
 
     # Use default signal handlers in order to avoid problems
     # killing subprocesses as reported in bug #353239.
@@ -764,8 +755,7 @@ def _exec(
                             involved_features.append("pid-sandbox")
 
                         writemsg(
-                            'Unable to unshare: %s (for FEATURES="%s")\n'
-                            % (
+                            'Unable to unshare: %s (for FEATURES="%s")\n' % (
                                 errno.errorcode.get(errno_value, "?"),
                                 " ".join(involved_features),
                             ),
@@ -784,28 +774,14 @@ def _exec(
                                     [
                                         portage._python_interpreter,
                                         os.path.join(portage._bin_path, "pid-ns-init"),
-                                        _unicode_encode(
-                                            "" if uid is None else str(uid)
-                                        ),
-                                        _unicode_encode(
-                                            "" if gid is None else str(gid)
-                                        ),
-                                        _unicode_encode(
-                                            ""
-                                            if groups is None
-                                            else ",".join(
-                                                str(group) for group in groups
-                                            )
-                                        ),
-                                        _unicode_encode(
-                                            "" if umask is None else str(umask)
-                                        ),
-                                        _unicode_encode(
-                                            ",".join(str(fd) for fd in fd_pipes)
-                                        ),
+                                        _unicode_encode("" if uid is None else str(uid)),
+                                        _unicode_encode("" if gid is None else str(gid)),
+                                        _unicode_encode("" if groups is None else ",".join(
+                                            str(group) for group in groups)),
+                                        _unicode_encode("" if umask is None else str(umask)),
+                                        _unicode_encode(",".join(str(fd) for fd in fd_pipes)),
                                         binary,
-                                    ]
-                                    + myargs,
+                                    ] + myargs,
                                 )
                                 uid = None
                                 gid = None
@@ -834,7 +810,7 @@ def _exec(
                             if mount_ret != 0:
                                 # TODO: should it be fatal maybe?
                                 writemsg(
-                                    "Unable to mark mounts slave: %d\n" % (mount_ret,),
+                                    "Unable to mark mounts slave: %d\n" % (mount_ret, ),
                                     noiselevel=-1,
                                 )
                         if unshare_pid:
@@ -844,18 +820,16 @@ def _exec(
                             if mount_ret != 0:
                                 # can't proceed with shared /proc
                                 writemsg(
-                                    "Unable to mark /proc slave: %d\n" % (mount_ret,),
+                                    "Unable to mark /proc slave: %d\n" % (mount_ret, ),
                                     noiselevel=-1,
                                 )
                                 os._exit(1)
                             # mount new /proc for our namespace
-                            s = subprocess.Popen(
-                                ["mount", "-n", "-t", "proc", "proc", "/proc"]
-                            )
+                            s = subprocess.Popen(["mount", "-n", "-t", "proc", "proc", "/proc"])
                             mount_ret = s.wait()
                             if mount_ret != 0:
                                 writemsg(
-                                    "Unable to mount new /proc: %d\n" % (mount_ret,),
+                                    "Unable to mount new /proc: %d\n" % (mount_ret, ),
                                     noiselevel=-1,
                                 )
                                 os._exit(1)
@@ -867,20 +841,12 @@ def _exec(
                                 if hasattr(socket, "sethostname"):
                                     socket.sethostname(new_hostname)
                                 else:
-                                    if (
-                                        libc.sethostname(
-                                            new_hostname, len(new_hostname)
-                                        )
-                                        != 0
-                                    ):
+                                    if (libc.sethostname(new_hostname, len(new_hostname)) != 0):
                                         errno_value = ctypes.get_errno()
-                                        raise OSError(
-                                            errno_value, os.strerror(errno_value)
-                                        )
+                                        raise OSError(errno_value, os.strerror(errno_value))
                             except Exception as e:
                                 writemsg(
-                                    'Unable to set hostname: %s (for FEATURES="network-sandbox")\n'
-                                    % (e,),
+                                    'Unable to set hostname: %s (for FEATURES="network-sandbox")\n' % (e, ),
                                     noiselevel=-1,
                                 )
                             _configure_loopback_interface()

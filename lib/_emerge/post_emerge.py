@@ -47,11 +47,8 @@ def display_news_notification(root_config, myopts):
 
 def show_depclean_suggestion():
     out = portage.output.EOutput()
-    msg = (
-        "After world updates, it is important to remove "
-        + "obsolete packages with emerge --depclean. Refer "
-        + "to `man emerge` for more information."
-    )
+    msg = ("After world updates, it is important to remove " + "obsolete packages with emerge --depclean. Refer " +
+           "to `man emerge` for more information.")
     for line in textwrap.wrap(msg, 72):
         out.ewarn(line)
 
@@ -94,9 +91,7 @@ def post_emerge(myaction, myopts, myfiles, target_root, trees, mtimedb, retval):
     settings.lock()
 
     config_protect = portage.util.shlex_split(settings.get("CONFIG_PROTECT", ""))
-    infodirs = settings.get("INFOPATH", "").split(":") + settings.get(
-        "INFODIR", ""
-    ).split(":")
+    infodirs = settings.get("INFOPATH", "").split(":") + settings.get("INFODIR", "").split(":")
 
     os.chdir("/")
 
@@ -143,19 +138,13 @@ def post_emerge(myaction, myopts, myfiles, target_root, trees, mtimedb, retval):
             print()
             print(colorize("WARN", "!!!") + " existing preserved libs:")
             display_preserved_libs(vardbapi, verbose="--verbose" in myopts)
-            print(
-                "Use "
-                + colorize("GOOD", "emerge @preserved-rebuild")
-                + " to rebuild packages using these libraries"
-            )
+            print("Use " + colorize("GOOD", "emerge @preserved-rebuild") + " to rebuild packages using these libraries")
 
     chk_updated_cfg_files(settings["EROOT"], config_protect)
 
     display_news_notification(root_config, myopts)
 
-    postemerge = os.path.join(
-        settings["PORTAGE_CONFIGROOT"], portage.USER_CONFIG_PATH, "bin", "post_emerge"
-    )
+    postemerge = os.path.join(settings["PORTAGE_CONFIGROOT"], portage.USER_CONFIG_PATH, "bin", "post_emerge")
     if os.access(postemerge, os.X_OK):
         hook_retval = portage.process.spawn([postemerge], env=settings.environ())
         if hook_retval != os.EX_OK:

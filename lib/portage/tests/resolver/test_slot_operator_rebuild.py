@@ -13,12 +13,25 @@ from portage.output import colorize
 
 
 class SlotOperatorRebuildTestCase(TestCase):
+
     def testSlotOperatorRebuild(self):
         ebuilds = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/A-2": {"EAPI": "5", "SLOT": "0/2"},
-            "app-misc/B-0": {"EAPI": "5", "RDEPEND": "app-misc/A:="},
-            "app-misc/C-0": {"EAPI": "5", "RDEPEND": "|| ( app-misc/X app-misc/A:= )"},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/A-2": {
+                "EAPI": "5",
+                "SLOT": "0/2"
+            },
+            "app-misc/B-0": {
+                "EAPI": "5",
+                "RDEPEND": "app-misc/A:="
+            },
+            "app-misc/C-0": {
+                "EAPI": "5",
+                "RDEPEND": "|| ( app-misc/X app-misc/A:= )"
+            },
             "app-misc/D-1": {
                 "EAPI": "6",
                 "RDEPEND": "app-misc/E",
@@ -27,8 +40,14 @@ class SlotOperatorRebuildTestCase(TestCase):
                 "EAPI": "6",
                 "RDEPEND": "app-misc/F:=",
             },
-            "app-misc/F-1": {"EAPI": "6", "SLOT": "0/1"},
-            "app-misc/F-2": {"EAPI": "6", "SLOT": "0/2"},
+            "app-misc/F-1": {
+                "EAPI": "6",
+                "SLOT": "0/1"
+            },
+            "app-misc/F-2": {
+                "EAPI": "6",
+                "SLOT": "0/2"
+            },
         }
 
         binpkgs = {
@@ -39,13 +58,22 @@ class SlotOperatorRebuildTestCase(TestCase):
         }
 
         installed = {
-            "app-misc/A-1": {"EAPI": "5", "SLOT": "0/1"},
-            "app-misc/B-0": {"EAPI": "5", "RDEPEND": "app-misc/A:0/1="},
+            "app-misc/A-1": {
+                "EAPI": "5",
+                "SLOT": "0/1"
+            },
+            "app-misc/B-0": {
+                "EAPI": "5",
+                "RDEPEND": "app-misc/A:0/1="
+            },
             "app-misc/C-0": {
                 "EAPI": "5",
                 "RDEPEND": "|| ( app-misc/X app-misc/A:0/1= )",
             },
-            "app-misc/F-2": {"EAPI": "6", "SLOT": "0/2"},
+            "app-misc/F-2": {
+                "EAPI": "6",
+                "SLOT": "0/2"
+            },
         }
 
         world = ["app-misc/B", "app-misc/C"]
@@ -86,14 +114,12 @@ class SlotOperatorRebuildTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.cleanup()

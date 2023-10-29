@@ -4,7 +4,6 @@
 doc = """Perform package move updates for installed and binary packages."""
 __doc__ = doc
 
-
 module_spec = {
     "name": "move",
     "description": doc,

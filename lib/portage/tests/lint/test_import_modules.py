@@ -11,13 +11,11 @@ from portage import _unicode_decode
 
 
 class ImportModulesTestCase(TestCase):
+
     def testImportModules(self):
         expected_failures = frozenset(())
 
-        iters = (
-            self._iter_modules(os.path.join(PORTAGE_PYM_PATH, x))
-            for x in PORTAGE_PYM_PACKAGES
-        )
+        iters = (self._iter_modules(os.path.join(PORTAGE_PYM_PATH, x)) for x in PORTAGE_PYM_PACKAGES)
         for mod in chain(*iters):
             try:
                 __import__(mod)
@@ -29,7 +27,7 @@ class ImportModulesTestCase(TestCase):
     def _iter_modules(self, base_dir):
         for parent, dirs, files in os.walk(base_dir):
             parent = _unicode_decode(parent, encoding=_encodings["fs"], errors="strict")
-            parent_mod = parent[len(PORTAGE_PYM_PATH) + 1 :]
+            parent_mod = parent[len(PORTAGE_PYM_PATH) + 1:]
             parent_mod = parent_mod.replace("/", ".")
             for x in files:
                 x = _unicode_decode(x, encoding=_encodings["fs"], errors="strict")

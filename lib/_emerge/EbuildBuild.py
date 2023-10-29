@@ -52,11 +52,8 @@ class EbuildBuild(CompositeTask):
         # First get the SRC_URI metadata (it's not cached in self.pkg.metadata
         # because some packages have an extremely large SRC_URI value).
         self._start_task(
-            AsyncTaskFuture(
-                future=self.pkg.root_config.trees["porttree"].dbapi.async_aux_get(
-                    self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler
-                )
-            ),
+            AsyncTaskFuture(future=self.pkg.root_config.trees["porttree"].dbapi.async_aux_get(
+                self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler)),
             self._start_with_metadata,
         )
 
@@ -73,7 +70,7 @@ class EbuildBuild(CompositeTask):
         self._tree = tree
         portdb = root_config.trees[tree].dbapi
         settings.setcpv(pkg)
-        (settings.configdict["pkg"]["SRC_URI"],) = aux_get_task.future.result()
+        (settings.configdict["pkg"]["SRC_URI"], ) = aux_get_task.future.result()
         settings.configdict["pkg"]["EMERGE_FROM"] = "ebuild"
         if self.opts.buildpkgonly:
             settings.configdict["pkg"]["MERGE_TYPE"] = "buildonly"
@@ -83,9 +80,7 @@ class EbuildBuild(CompositeTask):
         if ebuild_path is None:
             raise AssertionError(f"ebuild not found for '{pkg.cpv}'")
         self._ebuild_path = ebuild_path
-        portage.doebuild_environment(
-            ebuild_path, "setup", settings=self.settings, db=portdb
-        )
+        portage.doebuild_environment(ebuild_path, "setup", settings=self.settings, db=portdb)
 
         # Check the manifest here since with --keep-going mode it's
         # currently possible to get this far with a broken manifest.
@@ -100,9 +95,7 @@ class EbuildBuild(CompositeTask):
             pass
         elif prefetcher.isAlive() and prefetcher.poll() is None:
             if not self.background:
-                fetch_log = os.path.join(
-                    _emerge.emergelog._emerge_log_dir, "emerge-fetch.log"
-                )
+                fetch_log = os.path.join(_emerge.emergelog._emerge_log_dir, "emerge-fetch.log")
                 msg = (
                     "Fetching files in the background.",
                     "To view fetch progress, run in another terminal:",
@@ -177,9 +170,7 @@ class EbuildBuild(CompositeTask):
             fetch_log = None
             logwrite_access = False
             if quiet_setting:
-                fetch_log = os.path.join(
-                    _emerge.emergelog._emerge_log_dir, "emerge-fetch.log"
-                )
+                fetch_log = os.path.join(_emerge.emergelog._emerge_log_dir, "emerge-fetch.log")
                 logwrite_access = os.access(first_existing(fetch_log), os.W_OK)
 
             fetcher = EbuildFetcher(
@@ -202,9 +193,7 @@ class EbuildBuild(CompositeTask):
             return
 
         self._build_dir = EbuildBuildDir(scheduler=self.scheduler, settings=settings)
-        self._start_task(
-            AsyncTaskFuture(future=self._build_dir.async_lock()), self._start_pre_clean
-        )
+        self._start_task(AsyncTaskFuture(future=self._build_dir.async_lock()), self._start_pre_clean)
 
     def _start_pre_clean(self, lock_task):
         self._assert_current(lock_task)
@@ -331,12 +320,8 @@ class EbuildBuild(CompositeTask):
         system_set = pkg.root_config.sets["system"]
 
         # buildsyspkg: Check if we need to _force_ binary package creation
-        self._issyspkg = (
-            "buildsyspkg" in features
-            and system_set.findAtomForPackage(pkg)
-            and "buildpkg" not in features
-            and opts.buildpkg != "n"
-        )
+        self._issyspkg = ("buildsyspkg" in features and system_set.findAtomForPackage(pkg)
+                          and "buildpkg" not in features and opts.buildpkg != "n")
 
         # Do not build binary cache for packages from volatile sources.
         # For volatile sources (eg., git), the PROPERTIES parameter in
@@ -351,11 +336,8 @@ class EbuildBuild(CompositeTask):
         live_ebuild = "live" in self.settings.get("PROPERTIES", "").split()
         buildpkg_live_disabled = live_ebuild and not buildpkg_live
 
-        if (
-            ("buildpkg" in features or self._issyspkg)
-            and not buildpkg_live_disabled
-            and not self.opts.buildpkg_exclude.findAtomForPackage(pkg)
-        ):
+        if (("buildpkg" in features or self._issyspkg) and not buildpkg_live_disabled
+                and not self.opts.buildpkg_exclude.findAtomForPackage(pkg)):
             self._buildpkg = True
 
             msg = " === ({} of {}) Compiling/Packaging ({}::{})".format(
@@ -385,9 +367,7 @@ class EbuildBuild(CompositeTask):
             )
             logger.log(msg, short_msg=short_msg)
 
-        build = EbuildExecuter(
-            background=self.background, pkg=pkg, scheduler=scheduler, settings=settings
-        )
+        build = EbuildExecuter(background=self.background, pkg=pkg, scheduler=scheduler, settings=settings)
         self._start_task(build, self._build_exit)
 
     def _fetch_failed(self):
@@ -397,10 +377,7 @@ class EbuildBuild(CompositeTask):
         # to be displayed for problematic packages even though they do
         # not set RESTRICT=fetch (bug #336499).
 
-        if (
-            "fetch" not in self.pkg.restrict
-            and "nofetch" not in self.pkg.defined_phases
-        ):
+        if ("fetch" not in self.pkg.restrict and "nofetch" not in self.pkg.defined_phases):
             self._async_unlock_builddir(returncode=self.returncode)
             return
 
@@ -460,9 +437,7 @@ class EbuildBuild(CompositeTask):
             self.scheduler.output(msg, log_path=self.settings.get("PORTAGE_LOG_FILE"))
 
         binpkg_tasks = TaskSequence()
-        requested_binpkg_formats = self.settings.get(
-            "PORTAGE_BINPKG_FORMAT", "tar"
-        ).split()
+        requested_binpkg_formats = self.settings.get("PORTAGE_BINPKG_FORMAT", "tar").split()
         for pkg_fmt in portage.const.SUPPORTED_BINPKG_FORMATS:
             if pkg_fmt in requested_binpkg_formats:
                 if pkg_fmt == "rpm":
@@ -472,8 +447,7 @@ class EbuildBuild(CompositeTask):
                             phase="rpm",
                             scheduler=self.scheduler,
                             settings=self.settings,
-                        )
-                    )
+                        ))
                 else:
                     task = EbuildBinpkg(
                         background=self.background,
@@ -486,9 +460,7 @@ class EbuildBuild(CompositeTask):
                     # immediately after EbuildBinpkg. Note that
                     # task.addExitListener does not provide the
                     # necessary guarantee (see bug 578204).
-                    binpkg_tasks.add(
-                        self._RecordBinpkgInfo(ebuild_binpkg=task, ebuild_build=self)
-                    )
+                    binpkg_tasks.add(self._RecordBinpkgInfo(ebuild_binpkg=task, ebuild_build=self))
 
         if binpkg_tasks:
             self._start_task(binpkg_tasks, self._buildpkg_exit)
@@ -558,12 +530,10 @@ class EbuildBuild(CompositeTask):
             info["BUILD_ID"] = f"{pkg.build_id}\n"
         for k, v in info.items():
             with open(
-                _unicode_encode(
-                    os.path.join(infoloc, k), encoding=_encodings["fs"], errors="strict"
-                ),
-                mode="w",
-                encoding=_encodings["repo.content"],
-                errors="strict",
+                    _unicode_encode(os.path.join(infoloc, k), encoding=_encodings["fs"], errors="strict"),
+                    mode="w",
+                    encoding=_encodings["repo.content"],
+                    errors="strict",
             ) as f:
                 f.write(v)
 

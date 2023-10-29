@@ -15,6 +15,7 @@ from portage.util import ensure_dirs
 
 
 class BlockerFileCollisionEmergeTestCase(TestCase):
+
     def testBlockerFileCollision(self):
         debug = False
 
@@ -60,38 +61,35 @@ src_install() {
         file_collision = os.path.join(eroot, "usr/lib/file-collision")
 
         test_commands = (
-            emerge_cmd
-            + (
+            emerge_cmd + (
                 "--oneshot",
                 "dev-libs/A",
             ),
-            (lambda: portage.util.grablines(file_collision) == ["A\n"],),
-            emerge_cmd
-            + (
+            (lambda: portage.util.grablines(file_collision) == ["A\n"], ),
+            emerge_cmd + (
                 "--oneshot",
                 "dev-libs/B",
             ),
-            (lambda: portage.util.grablines(file_collision) == ["B\n"],),
-            emerge_cmd
-            + (
+            (lambda: portage.util.grablines(file_collision) == ["B\n"], ),
+            emerge_cmd + (
                 "--oneshot",
                 "dev-libs/A",
             ),
-            (lambda: portage.util.grablines(file_collision) == ["A\n"],),
-            ({"FEATURES": "parallel-install"},)
-            + emerge_cmd
-            + (
+            (lambda: portage.util.grablines(file_collision) == ["A\n"], ),
+            ({
+                "FEATURES": "parallel-install"
+            }, ) + emerge_cmd + (
                 "--oneshot",
                 "dev-libs/B",
             ),
-            (lambda: portage.util.grablines(file_collision) == ["B\n"],),
-            ({"FEATURES": "parallel-install"},)
-            + emerge_cmd
-            + (
+            (lambda: portage.util.grablines(file_collision) == ["B\n"], ),
+            ({
+                "FEATURES": "parallel-install"
+            }, ) + emerge_cmd + (
                 "-Cq",
                 "dev-libs/B",
             ),
-            (lambda: not os.path.exists(file_collision),),
+            (lambda: not os.path.exists(file_collision), ),
         )
 
         fake_bin = os.path.join(eprefix, "bin")
@@ -131,9 +129,7 @@ src_install() {
         }
 
         if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
-            env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ[
-                "__PORTAGE_TEST_HARDLINK_LOCKS"
-            ]
+            env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
 
         dirs = [
             playground.distdir,
@@ -189,9 +185,7 @@ src_install() {
                         for line in output:
                             sys.stderr.write(_unicode_decode(line))
 
-                self.assertEqual(
-                    os.EX_OK, proc.returncode, f"emerge failed with args {args}"
-                )
+                self.assertEqual(os.EX_OK, proc.returncode, f"emerge failed with args {args}")
         finally:
             playground.debug = False
             playground.cleanup()

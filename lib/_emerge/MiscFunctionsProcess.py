@@ -18,15 +18,10 @@ class MiscFunctionsProcess(AbstractEbuildProcess):
     def _start(self):
         settings = self.settings
         portage_bin_path = settings["PORTAGE_BIN_PATH"]
-        misc_sh_binary = os.path.join(
-            portage_bin_path, os.path.basename(portage.const.MISC_SH_BINARY)
-        )
+        misc_sh_binary = os.path.join(portage_bin_path, os.path.basename(portage.const.MISC_SH_BINARY))
 
         self.args = [portage._shell_quote(misc_sh_binary)] + self.commands
-        if (
-            self.logfile is None
-            and self.settings.get("PORTAGE_BACKGROUND") != "subprocess"
-        ):
+        if (self.logfile is None and self.settings.get("PORTAGE_BACKGROUND") != "subprocess"):
             self.logfile = settings.get("PORTAGE_LOG_FILE")
 
         AbstractEbuildProcess._start(self)
@@ -52,9 +47,7 @@ class MiscFunctionsProcess(AbstractEbuildProcess):
         # Use a separate sandbox log file to avoid clobbering the real one.
         sandbox_log = self.settings.pop("SANDBOX_LOG", None)
         if sandbox_log is not None:
-            self.settings["SANDBOX_LOG"] = os.path.join(
-                self.settings["T"], "sandbox-misc.log"
-            )
+            self.settings["SANDBOX_LOG"] = os.path.join(self.settings["T"], "sandbox-misc.log")
 
         try:
             return spawn(" ".join(args), self.settings, **kwargs)

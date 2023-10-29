@@ -16,7 +16,6 @@ from portage import os
 from portage.const import HASHING_BLOCKSIZE, PRELINK_BINARY
 from portage.localization import _
 
-
 # Summary of all available hashes and their implementations,
 # most preferred first. Please keep this in sync with logic below.
 # ================================================================
@@ -32,7 +31,6 @@ from portage.localization import _
 # SHA3_256: hashlib
 # SHA3_512: hashlib
 
-
 # Dict of all available hash functions
 hashfunc_map = {}
 hashorigin_map = {}
@@ -40,9 +38,7 @@ hashorigin_map = {}
 
 def _open_file(filename):
     try:
-        return open(
-            _unicode_encode(filename, encoding=_encodings["fs"], errors="strict"), "rb"
-        )
+        return open(_unicode_encode(filename, encoding=_encodings["fs"], errors="strict"), "rb")
     except OSError as e:
         func_call = f"open('{_unicode_decode(filename)}')"
         if e.errno == errno.EPERM:
@@ -56,7 +52,7 @@ def _open_file(filename):
 
 
 class _generate_hash_function:
-    __slots__ = ("_hashobject",)
+    __slots__ = ("_hashobject", )
 
     def __init__(self, hashtype, hashobject, origin="unknown"):
         self._hashobject = hashobject
@@ -125,10 +121,7 @@ for local_name, hash_name in (
     except ValueError:
         pass
     else:
-        _generate_hash_function(
-            local_name, functools.partial(hashlib.new, hash_name), origin="hashlib"
-        )
-
+        _generate_hash_function(local_name, functools.partial(hashlib.new, hash_name), origin="hashlib")
 
 # Use pycrypto when available, prefer it over the internal fallbacks
 # Check for 'new' attributes, since they can be missing if the module
@@ -148,20 +141,15 @@ if "RMD160" not in hashfunc_map:
         try:
             import mhash
 
-            for local_name, hash_name in (("RMD160", "RIPEMD160"),):
-                if local_name not in hashfunc_map and hasattr(
-                    mhash, f"MHASH_{hash_name}"
-                ):
+            for local_name, hash_name in (("RMD160", "RIPEMD160"), ):
+                if local_name not in hashfunc_map and hasattr(mhash, f"MHASH_{hash_name}"):
                     _generate_hash_function(
                         local_name,
-                        functools.partial(
-                            mhash.MHASH, getattr(mhash, f"MHASH_{hash_name}")
-                        ),
+                        functools.partial(mhash.MHASH, getattr(mhash, f"MHASH_{hash_name}")),
                         origin="mhash",
                     )
         except ImportError:
             pass
-
 
 _whirlpool_unaccelerated = False
 if "WHIRLPOOL" not in hashfunc_map:
@@ -177,6 +165,7 @@ if "WHIRLPOOL" not in hashfunc_map:
 
 # There is only one implementation for size
 class SizeHash:
+
     def checksum_file(self, filename):
         size = os.stat(filename).st_size
         return (size, size)
@@ -188,7 +177,6 @@ hashfunc_map["size"] = SizeHash()
 hashfunc_keys = frozenset(hashfunc_map)
 
 # end actual hash functions
-
 
 prelink_capable = False
 if os.path.exists(PRELINK_BINARY):
@@ -205,11 +193,8 @@ if os.path.exists(PRELINK_BINARY):
 def is_prelinkable_elf(filename):
     with _open_file(filename) as f:
         magic = f.read(17)
-    return (
-        len(magic) == 17
-        and magic.startswith(b"\x7fELF")
-        and magic[16:17] in (b"\x02", b"\x03")
-    )  # 2=ET_EXEC, 3=ET_DYN
+    return (len(magic) == 17 and magic.startswith(b"\x7fELF")
+            and magic[16:17] in (b"\x02", b"\x03"))  # 2=ET_EXEC, 3=ET_DYN
 
 
 def perform_md5(x, calc_prelink=0):
@@ -217,9 +202,7 @@ def perform_md5(x, calc_prelink=0):
 
 
 def _perform_md5_merge(x, **kwargs):
-    return perform_md5(
-        _unicode_encode(x, encoding=_encodings["merge"], errors="strict"), **kwargs
-    )
+    return perform_md5(_unicode_encode(x, encoding=_encodings["merge"], errors="strict"), **kwargs)
 
 
 def perform_all(x, calc_prelink=0):
@@ -312,11 +295,7 @@ def _apply_hash_filter(digests, hash_filter):
                     break
 
     if modified:
-        digests = {
-            k: v
-            for k, v in digests.items()
-            if k == "size" or k in verifiable_hash_types
-        }
+        digests = {k: v for k, v in digests.items() if k == "size" or k in verifiable_hash_types}
 
     return digests
 
@@ -377,9 +356,7 @@ def verify_all(filename, mydict, calc_prelink=0, strict=0):
             myhash = perform_checksum(filename, x, calc_prelink=calc_prelink)[0]
             if mydict[x] != myhash:
                 if strict:
-                    raise portage.exception.DigestException(
-                        f"Failed to verify '{filename}' on checksum type '{x}'"
-                    )
+                    raise portage.exception.DigestException(f"Failed to verify '{filename}' on checksum type '{x}'")
                 else:
                     file_is_ok = False
                     reason = (f"Failed on {x} verification", myhash, mydict[x])
@@ -417,9 +394,7 @@ def perform_checksum(filename, hashname="MD5", calc_prelink=0):
             try:
                 tmpfile_fd, prelink_tmpfile = tempfile.mkstemp()
                 try:
-                    retval = portage.process.spawn(
-                        [PRELINK_BINARY, "--verify", filename], fd_pipes={1: tmpfile_fd}
-                    )
+                    retval = portage.process.spawn([PRELINK_BINARY, "--verify", filename], fd_pipes={1: tmpfile_fd})
                 finally:
                     os.close(tmpfile_fd)
                 if retval == os.EX_OK:
@@ -430,8 +405,7 @@ def perform_checksum(filename, hashname="MD5", calc_prelink=0):
         try:
             if hashname not in hashfunc_keys:
                 raise portage.exception.DigestException(
-                    f"{hashname} hash function not available (needs dev-python/pycrypto)"
-                )
+                    f"{hashname} hash function not available (needs dev-python/pycrypto)")
             myhash, mysize = hashfunc_map[hashname].checksum_file(myfilename)
         except OSError as e:
             if e.errno in (errno.ENOENT, errno.ESTALE):
@@ -468,9 +442,7 @@ def perform_multiple_checksums(filename, hashes=["MD5"], calc_prelink=0):
     rVal = {}
     for x in hashes:
         if x not in hashfunc_keys:
-            raise portage.exception.DigestException(
-                f"{x} hash function not available (needs dev-python/pycrypto)"
-            )
+            raise portage.exception.DigestException(f"{x} hash function not available (needs dev-python/pycrypto)")
         rVal[x] = perform_checksum(filename, x, calc_prelink)[0]
     return rVal
 
@@ -487,7 +459,5 @@ def checksum_str(data, hashname="MD5"):
     @return: The hash (hex-digest) of the data
     """
     if hashname not in hashfunc_keys:
-        raise portage.exception.DigestException(
-            f"{hashname} hash function not available (needs dev-python/pycrypto)"
-        )
+        raise portage.exception.DigestException(f"{hashname} hash function not available (needs dev-python/pycrypto)")
     return hashfunc_map[hashname].checksum_str(data)

@@ -22,27 +22,25 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
     portage.writemsg_stdout("\n>>> Updating Portage cache\n")
     cachedir = os.path.normpath(settings.depcachedir)
     if cachedir in [
-        "/",
-        "/bin",
-        "/dev",
-        "/etc",
-        "/home",
-        "/lib",
-        "/opt",
-        "/proc",
-        "/root",
-        "/sbin",
-        "/sys",
-        "/tmp",
-        "/usr",
-        "/var",
+            "/",
+            "/bin",
+            "/dev",
+            "/etc",
+            "/home",
+            "/lib",
+            "/opt",
+            "/proc",
+            "/root",
+            "/sbin",
+            "/sys",
+            "/tmp",
+            "/usr",
+            "/var",
     ]:
         print(
-            (
-                "!!! PORTAGE_DEPCACHEDIR IS SET TO A PRIMARY "
-                "ROOT DIRECTORY ON YOUR SYSTEM.\n"
-                f"!!! This is ALMOST CERTAINLY NOT what you want: '{cachedir}'",
-            ),
+            ("!!! PORTAGE_DEPCACHEDIR IS SET TO A PRIMARY "
+             "ROOT DIRECTORY ON YOUR SYSTEM.\n"
+             f"!!! This is ALMOST CERTAINLY NOT what you want: '{cachedir}'", ),
             file=sys.stderr,
         )
         sys.exit(73)
@@ -75,9 +73,7 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
             eclass_db.update_eclasses()
             porttrees_data.append(TreeData(portdb.auxdb[path], eclass_db, path, src_db))
 
-    quiet = (
-        settings.get("TERM") == "dumb" or "--quiet" in myopts or not sys.stdout.isatty()
-    )
+    quiet = (settings.get("TERM") == "dumb" or "--quiet" in myopts or not sys.stdout.isatty())
 
     onProgress = None
     if not quiet:
@@ -135,9 +131,7 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
                 ebuild_hash = hashed_path(ebuild_location)
 
                 try:
-                    if not tree_data.src_db.validate_entry(
-                        src, ebuild_hash, tree_data.eclass_db
-                    ):
+                    if not tree_data.src_db.validate_entry(src, ebuild_hash, tree_data.eclass_db):
                         continue
                 except CacheError:
                     continue
@@ -172,24 +166,18 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
                     src[dest_chf_key] = dest_chf_getter(ebuild_hash)
 
                 if dest is not None:
-                    if not (
-                        dest.get(dest_chf_key) == src[dest_chf_key]
-                        and tree_data.eclass_db.validate_and_rewrite_cache(
-                            dest["_eclasses_"],
-                            tree_data.dest_db.validation_chf,
-                            tree_data.dest_db.store_eclass_paths,
-                        )
-                        is not None
-                        and set(dest["_eclasses_"]) == set(src["_eclasses_"])
-                    ):
+                    if not (dest.get(dest_chf_key) == src[dest_chf_key]
+                            and tree_data.eclass_db.validate_and_rewrite_cache(
+                                dest["_eclasses_"],
+                                tree_data.dest_db.validation_chf,
+                                tree_data.dest_db.store_eclass_paths,
+                            ) is not None and set(dest["_eclasses_"]) == set(src["_eclasses_"])):
                         dest = None
                     else:
                         # We don't want to skip the write unless we're really
                         # sure that the existing cache is identical, so don't
                         # trust _mtime_ and _eclasses_ alone.
-                        cache_is_identical = (
-                            True for k in auxdbkeys if dest.get(k, "") != src.get(k, "")
-                        )
+                        cache_is_identical = (True for k in auxdbkeys if dest.get(k, "") != src.get(k, ""))
                         if any(cache_is_identical):
                             dest = None
                 if dest is not None:
@@ -215,10 +203,8 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
             dead_nodes = set(tree_data.dest_db)
         except CacheError as e:
             writemsg_level(
-                (
-                    "Error listing cache entries for "
-                    f"'{tree_data.path}': {e}, continuing...\n"
-                ),
+                ("Error listing cache entries for "
+                 f"'{tree_data.path}': {e}, continuing...\n"),
                 level=logging.ERROR,
                 noiselevel=-1,
             )

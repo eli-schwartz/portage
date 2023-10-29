@@ -72,17 +72,13 @@ def pkg_use_display(pkg, opts, modified_use=None):
         for f in use:
             if f.startswith(flag_prefix):
                 use_expand_flags.add(f)
-                use_enabled.setdefault(varname.upper(), []).append(
-                    _flag_info(f, f[len(flag_prefix) :])
-                )
+                use_enabled.setdefault(varname.upper(), []).append(_flag_info(f, f[len(flag_prefix):]))
 
         for f in pkg.iuse.all:
             if f.startswith(flag_prefix):
                 use_expand_flags.add(f)
                 if f not in use:
-                    use_disabled.setdefault(varname.upper(), []).append(
-                        _flag_info(f, f[len(flag_prefix) :])
-                    )
+                    use_disabled.setdefault(varname.upper(), []).append(_flag_info(f, f[len(flag_prefix):]))
 
     var_order = set(use_enabled)
     var_order.update(use_disabled)

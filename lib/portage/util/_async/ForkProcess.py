@@ -49,14 +49,11 @@ class ForkProcess(SpawnProcess):
         # to cpython issue 84559.
         if self.fd_pipes and not self._HAVE_SEND_HANDLE:
             raise NotImplementedError(
-                'fd_pipes only supported with HAVE_SEND_HANDLE or multiprocessing start method "fork"'
-            )
+                'fd_pipes only supported with HAVE_SEND_HANDLE or multiprocessing start method "fork"')
 
         if self.fd_pipes or self.logfile or not self.background:
             # Log via multiprocessing.Pipe if necessary.
-            connection, self._child_connection = multiprocessing.Pipe(
-                duplex=self._HAVE_SEND_HANDLE
-            )
+            connection, self._child_connection = multiprocessing.Pipe(duplex=self._HAVE_SEND_HANDLE)
 
         retval = self._spawn(self.args, fd_pipes=self.fd_pipes)
 
@@ -83,18 +80,12 @@ class ForkProcess(SpawnProcess):
             else:
                 master_fd = connection
 
-            self._start_main_task(
-                master_fd, log_file_path=self.logfile, stdout_fd=stdout_fd
-            )
+            self._start_main_task(master_fd, log_file_path=self.logfile, stdout_fd=stdout_fd)
 
     @property
     def _fd_pipes_send_handle(self):
         """Returns True if we have a connection to implement fd_pipes via send_handle."""
-        return bool(
-            self._HAVE_SEND_HANDLE
-            and self._files
-            and getattr(self._files, "connection", False)
-        )
+        return bool(self._HAVE_SEND_HANDLE and self._files and getattr(self._files, "connection", False))
 
     def _send_fd_pipes(self):
         """
@@ -102,9 +93,7 @@ class ForkProcess(SpawnProcess):
         This performs blocking IO, intended for invocation via run_in_executor.
         """
         fd_list = list(set(self.fd_pipes.values()))
-        self._files.connection.send(
-            (self.fd_pipes, fd_list),
-        )
+        self._files.connection.send((self.fd_pipes, fd_list), )
         for fd in fd_list:
             multiprocessing.reduction.send_handle(
                 self._files.connection,
@@ -166,9 +155,7 @@ class ForkProcess(SpawnProcess):
             stdin_fd = fd_pipes.get(0) if fd_pipes else None
             if stdin_fd is not None and stdin_fd == portage._get_stdin().fileno():
                 stdin_dup = os.dup(stdin_fd)
-                fcntl.fcntl(
-                    stdin_dup, fcntl.F_SETFD, fcntl.fcntl(stdin_fd, fcntl.F_GETFD)
-                )
+                fcntl.fcntl(stdin_dup, fcntl.F_SETFD, fcntl.fcntl(stdin_fd, fcntl.F_GETFD))
                 fd_pipes[0] = stdin_dup
 
             if self._fd_pipes_send_handle:
@@ -191,12 +178,9 @@ class ForkProcess(SpawnProcess):
             if stdin_dup is not None:
                 os.close(stdin_dup)
 
-        self._proc_join_task = asyncio.ensure_future(
-            self._proc_join(self._proc, loop=self.scheduler), loop=self.scheduler
-        )
-        self._proc_join_task.add_done_callback(
-            functools.partial(self._proc_join_done, self._proc)
-        )
+        self._proc_join_task = asyncio.ensure_future(self._proc_join(self._proc, loop=self.scheduler),
+                                                     loop=self.scheduler)
+        self._proc_join_task.add_done_callback(functools.partial(self._proc_join_done, self._proc))
 
         return [self._proc.pid]
 
@@ -289,9 +273,7 @@ class ForkProcess(SpawnProcess):
                 fd_pipes, fd_list = child_connection.recv()
                 fd_pipes_map = {}
                 for fd in fd_list:
-                    fd_pipes_map[fd] = multiprocessing.reduction.recv_handle(
-                        child_connection
-                    )
+                    fd_pipes_map[fd] = multiprocessing.reduction.recv_handle(child_connection)
                 child_connection.close()
                 for k, v in list(fd_pipes.items()):
                     fd_pipes[k] = fd_pipes_map[v]
@@ -318,9 +300,7 @@ class ForkProcess(SpawnProcess):
             # descriptor flags.
             if sys.stdin.fileno() != 0:
                 os.dup2(0, sys.stdin.fileno())
-                fcntl.fcntl(
-                    sys.stdin.fileno(), fcntl.F_SETFD, fcntl.fcntl(0, fcntl.F_GETFD)
-                )
+                fcntl.fcntl(sys.stdin.fileno(), fcntl.F_SETFD, fcntl.fcntl(0, fcntl.F_GETFD))
             sys.__stdin__ = sys.stdin
 
         sys.exit(target(*(args or []), **(kwargs or {})))

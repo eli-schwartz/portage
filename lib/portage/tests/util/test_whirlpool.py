@@ -6,12 +6,12 @@ import pytest
 from portage.tests import TestCase
 from portage.util.whirlpool import CWhirlpool, PyWhirlpool
 
-
 CWHIRLPOOL_AVAILABLE = CWhirlpool.is_available
 CWHIRLPOOL_NOT_AVAILABLE_MSG = "C Whirlpool extension is not importable"
 
 
 class WhirlpoolTestCase(TestCase):
+
     def testBundledWhirlpool(self, cls=PyWhirlpool):
         self.assertEqual(
             cls(b"The quick brown fox jumps over the lazy dog").hexdigest(),

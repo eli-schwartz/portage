@@ -9,13 +9,9 @@ from _emerge.resolver.package_tracker import PackageTracker, PackageTrackerDbapi
 
 
 class PackageTrackerTestCase(TestCase):
-    FakePackage = collections.namedtuple(
-        "FakePackage", ["root", "cp", "cpv", "slot", "slot_atom", "version", "repo"]
-    )
+    FakePackage = collections.namedtuple("FakePackage", ["root", "cp", "cpv", "slot", "slot_atom", "version", "repo"])
 
-    FakeConflict = collections.namedtuple(
-        "FakeConflict", ["description", "root", "pkgs"]
-    )
+    FakeConflict = collections.namedtuple("FakeConflict", ["description", "root", "pkgs"])
 
     def make_pkg(self, root, atom, repo="test_repo"):
         atom = Atom(atom)
@@ -254,12 +250,10 @@ class PackageTrackerTestCase(TestCase):
         check_conflicts([self.make_conflict("slot conflict", "/", [x1, x3, x2])])
 
         p.add_pkg(x4b)
-        check_conflicts(
-            [
-                self.make_conflict("slot conflict", "/", [x1, x3, x2]),
-                self.make_conflict("cpv conflict", "/", [x4, x4b]),
-            ]
-        )
+        check_conflicts([
+            self.make_conflict("slot conflict", "/", [x1, x3, x2]),
+            self.make_conflict("cpv conflict", "/", [x4, x4b]),
+        ])
 
         check_conflicts(
             [

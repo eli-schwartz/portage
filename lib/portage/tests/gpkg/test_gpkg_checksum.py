@@ -19,15 +19,12 @@ from portage.exception import (
 
 
 class test_gpkg_checksum_case(TestCase):
+
     def test_gpkg_missing_header(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} -binpkg-signing '
-                    '-binpkg-request-signature -gpg-keepalive"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                          '-binpkg-request-signature -gpg-keepalive"', ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -43,9 +40,7 @@ class test_gpkg_checksum_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if f.name != os.path.join("test", binpkg_1.gpkg_version):
                             tar_2.addfile(f, tar_1.extractfile(f))
@@ -62,14 +57,10 @@ class test_gpkg_checksum_case(TestCase):
             playground.cleanup()
 
     def test_gpkg_missing_manifest(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} -binpkg-signing '
-                    '-binpkg-request-signature -gpg-keepalive"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                          '-binpkg-request-signature -gpg-keepalive"', ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -85,31 +76,23 @@ class test_gpkg_checksum_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if f.name != os.path.join("test", "Manifest"):
                             tar_2.addfile(f, tar_1.extractfile(f))
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(
-                MissingSignature, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(MissingSignature, binpkg_2.decompress, os.path.join(tmpdir, "test"))
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_missing_files(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} -binpkg-signing '
-                    '-binpkg-request-signature -gpg-keepalive"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                          '-binpkg-request-signature -gpg-keepalive"', ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -129,31 +112,23 @@ class test_gpkg_checksum_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if "image.tar" not in f.name:
                             tar_2.addfile(f, tar_1.extractfile(f))
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(
-                DigestException, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(DigestException, binpkg_2.decompress, os.path.join(tmpdir, "test"))
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_extra_files(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} -binpkg-signing '
-                    '-binpkg-request-signature -gpg-keepalive"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                          '-binpkg-request-signature -gpg-keepalive"', ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -169,9 +144,7 @@ class test_gpkg_checksum_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         tar_2.addfile(f, tar_1.extractfile(f))
                     data_tarinfo = tarfile.TarInfo(os.path.join("test", "data2"))
@@ -182,22 +155,16 @@ class test_gpkg_checksum_case(TestCase):
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(
-                DigestException, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(DigestException, binpkg_2.decompress, os.path.join(tmpdir, "test"))
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_incorrect_checksum(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} -binpkg-signing '
-                    '-binpkg-request-signature -gpg-keepalive"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                          '-binpkg-request-signature -gpg-keepalive"', ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -213,9 +180,7 @@ class test_gpkg_checksum_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if f.name == os.path.join("test", "Manifest"):
                             data = io.BytesIO(tar_1.extractfile(f).read())
@@ -229,22 +194,16 @@ class test_gpkg_checksum_case(TestCase):
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(
-                DigestException, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(DigestException, binpkg_2.decompress, os.path.join(tmpdir, "test"))
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_duplicate_files(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} -binpkg-signing '
-                    '-binpkg-request-signature -gpg-keepalive"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                          '-binpkg-request-signature -gpg-keepalive"', ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -260,9 +219,7 @@ class test_gpkg_checksum_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         tar_2.addfile(f, tar_1.extractfile(f))
                         tar_2.addfile(f, tar_1.extractfile(f))
@@ -279,14 +236,10 @@ class test_gpkg_checksum_case(TestCase):
             playground.cleanup()
 
     def test_gpkg_manifest_duplicate_files(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} -binpkg-signing '
-                    '-binpkg-request-signature -gpg-keepalive"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                          '-binpkg-request-signature -gpg-keepalive"', ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -302,9 +255,7 @@ class test_gpkg_checksum_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if f.name == os.path.join("test", "Manifest"):
                             manifest = tar_1.extractfile(f).read()
@@ -321,22 +272,16 @@ class test_gpkg_checksum_case(TestCase):
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(
-                DigestException, binpkg_2.decompress, os.path.join(tmpdir, "test")
-            )
+            self.assertRaises(DigestException, binpkg_2.decompress, os.path.join(tmpdir, "test"))
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_different_size_file(self):
-        playground = ResolverPlayground(
-            user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} -binpkg-signing '
-                    '-binpkg-request-signature -gpg-keepalive"',
-                ),
-            }
-        )
+        playground = ResolverPlayground(user_config={
+            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                          '-binpkg-request-signature -gpg-keepalive"', ),
+        })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -352,9 +297,7 @@ class test_gpkg_checksum_case(TestCase):
             binpkg_1.compress(orig_full_path, {})
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if "image" in f.name:
                             data = tar_1.extractfile(f).read()

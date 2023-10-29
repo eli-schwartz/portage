@@ -43,6 +43,7 @@ class BinRepoConfig:
 
 
 class BinRepoConfigLoader(Mapping):
+
     def __init__(self, paths, settings):
         """Load config from files in paths"""
 
@@ -71,7 +72,7 @@ class BinRepoConfigLoader(Mapping):
             repo = BinRepoConfig(repo_data)
             if repo.sync_uri is None:
                 writemsg(
-                    _("!!! Missing sync-uri setting for binrepo %s\n") % (repo.name,),
+                    _("!!! Missing sync-uri setting for binrepo %s\n") % (repo.name, ),
                     noiselevel=-1,
                 )
                 continue
@@ -94,23 +95,17 @@ class BinRepoConfigLoader(Mapping):
                 current_priority += 1
                 sync_uris.add(sync_uri)
                 repos.append(
-                    BinRepoConfig(
-                        {
-                            "name-fallback": self._digest_uri(sync_uri),
-                            "name": None,
-                            "priority": current_priority,
-                            "sync-uri": sync_uri,
-                        }
-                    )
-                )
+                    BinRepoConfig({
+                        "name-fallback": self._digest_uri(sync_uri),
+                        "name": None,
+                        "priority": current_priority,
+                        "sync-uri": sync_uri,
+                    }))
 
-        self._data = OrderedDict(
-            (repo.name or repo.name_fallback, repo)
-            for repo in sorted(
-                repos,
-                key=lambda repo: (repo.priority or 0, repo.name or repo.name_fallback),
-            )
-        )
+        self._data = OrderedDict((repo.name or repo.name_fallback, repo) for repo in sorted(
+            repos,
+            key=lambda repo: (repo.priority or 0, repo.name or repo.name_fallback),
+        ))
 
     @staticmethod
     def _digest_uri(uri):

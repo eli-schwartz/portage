@@ -26,8 +26,7 @@ def get_hooks_from_dir(rel_directory, prefix="/"):
             hooks[filepath] = name
         else:
             writemsg_level(
-                " %s %s hook: '%s' is not executable\n"
-                % (
+                " %s %s hook: '%s' is not executable\n" % (
                     warn("*"),
                     directory,
                     portage._unicode_decode(name),

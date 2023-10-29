@@ -9,6 +9,7 @@ from portage.dep import Atom, best_match_to_list
 
 
 class Test_best_match_to_list(TestCase):
+
     def best_match_to_list_wrapper(self, mypkg, mylist):
         """
         This function uses best_match_to_list to create sorted
@@ -54,7 +55,8 @@ class Test_best_match_to_list(TestCase):
             ),
             (
                 "dev-libs/A-1",
-                [Atom("dev-libs/*", allow_wildcard=True), Atom("=dev-libs/A-1:0")],
+                [Atom("dev-libs/*", allow_wildcard=True),
+                 Atom("=dev-libs/A-1:0")],
                 [Atom("=dev-libs/A-1:0"), Atom("dev-libs/*", allow_wildcard=True)],
                 True,
             ),
@@ -126,6 +128,4 @@ class Test_best_match_to_list(TestCase):
             else:
                 atom_lists = [atom_list]
             for atom_list in atom_lists:
-                self.assertEqual(
-                    self.best_match_to_list_wrapper(pkg, atom_list), result
-                )
+                self.assertEqual(self.best_match_to_list_wrapper(pkg, atom_list), result)

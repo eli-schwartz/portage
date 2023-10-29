@@ -18,6 +18,7 @@ from portage.gpg import GPG
 
 
 class test_gpkg_metadata_url_case(TestCase):
+
     def httpd(self, directory, port):
         try:
             import http.server
@@ -36,9 +37,7 @@ class test_gpkg_metadata_url_case(TestCase):
         except ImportError:
             self.skipTest("threading module not exists")
 
-        server = threading.Thread(
-            target=self.httpd, args=(directory, port), daemon=True
-        )
+        server = threading.Thread(target=self.httpd, args=(directory, port), daemon=True)
         server.start()
         return server
 
@@ -50,8 +49,7 @@ class test_gpkg_metadata_url_case(TestCase):
                     'FEATURES="${FEATURES} -binpkg-signing '
                     '-binpkg-request-signature"',
                 ),
-            }
-        )
+            })
         tmpdir = tempfile.mkdtemp()
         try:
             settings = playground.settings
@@ -79,9 +77,7 @@ class test_gpkg_metadata_url_case(TestCase):
 
             test_gpkg.compress(os.path.join(tmpdir, "orig"), meta)
 
-            meta_from_url = test_gpkg.get_metadata_url(
-                "http://127.0.0.1:" + str(port) + "/test.gpkg.tar"
-            )
+            meta_from_url = test_gpkg.get_metadata_url("http://127.0.0.1:" + str(port) + "/test.gpkg.tar")
 
             self.assertEqual(meta, meta_from_url)
         finally:
@@ -93,10 +89,10 @@ class test_gpkg_metadata_url_case(TestCase):
             user_config={
                 "make.conf": (
                     'BINPKG_COMPRESS="gzip"',
-                    'FEATURES="${FEATURES} binpkg-signing ' 'binpkg-request-signature"',
+                    'FEATURES="${FEATURES} binpkg-signing '
+                    'binpkg-request-signature"',
                 ),
-            }
-        )
+            })
         tmpdir = tempfile.mkdtemp()
         try:
             settings = playground.settings
@@ -128,9 +124,7 @@ class test_gpkg_metadata_url_case(TestCase):
             test_gpkg.compress(os.path.join(tmpdir, "orig"), meta)
 
             with tarfile.open(os.path.join(tmpdir, "test-1.gpkg.tar"), "r") as tar_1:
-                with tarfile.open(
-                    os.path.join(tmpdir, "test-2.gpkg.tar"), "w"
-                ) as tar_2:
+                with tarfile.open(os.path.join(tmpdir, "test-2.gpkg.tar"), "w") as tar_2:
                     for f in tar_1.getmembers():
                         if f.name == "test/metadata.tar.gz":
                             sig = b"""

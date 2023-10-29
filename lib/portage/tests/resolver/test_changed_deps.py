@@ -13,6 +13,7 @@ from portage.output import colorize
 
 
 class ChangedDepsTestCase(TestCase):
+
     def testChangedDeps(self):
         ebuilds = {
             "app-misc/A-0": {
@@ -30,7 +31,7 @@ class ChangedDepsTestCase(TestCase):
             "app-misc/A-0": {},
         }
 
-        world = ("app-misc/A",)
+        world = ("app-misc/A", )
 
         test_cases = (
             # --dynamic-deps=n causes the original deps to be respected
@@ -103,8 +104,7 @@ class ChangedDepsTestCase(TestCase):
                     "--usepkg": True,
                 },
                 mergelist=["[binary]app-misc/A-0"],
-            ),
-        )
+            ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -117,15 +117,13 @@ class ChangedDepsTestCase(TestCase):
                     installed=installed,
                     world=world,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.cleanup()

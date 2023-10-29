@@ -87,9 +87,7 @@ class MutableMapping(Mapping):
 
     def pop(self, key, *args):
         if len(args) > 1:
-            raise TypeError(
-                "pop expected at most 2 arguments, got " + repr(1 + len(args))
-            )
+            raise TypeError("pop expected at most 2 arguments, got " + repr(1 + len(args)))
         try:
             value = self[key]
         except KeyError:
@@ -109,9 +107,7 @@ class MutableMapping(Mapping):
 
     def update(self, *args, **kwargs):
         if len(args) > 1:
-            raise TypeError(
-                "expected at most 1 positional argument, got " + repr(len(args))
-            )
+            raise TypeError("expected at most 1 positional argument, got " + repr(len(args)))
         other = None
         if args:
             other = args[0]
@@ -143,15 +139,13 @@ class UserDict(MutableMapping):
          https://bugs.python.org/issue2876
     """
 
-    __slots__ = ("data",)
+    __slots__ = ("data", )
 
     def __init__(self, *args, **kwargs):
         self.data = {}
 
         if len(args) > 1:
-            raise TypeError(
-                "expected at most 1 positional argument, got " + repr(len(args))
-            )
+            raise TypeError("expected at most 1 positional argument, got " + repr(len(args)))
 
         if args:
             self.update(args[0])
@@ -278,13 +272,11 @@ class _SlotDict:
 
     _prefix = ""
     allowed_keys = frozenset()
-    __slots__ = ("__weakref__",)
+    __slots__ = ("__weakref__", )
 
     def __init__(self, *args, **kwargs):
         if len(args) > 1:
-            raise TypeError(
-                "expected at most 1 positional argument, got " + repr(len(args))
-            )
+            raise TypeError("expected at most 1 positional argument, got " + repr(len(args)))
 
         if args:
             self.update(args[0])
@@ -342,9 +334,7 @@ class _SlotDict:
 
     def update(self, *args, **kwargs):
         if len(args) > 1:
-            raise TypeError(
-                "expected at most 1 positional argument, got " + repr(len(args))
-            )
+            raise TypeError("expected at most 1 positional argument, got " + repr(len(args)))
         other = None
         if args:
             other = args[0]
@@ -384,9 +374,7 @@ class _SlotDict:
 
     def pop(self, key, *args):
         if len(args) > 1:
-            raise TypeError(
-                "pop expected at most 2 arguments, got " + repr(1 + len(args))
-            )
+            raise TypeError("pop expected at most 2 arguments, got " + repr(1 + len(args)))
         try:
             value = self[key]
         except KeyError:

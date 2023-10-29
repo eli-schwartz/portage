@@ -13,6 +13,7 @@ from portage.output import colorize
 
 
 class SonameSlotConflictUpdateTestCase(TestCase):
+
     def testSonameSlotConflictUpdate(self):
         binpkgs = {
             "app-text/podofo-0.9.2": {
@@ -101,16 +102,14 @@ class SonameSlotConflictUpdateTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
 
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.debug = False
                     playground.cleanup()

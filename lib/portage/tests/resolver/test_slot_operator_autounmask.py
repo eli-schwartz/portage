@@ -13,13 +13,20 @@ from portage.output import colorize
 
 
 class SlotOperatorAutoUnmaskTestCase(TestCase):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def testSubSlot(self):
         ebuilds = {
-            "dev-libs/icu-49": {"EAPI": "5", "SLOT": "0/49"},
-            "dev-libs/icu-4.8": {"EAPI": "5", "SLOT": "0/48"},
+            "dev-libs/icu-49": {
+                "EAPI": "5",
+                "SLOT": "0/49"
+            },
+            "dev-libs/icu-4.8": {
+                "EAPI": "5",
+                "SLOT": "0/48"
+            },
             "dev-libs/libxml2-2.7.8": {
                 "EAPI": "5",
                 "DEPEND": "dev-libs/icu:=",
@@ -28,8 +35,14 @@ class SlotOperatorAutoUnmaskTestCase(TestCase):
             },
         }
         binpkgs = {
-            "dev-libs/icu-49": {"EAPI": "5", "SLOT": "0/49"},
-            "dev-libs/icu-4.8": {"EAPI": "5", "SLOT": "0/48"},
+            "dev-libs/icu-49": {
+                "EAPI": "5",
+                "SLOT": "0/49"
+            },
+            "dev-libs/icu-4.8": {
+                "EAPI": "5",
+                "SLOT": "0/48"
+            },
             "dev-libs/libxml2-2.7.8": {
                 "EAPI": "5",
                 "DEPEND": "dev-libs/icu:0/48=",
@@ -37,7 +50,10 @@ class SlotOperatorAutoUnmaskTestCase(TestCase):
             },
         }
         installed = {
-            "dev-libs/icu-4.8": {"EAPI": "5", "SLOT": "0/48"},
+            "dev-libs/icu-4.8": {
+                "EAPI": "5",
+                "SLOT": "0/48"
+            },
             "dev-libs/libxml2-2.7.8": {
                 "EAPI": "5",
                 "DEPEND": "dev-libs/icu:0/48=",
@@ -50,27 +66,41 @@ class SlotOperatorAutoUnmaskTestCase(TestCase):
         test_cases = (
             ResolverPlaygroundTestCase(
                 ["dev-libs/icu"],
-                options={"--autounmask": True, "--oneshot": True},
+                options={
+                    "--autounmask": True,
+                    "--oneshot": True
+                },
                 success=False,
                 mergelist=["dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
                 unstable_keywords=["dev-libs/libxml2-2.7.8"],
             ),
             ResolverPlaygroundTestCase(
                 ["dev-libs/icu"],
-                options={"--oneshot": True, "--ignore-built-slot-operator-deps": "y"},
+                options={
+                    "--oneshot": True,
+                    "--ignore-built-slot-operator-deps": "y"
+                },
                 success=True,
                 mergelist=["dev-libs/icu-49"],
             ),
             ResolverPlaygroundTestCase(
                 ["dev-libs/icu"],
-                options={"--autounmask": True, "--oneshot": True, "--usepkg": True},
+                options={
+                    "--autounmask": True,
+                    "--oneshot": True,
+                    "--usepkg": True
+                },
                 success=False,
                 mergelist=["[binary]dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
                 unstable_keywords=["dev-libs/libxml2-2.7.8"],
             ),
             ResolverPlaygroundTestCase(
                 ["dev-libs/icu"],
-                options={"--autounmask": True, "--oneshot": True, "--usepkgonly": True},
+                options={
+                    "--autounmask": True,
+                    "--oneshot": True,
+                    "--usepkgonly": True
+                },
                 success=True,
                 mergelist=["[binary]dev-libs/icu-4.8"],
             ),
@@ -96,7 +126,11 @@ class SlotOperatorAutoUnmaskTestCase(TestCase):
             ),
             ResolverPlaygroundTestCase(
                 ["@world"],
-                options={"--update": True, "--deep": True, "--usepkgonly": True},
+                options={
+                    "--update": True,
+                    "--deep": True,
+                    "--usepkgonly": True
+                },
                 success=True,
                 mergelist=[],
             ),
@@ -124,14 +158,12 @@ class SlotOperatorAutoUnmaskTestCase(TestCase):
                     world=world,
                     debug=False,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     playground.cleanup()

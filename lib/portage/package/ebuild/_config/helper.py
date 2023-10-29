@@ -56,7 +56,7 @@ def prune_incremental(split):
     """
     for i, x in enumerate(reversed(split)):
         if x == "*":
-            split = split[-i - 1 :]
+            split = split[-i - 1:]
             break
         elif x == "-*":
             if i == 0:

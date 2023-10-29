@@ -16,6 +16,7 @@ from portage import _shell_quote
 
 
 class hashed_path:
+
     def __init__(self, location):
         self.location = location
 
@@ -71,7 +72,7 @@ class cache:
         # ~harring
         if porttree_root:
             self.porttree_root = porttree_root
-            self.porttrees = (normalize_path(self.porttree_root),)
+            self.porttrees = (normalize_path(self.porttree_root), )
             self._master_eclass_root = os.path.join(self.porttrees[0], "eclass")
             self.update_eclasses()
         else:
@@ -175,7 +176,5 @@ class cache:
     @property
     def eclass_locations_string(self):
         if self._eclass_locations_str is None:
-            self._eclass_locations_str = " ".join(
-                _shell_quote(x) for x in reversed(self.porttrees)
-            )
+            self._eclass_locations_str = " ".join(_shell_quote(x) for x in reversed(self.porttrees))
         return self._eclass_locations_str

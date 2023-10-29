@@ -52,14 +52,10 @@ def retry(
     @return: func decorated with retry support
     @rtype: callable
     """
-    return functools.partial(
-        _retry_wrapper, loop, try_max, try_timeout, overall_timeout, delay_func, reraise
-    )
+    return functools.partial(_retry_wrapper, loop, try_max, try_timeout, overall_timeout, delay_func, reraise)
 
 
-def _retry_wrapper(
-    _loop, try_max, try_timeout, overall_timeout, delay_func, reraise, func, loop=None
-):
+def _retry_wrapper(_loop, try_max, try_timeout, overall_timeout, delay_func, reraise, func, loop=None):
     """
     Create and return a decorated function.
     """
@@ -108,6 +104,7 @@ def _retry(
 
 
 class _Retry:
+
     def __init__(
         self,
         future,
@@ -136,9 +133,7 @@ class _Retry:
 
         future.add_done_callback(self._cancel_callback)
         if overall_timeout is not None:
-            self._overall_timeout_handle = loop.call_later(
-                overall_timeout, self._overall_timeout_callback
-            )
+            self._overall_timeout_handle = loop.call_later(overall_timeout, self._overall_timeout_callback)
         self._begin_try()
 
     def _cancel_callback(self, future):
@@ -160,9 +155,7 @@ class _Retry:
         self._current_task = asyncio.ensure_future(self._func(), loop=self._loop)
         self._current_task.add_done_callback(self._try_done)
         if self._try_timeout is not None:
-            self._try_timeout_handle = self._loop.call_later(
-                self._try_timeout, self._try_timeout_callback
-            )
+            self._try_timeout_handle = self._loop.call_later(self._try_timeout, self._try_timeout_callback)
 
     def _try_done(self, future):
         self._current_task = None

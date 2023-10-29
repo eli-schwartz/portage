@@ -67,9 +67,7 @@ class ContentsCaseSensitivityManager:
         """
         Initialize data structures for case-insensitive support.
         """
-        self._contents_insensitive = {
-            k.lower(): v for k, v in self.getcontents().items()
-        }
+        self._contents_insensitive = {k.lower(): v for k, v in self.getcontents().items()}
         self._reverse_key_map = {k.lower(): k for k in self.getcontents()}
 
     def _keys_case_insensitive(self):

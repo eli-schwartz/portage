@@ -20,9 +20,7 @@ def main(files):
 
     for filename in files:
         # Emulate 'chmod -fR a+rX,u+w,g-w,o-w' with minimal chmod calls.
-        apply_recursive_permissions(
-            filename, filemode=0o644, filemask=0o022, dirmode=0o755, dirmask=0o022
-        )
+        apply_recursive_permissions(filename, filemode=0o644, filemask=0o022, dirmode=0o755, dirmask=0o022)
 
     return os.EX_OK
 

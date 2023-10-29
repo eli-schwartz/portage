@@ -20,6 +20,7 @@ from _emerge.CompositeTask import CompositeTask
 
 
 class FetchIterator:
+
     def __init__(self, config):
         self._config = config
         self._terminated = threading.Event()
@@ -41,7 +42,7 @@ class FetchIterator:
         # and in order to reduce latency in case of a signal interrupt.
         cp_all = self._config.portdb.cp_all
         for category in sorted(self._config.portdb.categories):
-            yield from cp_all(categories=(category,))
+            yield from cp_all(categories=(category, ))
 
     def __iter__(self):
         portdb = self._config.portdb
@@ -65,16 +66,14 @@ class FetchIterator:
                     if self._terminated.is_set():
                         return
 
-                    yield _EbuildFetchTasks(
-                        fetch_tasks_future=_async_fetch_tasks(
-                            self._config,
-                            hash_filter,
-                            repo_config,
-                            digests_future,
-                            cpv,
-                            portdb._event_loop,
-                        )
-                    )
+                    yield _EbuildFetchTasks(fetch_tasks_future=_async_fetch_tasks(
+                        self._config,
+                        hash_filter,
+                        repo_config,
+                        digests_future,
+                        cpv,
+                        portdb._event_loop,
+                    ))
 
 
 class _EbuildFetchTasks(CompositeTask):
@@ -83,12 +82,10 @@ class _EbuildFetchTasks(CompositeTask):
     for each of the files referenced by an ebuild.
     """
 
-    __slots__ = ("fetch_tasks_future",)
+    __slots__ = ("fetch_tasks_future", )
 
     def _start(self):
-        self._start_task(
-            AsyncTaskFuture(future=self.fetch_tasks_future), self._start_fetch_tasks
-        )
+        self._start_task(AsyncTaskFuture(future=self.fetch_tasks_future), self._start_fetch_tasks)
 
     def _start_fetch_tasks(self, task):
         if self._default_exit(task) != os.EX_OK:
@@ -135,11 +132,7 @@ def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, lo
         # function returns, in order to avoid triggering the event loop's
         # exception handler.
         if not gather_result.cancelled():
-            list(
-                future.exception()
-                for future in gather_result.result()
-                if not future.cancelled()
-            )
+            list(future.exception() for future in gather_result.result() if not future.cancelled())
         else:
             result.cancel()
 
@@ -156,7 +149,7 @@ def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, lo
             return
 
         try:
-            (restrict,) = aux_get_result.result()
+            (restrict, ) = aux_get_result.result()
         except (PortageKeyError, PortageException) as e:
             config.log_failure(f"{cpv}\t\taux_get exception {e}")
             result.set_result(fetch_tasks)
@@ -201,9 +194,7 @@ def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, lo
                 # skip mirror-restricted files unless override via mirror+
                 # or in config_mirror_exemptions
                 if restrict_mirror and not override_mirror:
-                    if config.restrict_mirror_exemptions is None or not uri.startswith(
-                        "mirror://"
-                    ):
+                    if config.restrict_mirror_exemptions is None or not uri.startswith("mirror://"):
                         continue
                     mirror_name = uri.split("/", 3)[2]
                     if mirror_name not in config.restrict_mirror_exemptions:
@@ -227,9 +218,7 @@ def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, lo
                 # If there's an exception then raise it.
                 digests = digests_future.result()
             else:
-                digests = repo_config.load_manifest(
-                    os.path.join(repo_config.location, cpv.cp)
-                ).getTypeDigests("DIST")
+                digests = repo_config.load_manifest(os.path.join(repo_config.location, cpv.cp)).getTypeDigests("DIST")
         except (OSError, PortageException) as e:
             digests_future.done() or digests_future.set_exception(e)
             for filename in new_uri_map:
@@ -270,15 +259,12 @@ def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, lo
                     restrict=restrict,
                     uri_tuple=uri_tuple,
                     config=config,
-                )
-            )
+                ))
 
         result.set_result(fetch_tasks)
 
     def future_generator():
-        yield config.portdb.async_aux_get(
-            cpv, ("RESTRICT",), myrepo=repo_config.name, loop=loop
-        )
+        yield config.portdb.async_aux_get(cpv, ("RESTRICT", ), myrepo=repo_config.name, loop=loop)
         yield config.portdb.async_fetch_map(cpv, mytree=repo_config.location, loop=loop)
 
     # Use iter_gather(max_jobs=1) to limit the number of processes per
@@ -291,10 +277,7 @@ def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, lo
         loop=loop,
     )
     gather_result.add_done_callback(aux_get_done)
-    result.add_done_callback(
-        lambda result: gather_result.cancel()
-        if result.cancelled() and not gather_result.done()
-        else None
-    )
+    result.add_done_callback(lambda result: gather_result.cancel()
+                             if result.cancelled() and not gather_result.done() else None)
 
     return result

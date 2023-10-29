@@ -40,7 +40,8 @@ class ManifestProcess(ForkProcess):
             mf.create(assumeDistHashesAlways=True)
         except FileNotFound as e:
             portage.writemsg(
-                _("!!! File %s doesn't exist, can't update " "Manifest\n") % e,
+                _("!!! File %s doesn't exist, can't update "
+                  "Manifest\n") % e,
                 noiselevel=-1,
             )
             return 1

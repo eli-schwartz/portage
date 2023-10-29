@@ -11,7 +11,9 @@ from portage.tests import TestCase
 
 
 class CompatCoroutineTestCase(TestCase):
+
     def test_returning_coroutine(self):
+
         @coroutine
         def returning_coroutine(loop=None):
             yield asyncio.sleep(0, loop=loop)
@@ -24,6 +26,7 @@ class CompatCoroutineTestCase(TestCase):
         )
 
     def test_raising_coroutine(self):
+
         class TestException(Exception):
             pass
 
@@ -33,11 +36,10 @@ class CompatCoroutineTestCase(TestCase):
             raise TestException("exception")
 
         loop = asyncio.get_event_loop()
-        self.assertRaises(
-            TestException, loop.run_until_complete, raising_coroutine(loop=loop)
-        )
+        self.assertRaises(TestException, loop.run_until_complete, raising_coroutine(loop=loop))
 
     def test_catching_coroutine(self):
+
         class TestException(Exception):
             pass
 
@@ -55,9 +57,7 @@ class CompatCoroutineTestCase(TestCase):
             coroutine_return("success")
 
         loop = asyncio.get_event_loop()
-        self.assertEqual(
-            "success", loop.run_until_complete(catching_coroutine(loop=loop))
-        )
+        self.assertEqual("success", loop.run_until_complete(catching_coroutine(loop=loop)))
 
     def test_cancelled_coroutine(self):
         """
@@ -93,9 +93,7 @@ class CompatCoroutineTestCase(TestCase):
 
         self.assertRaises(asyncio.CancelledError, loop.run_until_complete, future)
 
-        self.assertRaises(
-            asyncio.CancelledError, loop.run_until_complete, exception_in_coroutine
-        )
+        self.assertRaises(asyncio.CancelledError, loop.run_until_complete, exception_in_coroutine)
 
     def test_cancelled_future(self):
         """
@@ -112,12 +110,11 @@ class CompatCoroutineTestCase(TestCase):
                 yield future
 
         loop = asyncio.get_event_loop()
-        future = loop.run_until_complete(
-            asyncio.wait([cancelled_future_coroutine(loop=loop)], loop=loop)
-        )[0].pop()
+        future = loop.run_until_complete(asyncio.wait([cancelled_future_coroutine(loop=loop)], loop=loop))[0].pop()
         self.assertTrue(future.cancelled())
 
     def test_yield_expression_result(self):
+
         @coroutine
         def yield_expression_coroutine(loop=None):
             for i in range(3):
@@ -128,6 +125,7 @@ class CompatCoroutineTestCase(TestCase):
         loop.run_until_complete(yield_expression_coroutine(loop=loop))
 
     def test_method_coroutine(self):
+
         class Cubby:
             _empty = object()
 
@@ -184,12 +182,8 @@ class CompatCoroutineTestCase(TestCase):
         loop = asyncio.get_event_loop()
         cubby = Cubby(loop)
         values = list(range(3))
-        writer = asyncio.ensure_future(
-            writer_coroutine(cubby, values, None, loop=loop), loop=loop
-        )
-        reader = asyncio.ensure_future(
-            reader_coroutine(cubby, None, loop=loop), loop=loop
-        )
+        writer = asyncio.ensure_future(writer_coroutine(cubby, values, None, loop=loop), loop=loop)
+        reader = asyncio.ensure_future(reader_coroutine(cubby, None, loop=loop), loop=loop)
         loop.run_until_complete(asyncio.wait([writer, reader], loop=loop))
 
         self.assertEqual(reader.result(), values)
@@ -199,9 +193,7 @@ class CompatCoroutineTestCase(TestCase):
         # blend with synchronous code.
         sync_cubby = _sync_methods(cubby, loop=loop)
         sync_reader = _sync_decorator(reader_coroutine, loop=loop)
-        writer = asyncio.ensure_future(
-            writer_coroutine(cubby, values, None, loop=loop), loop=loop
-        )
+        writer = asyncio.ensure_future(writer_coroutine(cubby, values, None, loop=loop), loop=loop)
         self.assertEqual(sync_reader(cubby, None), values)
         self.assertTrue(writer.done())
 

@@ -80,13 +80,9 @@ def _expand_new_virtuals(
         elif isinstance(x, list):
             assert x, f"Normalization error, empty conjunction found in {mysplit}"
             if is_disjunction:
-                assert (
-                    x[0] != "||"
-                ), f"Normalization error, nested disjunction found in {mysplit}"
+                assert (x[0] != "||"), f"Normalization error, nested disjunction found in {mysplit}"
             else:
-                assert (
-                    x[0] == "||"
-                ), f"Normalization error, nested conjunction found in {mysplit}"
+                assert (x[0] == "||"), f"Normalization error, nested conjunction found in {mysplit}"
             x_exp = _expand_new_virtuals(
                 x,
                 edebug,
@@ -105,9 +101,7 @@ def _expand_new_virtuals(
                         # Due to normalization, a conjunction must not be
                         # nested directly in another conjunction, so this
                         # must be a disjunction.
-                        assert (
-                            x and x[0] == "||"
-                        ), f"Normalization error, nested conjunction found in {x_exp}"
+                        assert (x and x[0] == "||"), f"Normalization error, nested conjunction found in {x_exp}"
                         newsplit.extend(x[1:])
                     else:
                         newsplit.append(x)
@@ -198,9 +192,7 @@ def _expand_new_virtuals(
                 virt_atom = Atom(virt_atom)
                 if parent is None:
                     if myuse is None:
-                        virt_atom = virt_atom.evaluate_conditionals(
-                            mysettings.get("PORTAGE_USE", "").split()
-                        )
+                        virt_atom = virt_atom.evaluate_conditionals(mysettings.get("PORTAGE_USE", "").split())
                     else:
                         virt_atom = virt_atom.evaluate_conditionals(myuse)
                 else:
@@ -221,12 +213,12 @@ def _expand_new_virtuals(
             pkg_kwargs["myuse"] = pkg_use_enabled(pkg)
             if edebug:
                 writemsg_level(
-                    _("Virtual Parent:      %s\n") % (pkg,),
+                    _("Virtual Parent:      %s\n") % (pkg, ),
                     noiselevel=-1,
                     level=logging.DEBUG,
                 )
                 writemsg_level(
-                    _("Virtual Depstring:   %s\n") % (depstring,),
+                    _("Virtual Depstring:   %s\n") % (depstring, ),
                     noiselevel=-1,
                     level=logging.DEBUG,
                 )
@@ -335,9 +327,7 @@ class _dep_choice(SlotObject):
     )
 
 
-def dep_zapdeps(
-    unreduced, reduced, myroot, use_binaries=0, trees=None, minimize_slots=False
-):
+def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize_slots=False):
     """
     Takes an unreduced and reduced deplist and removes satisfied dependencies.
     Returned deplist contains steps that must be taken to satisfy dependencies.
@@ -458,11 +448,7 @@ def dep_zapdeps(
                 continue
 
             # It's not a downgrade if parent is replacing child.
-            replacing = (
-                parent
-                and graph_interface
-                and graph_interface.will_replace_child(parent, myroot, atom)
-            )
+            replacing = (parent and graph_interface and graph_interface.will_replace_child(parent, myroot, atom))
             # Ignore USE dependencies here since we don't want USE
             # settings to adversely affect || preference evaluation.
             avail_pkg = mydbapi_match_pkgs(atom.without_use)
@@ -478,11 +464,7 @@ def dep_zapdeps(
 
             if not replacing and graph_db is not None and downgrade_probe is not None:
                 slot_matches = graph_db.match_pkgs(avail_slot)
-                if (
-                    len(slot_matches) > 1
-                    and avail_pkg < slot_matches[-1]
-                    and not downgrade_probe(avail_pkg)
-                ):
+                if (len(slot_matches) > 1 and avail_pkg < slot_matches[-1] and not downgrade_probe(avail_pkg)):
                     # If a downgrade is not desirable, then avoid a
                     # choice that pulls in a lower version involved
                     # in a slot conflict (bug #531656).
@@ -498,9 +480,8 @@ def dep_zapdeps(
                         # so we can prioritize choices that do not
                         # require changes to use.mask or use.force
                         # (see bug #515584).
-                        violated_atom = atom.violated_conditionals(
-                            pkg_use_enabled(avail_pkg), avail_pkg.iuse.is_valid_flag
-                        )
+                        violated_atom = atom.violated_conditionals(pkg_use_enabled(avail_pkg),
+                                                                   avail_pkg.iuse.is_valid_flag)
 
                         # Note that violated_atom.use can be None here,
                         # since evaluation can collapse conditional USE
@@ -514,10 +495,7 @@ def dep_zapdeps(
                                     break
                             else:
                                 for flag in violated_atom.use.disabled:
-                                    if (
-                                        flag in avail_pkg.use.force
-                                        and flag not in avail_pkg.use.mask
-                                    ):
+                                    if (flag in avail_pkg.use.force and flag not in avail_pkg.use.mask):
                                         all_use_unmasked = False
                                         break
                 else:
@@ -530,13 +508,8 @@ def dep_zapdeps(
             if not replacing and downgrade_probe is not None and graph is not None:
                 highest_in_slot = mydbapi_match_pkgs(avail_slot)
                 highest_in_slot = highest_in_slot[-1] if highest_in_slot else None
-                if (
-                    avail_pkg
-                    and highest_in_slot
-                    and avail_pkg < highest_in_slot
-                    and not downgrade_probe(avail_pkg)
-                    and (highest_in_slot.installed or highest_in_slot in graph)
-                ):
+                if (avail_pkg and highest_in_slot and avail_pkg < highest_in_slot and not downgrade_probe(avail_pkg)
+                        and (highest_in_slot.installed or highest_in_slot in graph)):
                     installed_downgrade = True
 
             slot_map[avail_slot] = avail_pkg
@@ -553,19 +526,12 @@ def dep_zapdeps(
                 # upgrades, and a package choice that is not internally
                 # consistent will lead the has_upgrade/has_downgrade logic
                 # to produce invalid results (see bug 600346).
-                all_match_current = all(
-                    a.match(avail_pkg) for a in slot_atoms[avail_slot]
-                )
-                all_match_previous = all(
-                    a.match(highest_cpv) for a in slot_atoms[avail_slot]
-                )
+                all_match_current = all(a.match(avail_pkg) for a in slot_atoms[avail_slot])
+                all_match_previous = all(a.match(highest_cpv) for a in slot_atoms[avail_slot])
                 if all_match_previous and not all_match_current:
                     continue
 
-            current_higher = (
-                highest_cpv is None
-                or vercmp(avail_pkg.version, highest_cpv.version) > 0
-            )
+            current_higher = (highest_cpv is None or vercmp(avail_pkg.version, highest_cpv.version) > 0)
 
             if current_higher or (all_match_current and not all_match_previous):
                 cp_map[avail_pkg.cp] = avail_pkg
@@ -576,13 +542,9 @@ def dep_zapdeps(
         else:
             new_slot_count = 0
             for slot_atom, avail_pkg in slot_map.items():
-                if parent is not None and graph_interface.want_update_pkg(
-                    parent, avail_pkg
-                ):
+                if parent is not None and graph_interface.want_update_pkg(parent, avail_pkg):
                     want_update = True
-                if not slot_atom.cp.startswith("virtual/") and not graph_db.match_pkgs(
-                    slot_atom
-                ):
+                if not slot_atom.cp.startswith("virtual/") and not graph_db.match_pkgs(slot_atom):
                     new_slot_count += 1
 
         this_choice = _dep_choice(
@@ -610,9 +572,7 @@ def dep_zapdeps(
                 all_installed_slots = True
                 for slot_atom in slot_map:
                     # New-style virtuals have zero cost to install.
-                    if not vardb.match(slot_atom) and not slot_atom.startswith(
-                        "virtual/"
-                    ):
+                    if not vardb.match(slot_atom) and not slot_atom.startswith("virtual/"):
                         all_installed_slots = False
                         break
             this_choice.all_installed_slots = all_installed_slots
@@ -673,8 +633,8 @@ def dep_zapdeps(
                             break
                 if circular_atom is None and circular_dependency is not None:
                     for circular_child in itertools.chain(
-                        circular_dependency.get(parent, []),
-                        circular_dependency.get(virt_parent, []),
+                            circular_dependency.get(parent, []),
+                            circular_dependency.get(virt_parent, []),
                     ):
                         for atom in atoms:
                             if not atom.blocker and atom.match(circular_child):
@@ -763,11 +723,7 @@ def dep_zapdeps(
                 if choice_1 is choice_2:
                     # choice_1 will not be promoted, so move on
                     break
-                if (
-                    choice_1.all_installed_slots
-                    and not choice_2.all_installed_slots
-                    and not choice_2.want_update
-                ):
+                if (choice_1.all_installed_slots and not choice_2.all_installed_slots and not choice_2.want_update):
                     # promote choice_1 in front of choice_2
                     choices.remove(choice_1)
                     index_2 = choices.index(choice_2)
@@ -788,16 +744,12 @@ def dep_zapdeps(
                             has_downgrade = True
 
                 if (
-                    # Prefer upgrades.
+                        # Prefer upgrades.
                     (has_upgrade and not has_downgrade)
-                    # Prefer choices where all packages have been pulled into
-                    # the graph, except for choices that eliminate upgrades.
-                    or (
-                        choice_1.all_in_graph
-                        and not choice_2.all_in_graph
-                        and not (has_downgrade and not has_upgrade)
-                    )
-                ):
+                        # Prefer choices where all packages have been pulled into
+                        # the graph, except for choices that eliminate upgrades.
+                        or
+                    (choice_1.all_in_graph and not choice_2.all_in_graph and not (has_downgrade and not has_upgrade))):
                     # promote choice_1 in front of choice_2
                     choices.remove(choice_1)
                     index_2 = choices.index(choice_2)
@@ -984,9 +936,7 @@ def _overlap_dnf(dep_struct):
     result = []
     for i, x in enumerate(dep_struct):
         if isinstance(x, list):
-            assert (
-                x and x[0] == "||"
-            ), f"Normalization error, nested conjunction found in {dep_struct}"
+            assert (x and x[0] == "||"), f"Normalization error, nested conjunction found in {dep_struct}"
             order_map[id(x)] = i
             prev_cp = None
             for atom in _iter_flatten(x):
@@ -1012,9 +962,7 @@ def _overlap_dnf(dep_struct):
             traversed.add(cp)
             for x in cp_map[cp]:
                 disjunctions[id(x)] = x
-            for other_cp in itertools.chain(
-                overlap_graph.child_nodes(cp), overlap_graph.parent_nodes(cp)
-            ):
+            for other_cp in itertools.chain(overlap_graph.child_nodes(cp), overlap_graph.parent_nodes(cp)):
                 if other_cp not in traversed:
                     stack.append(other_cp)
 
@@ -1047,20 +995,15 @@ def dep_wordreduce(mydeplist, mysettings, mydbapi, mode, use_cache=1):
     for mypos, token in enumerate(deplist):
         if isinstance(deplist[mypos], list):
             # recurse
-            deplist[mypos] = dep_wordreduce(
-                deplist[mypos], mysettings, mydbapi, mode, use_cache=use_cache
-            )
+            deplist[mypos] = dep_wordreduce(deplist[mypos], mysettings, mydbapi, mode, use_cache=use_cache)
         elif deplist[mypos] == "||":
             pass
         elif token[:1] == "!":
             deplist[mypos] = False
         else:
             mykey = deplist[mypos].cp
-            if (
-                mysettings
-                and mykey in mysettings.pprovideddict
-                and match_from_list(deplist[mypos], mysettings.pprovideddict[mykey])
-            ):
+            if (mysettings and mykey in mysettings.pprovideddict
+                    and match_from_list(deplist[mypos], mysettings.pprovideddict[mykey])):
                 deplist[mypos] = True
             elif mydbapi is None:
                 # Assume nothing is satisfied.  This forces dep_zapdeps to

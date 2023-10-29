@@ -44,9 +44,9 @@ def linux_ro_checker(dir_list):
 
     try:
         with open(
-            "/proc/self/mountinfo",
-            encoding=_encodings["content"],
-            errors="replace",
+                "/proc/self/mountinfo",
+                encoding=_encodings["content"],
+                errors="replace",
         ) as f:
             for line in f:
                 # we're interested in dir and both attr fileds which always
@@ -93,8 +93,7 @@ def linux_ro_checker(dir_list):
 
     for line in invalids:
         writemsg_level(
-            _("!!! /proc/self/mountinfo contains unrecognized line: %s\n")
-            % line.rstrip(),
+            _("!!! /proc/self/mountinfo contains unrecognized line: %s\n") % line.rstrip(),
             level=logging.WARNING,
             noiselevel=-1,
         )

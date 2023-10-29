@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class OnlydepsIdepsTestCase(TestCase):
+
     def testOnlydepsIdepsEAPI7(self):
         ebuilds = {
             "dev-libs/A-1": {
@@ -31,7 +32,10 @@ class OnlydepsIdepsTestCase(TestCase):
                 ["dev-libs/A"],
                 all_permutations=True,
                 success=True,
-                options={"--onlydeps": True, "--onlydeps-with-rdeps": "y"},
+                options={
+                    "--onlydeps": True,
+                    "--onlydeps-with-rdeps": "y"
+                },
                 ambiguous_merge_order=True,
                 mergelist=[("dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1")],
             ),
@@ -39,7 +43,10 @@ class OnlydepsIdepsTestCase(TestCase):
                 ["dev-libs/A"],
                 all_permutations=True,
                 success=True,
-                options={"--onlydeps": True, "--onlydeps-with-rdeps": "n"},
+                options={
+                    "--onlydeps": True,
+                    "--onlydeps-with-rdeps": "n"
+                },
                 mergelist=["dev-libs/B-1"],
             ),
             ResolverPlaygroundTestCase(
@@ -79,9 +86,7 @@ class OnlydepsIdepsTestCase(TestCase):
             ),
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -111,17 +116,21 @@ class OnlydepsIdepsTestCase(TestCase):
                 ["dev-libs/A"],
                 all_permutations=True,
                 success=True,
-                options={"--onlydeps": True, "--onlydeps-with-rdeps": "y"},
+                options={
+                    "--onlydeps": True,
+                    "--onlydeps-with-rdeps": "y"
+                },
                 ambiguous_merge_order=True,
-                mergelist=[
-                    ("dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", "dev-libs/E-1")
-                ],
+                mergelist=[("dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", "dev-libs/E-1")],
             ),
             ResolverPlaygroundTestCase(
                 ["dev-libs/A"],
                 all_permutations=True,
                 success=True,
-                options={"--onlydeps": True, "--onlydeps-with-rdeps": "n"},
+                options={
+                    "--onlydeps": True,
+                    "--onlydeps-with-rdeps": "n"
+                },
                 mergelist=["dev-libs/B-1"],
             ),
             ResolverPlaygroundTestCase(
@@ -161,9 +170,7 @@ class OnlydepsIdepsTestCase(TestCase):
             ),
         )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

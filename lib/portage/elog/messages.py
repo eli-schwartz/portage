@@ -19,15 +19,13 @@ from portage import _unicode_decode
 
 import sys
 
-_log_levels = frozenset(
-    [
-        "ERROR",
-        "INFO",
-        "LOG",
-        "QA",
-        "WARN",
-    ]
-)
+_log_levels = frozenset([
+    "ERROR",
+    "INFO",
+    "LOG",
+    "QA",
+    "WARN",
+])
 
 
 def collect_ebuild_messages(path):
@@ -48,9 +46,7 @@ def collect_ebuild_messages(path):
     for msgfunction in mylogfiles:
         filename = os.path.join(path, msgfunction)
         if msgfunction not in EBUILD_PHASES:
-            writemsg(
-                _("!!! can't process invalid log file: %s\n") % filename, noiselevel=-1
-            )
+            writemsg(_("!!! can't process invalid log file: %s\n") % filename, noiselevel=-1)
             continue
         if not msgfunction in logentries:
             logentries[msgfunction] = []
@@ -72,7 +68,8 @@ def collect_ebuild_messages(path):
                     raise ValueError(msgtype)
             except ValueError:
                 writemsg(
-                    _("!!! malformed entry in " "log file: '%s': %s\n") % (filename, l),
+                    _("!!! malformed entry in "
+                      "log file: '%s': %s\n") % (filename, l),
                     noiselevel=-1,
                 )
                 continue
@@ -131,9 +128,7 @@ def _elog_base(level, msg, phase="other", key=None, color=None, out=None):
 
     # avoid potential UnicodeEncodeError
     if out in (sys.stdout, sys.stderr):
-        formatted_msg = _unicode_encode(
-            formatted_msg, encoding=_encodings["stdio"], errors="backslashreplace"
-        )
+        formatted_msg = _unicode_encode(formatted_msg, encoding=_encodings["stdio"], errors="backslashreplace")
         out = out.buffer
 
     out.write(formatted_msg)
@@ -204,7 +199,5 @@ class _make_msgfunction:
 
 
 for f in _functions:
-    setattr(
-        sys.modules[__name__], f, _make_msgfunction(_functions[f][0], _functions[f][1])
-    )
+    setattr(sys.modules[__name__], f, _make_msgfunction(_functions[f][0], _functions[f][1]))
 del f, _functions

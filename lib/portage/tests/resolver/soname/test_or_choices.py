@@ -13,6 +13,7 @@ from portage.output import colorize
 
 
 class SonameOrChoicesTestCase(TestCase):
+
     def testSonameConflictMissedUpdate(self):
         binpkgs = {
             "dev-lang/ocaml-4.02.1": {
@@ -24,14 +25,10 @@ class SonameOrChoicesTestCase(TestCase):
                 "PROVIDES": "x86_32: libocaml-4.01.0.so",
             },
             "dev-ml/lablgl-1.05": {
-                "DEPEND": (
-                    ">=dev-lang/ocaml-3.10.2 "
-                    "|| ( dev-ml/labltk <dev-lang/ocaml-4.02 )"
-                ),
-                "RDEPEND": (
-                    ">=dev-lang/ocaml-3.10.2 "
-                    "|| ( dev-ml/labltk <dev-lang/ocaml-4.02 )"
-                ),
+                "DEPEND": (">=dev-lang/ocaml-3.10.2 "
+                           "|| ( dev-ml/labltk <dev-lang/ocaml-4.02 )"),
+                "RDEPEND": (">=dev-lang/ocaml-3.10.2 "
+                            "|| ( dev-ml/labltk <dev-lang/ocaml-4.02 )"),
                 "REQUIRES": "x86_32: libocaml-4.02.1.so",
             },
             "dev-ml/labltk-8.06.0": {
@@ -49,14 +46,10 @@ class SonameOrChoicesTestCase(TestCase):
                 "PROVIDES": "x86_32: libocaml-4.01.0.so",
             },
             "dev-ml/lablgl-1.05": {
-                "DEPEND": (
-                    ">=dev-lang/ocaml-3.10.2 "
-                    "|| ( dev-ml/labltk <dev-lang/ocaml-4.02 )"
-                ),
-                "RDEPEND": (
-                    ">=dev-lang/ocaml-3.10.2 "
-                    "|| ( dev-ml/labltk <dev-lang/ocaml-4.02 )"
-                ),
+                "DEPEND": (">=dev-lang/ocaml-3.10.2 "
+                           "|| ( dev-ml/labltk <dev-lang/ocaml-4.02 )"),
+                "RDEPEND": (">=dev-lang/ocaml-3.10.2 "
+                            "|| ( dev-ml/labltk <dev-lang/ocaml-4.02 )"),
                 "REQUIRES": "x86_32: libocaml-4.01.0.so",
             },
         }
@@ -83,8 +76,7 @@ class SonameOrChoicesTestCase(TestCase):
                     "[binary]dev-ml/labltk-8.06.0",
                     "[binary]dev-ml/lablgl-1.05",
                 ],
-            ),
-        )
+            ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -96,15 +88,13 @@ class SonameOrChoicesTestCase(TestCase):
                     installed=installed,
                     world=world,
                     user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"',),
+                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
                     },
                 )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     # Disable debug so that cleanup works.
                     playground.debug = False

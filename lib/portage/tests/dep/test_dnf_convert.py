@@ -7,6 +7,7 @@ from portage.dep._dnf import dnf_convert
 
 
 class DNFConvertTestCase(TestCase):
+
     def testDNFConvert(self):
         test_cases = (
             (
@@ -27,15 +28,13 @@ class DNFConvertTestCase(TestCase):
             ),
             (
                 "|| ( A ( B C ) ) || ( D E ) F",
-                [
-                    [
-                        "||",
-                        ["F", "A", "D"],
-                        ["F", "A", "E"],
-                        ["F", "B", "C", "D"],
-                        ["F", "B", "C", "E"],
-                    ]
-                ],
+                [[
+                    "||",
+                    ["F", "A", "D"],
+                    ["F", "A", "E"],
+                    ["F", "B", "C", "D"],
+                    ["F", "B", "C", "E"],
+                ]],
             ),
             (
                 "|| ( A ( B C || ( D E ) ) ( F G ) H )",
@@ -47,17 +46,15 @@ class DNFConvertTestCase(TestCase):
             ),
             (
                 "|| ( A ( C || ( D E ) || ( F G ) ) H )",
-                [
-                    [
-                        "||",
-                        "A",
-                        ["C", "D", "F"],
-                        ["C", "D", "G"],
-                        ["C", "E", "F"],
-                        ["C", "E", "G"],
-                        "H",
-                    ]
-                ],
+                [[
+                    "||",
+                    "A",
+                    ["C", "D", "F"],
+                    ["C", "D", "G"],
+                    ["C", "E", "F"],
+                    ["C", "E", "G"],
+                    "H",
+                ]],
             ),
         )
 

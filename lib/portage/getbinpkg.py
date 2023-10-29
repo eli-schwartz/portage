@@ -52,23 +52,17 @@ def make_metadata_dict(data):
     )
 
     myid, _myglob = data
-    metadata = (
-        (
-            k_bytes,
-            _unicode_decode(
-                k_bytes, encoding=_encodings["repo.content"], errors="replace"
-            ),
-        )
-        for k_bytes in portage.xpak.getindex_mem(myid)
-    )
+    metadata = ((
+        k_bytes,
+        _unicode_decode(k_bytes, encoding=_encodings["repo.content"], errors="replace"),
+    ) for k_bytes in portage.xpak.getindex_mem(myid))
     mydict = {
         k: _unicode_decode(
             portage.xpak.getitem(data, k_bytes),
             encoding=_encodings["repo.content"],
             errors="replace",
         )
-        for k_bytes, k in metadata
-        if k in _all_metadata_keys or k == "CATEGORY"
+        for k_bytes, k in metadata if k in _all_metadata_keys or k == "CATEGORY"
     }
 
     return mydict
@@ -92,15 +86,11 @@ class ParseLinks(html_parser_HTMLParser):
         return self.PL_anchors
 
     def get_anchors_by_prefix(self, prefix):
-        newlist = [
-            x for x in self.PL_anchors if x.startswith(prefix) and x not in newlist
-        ]
+        newlist = [x for x in self.PL_anchors if x.startswith(prefix) and x not in newlist]
         return newlist
 
     def get_anchors_by_suffix(self, suffix):
-        newlist = [
-            x for x in self.PL_anchors if x.endswith(suffix) and x not in newlist
-        ]
+        newlist = [x for x in self.PL_anchors if x.endswith(suffix) and x not in newlist]
         return newlist
 
     def handle_endtag(self, tag):
@@ -108,11 +98,7 @@ class ParseLinks(html_parser_HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         if tag == "a":
-            myarchors = (
-                urllib_parse_unquote(x[1])
-                for x in attrs
-                if x[0] == "href" and x[1] not in self.PL_anchors
-            )
+            myarchors = (urllib_parse_unquote(x[1]) for x in attrs if x[0] == "href" and x[1] not in self.PL_anchors)
             self.PL_anchors.extend(myarchors)
 
 
@@ -129,9 +115,8 @@ def create_conn(baseurl, conn=None):
 
     parts = baseurl.split("://", 1)
     if len(parts) != 2:
-        raise ValueError(
-            _("Provided URI does not " "contain protocol identifier. '%s'") % baseurl
-        )
+        raise ValueError(_("Provided URI does not "
+                           "contain protocol identifier. '%s'") % baseurl)
     protocol, url = parts
     del parts
 
@@ -168,9 +153,7 @@ def create_conn(baseurl, conn=None):
         except AttributeError:
             # Python 2
             encodebytes = base64.encodestring
-        unicode_bytes = encodebytes(_unicode_encode(f"{username}:{password}")).replace(
-            b"\012", b""
-        )
+        unicode_bytes = encodebytes(_unicode_encode(f"{username}:{password}")).replace(b"\012", b"")
         http_headers = {b"Authorization": f"Basic {unicode_bytes}"}
 
     if not conn:
@@ -182,9 +165,7 @@ def create_conn(baseurl, conn=None):
             try:
                 from http.client import HTTPSConnection as http_client_HTTPSConnection
             except ImportError:
-                raise NotImplementedError(
-                    _("python must have ssl enabled for https support")
-                )
+                raise NotImplementedError(_("python must have ssl enabled for https support"))
             conn = http_client_HTTPSConnection(host)
         elif protocol == "http":
             conn = http_client_HTTPConnection(host)
@@ -197,12 +178,10 @@ def create_conn(baseurl, conn=None):
             if password:
                 conn.login(username, password)
             else:
-                sys.stderr.write(
-                    colorize(
-                        "WARN",
-                        _(f" * No password provided for username '{username}'\n\n"),
-                    )
-                )
+                sys.stderr.write(colorize(
+                    "WARN",
+                    _(f" * No password provided for username '{username}'\n\n"),
+                ))
                 conn.login(username)
             conn.set_pasv(passive)
             conn.set_debuglevel(0)
@@ -210,9 +189,7 @@ def create_conn(baseurl, conn=None):
             try:
                 import paramiko
             except ImportError:
-                raise NotImplementedError(
-                    _("paramiko must be installed for sftp support")
-                )
+                raise NotImplementedError(_("paramiko must be installed for sftp support"))
             t = paramiko.Transport(host)
             t.connect(username=username, password=password)
             conn = paramiko.SFTPClient.from_transport(t)
@@ -304,13 +281,9 @@ def make_http_request(conn, address, _params={}, headers={}, dest=None):
                 parts = x.split(": ", 1)
                 if parts[0] == "Location":
                     if rc == 301:
-                        sys.stderr.write(
-                            f"{colorize('BAD', _('Location has moved: '))}{parts[1]}\n"
-                        )
+                        sys.stderr.write(f"{colorize('BAD', _('Location has moved: '))}{parts[1]}\n")
                     if rc == 302:
-                        sys.stderr.write(
-                            f"{colorize('BAD', _('Location has temporarily moved: '))}{parts[1]}\n"
-                        )
+                        sys.stderr.write(f"{colorize('BAD', _('Location has temporarily moved: '))}{parts[1]}\n")
                     address = parts[1]
                     break
 
@@ -363,7 +336,7 @@ def match_in_array(array, prefix="", suffix="", match_both=1, allow_overlap=0):
         else:
             pass  # Do whatever... We're overlapping.
 
-        if suffix and x_size >= suffix_size and x[-len(suffix) :] == suffix:
+        if suffix and x_size >= suffix_size and x[-len(suffix):] == suffix:
             myarray.append(x)  # It matches
         else:
             continue  # Doesn't match.
@@ -404,9 +377,7 @@ def dir_get_list(baseurl, conn=None):
         else:
             import portage.exception
 
-            raise portage.exception.PortageException(
-                _("Unable to get listing: %s %s") % (rc, msg)
-            )
+            raise portage.exception.PortageException(_("Unable to get listing: %s %s") % (rc, msg))
     elif protocol == "ftp":
         if address[-1] == "/":
             olddir = conn.pwd()
@@ -466,7 +437,7 @@ def file_get_metadata(baseurl, conn=None, chunk_size=3000):
             if not keepconnection:
                 conn.close()
             return myid
-        xpak_data = data[len(data) - (xpaksize + 8) : -8]
+        xpak_data = data[len(data) - (xpaksize + 8):-8]
         del data
 
         myid = portage.xpak.xsplit_mem(xpak_data)
@@ -482,9 +453,7 @@ def file_get_metadata(baseurl, conn=None, chunk_size=3000):
     return myid
 
 
-def file_get(
-    baseurl=None, dest=None, conn=None, fcmd=None, filename=None, fcmd_vars=None
-):
+def file_get(baseurl=None, dest=None, conn=None, fcmd=None, filename=None, fcmd_vars=None):
     """Takes a base url to connect to and read from.
     URI should be in the form <proto>://[user[:pass]@]<site>[:port]<path>"""
 
@@ -505,16 +474,12 @@ def file_get(
 
     if "DISTDIR" not in variables:
         if dest is None:
-            raise portage.exception.MissingParameter(
-                _("fcmd_vars is missing required 'DISTDIR' key")
-            )
+            raise portage.exception.MissingParameter(_("fcmd_vars is missing required 'DISTDIR' key"))
         variables["DISTDIR"] = dest
 
     if "URI" not in variables:
         if baseurl is None:
-            raise portage.exception.MissingParameter(
-                _("fcmd_vars is missing required 'URI' key")
-            )
+            raise portage.exception.MissingParameter(_("fcmd_vars is missing required 'URI' key"))
         variables["URI"] = baseurl
 
     if "FILE" not in variables:
@@ -590,9 +555,7 @@ def file_get_lib(baseurl, dest, conn=None):
     return rc
 
 
-def dir_get_metadata(
-    baseurl, conn=None, chunk_size=3000, verbose=1, usingcache=1, makepickle=None
-):
+def dir_get_metadata(baseurl, conn=None, chunk_size=3000, verbose=1, usingcache=1, makepickle=None):
     warnings.warn(
         "portage.getbinpkg.dir_get_metadata() is deprecated",
         DeprecationWarning,
@@ -620,9 +583,7 @@ def dir_get_metadata(
     out = sys.stdout
     try:
         metadatafile = open(
-            _unicode_encode(
-                metadatafilename, encoding=_encodings["fs"], errors="strict"
-            ),
+            _unicode_encode(metadatafilename, encoding=_encodings["fs"], errors="strict"),
             "rb",
         )
         mypickle = pickle.Unpickler(metadatafile)
@@ -672,10 +633,8 @@ def dir_get_metadata(
     metalist.sort()
     metalist.reverse()  # makes the order new-to-old.
     for mfile in metalist:
-        if usingcache and (
-            (metadata[baseurl]["indexname"] != mfile)
-            or (metadata[baseurl]["timestamp"] < int(time.time() - (60 * 60 * 24)))
-        ):
+        if usingcache and ((metadata[baseurl]["indexname"] != mfile) or
+                           (metadata[baseurl]["timestamp"] < int(time.time() - (60 * 60 * 24)))):
             # Try to download new cache until we succeed on one.
             data = ""
             for trynum in [1, 2, 3]:
@@ -725,9 +684,7 @@ def dir_get_metadata(
                     sys.stderr.flush()
             try:
                 metadatafile = open(
-                    _unicode_encode(
-                        metadatafilename, encoding=_encodings["fs"], errors="strict"
-                    ),
+                    _unicode_encode(metadatafilename, encoding=_encodings["fs"], errors="strict"),
                     "wb",
                 )
                 pickle.dump(metadata, metadatafile, protocol=2)
@@ -758,16 +715,12 @@ def dir_get_metadata(
                 self.display()
 
         def display(self):
-            self.out.write(
-                "".join(
-                    (
-                        "\r",
-                        colorize("WARN", _(f"cache miss: '{self.misses}'")),
-                        " --- ",
-                        colorize("GOOD", _(f"cache hit: '{self.hits}'")),
-                    )
-                )
-            )
+            self.out.write("".join((
+                "\r",
+                colorize("WARN", _(f"cache miss: '{self.misses}'")),
+                " --- ",
+                colorize("GOOD", _(f"cache hit: '{self.hits}'")),
+            )))
             self.out.flush()
 
     cache_stats = CacheStats(out)
@@ -786,9 +739,7 @@ def dir_get_metadata(
             myid = None
             for _x in range(3):
                 try:
-                    myid = file_get_metadata(
-                        "/".join((baseurl.rstrip("/"), x.lstrip("/"))), conn, chunk_size
-                    )
+                    myid = file_get_metadata("/".join((baseurl.rstrip("/"), x.lstrip("/"))), conn, chunk_size)
                     break
                 except http_client_BadStatusLine:
                     # Sometimes this error is thrown from conn.getresponse() in
@@ -807,9 +758,7 @@ def dir_get_metadata(
             if myid and myid[0]:
                 metadata[baseurl]["data"][x] = make_metadata_dict(myid)
             elif verbose:
-                sys.stderr.write(
-                    f"{colorize('BAD', _('!!! Failed to retrieve metadata on: '))}{x}\n"
-                )
+                sys.stderr.write(f"{colorize('BAD', _('!!! Failed to retrieve metadata on: '))}{x}\n")
                 sys.stderr.flush()
         else:
             cache_stats.hits += 1
@@ -831,9 +780,7 @@ def dir_get_metadata(
         if "modified" in metadata[baseurl] and metadata[baseurl]["modified"]:
             metadata[baseurl]["timestamp"] = int(time.time())
             metadatafile = open(
-                _unicode_encode(
-                    metadatafilename, encoding=_encodings["fs"], errors="strict"
-                ),
+                _unicode_encode(metadatafilename, encoding=_encodings["fs"], errors="strict"),
                 "wb",
             )
             pickle.dump(metadata, metadatafile, protocol=2)
@@ -869,6 +816,7 @@ def _cmp_cpv(d1, d2):
 
 
 class PackageIndex:
+
     def __init__(
         self,
         allowed_pkg_keys=None,
@@ -954,9 +902,7 @@ class PackageIndex:
             self.header["PACKAGES"] = str(len(self.packages))
         keys = list(self.header)
         keys.sort()
-        self._writepkgindex(
-            pkgfile, [(k, self.header[k]) for k in keys if self.header[k]]
-        )
+        self._writepkgindex(pkgfile, [(k, self.header[k]) for k in keys if self.header[k]])
         for metadata in sorted(self.packages, key=portage.util.cmp_sort_key(_cmp_cpv)):
             metadata = metadata.copy()
             if self._inherited_keys:
@@ -970,6 +916,4 @@ class PackageIndex:
                         metadata.pop(k, None)
             keys = list(metadata)
             keys.sort()
-            self._writepkgindex(
-                pkgfile, ((k, metadata[k]) for k in keys if metadata[k])
-            )
+            self._writepkgindex(pkgfile, ((k, metadata[k]) for k in keys if metadata[k]))

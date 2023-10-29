@@ -41,7 +41,7 @@ class AbstractEbuildProcess(SpawnProcess):
         "depend",
         "help",
     )
-    _phases_interactive_whitelist = ("config",)
+    _phases_interactive_whitelist = ("config", )
 
     # Number of milliseconds to allow natural exit of the ebuild
     # process after it has called the exit command via IPC. It
@@ -52,9 +52,7 @@ class AbstractEbuildProcess(SpawnProcess):
 
     # The EbuildIpcDaemon support is well tested, but this variable
     # is left so we can temporarily disable it if any issues arise.
-    _enable_ipc_daemon = (
-        installation.TYPE == installation.TYPES.SOURCE or "@IPC@" == "True"
-    )
+    _enable_ipc_daemon = (installation.TYPE == installation.TYPES.SOURCE or "@IPC@" == "True")
 
     def __init__(self, **kwargs):
         SpawnProcess.__init__(self, **kwargs)
@@ -71,10 +69,8 @@ class AbstractEbuildProcess(SpawnProcess):
         # die_hooks for some reason, and PORTAGE_BUILDDIR
         # doesn't exist yet.
         if need_builddir and not os.path.isdir(self.settings["PORTAGE_BUILDDIR"]):
-            msg = (
-                f"The ebuild phase '{self.phase}' has been aborted since "
-                f"PORTAGE_BUILDDIR does not exist: '{self.settings['PORTAGE_BUILDDIR']}'"
-            )
+            msg = (f"The ebuild phase '{self.phase}' has been aborted since "
+                   f"PORTAGE_BUILDDIR does not exist: '{self.settings['PORTAGE_BUILDDIR']}'")
             self._eerror(textwrap.wrap(msg, 72))
             self.returncode = 1
             self._async_wait()
@@ -92,16 +88,13 @@ class AbstractEbuildProcess(SpawnProcess):
             if self.phase not in self._phases_without_builddir:
                 start_ipc_daemon = True
                 if "PORTAGE_BUILDDIR_LOCKED" not in self.settings:
-                    self._build_dir = EbuildBuildDir(
-                        scheduler=self.scheduler, settings=self.settings
-                    )
+                    self._build_dir = EbuildBuildDir(scheduler=self.scheduler, settings=self.settings)
                     self._start_future = self._build_dir.async_lock()
                     self._start_future.add_done_callback(
                         functools.partial(
                             self._start_post_builddir_lock,
                             start_ipc_daemon=start_ipc_daemon,
-                        )
-                    )
+                        ))
                     return
             else:
                 self.settings.pop("PORTAGE_IPC_DAEMON", None)
@@ -110,9 +103,7 @@ class AbstractEbuildProcess(SpawnProcess):
             # approach to detect unexpected exit like in bug #190128.
             self.settings.pop("PORTAGE_IPC_DAEMON", None)
             if self.phase not in self._phases_without_builddir:
-                exit_file = os.path.join(
-                    self.settings["PORTAGE_BUILDDIR"], ".exit_status"
-                )
+                exit_file = os.path.join(self.settings["PORTAGE_BUILDDIR"], ".exit_status")
                 self.settings["PORTAGE_EBUILD_EXIT_FILE"] = exit_file
                 try:
                     os.unlink(exit_file)
@@ -146,11 +137,8 @@ class AbstractEbuildProcess(SpawnProcess):
         if self.fd_pipes is None:
             self.fd_pipes = {}
         null_fd = None
-        if (
-            0 not in self.fd_pipes
-            and self.phase not in self._phases_interactive_whitelist
-            and "interactive" not in self.settings.get("PROPERTIES", "").split()
-        ):
+        if (0 not in self.fd_pipes and self.phase not in self._phases_interactive_whitelist
+                and "interactive" not in self.settings.get("PROPERTIES", "").split()):
             null_fd = os.open("/dev/null", os.O_RDONLY)
             self.fd_pipes[0] = null_fd
 
@@ -216,9 +204,7 @@ class AbstractEbuildProcess(SpawnProcess):
     def _exit_command_callback(self):
         if self._registered:
             # Let the process exit naturally, if possible.
-            self._exit_timeout_id = self.scheduler.call_later(
-                self._exit_timeout, self._exit_command_timeout_cb
-            )
+            self._exit_timeout_id = self.scheduler.call_later(self._exit_timeout, self._exit_command_timeout_cb)
 
     def _exit_command_timeout_cb(self):
         if self._registered:
@@ -227,9 +213,7 @@ class AbstractEbuildProcess(SpawnProcess):
             # this when possible since it makes sandbox complain about
             # being killed by a signal.
             self.cancel()
-            self._exit_timeout_id = self.scheduler.call_later(
-                self._cancel_timeout, self._cancel_timeout_cb
-            )
+            self._exit_timeout_id = self.scheduler.call_later(self._cancel_timeout, self._cancel_timeout_cb)
         else:
             self._exit_timeout_id = None
 
@@ -240,10 +224,8 @@ class AbstractEbuildProcess(SpawnProcess):
     def _orphan_process_warn(self):
         phase = self.phase
 
-        msg = (
-            f"The ebuild phase '{phase}' with pid {self.pid} appears "
-            "to have left an orphan process running in the background."
-        )
+        msg = (f"The ebuild phase '{phase}' with pid {self.pid} appears "
+               "to have left an orphan process running in the background.")
 
         self._eerror(textwrap.wrap(msg, 72))
 
@@ -254,9 +236,7 @@ class AbstractEbuildProcess(SpawnProcess):
         # TODO: Add support for logging via named pipe (fifo) with
         # sesandbox, since EbuildIpcDaemon uses a fifo and it's known
         # to be compatible with sesandbox.
-        return not (
-            "sesandbox" in self.settings.features and self.settings.selinux_enabled()
-        ) or os.isatty(slave_fd)
+        return not ("sesandbox" in self.settings.features and self.settings.selinux_enabled()) or os.isatty(slave_fd)
 
     def _killed_by_signal(self, signum):
         msg = f"The ebuild phase '{self.phase}' has been killed by signal {signum}."
@@ -265,27 +245,25 @@ class AbstractEbuildProcess(SpawnProcess):
     def _unexpected_exit(self):
         phase = self.phase
 
-        msg = (
-            f"The ebuild phase '{phase}' has exited "
-            "unexpectedly. This type of behavior "
-            "is known to be triggered "
-            "by things such as failed variable "
-            "assignments (bug #190128) or bad substitution "
-            "errors (bug #200313). Normally, before exiting, bash should "
-            "have displayed an error message above. If bash did not "
-            "produce an error message above, it's possible "
-            "that the ebuild has called `exit` when it "
-            "should have called `die` instead. This behavior may also "
-            "be triggered by a corrupt bash binary or a hardware "
-            "problem such as memory or cpu malfunction. If the problem is not "
-            "reproducible or it appears to occur randomly, then it is likely "
-            "to be triggered by a hardware problem. "
-            "If you suspect a hardware problem then you should "
-            "try some basic hardware diagnostics such as memtest. "
-            "Please do not report this as a bug unless it is consistently "
-            "reproducible and you are sure that your bash binary and hardware "
-            "are functioning properly."
-        )
+        msg = (f"The ebuild phase '{phase}' has exited "
+               "unexpectedly. This type of behavior "
+               "is known to be triggered "
+               "by things such as failed variable "
+               "assignments (bug #190128) or bad substitution "
+               "errors (bug #200313). Normally, before exiting, bash should "
+               "have displayed an error message above. If bash did not "
+               "produce an error message above, it's possible "
+               "that the ebuild has called `exit` when it "
+               "should have called `die` instead. This behavior may also "
+               "be triggered by a corrupt bash binary or a hardware "
+               "problem such as memory or cpu malfunction. If the problem is not "
+               "reproducible or it appears to occur randomly, then it is likely "
+               "to be triggered by a hardware problem. "
+               "If you suspect a hardware problem then you should "
+               "try some basic hardware diagnostics such as memtest. "
+               "Please do not report this as a bug unless it is consistently "
+               "reproducible and you are sure that your bash binary and hardware "
+               "are functioning properly.")
 
         self._eerror(textwrap.wrap(msg, 72))
 
@@ -370,9 +348,7 @@ class AbstractEbuildProcess(SpawnProcess):
         self._build_dir_unlock = self._build_dir.async_unlock()
         # Unlock only once.
         self._build_dir = None
-        self._build_dir_unlock.add_done_callback(
-            functools.partial(self._unlock_builddir_exit, returncode=returncode)
-        )
+        self._build_dir_unlock.add_done_callback(functools.partial(self._unlock_builddir_exit, returncode=returncode))
 
     def _unlock_builddir_exit(self, unlock_future, returncode=None):
         # Normally, async_unlock should not raise an exception here.

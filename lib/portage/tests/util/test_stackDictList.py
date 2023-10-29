@@ -6,20 +6,36 @@ from portage.tests import TestCase
 
 
 class StackDictListTestCase(TestCase):
+
     def testStackDictList(self):
         from portage.util import stack_dictlist
 
         tests = [
-            ({"a": "b"}, {"x": "y"}, False, {"a": ["b"], "x": ["y"]}),
-            ({"KEYWORDS": ["alpha", "x86"]}, {"KEYWORDS": ["-*"]}, True, {}),
+            ({
+                "a": "b"
+            }, {
+                "x": "y"
+            }, False, {
+                "a": ["b"],
+                "x": ["y"]
+            }),
+            ({
+                "KEYWORDS": ["alpha", "x86"]
+            }, {
+                "KEYWORDS": ["-*"]
+            }, True, {}),
             (
-                {"KEYWORDS": ["alpha", "x86"]},
-                {"KEYWORDS": ["-x86"]},
+                {
+                    "KEYWORDS": ["alpha", "x86"]
+                },
+                {
+                    "KEYWORDS": ["-x86"]
+                },
                 True,
-                {"KEYWORDS": ["alpha"]},
+                {
+                    "KEYWORDS": ["alpha"]
+                },
             ),
         ]
         for test in tests:
-            self.assertEqual(
-                stack_dictlist([test[0], test[1]], incremental=test[2]), test[3]
-            )
+            self.assertEqual(stack_dictlist([test[0], test[1]], incremental=test[2]), test[3])

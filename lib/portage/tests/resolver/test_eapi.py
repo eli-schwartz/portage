@@ -9,32 +9,93 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class EAPITestCase(TestCase):
+
     def testEAPI(self):
         ebuilds = {
             # EAPI-1: IUSE-defaults
-            "dev-libs/A-1.0": {"EAPI": 0, "IUSE": "+foo"},
-            "dev-libs/A-1.1": {"EAPI": 1, "IUSE": "+foo"},
-            "dev-libs/A-1.2": {"EAPI": 2, "IUSE": "+foo"},
-            "dev-libs/A-1.3": {"EAPI": 3, "IUSE": "+foo"},
-            "dev-libs/A-1.4": {"EAPI": "4", "IUSE": "+foo"},
+            "dev-libs/A-1.0": {
+                "EAPI": 0,
+                "IUSE": "+foo"
+            },
+            "dev-libs/A-1.1": {
+                "EAPI": 1,
+                "IUSE": "+foo"
+            },
+            "dev-libs/A-1.2": {
+                "EAPI": 2,
+                "IUSE": "+foo"
+            },
+            "dev-libs/A-1.3": {
+                "EAPI": 3,
+                "IUSE": "+foo"
+            },
+            "dev-libs/A-1.4": {
+                "EAPI": "4",
+                "IUSE": "+foo"
+            },
             # EAPI-1: slot deps
-            "dev-libs/A-2.0": {"EAPI": 0, "DEPEND": "dev-libs/B:0"},
-            "dev-libs/A-2.1": {"EAPI": 1, "DEPEND": "dev-libs/B:0"},
-            "dev-libs/A-2.2": {"EAPI": 2, "DEPEND": "dev-libs/B:0"},
-            "dev-libs/A-2.3": {"EAPI": 3, "DEPEND": "dev-libs/B:0"},
-            "dev-libs/A-2.4": {"EAPI": "4", "DEPEND": "dev-libs/B:0"},
+            "dev-libs/A-2.0": {
+                "EAPI": 0,
+                "DEPEND": "dev-libs/B:0"
+            },
+            "dev-libs/A-2.1": {
+                "EAPI": 1,
+                "DEPEND": "dev-libs/B:0"
+            },
+            "dev-libs/A-2.2": {
+                "EAPI": 2,
+                "DEPEND": "dev-libs/B:0"
+            },
+            "dev-libs/A-2.3": {
+                "EAPI": 3,
+                "DEPEND": "dev-libs/B:0"
+            },
+            "dev-libs/A-2.4": {
+                "EAPI": "4",
+                "DEPEND": "dev-libs/B:0"
+            },
             # EAPI-2: use deps
-            "dev-libs/A-3.0": {"EAPI": 0, "DEPEND": "dev-libs/B[foo]"},
-            "dev-libs/A-3.1": {"EAPI": 1, "DEPEND": "dev-libs/B[foo]"},
-            "dev-libs/A-3.2": {"EAPI": 2, "DEPEND": "dev-libs/B[foo]"},
-            "dev-libs/A-3.3": {"EAPI": 3, "DEPEND": "dev-libs/B[foo]"},
-            "dev-libs/A-3.4": {"EAPI": "4", "DEPEND": "dev-libs/B[foo]"},
+            "dev-libs/A-3.0": {
+                "EAPI": 0,
+                "DEPEND": "dev-libs/B[foo]"
+            },
+            "dev-libs/A-3.1": {
+                "EAPI": 1,
+                "DEPEND": "dev-libs/B[foo]"
+            },
+            "dev-libs/A-3.2": {
+                "EAPI": 2,
+                "DEPEND": "dev-libs/B[foo]"
+            },
+            "dev-libs/A-3.3": {
+                "EAPI": 3,
+                "DEPEND": "dev-libs/B[foo]"
+            },
+            "dev-libs/A-3.4": {
+                "EAPI": "4",
+                "DEPEND": "dev-libs/B[foo]"
+            },
             # EAPI-2: strong blocks
-            "dev-libs/A-4.0": {"EAPI": 0, "DEPEND": "!!dev-libs/B"},
-            "dev-libs/A-4.1": {"EAPI": 1, "DEPEND": "!!dev-libs/B"},
-            "dev-libs/A-4.2": {"EAPI": 2, "DEPEND": "!!dev-libs/B"},
-            "dev-libs/A-4.3": {"EAPI": 3, "DEPEND": "!!dev-libs/B"},
-            "dev-libs/A-4.4": {"EAPI": "4", "DEPEND": "!!dev-libs/B"},
+            "dev-libs/A-4.0": {
+                "EAPI": 0,
+                "DEPEND": "!!dev-libs/B"
+            },
+            "dev-libs/A-4.1": {
+                "EAPI": 1,
+                "DEPEND": "!!dev-libs/B"
+            },
+            "dev-libs/A-4.2": {
+                "EAPI": 2,
+                "DEPEND": "!!dev-libs/B"
+            },
+            "dev-libs/A-4.3": {
+                "EAPI": 3,
+                "DEPEND": "!!dev-libs/B"
+            },
+            "dev-libs/A-4.4": {
+                "EAPI": "4",
+                "DEPEND": "!!dev-libs/B"
+            },
             # EAPI-4: slot operator deps
             # ~ "dev-libs/A-5.0": { "EAPI": 0, "DEPEND": "dev-libs/B:*" },
             # ~ "dev-libs/A-5.1": { "EAPI": 1, "DEPEND": "dev-libs/B:*" },
@@ -42,11 +103,26 @@ class EAPITestCase(TestCase):
             # ~ "dev-libs/A-5.3": { "EAPI": 3, "DEPEND": "dev-libs/B:*" },
             # ~ "dev-libs/A-5.4": { "EAPI": "4", "DEPEND": "dev-libs/B:*" },
             # EAPI-4: use dep defaults
-            "dev-libs/A-6.0": {"EAPI": 0, "DEPEND": "dev-libs/B[bar(+)]"},
-            "dev-libs/A-6.1": {"EAPI": 1, "DEPEND": "dev-libs/B[bar(+)]"},
-            "dev-libs/A-6.2": {"EAPI": 2, "DEPEND": "dev-libs/B[bar(+)]"},
-            "dev-libs/A-6.3": {"EAPI": 3, "DEPEND": "dev-libs/B[bar(+)]"},
-            "dev-libs/A-6.4": {"EAPI": "4", "DEPEND": "dev-libs/B[bar(+)]"},
+            "dev-libs/A-6.0": {
+                "EAPI": 0,
+                "DEPEND": "dev-libs/B[bar(+)]"
+            },
+            "dev-libs/A-6.1": {
+                "EAPI": 1,
+                "DEPEND": "dev-libs/B[bar(+)]"
+            },
+            "dev-libs/A-6.2": {
+                "EAPI": 2,
+                "DEPEND": "dev-libs/B[bar(+)]"
+            },
+            "dev-libs/A-6.3": {
+                "EAPI": 3,
+                "DEPEND": "dev-libs/B[bar(+)]"
+            },
+            "dev-libs/A-6.4": {
+                "EAPI": "4",
+                "DEPEND": "dev-libs/B[bar(+)]"
+            },
             # EAPI-4: REQUIRED_USE
             "dev-libs/A-7.0": {
                 "EAPI": 0,
@@ -73,7 +149,10 @@ class EAPITestCase(TestCase):
                 "IUSE": "foo +bar",
                 "REQUIRED_USE": "|| ( foo bar )",
             },
-            "dev-libs/B-1": {"EAPI": 1, "IUSE": "+foo"},
+            "dev-libs/B-1": {
+                "EAPI": 1,
+                "IUSE": "+foo"
+            },
             # EAPI-7: implicit || ( ) no longer satisfies deps
             "dev-libs/C-1": {
                 "EAPI": "6",
@@ -89,18 +168,10 @@ class EAPITestCase(TestCase):
 
         test_cases = (
             ResolverPlaygroundTestCase(["=dev-libs/A-1.0"], success=False),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-1.1"], success=True, mergelist=["dev-libs/A-1.1"]
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-1.2"], success=True, mergelist=["dev-libs/A-1.2"]
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-1.3"], success=True, mergelist=["dev-libs/A-1.3"]
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-1.4"], success=True, mergelist=["dev-libs/A-1.4"]
-            ),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1.1"], success=True, mergelist=["dev-libs/A-1.1"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1.2"], success=True, mergelist=["dev-libs/A-1.2"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1.3"], success=True, mergelist=["dev-libs/A-1.3"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1.4"], success=True, mergelist=["dev-libs/A-1.4"]),
             ResolverPlaygroundTestCase(["=dev-libs/A-2.0"], success=False),
             ResolverPlaygroundTestCase(
                 ["=dev-libs/A-2.1"],
@@ -141,15 +212,9 @@ class EAPITestCase(TestCase):
             ),
             ResolverPlaygroundTestCase(["=dev-libs/A-4.0"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-4.1"], success=False),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-4.2"], success=True, mergelist=["dev-libs/A-4.2"]
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-4.3"], success=True, mergelist=["dev-libs/A-4.3"]
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-4.4"], success=True, mergelist=["dev-libs/A-4.4"]
-            ),
+            ResolverPlaygroundTestCase(["=dev-libs/A-4.2"], success=True, mergelist=["dev-libs/A-4.2"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-4.3"], success=True, mergelist=["dev-libs/A-4.3"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-4.4"], success=True, mergelist=["dev-libs/A-4.4"]),
             ResolverPlaygroundTestCase(["=dev-libs/A-5.0"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-5.1"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-5.2"], success=False),
@@ -169,12 +234,8 @@ class EAPITestCase(TestCase):
             ResolverPlaygroundTestCase(["=dev-libs/A-7.1"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-7.2"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-7.3"], success=False),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-7.4"], success=True, mergelist=["dev-libs/A-7.4"]
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/C-1"], success=True, mergelist=["dev-libs/C-1"]
-            ),
+            ResolverPlaygroundTestCase(["=dev-libs/A-7.4"], success=True, mergelist=["dev-libs/A-7.4"]),
+            ResolverPlaygroundTestCase(["=dev-libs/C-1"], success=True, mergelist=["dev-libs/C-1"]),
             ResolverPlaygroundTestCase(["=dev-libs/C-2"], success=False),
         )
 
@@ -188,8 +249,13 @@ class EAPITestCase(TestCase):
 
     def testBdepend(self):
         ebuilds = {
-            "dev-libs/A-1.0": {"EAPI": 7},
-            "dev-libs/B-1.0": {"EAPI": 7, "BDEPEND": "dev-libs/A"},
+            "dev-libs/A-1.0": {
+                "EAPI": 7
+            },
+            "dev-libs/B-1.0": {
+                "EAPI": 7,
+                "BDEPEND": "dev-libs/A"
+            },
         }
 
         # Verify that BDEPEND is considered at all.
@@ -208,8 +274,13 @@ class EAPITestCase(TestCase):
 
     def testIdepend(self):
         ebuilds = {
-            "dev-libs/A-1.0": {"EAPI": 8},
-            "dev-libs/B-1.0": {"EAPI": 8, "IDEPEND": "dev-libs/A"},
+            "dev-libs/A-1.0": {
+                "EAPI": 8
+            },
+            "dev-libs/B-1.0": {
+                "EAPI": 8,
+                "IDEPEND": "dev-libs/A"
+            },
         }
 
         test_cases = (
@@ -218,8 +289,7 @@ class EAPITestCase(TestCase):
                 ["=dev-libs/B-1.0"],
                 success=True,
                 mergelist=["dev-libs/A-1.0", "dev-libs/B-1.0"],
-            ),
-        )
+            ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:

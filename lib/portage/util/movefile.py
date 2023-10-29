@@ -48,7 +48,7 @@ def _get_xattr_excluder(pattern):
 
 
 class _xattr_excluder:
-    __slots__ = ("_pattern_split",)
+    __slots__ = ("_pattern_split", )
 
     def __init__(self, pattern):
         if pattern is None:
@@ -97,12 +97,8 @@ def _copyxattr(src, dest, exclude=None):
             raise_exception = True
         if raise_exception:
             raise OperationNotSupported(
-                _(
-                    "Filesystem containing file '%s' "
-                    "does not support extended attribute '%s'"
-                )
-                % (_unicode_decode(dest), _unicode_decode(attr))
-            )
+                _("Filesystem containing file '%s' "
+                  "does not support extended attribute '%s'") % (_unicode_decode(dest), _unicode_decode(attr)))
 
 
 def _cmpxattr(src: bytes, dest: bytes, exclude=None) -> bool:
@@ -174,9 +170,7 @@ def movefile(
     except SystemExit as e:
         raise
     except Exception as e:
-        writemsg(
-            f"!!! {_('Stating source file failed... movefile()')}\n", noiselevel=-1
-        )
+        writemsg(f"!!! {_('Stating source file failed... movefile()')}\n", noiselevel=-1)
         writemsg(f"!!! {e}\n", noiselevel=-1)
         return None
 
@@ -210,7 +204,7 @@ def movefile(
         try:
             target = os.readlink(src)
             if mysettings and "D" in mysettings and target.startswith(mysettings["D"]):
-                target = target[len(mysettings["D"]) - 1 :]
+                target = target[len(mysettings["D"]) - 1:]
             # Atomically update the path if it exists.
             try:
                 os.rename(src, dest)
@@ -233,9 +227,7 @@ def movefile(
                 # to tolerate these links being recreated during the merge
                 # process. In any case, if the link is pointing at the right
                 # place, we're in good shape.
-                if e.errno not in (errno.ENOENT, errno.EEXIST) or target != os.readlink(
-                    dest
-                ):
+                if e.errno not in (errno.ENOENT, errno.EEXIST) or target != os.readlink(dest):
                     raise
             lchown(dest, sstat[stat.ST_UID], sstat[stat.ST_GID])
 
@@ -276,8 +268,7 @@ def movefile(
         except OSError as e:
             if e.errno != errno.ENOENT:
                 writemsg(
-                    _("!!! Failed to remove hardlink temp file: %s\n")
-                    % (hardlink_tmp,),
+                    _("!!! Failed to remove hardlink temp file: %s\n") % (hardlink_tmp, ),
                     noiselevel=-1,
                 )
                 writemsg(f"!!! {e}\n", noiselevel=-1)
@@ -319,8 +310,10 @@ def movefile(
             if e.errno != errno.EXDEV:
                 # Some random error.
                 writemsg(
-                    f"!!! {_('Failed to move %(src)s to %(dest)s')}\n"
-                    % {"src": src, "dest": dest},
+                    f"!!! {_('Failed to move %(src)s to %(dest)s')}\n" % {
+                        "src": src,
+                        "dest": dest
+                    },
                     noiselevel=-1,
                 )
                 writemsg(f"!!! {e}\n", noiselevel=-1)
@@ -329,9 +322,7 @@ def movefile(
     if renamefailed:
         if stat.S_ISREG(sstat[stat.ST_MODE]):
             dest_tmp = dest + "#new"
-            dest_tmp_bytes = _unicode_encode(
-                dest_tmp, encoding=encoding, errors="strict"
-            )
+            dest_tmp_bytes = _unicode_encode(dest_tmp, encoding=encoding, errors="strict")
             success = False
             try:  # For safety copy then move it over.
                 _copyfile(src_bytes, dest_tmp_bytes)
@@ -346,11 +337,9 @@ def movefile(
                     except SystemExit:
                         raise
                     except:
-                        msg = _(
-                            "Failed to copy extended attributes. "
-                            "In order to avoid this error, set "
-                            'FEATURES="-xattr" in make.conf.'
-                        )
+                        msg = _("Failed to copy extended attributes. "
+                                "In order to avoid this error, set "
+                                'FEATURES="-xattr" in make.conf.')
                         msg = textwrap.wrap(msg, 65)
                         for line in msg:
                             writemsg(f"!!! {line}\n", noiselevel=-1)
@@ -360,8 +349,10 @@ def movefile(
                 success = True
             except Exception as e:
                 writemsg(
-                    f"!!! {_('copy %(src)s -> %(dest)s failed.')}\n"
-                    % {"src": src, "dest": dest},
+                    f"!!! {_('copy %(src)s -> %(dest)s failed.')}\n" % {
+                        "src": src,
+                        "dest": dest
+                    },
                     noiselevel=-1,
                 )
                 writemsg(f"!!! {e}\n", noiselevel=-1)
@@ -378,8 +369,7 @@ def movefile(
             if a != os.EX_OK:
                 writemsg(_("!!! Failed to move special file:\n"), noiselevel=-1)
                 writemsg(
-                    _("!!! '%(src)s' to '%(dest)s'\n")
-                    % {
+                    _("!!! '%(src)s' to '%(dest)s'\n") % {
                         "src": _unicode_decode(src, encoding=encoding),
                         "dest": _unicode_decode(dest, encoding=encoding),
                     },

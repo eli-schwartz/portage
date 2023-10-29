@@ -39,9 +39,7 @@ def expand_new_virt(vardb, atom):
             continue
 
         traversed.add(virt_cpv)
-        eapi, iuse, rdepend, use = vardb.aux_get(
-            virt_cpv, ["EAPI", "IUSE", "RDEPEND", "USE"]
-        )
+        eapi, iuse, rdepend, use = vardb.aux_get(virt_cpv, ["EAPI", "IUSE", "RDEPEND", "USE"])
         if not portage.eapi_is_supported(eapi):
             yield atom
             continue
@@ -74,12 +72,10 @@ def expand_new_virt(vardb, atom):
             vardb.settings,
             myuse=valid_use,
             myroot=vardb.settings["EROOT"],
-            trees={
-                vardb.settings["EROOT"]: {
-                    "porttree": vardb.vartree,
-                    "vartree": vardb.vartree,
-                }
-            },
+            trees={vardb.settings["EROOT"]: {
+                       "porttree": vardb.vartree,
+                       "vartree": vardb.vartree,
+                   }},
         )
 
         if success:

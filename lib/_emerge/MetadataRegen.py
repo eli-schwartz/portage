@@ -11,6 +11,7 @@ from portage.util._async.AsyncScheduler import AsyncScheduler
 
 
 class MetadataRegen(AsyncScheduler):
+
     def __init__(self, portdb, cp_iter=None, consumer=None, write_auxdb=True, **kwargs):
         AsyncScheduler.__init__(self, **kwargs)
         self._portdb = portdb
@@ -37,7 +38,7 @@ class MetadataRegen(AsyncScheduler):
         # and in order to reduce latency in case of a signal interrupt.
         cp_all = self._portdb.cp_all
         for category in sorted(self._portdb.categories):
-            yield from cp_all(categories=(category,))
+            yield from cp_all(categories=(category, ))
 
     def _iter_metadata_processes(self):
         portdb = self._portdb
@@ -62,12 +63,8 @@ class MetadataRegen(AsyncScheduler):
                     valid_pkgs.add(cpv)
                     ebuild_path, repo_path = portdb.findname2(cpv, myrepo=repo.name)
                     if ebuild_path is None:
-                        raise AssertionError(
-                            f"ebuild not found for '{cpv}{_repo_separator}{repo.name}'"
-                        )
-                    metadata, ebuild_hash = portdb._pull_valid_cache(
-                        cpv, ebuild_path, repo_path
-                    )
+                        raise AssertionError(f"ebuild not found for '{cpv}{_repo_separator}{repo.name}'")
+                    metadata, ebuild_hash = portdb._pull_valid_cache(cpv, ebuild_path, repo_path)
                     if metadata is not None:
                         if consumer is not None:
                             consumer(cpv, repo_path, metadata, ebuild_hash, True)
@@ -98,8 +95,7 @@ class MetadataRegen(AsyncScheduler):
                     dead_nodes[mytree] = set(portdb.auxdb[mytree])
                 except CacheError as e:
                     portage.writemsg(
-                        "Error listing cache entries for "
-                        + f"'{mytree}': {e}, continuing...\n",
+                        "Error listing cache entries for " + f"'{mytree}': {e}, continuing...\n",
                         noiselevel=-1,
                     )
                     del e
@@ -110,13 +106,10 @@ class MetadataRegen(AsyncScheduler):
             cpv_getkey = portage.cpv_getkey
             for mytree in portdb.porttrees:
                 try:
-                    dead_nodes[mytree] = {
-                        cpv for cpv in portdb.auxdb[mytree] if cpv_getkey(cpv) in cp_set
-                    }
+                    dead_nodes[mytree] = {cpv for cpv in portdb.auxdb[mytree] if cpv_getkey(cpv) in cp_set}
                 except CacheError as e:
                     portage.writemsg(
-                        "Error listing cache entries for "
-                        + f"'{mytree}': {e}, continuing...\n",
+                        "Error listing cache entries for " + f"'{mytree}': {e}, continuing...\n",
                         noiselevel=-1,
                     )
                     del e

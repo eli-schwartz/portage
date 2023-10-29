@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class SlotOperatorCompleteGraphTestCase(TestCase):
+
     def testSlotOperatorCompleteGraph(self):
         ebuilds = {
             "app-misc/meta-pkg-2": {
@@ -88,7 +89,7 @@ class SlotOperatorCompleteGraphTestCase(TestCase):
             },
         }
 
-        world = ("app-misc/meta-pkg",)
+        world = ("app-misc/meta-pkg", )
 
         test_cases = (
             # Test bug 614390, where the depgraph._complete_graph
@@ -108,12 +109,9 @@ class SlotOperatorCompleteGraphTestCase(TestCase):
                     ("app-misc/D-1", "app-misc/C-1", "app-misc/B-2"),
                     "app-misc/meta-pkg-2",
                 ],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class Config:
+
     def __init__(self, options, portdb, event_loop):
         self.options = options
         self.portdb = portdb
@@ -28,12 +29,8 @@ class Config:
         self.start_time = time.time()
         self._open_files = []
 
-        self.log_success = self._open_log(
-            "success", getattr(options, "success_log", None), "a"
-        )
-        self.log_failure = self._open_log(
-            "failure", getattr(options, "failure_log", None), "a"
-        )
+        self.log_success = self._open_log("success", getattr(options, "success_log", None), "a")
+        self.log_failure = self._open_log("failure", getattr(options, "failure_log", None), "a")
 
         self.distfiles = None
         if getattr(options, "distfiles", None) is not None:
@@ -59,9 +56,7 @@ class Config:
 
         self.restrict_mirror_exemptions = None
         if getattr(options, "restrict_mirror_exemptions", None) is not None:
-            self.restrict_mirror_exemptions = frozenset(
-                options.restrict_mirror_exemptions.split(",")
-            )
+            self.restrict_mirror_exemptions = frozenset(options.restrict_mirror_exemptions.split(","))
 
         self.recycle_db = None
         if getattr(options, "recycle_db", None) is not None:
@@ -73,9 +68,7 @@ class Config:
 
         self.content_db = None
         if getattr(options, "content_db", None) is not None:
-            self.content_db = ContentDB(
-                self._open_shelve(options.content_db, "content")
-            )
+            self.content_db = ContentDB(self._open_shelve(options.content_db, "content"))
 
         self.deletion_db = None
         if getattr(options, "deletion_db", None) is not None:
@@ -109,7 +102,7 @@ class Config:
             self._log_func = log_func
 
         def __call__(self, msg):
-            self._log_func(self._line_format % (msg,))
+            self._log_func(self._line_format % (msg, ))
 
     def _open_shelve(self, db_file, db_desc):
         dry_run = getattr(self.options, "dry_run", False)
@@ -125,10 +118,7 @@ class Config:
                 db = shelve.open(db_file, flag=open_flag)
             except ImportError as e:
                 # ImportError has different attributes for python2 vs. python3
-                if (
-                    getattr(e, "name", None) == "bsddb"
-                    or getattr(e, "message", None) == "No module named bsddb"
-                ):
+                if (getattr(e, "name", None) == "bsddb" or getattr(e, "message", None) == "No module named bsddb"):
                     from bsddb3 import dbshelve
 
                     db = dbshelve.open(db_file, flags=open_flag)

@@ -13,9 +13,10 @@ from portage.output import colorize
 
 
 class RebuiltBinariesCase(TestCase):
+
     def testRebuiltBinaries(self):
         user_config = {
-            "make.conf": ('FEATURES="binpkg-multi-instance"',),
+            "make.conf": ('FEATURES="binpkg-multi-instance"', ),
         }
 
         binpkgs = (
@@ -87,27 +88,25 @@ class RebuiltBinariesCase(TestCase):
             "dev-libs/B",
         )
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--deep": True,
-                    "--rebuilt-binaries": True,
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                ignore_mergelist_order=True,
-                mergelist=["[binary]dev-libs/B-1-3", "[binary]app-misc/A-1-3"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@world"],
+            options={
+                "--deep": True,
+                "--rebuilt-binaries": True,
+                "--update": True,
+                "--usepkgonly": True,
+            },
+            success=True,
+            ignore_mergelist_order=True,
+            mergelist=["[binary]dev-libs/B-1-3", "[binary]app-misc/A-1-3"],
+        ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
                 _user_config = user_config.copy()
-                _user_config["make.conf"] += (f'BINPKG_FORMAT="{binpkg_format}"',)
+                _user_config["make.conf"] += (f'BINPKG_FORMAT="{binpkg_format}"', )
                 playground = ResolverPlayground(
                     debug=False,
                     binpkgs=binpkgs,
@@ -119,9 +118,7 @@ class RebuiltBinariesCase(TestCase):
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
-                        self.assertEqual(
-                            test_case.test_success, True, test_case.fail_msg
-                        )
+                        self.assertEqual(test_case.test_success, True, test_case.fail_msg)
                 finally:
                     # Disable debug so that cleanup works.
                     # playground.debug = False

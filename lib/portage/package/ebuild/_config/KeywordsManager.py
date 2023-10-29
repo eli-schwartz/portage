@@ -1,7 +1,7 @@
 # Copyright 2010-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = ("KeywordsManager",)
+__all__ = ("KeywordsManager", )
 
 import warnings
 
@@ -18,9 +18,7 @@ from portage.versions import _pkg_str
 class KeywordsManager:
     """Manager class to handle keywords processing and validation"""
 
-    def __init__(
-        self, profiles, abs_user_config, user_config=True, global_accept_keywords=""
-    ):
+    def __init__(self, profiles, abs_user_config, user_config=True, global_accept_keywords=""):
         self._pkeywords_list = []
         rawpkeywords = [
             grabdict_package(
@@ -31,8 +29,7 @@ class KeywordsManager:
                 eapi_default=None,
                 allow_repo=allow_profile_repo_deps(x),
                 allow_build_id=x.allow_build_id,
-            )
-            for x in profiles
+            ) for x in profiles
         ]
         for pkeyworddict in rawpkeywords:
             if not pkeyworddict:
@@ -53,8 +50,7 @@ class KeywordsManager:
                 eapi=x.eapi,
                 eapi_default=None,
                 allow_repo=allow_profile_repo_deps(x),
-            )
-            for x in profiles
+            ) for x in profiles
         ]
         for d in raw_p_accept_keywords:
             if not d:
@@ -69,9 +65,7 @@ class KeywordsManager:
         self.pkeywordsdict = ExtendedAtomDict(dict)
 
         if user_config:
-            user_accept_kwrds_path = os.path.join(
-                abs_user_config, "package.accept_keywords"
-            )
+            user_accept_kwrds_path = os.path.join(abs_user_config, "package.accept_keywords")
             user_kwrds_path = os.path.join(abs_user_config, "package.keywords")
             pkgdict = grabdict_package(
                 user_kwrds_path,
@@ -84,27 +78,23 @@ class KeywordsManager:
 
             if pkgdict and portage._internal_caller:
                 warnings.warn(
-                    _("%s is deprecated, use %s instead")
-                    % (user_kwrds_path, user_accept_kwrds_path),
+                    _("%s is deprecated, use %s instead") % (user_kwrds_path, user_accept_kwrds_path),
                     UserWarning,
                 )
 
             for k, v in grabdict_package(
-                user_accept_kwrds_path,
-                recursive=1,
-                allow_wildcard=True,
-                allow_repo=True,
-                verify_eapi=False,
-                allow_build_id=True,
+                    user_accept_kwrds_path,
+                    recursive=1,
+                    allow_wildcard=True,
+                    allow_repo=True,
+                    verify_eapi=False,
+                    allow_build_id=True,
             ).items():
                 pkgdict.setdefault(k, []).extend(v)
 
             accept_keywords_defaults = global_accept_keywords.split()
-            accept_keywords_defaults = tuple(
-                "~" + keyword
-                for keyword in accept_keywords_defaults
-                if keyword[:1] not in "~-"
-            )
+            accept_keywords_defaults = tuple("~" + keyword for keyword in accept_keywords_defaults
+                                             if keyword[:1] not in "~-")
             for k, v in pkgdict.items():
                 # default to ~arch if no specific keyword is given
                 if not v:
@@ -288,11 +278,7 @@ class KeywordsManager:
                 hastesting = True
             elif not gp.startswith("-"):
                 hasstable = True
-        if not match and (
-            (hastesting and "~*" in pgroups)
-            or (hasstable and "*" in pgroups)
-            or "**" in pgroups
-        ):
+        if not match and ((hastesting and "~*" in pgroups) or (hasstable and "*" in pgroups) or "**" in pgroups):
             match = True
         if match:
             missing = []
@@ -331,9 +317,7 @@ class KeywordsManager:
 
         unmaskgroups = []
         if self._p_accept_keywords:
-            accept_keywords_defaults = tuple(
-                "~" + keyword for keyword in pgroups if keyword[:1] not in "~-"
-            )
+            accept_keywords_defaults = tuple("~" + keyword for keyword in pgroups if keyword[:1] not in "~-")
             for d in self._p_accept_keywords:
                 cpdict = d.get(cp)
                 if cpdict:

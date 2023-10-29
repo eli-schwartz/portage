@@ -7,7 +7,8 @@ from portage.dep.soname.SonameAtom import SonameAtom
 
 _error_empty_category = _("Multilib category empty: %s")
 _error_missing_category = _("Multilib category missing: %s")
-_error_duplicate_category = _("Multilib category occurs" " more than once: %s")
+_error_duplicate_category = _("Multilib category occurs"
+                              " more than once: %s")
 
 
 def parse_soname_deps(s):

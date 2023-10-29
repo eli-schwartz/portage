@@ -1,6 +1,5 @@
 # Copyright 2010-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-
 """Tests for the portage.util._xattr module"""
 
 from unittest import mock
@@ -10,7 +9,6 @@ import subprocess
 import portage
 from portage.tests import TestCase
 from portage.util._xattr import xattr as _xattr, _XattrSystemCommands, _XattrStub
-
 
 orig_popen = subprocess.Popen
 
@@ -32,14 +30,12 @@ def MockSubprocessPopen(stdin):
 class SystemCommandsTest(TestCase):
     """Test _XattrSystemCommands"""
 
-    OUTPUT = "\n".join(
-        (
-            "# file: /bin/ping",
-            "security.capability=0sAQAAAgAgAAAAAAAAAAAAAAAAAAA=",
-            'user.foo="asdf"',
-            "",
-        )
-    )
+    OUTPUT = "\n".join((
+        "# file: /bin/ping",
+        "security.capability=0sAQAAAgAgAAAAAAAAAAAAAAAAAAA=",
+        'user.foo="asdf"',
+        "",
+    ))
 
     def _setUp(self):
         return _XattrSystemCommands
@@ -63,15 +59,11 @@ class SystemCommandsTest(TestCase):
         xattr = self._setUp()
         with mock.patch.object(subprocess, "Popen") as call_mock:
             # Verify output parsing.
-            call_mock.return_value = MockSubprocessPopen(
-                "\n".join(
-                    [
-                        "# file: /some/file",
-                        'user.foo="asdf"',
-                        "",
-                    ]
-                )
-            )
+            call_mock.return_value = MockSubprocessPopen("\n".join([
+                "# file: /some/file",
+                'user.foo="asdf"',
+                "",
+            ]))
             call_mock.reset()
             self.assertEqual(xattr.get("/some/file", "user.foo"), b'"asdf"')
 

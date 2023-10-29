@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class UpdateIfInstalledTestCase(TestCase):
+
     def testUpdateIfInstalledEmerge(self):
         installed = {
             "dev-lang/ghc-4": {},
@@ -18,19 +19,17 @@ class UpdateIfInstalledTestCase(TestCase):
         }
 
         ebuilds = installed.copy()
-        ebuilds.update(
-            {
-                "app-misc/cowsay-10": {},
-                "dev-lang/ghc-5": {},
-                "dev-libs/larryware-4": {},
-                "dev-libs/larryware-ng-4": {"RDEPEND": ">=net-libs/moo-1"},
-                "net-libs/moo-1": {},
-            }
-        )
+        ebuilds.update({
+            "app-misc/cowsay-10": {},
+            "dev-lang/ghc-5": {},
+            "dev-libs/larryware-4": {},
+            "dev-libs/larryware-ng-4": {
+                "RDEPEND": ">=net-libs/moo-1"
+            },
+            "net-libs/moo-1": {},
+        })
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds, installed=installed, debug=False
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, debug=False)
 
         test_cases = (
             # We should only try to update ghc when passed ghc and

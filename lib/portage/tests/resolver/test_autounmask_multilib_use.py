@@ -11,6 +11,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class AutounmaskMultilibUseTestCase(TestCase):
+
     @pytest.mark.xfail()
     def testAutounmaskMultilibUse(self):
         ebuilds = {
@@ -57,10 +58,10 @@ class AutounmaskMultilibUseTestCase(TestCase):
 
         user_config = {
             # "make.conf" : ("USE=\"abi_x86_32 abi_x86_64\"",)
-            "make.conf": ('USE="abi_x86_64"',)
+            "make.conf": ('USE="abi_x86_64"', )
         }
 
-        world = ("games-util/steam-client-meta",)
+        world = ("games-util/steam-client-meta", )
 
         test_cases = (
             # Test autounmask solving of multilib use deps for bug #481628.
@@ -68,11 +69,14 @@ class AutounmaskMultilibUseTestCase(TestCase):
             # currently fails with a SLOT conflict.
             ResolverPlaygroundTestCase(
                 ["x11-proto/xextproto", "x11-libs/libXaw"],
-                options={"--oneshot": True, "--autounmask": True, "--backtrack": 30},
+                options={
+                    "--oneshot": True,
+                    "--autounmask": True,
+                    "--backtrack": 30
+                },
                 mergelist=["x11-proto/xextproto-7.2.1-r1", "x11-libs/libXaw-1.0.11-r2"],
                 success=True,
-            ),
-        )
+            ), )
 
         playground = ResolverPlayground(
             ebuilds=ebuilds,

@@ -79,26 +79,19 @@ class Binpkg(CompositeTask):
         self._infloc = os.path.join(dir_path, "build-info")
         self._ebuild_path = os.path.join(self._infloc, pkg.pf + ".ebuild")
         settings["EBUILD"] = self._ebuild_path
-        portage.doebuild_environment(
-            self._ebuild_path, "setup", settings=self.settings, db=self._bintree.dbapi
-        )
+        portage.doebuild_environment(self._ebuild_path, "setup", settings=self.settings, db=self._bintree.dbapi)
         if dir_path != self.settings["PORTAGE_BUILDDIR"]:
-            raise AssertionError(
-                f"'{dir_path}' != '{self.settings['PORTAGE_BUILDDIR']}'"
-            )
+            raise AssertionError(f"'{dir_path}' != '{self.settings['PORTAGE_BUILDDIR']}'")
         self._build_dir = EbuildBuildDir(scheduler=self.scheduler, settings=settings)
         settings.configdict["pkg"]["EMERGE_FROM"] = "binary"
         settings.configdict["pkg"]["MERGE_TYPE"] = "binary"
 
         if eapi_exports_replace_vars(settings["EAPI"]):
             vardb = self.pkg.root_config.trees["vartree"].dbapi
-            settings["REPLACING_VERSIONS"] = " ".join(
-                {
-                    portage.versions.cpv_getversion(x)
-                    for x in vardb.match(self.pkg.slot_atom)
-                    + vardb.match("=" + self.pkg.cpv)
-                }
-            )
+            settings["REPLACING_VERSIONS"] = " ".join({
+                portage.versions.cpv_getversion(x)
+                for x in vardb.match(self.pkg.slot_atom) + vardb.match("=" + self.pkg.cpv)
+            })
 
         # The prefetcher has already completed or it
         # could be running now. If it's running now,
@@ -114,9 +107,7 @@ class Binpkg(CompositeTask):
             pass
         elif prefetcher.isAlive() and prefetcher.poll() is None:
             if not self.background:
-                fetch_log = os.path.join(
-                    _emerge.emergelog._emerge_log_dir, "emerge-fetch.log"
-                )
+                fetch_log = os.path.join(_emerge.emergelog._emerge_log_dir, "emerge-fetch.log")
                 msg = (
                     "Fetching in the background:",
                     prefetcher.pkg_path,
@@ -325,13 +316,11 @@ class Binpkg(CompositeTask):
         portage.prepare_build_dirs(self.settings["ROOT"], self.settings, 1)
         self._writemsg_level(">>> Extracting info\n")
 
-        await self._bintree.dbapi.unpack_metadata(
-            self.settings, infloc, loop=self.scheduler
-        )
+        await self._bintree.dbapi.unpack_metadata(self.settings, infloc, loop=self.scheduler)
         check_missing_metadata = ("CATEGORY", "PF")
         for k, v in zip(
-            check_missing_metadata,
-            self._bintree.dbapi.aux_get(self.pkg.cpv, check_missing_metadata),
+                check_missing_metadata,
+                self._bintree.dbapi.aux_get(self.pkg.cpv, check_missing_metadata),
         ):
             if v:
                 continue
@@ -343,9 +332,7 @@ class Binpkg(CompositeTask):
                 continue
 
             f = open(
-                _unicode_encode(
-                    os.path.join(infloc, k), encoding=_encodings["fs"], errors="strict"
-                ),
+                _unicode_encode(os.path.join(infloc, k), encoding=_encodings["fs"], errors="strict"),
                 mode="w",
                 encoding=_encodings["content"],
                 errors="backslashreplace",
@@ -357,30 +344,26 @@ class Binpkg(CompositeTask):
 
         # Store the md5sum in the vdb.
         if pkg_path is not None:
-            (md5sum,) = self._bintree.dbapi.aux_get(self.pkg.cpv, ["MD5"])
+            (md5sum, ) = self._bintree.dbapi.aux_get(self.pkg.cpv, ["MD5"])
             if not md5sum:
                 md5sum = portage.checksum.perform_md5(pkg_path)
             with open(
-                _unicode_encode(
-                    os.path.join(infloc, "BINPKGMD5"),
-                    encoding=_encodings["fs"],
+                    _unicode_encode(
+                        os.path.join(infloc, "BINPKGMD5"),
+                        encoding=_encodings["fs"],
+                        errors="strict",
+                    ),
+                    mode="w",
+                    encoding=_encodings["content"],
                     errors="strict",
-                ),
-                mode="w",
-                encoding=_encodings["content"],
-                errors="strict",
             ) as f:
                 f.write(_unicode_decode(f"{md5sum}\n"))
 
-        env_extractor = BinpkgEnvExtractor(
-            background=self.background, scheduler=self.scheduler, settings=self.settings
-        )
+        env_extractor = BinpkgEnvExtractor(background=self.background, scheduler=self.scheduler, settings=self.settings)
         env_extractor.start()
         await env_extractor.async_wait()
         if env_extractor.returncode != os.EX_OK:
-            raise portage.exception.PortageException(
-                f"failed to extract environment for {self.pkg.cpv}"
-            )
+            raise portage.exception.PortageException(f"failed to extract environment for {self.pkg.cpv}")
 
     def _unpack_metadata_exit(self, unpack_metadata):
         if self._default_exit(unpack_metadata) != os.EX_OK:
@@ -417,10 +400,7 @@ class Binpkg(CompositeTask):
         self._writemsg_level(f">>> Extracting {self.pkg.cpv}\n")
         self._start_task(
             AsyncTaskFuture(
-                future=self._bintree.dbapi.unpack_contents(
-                    self.settings, self._image_dir, loop=self.scheduler
-                )
-            ),
+                future=self._bintree.dbapi.unpack_contents(self.settings, self._image_dir, loop=self.scheduler)),
             self._unpack_contents_exit,
         )
 
@@ -441,7 +421,7 @@ class Binpkg(CompositeTask):
             return
 
         # Before anything else, let's do an integrity check.
-        (provides,) = self._bintree.dbapi.aux_get(self.pkg.cpv, ["PROVIDES"])
+        (provides, ) = self._bintree.dbapi.aux_get(self.pkg.cpv, ["PROVIDES"])
         if check_dyn_libs_inconsistent(self.settings["D"], provides):
             self._writemsg_level(
                 colorize(
@@ -454,13 +434,13 @@ class Binpkg(CompositeTask):
 
         try:
             with open(
-                _unicode_encode(
-                    os.path.join(self._infloc, "EPREFIX"),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                encoding=_encodings["repo.content"],
-                errors="replace",
+                    _unicode_encode(
+                        os.path.join(self._infloc, "EPREFIX"),
+                        encoding=_encodings["fs"],
+                        errors="strict",
+                    ),
+                    encoding=_encodings["repo.content"],
+                    errors="replace",
             ) as f:
                 self._build_prefix = f.read().rstrip("\n")
         except OSError:
@@ -503,22 +483,20 @@ class Binpkg(CompositeTask):
 
         # We want to install in "our" prefix, not the binary one
         with open(
-            _unicode_encode(
-                os.path.join(self._infloc, "EPREFIX"),
-                encoding=_encodings["fs"],
+                _unicode_encode(
+                    os.path.join(self._infloc, "EPREFIX"),
+                    encoding=_encodings["fs"],
+                    errors="strict",
+                ),
+                mode="w",
+                encoding=_encodings["repo.content"],
                 errors="strict",
-            ),
-            mode="w",
-            encoding=_encodings["repo.content"],
-            errors="strict",
         ) as f:
             f.write(self.settings["EPREFIX"] + "\n")
 
         # Move the files to the correct location for merge.
         image_tmp_dir = os.path.join(self.settings["PORTAGE_BUILDDIR"], "image_tmp")
-        build_d = os.path.join(
-            self.settings["D"], self._build_prefix.lstrip(os.sep)
-        ).rstrip(os.sep)
+        build_d = os.path.join(self.settings["D"], self._build_prefix.lstrip(os.sep)).rstrip(os.sep)
         if not os.path.isdir(build_d):
             # Assume this is a virtual package or something.
             shutil.rmtree(self._image_dir)
@@ -585,11 +563,8 @@ class Binpkg(CompositeTask):
                 EbuildBuildDir.async_unlock() task
         """
         self.settings.pop("PORTAGE_BINPKG_FILE", None)
-        if (
-            task.returncode == os.EX_OK
-            and "binpkg-logs" not in self.settings.features
-            and self.settings.get("PORTAGE_LOG_FILE")
-        ):
+        if (task.returncode == os.EX_OK and "binpkg-logs" not in self.settings.features
+                and self.settings.get("PORTAGE_LOG_FILE")):
             try:
                 os.unlink(self.settings["PORTAGE_LOG_FILE"])
             except OSError:

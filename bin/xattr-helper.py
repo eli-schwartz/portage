@@ -12,7 +12,6 @@ https://en.wikipedia.org/wiki/Extended_file_attributes
 """
 __doc__ = doc
 
-
 import argparse
 import array
 import os
@@ -20,7 +19,6 @@ import re
 import sys
 
 from portage.util._xattr import xattr
-
 
 _UNQUOTE_RE = re.compile(rb"\\[0-7]{3}")
 _FS_ENCODING = sys.getfilesystemencoding()
@@ -54,7 +52,7 @@ def quote(s, quote_chars):
         else:
             start = m.start()
             result.append(s[pos:start])
-            result.append(octal_quote_byte(s[start : start + 1]))
+            result.append(octal_quote_byte(s[start:start + 1]))
             pos = start + 1
 
     return b"".join(result)
@@ -76,7 +74,7 @@ def unquote(s):
             result.append(s[pos:start])
             pos = start + 4
             a = array.array("B")
-            a.append(int(s[start + 1 : pos], 8))
+            a.append(int(s[start + 1:pos], 8))
             try:
                 # Python >= 3.2
                 result.append(a.tobytes())
@@ -101,10 +99,7 @@ def dump_xattrs(pathnames, file_out):
         for attr in attrs:
             attr = unicode_encode(attr)
             value = xattr.get(pathname, attr)
-            file_out.write(
-                b'%s="%s"\n'
-                % (quote(attr, b"=" + quote_chars), quote(value, b'\0"' + quote_chars))
-            )
+            file_out.write(b'%s="%s"\n' % (quote(attr, b"=" + quote_chars), quote(value, b'\0"' + quote_chars)))
 
 
 def restore_xattrs(file_in):
@@ -145,7 +140,8 @@ def main(argv):
     actions.add_argument(
         "--restore",
         action="store_true",
-        help="Restore extended attributes using " "a dump read from stdin.",
+        help="Restore extended attributes using "
+        "a dump read from stdin.",
     )
 
     options = parser.parse_args(argv)

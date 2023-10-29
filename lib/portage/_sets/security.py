@@ -38,10 +38,7 @@ class SecuritySet(PackageSet):
             myglsa = glsa.Glsa(glsaid, self._settings, self._vardbapi, self._portdbapi)
             # print glsaid, myglsa.isVulnerable(), myglsa.isApplied(), myglsa.getMergeList()
             if self.useGlsa(myglsa):
-                atomlist += [
-                    "=" + x
-                    for x in myglsa.getMergeList(least_change=self._least_change)
-                ]
+                atomlist += ["=" + x for x in myglsa.getMergeList(least_change=self._least_change)]
         self._setAtoms(self._reduce(atomlist))
 
     def _reduce(self, atomlist):
@@ -84,9 +81,7 @@ class SecuritySet(PackageSet):
 
 class NewGlsaSet(SecuritySet):
     _skip_applied = True
-    description = (
-        "Package set that includes all packages possibly affected by an unapplied GLSA"
-    )
+    description = ("Package set that includes all packages possibly affected by an unapplied GLSA")
 
 
 class AffectedSet(SecuritySet):

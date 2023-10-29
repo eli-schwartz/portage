@@ -1,6 +1,5 @@
 # Copyright 2014-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-
 """
 Base class for performing sync operations.
 This class contains common initialization code and functions.
@@ -110,9 +109,7 @@ class SyncBase:
         """
         if self._repo_storage is None:
             storage_cls = portage.load_mod(self._select_storage_module())
-            self._repo_storage = _sync_methods(
-                storage_cls(self.repo, self.spawn_kwargs), loop=global_event_loop()
-            )
+            self._repo_storage = _sync_methods(storage_cls(self.repo, self.spawn_kwargs), loop=global_event_loop())
         return self._repo_storage
 
     @property
@@ -186,19 +183,13 @@ class SyncBase:
             retry_overall_timeout = None
         else:
             try:
-                retry_overall_timeout = float(
-                    self.repo.sync_openpgp_key_refresh_retry_overall_timeout
-                )
+                retry_overall_timeout = float(self.repo.sync_openpgp_key_refresh_retry_overall_timeout)
             except Exception as e:
                 errors.append(f"sync-openpgp-key-refresh-retry-overall-timeout: {e}")
             else:
                 if retry_overall_timeout < 0:
-                    errors.append(
-                        "sync-openpgp-key-refresh-retry-overall-timeout: "
-                        "value must be greater than or equal to zero: {}".format(
-                            retry_overall_timeout
-                        )
-                    )
+                    errors.append("sync-openpgp-key-refresh-retry-overall-timeout: "
+                                  "value must be greater than or equal to zero: {}".format(retry_overall_timeout))
                 elif retry_overall_timeout == 0:
                     retry_overall_timeout = None
 
@@ -206,33 +197,25 @@ class SyncBase:
             retry_delay_mult = None
         else:
             try:
-                retry_delay_mult = float(
-                    self.repo.sync_openpgp_key_refresh_retry_delay_mult
-                )
+                retry_delay_mult = float(self.repo.sync_openpgp_key_refresh_retry_delay_mult)
             except Exception as e:
                 errors.append(f"sync-openpgp-key-refresh-retry-delay-mult: {e}")
             else:
                 if retry_delay_mult <= 0:
-                    errors.append(
-                        "sync-openpgp-key-refresh-retry-mult: "
-                        "value must be greater than zero: {}".format(retry_delay_mult)
-                    )
+                    errors.append("sync-openpgp-key-refresh-retry-mult: "
+                                  "value must be greater than zero: {}".format(retry_delay_mult))
 
         if self.repo.sync_openpgp_key_refresh_retry_delay_exp_base is None:
             retry_delay_exp_base = None
         else:
             try:
-                retry_delay_exp_base = float(
-                    self.repo.sync_openpgp_key_refresh_retry_delay_exp_base
-                )
+                retry_delay_exp_base = float(self.repo.sync_openpgp_key_refresh_retry_delay_exp_base)
             except Exception as e:
                 errors.append(f"sync-openpgp-key-refresh-retry-delay-exp: {e}")
             else:
                 if retry_delay_exp_base <= 0:
-                    errors.append(
-                        "sync-openpgp-key-refresh-retry-delay-exp: "
-                        "value must be greater than zero: {}".format(retry_delay_mult)
-                    )
+                    errors.append("sync-openpgp-key-refresh-retry-delay-exp: "
+                                  "value must be greater than zero: {}".format(retry_delay_mult))
 
         if errors:
             lines = []
@@ -251,9 +234,7 @@ class SyncBase:
         return retry(
             reraise=True,
             try_max=retry_count,
-            overall_timeout=(
-                retry_overall_timeout if retry_overall_timeout > 0 else None
-            ),
+            overall_timeout=(retry_overall_timeout if retry_overall_timeout > 0 else None),
             delay_func=RandomExponentialBackoff(
                 multiplier=(1 if retry_delay_mult is None else retry_delay_mult),
                 base=(2 if retry_delay_exp_base is None else retry_delay_exp_base),
@@ -268,17 +249,11 @@ class SyncBase:
         @param openpgp_env: openpgp environment
         @type openpgp_env: gemato.openpgp.OpenPGPEnvironment
         """
-        out = portage.output.EOutput(
-            quiet=("--quiet" in self.options["emerge_config"].opts)
-        )
+        out = portage.output.EOutput(quiet=("--quiet" in self.options["emerge_config"].opts))
 
         if not self.repo.sync_openpgp_key_refresh:
-            out.ewarn(
-                "Key refresh is disabled via a repos.conf sync-openpgp-key-refresh"
-            )
-            out.ewarn(
-                "setting, and this is a security vulnerability because it prevents"
-            )
+            out.ewarn("Key refresh is disabled via a repos.conf sync-openpgp-key-refresh")
+            out.ewarn("setting, and this is a security vulnerability because it prevents")
             out.ewarn("detection of revoked keys!")
             return
 
@@ -288,18 +263,11 @@ class SyncBase:
             return
         out.eend(1)
 
-        out.ebegin(
-            "Refreshing keys from keyserver{}".format(
-                ""
-                if self.repo.sync_openpgp_keyserver is None
-                else " " + self.repo.sync_openpgp_keyserver
-            )
-        )
+        out.ebegin("Refreshing keys from keyserver{}".format("" if self.repo.sync_openpgp_keyserver is None else " " +
+                                                             self.repo.sync_openpgp_keyserver))
         retry_decorator = self._key_refresh_retry_decorator()
         if retry_decorator is None:
-            openpgp_env.refresh_keys_keyserver(
-                keyserver=self.repo.sync_openpgp_keyserver
-            )
+            openpgp_env.refresh_keys_keyserver(keyserver=self.repo.sync_openpgp_keyserver)
         else:
 
             def noisy_refresh_keys():
@@ -308,9 +276,7 @@ class SyncBase:
                 errors, display errors as soon as they occur.
                 """
                 try:
-                    openpgp_env.refresh_keys_keyserver(
-                        keyserver=self.repo.sync_openpgp_keyserver
-                    )
+                    openpgp_env.refresh_keys_keyserver(keyserver=self.repo.sync_openpgp_keyserver)
                 except Exception as e:
                     writemsg_level(f"{e}\n", level=logging.ERROR, noiselevel=-1)
                     raise  # retry
@@ -321,9 +287,7 @@ class SyncBase:
             # order to enforce timeouts.
             loop = global_event_loop()
             with ForkExecutor(loop=loop) as executor:
-                func_coroutine = functools.partial(
-                    loop.run_in_executor, executor, noisy_refresh_keys
-                )
+                func_coroutine = functools.partial(loop.run_in_executor, executor, noisy_refresh_keys)
                 decorated_func = retry_decorator(func_coroutine, loop=loop)
                 loop.run_until_complete(decorated_func())
         out.eend(0)
@@ -339,13 +303,9 @@ class SyncBase:
                 proxy = None
 
             if openpgp_key_path:
-                openpgp_env = gemato.openpgp.OpenPGPEnvironment(
-                    proxy=proxy, debug=debug
-                )
+                openpgp_env = gemato.openpgp.OpenPGPEnvironment(proxy=proxy, debug=debug)
             else:
-                openpgp_env = gemato.openpgp.OpenPGPSystemEnvironment(
-                    proxy=proxy, debug=debug
-                )
+                openpgp_env = gemato.openpgp.OpenPGPSystemEnvironment(proxy=proxy, debug=debug)
 
             return openpgp_env
 

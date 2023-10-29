@@ -9,6 +9,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class OrDowngradeInstalledTestCase(TestCase):
+
     def testOrDowngradeInstalled(self):
         ebuilds = {
             "net-misc/foo-1": {
@@ -18,12 +19,21 @@ class OrDowngradeInstalledTestCase(TestCase):
             "net-libs/libtirpc-1": {
                 "EAPI": "6",
             },
-            "sys-libs/glibc-2.26": {"EAPI": "6", "IUSE": ""},
-            "sys-libs/glibc-2.24": {"EAPI": "6", "IUSE": "+rpc"},
+            "sys-libs/glibc-2.26": {
+                "EAPI": "6",
+                "IUSE": ""
+            },
+            "sys-libs/glibc-2.24": {
+                "EAPI": "6",
+                "IUSE": "+rpc"
+            },
         }
 
         installed = {
-            "sys-libs/glibc-2.26": {"EAPI": "6", "IUSE": ""},
+            "sys-libs/glibc-2.26": {
+                "EAPI": "6",
+                "IUSE": ""
+            },
         }
 
         world = ["sys-libs/glibc"]
@@ -38,12 +48,9 @@ class OrDowngradeInstalledTestCase(TestCase):
                     "net-libs/libtirpc-1",
                     "net-misc/foo-1",
                 ],
-            ),
-        )
+            ), )
 
-        playground = ResolverPlayground(
-            debug=False, ebuilds=ebuilds, installed=installed, world=world
-        )
+        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
 
         try:
             for test_case in test_cases:
@@ -58,19 +65,17 @@ class OrDowngradeInstalledTestCase(TestCase):
         # not an ideal example because it's usually not
         # practical to downgrade it).
         user_config = {
-            "package.mask": (">=sys-libs/glibc-2.26",),
+            "package.mask": (">=sys-libs/glibc-2.26", ),
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["net-misc/foo"],
-                success=True,
-                mergelist=[
-                    "sys-libs/glibc-2.24",
-                    "net-misc/foo-1",
-                ],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["net-misc/foo"],
+            success=True,
+            mergelist=[
+                "sys-libs/glibc-2.24",
+                "net-misc/foo-1",
+            ],
+        ), )
 
         playground = ResolverPlayground(
             debug=False,
