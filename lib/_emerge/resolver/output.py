@@ -3,10 +3,7 @@
 """Resolver output display operation.
 """
 
-__all__ = (
-    "Display",
-    "format_unmatched_atom",
-)
+__all__ = ("Display", "format_unmatched_atom", )
 
 from portage import os
 from portage.dbapi.dep_expand import dep_expand
@@ -16,16 +13,7 @@ from portage.exception import InvalidDependString, SignatureException
 from portage.localization import localized_size
 from portage.package.ebuild.config import _get_feature_flags
 from portage.package.ebuild._spawn_nofetch import spawn_nofetch
-from portage.output import (
-    blue,
-    colorize,
-    create_color_func,
-    darkblue,
-    darkgreen,
-    green,
-    nc_len,
-    teal,
-)
+from portage.output import (blue, colorize, create_color_func, darkblue, darkgreen, green, nc_len, teal, )
 
 bad = create_color_func("BAD")
 from portage._sets.base import InternalPackageSet
@@ -34,13 +22,9 @@ from portage.versions import best, cpv_getversion
 
 from _emerge.Blocker import Blocker
 from _emerge.create_world_atom import create_world_atom
-from _emerge.resolver.output_helpers import (
-    _DisplayConfig,
-    _tree_display,
-    _PackageCounters,
-    _create_use_string,
-    PkgInfo,
-)
+from _emerge.resolver.output_helpers import (_DisplayConfig, _tree_display, _PackageCounters, _create_use_string,
+                                             PkgInfo,
+                                             )
 from _emerge.show_invalid_depstring_notice import show_invalid_depstring_notice
 
 
@@ -93,12 +77,9 @@ class Display:
         if self.conf.columns and self.conf.quiet:
             addl += " " + colorize(self.blocker_style, str(self.resolved))
         else:
-            addl = "[{} {}] {}{}".format(
-                colorize(self.blocker_style, "blocks"),
-                addl,
-                self.indent,
-                colorize(self.blocker_style, str(self.resolved)),
-            )
+            addl = "[{} {}] {}{}".format(colorize(self.blocker_style, "blocks"), addl, self.indent,
+                                         colorize(self.blocker_style, str(self.resolved)),
+                                         )
         block_parents = self.conf.blocker_parents.parent_nodes(blocker)
         block_parents = {str(pnode.cpv) for pnode in block_parents}
         block_parents = ", ".join(block_parents)
@@ -107,10 +88,9 @@ class Display:
         else:
             blocking_desc = "soft blocking"
         if self.resolved != blocker.atom:
-            addl += colorize(
-                self.blocker_style,
-                f' ("{str(blocker.atom).lstrip("!")}" is {blocking_desc} {block_parents})',
-            )
+            addl += colorize(self.blocker_style,
+                             f' ("{str(blocker.atom).lstrip("!")}" is {blocking_desc} {block_parents})',
+                             )
         else:
             addl += colorize(self.blocker_style, f" (is {blocking_desc} {block_parents})")
         if blocker.satisfied:
@@ -238,18 +218,10 @@ class Display:
         for key in use_expand:
             if key in self.use_expand_hidden:
                 continue
-            self.verboseadd += _create_use_string(
-                self.conf,
-                key.upper(),
-                cur_iuse_map[key],
-                iuse_forced[key],
-                cur_use_map[key],
-                old_iuse_map[key],
-                old_use_map[key],
-                is_new,
-                feature_flags,
-                reinst_flags_map.get(key),
-            )
+            self.verboseadd += _create_use_string(self.conf, key.upper(), cur_iuse_map[key], iuse_forced[key],
+                                                  cur_use_map[key], old_iuse_map[key], old_use_map[key], is_new,
+                                                  feature_flags, reinst_flags_map.get(key),
+                                                  )
 
     @staticmethod
     def pkgprint(pkg_str, pkg_info):
@@ -338,10 +310,9 @@ class Display:
                 if repo_path_prev == pkg_info.repo_path_real:
                     self.repoadd = self.conf.repo_display.repoStr(pkg_info.repo_path_real)
                 else:
-                    self.repoadd = "{}=>{}".format(
-                        self.conf.repo_display.repoStr(repo_path_prev),
-                        self.conf.repo_display.repoStr(pkg_info.repo_path_real),
-                    )
+                    self.repoadd = "{}=>{}".format(self.conf.repo_display.repoStr(repo_path_prev),
+                                                   self.conf.repo_display.repoStr(pkg_info.repo_path_real),
+                                                   )
             if self.repoadd:
                 repoadd_set.add(self.repoadd)
 
@@ -439,18 +410,13 @@ class Display:
             self.verboseadd = None
         else:
             if not pkg_info.merge:
-                myprint = "[{}] {}{}".format(
-                    self.pkgprint(pkg_info.operation.ljust(13), pkg_info),
-                    self.indent,
-                    self.pkgprint(pkg.cp, pkg_info),
-                )
+                myprint = "[{}] {}{}".format(self.pkgprint(pkg_info.operation.ljust(13), pkg_info), self.indent,
+                                             self.pkgprint(pkg.cp, pkg_info),
+                                             )
             else:
-                myprint = "[{} {}] {}{}".format(
-                    self.pkgprint(pkg.type_name, pkg_info),
-                    pkg_info.attr_display,
-                    self.indent,
-                    self.pkgprint(pkg.cp, pkg_info),
-                )
+                myprint = "[{} {}] {}{}".format(self.pkgprint(pkg.type_name, pkg_info), pkg_info.attr_display,
+                                                self.indent, self.pkgprint(pkg.cp, pkg_info),
+                                                )
             if (self.newlp - nc_len(myprint)) > 0:
                 myprint = myprint + (" " * (self.newlp - nc_len(myprint)))
             myprint = myprint + " " + darkblue("[" + ver_str + "]") + " "
@@ -480,19 +446,13 @@ class Display:
         else:
             if not pkg_info.merge:
                 addl = self.empty_space_in_brackets()
-                myprint = "[{}{}] {}{}".format(
-                    self.pkgprint(pkg_info.operation.ljust(13), pkg_info),
-                    addl,
-                    self.indent,
-                    self.pkgprint(pkg.cp, pkg_info),
-                )
+                myprint = "[{}{}] {}{}".format(self.pkgprint(pkg_info.operation.ljust(13), pkg_info), addl, self.indent,
+                                               self.pkgprint(pkg.cp, pkg_info),
+                                               )
             else:
-                myprint = "[{} {}] {}{}".format(
-                    self.pkgprint(pkg.type_name, pkg_info),
-                    pkg_info.attr_display,
-                    self.indent,
-                    self.pkgprint(pkg.cp, pkg_info),
-                )
+                myprint = "[{} {}] {}{}".format(self.pkgprint(pkg.type_name, pkg_info), pkg_info.attr_display,
+                                                self.indent, self.pkgprint(pkg.cp, pkg_info),
+                                                )
             if (self.newlp - nc_len(myprint)) > 0:
                 myprint = myprint + (" " * (self.newlp - nc_len(myprint)))
             myprint = myprint + " " + green("[" + ver_str + "]") + " "
@@ -514,21 +474,13 @@ class Display:
             pkg_str = self._append_repository(pkg_str, pkg, pkg_info)
         if not pkg_info.merge:
             addl = self.empty_space_in_brackets()
-            myprint = "[{}{}] {}{} {}".format(
-                self.pkgprint(pkg_info.operation.ljust(13), pkg_info),
-                addl,
-                self.indent,
-                self.pkgprint(pkg_str, pkg_info),
-                pkg_info.oldbest,
-            )
+            myprint = "[{}{}] {}{} {}".format(self.pkgprint(pkg_info.operation.ljust(13), pkg_info), addl, self.indent,
+                                              self.pkgprint(pkg_str, pkg_info), pkg_info.oldbest,
+                                              )
         else:
-            myprint = "[{} {}] {}{} {}".format(
-                self.pkgprint(pkg.type_name, pkg_info),
-                pkg_info.attr_display,
-                self.indent,
-                self.pkgprint(pkg_str, pkg_info),
-                pkg_info.oldbest,
-            )
+            myprint = "[{} {}] {}{} {}".format(self.pkgprint(pkg.type_name, pkg_info), pkg_info.attr_display,
+                                               self.indent, self.pkgprint(pkg_str, pkg_info), pkg_info.oldbest,
+                                               )
         return myprint
 
     def print_messages(self, show_repos):
@@ -825,15 +777,9 @@ class Display:
                             pkg_str = self._append_repository(pkg_str, pkg, pkg_info)
                         if not pkg_info.merge:
                             addl = self.empty_space_in_brackets()
-                            myprint = "[{}{}] ".format(
-                                self.pkgprint(pkg_info.operation.ljust(13), pkg_info),
-                                addl,
-                            )
+                            myprint = "[{}{}] ".format(self.pkgprint(pkg_info.operation.ljust(13), pkg_info), addl, )
                         else:
-                            myprint = "[{} {}] ".format(
-                                self.pkgprint(pkg.type_name, pkg_info),
-                                pkg_info.attr_display,
-                            )
+                            myprint = "[{} {}] ".format(self.pkgprint(pkg.type_name, pkg_info), pkg_info.attr_display, )
                         myprint += (self.indent + self.pkgprint(pkg_str, pkg_info) + " " + pkg_info.oldbest +
                                     darkgreen("to " + pkg.root))
                 else:

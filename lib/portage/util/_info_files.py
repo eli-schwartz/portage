@@ -71,16 +71,14 @@ def chk_updated_info_files(root, infodirs, prev_mtimes):
                                 del e
                     processed_count += 1
                     try:
-                        proc = subprocess.Popen(
-                            [
-                                "/usr/bin/install-info",
-                                f"--dir-file={os.path.join(inforoot, 'dir')}",
-                                os.path.join(inforoot, x),
-                            ],
-                            env=dict(os.environ, LANG="C", LANGUAGE="C"),
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT,
-                        )
+                        proc = subprocess.Popen([
+                            "/usr/bin/install-info", f"--dir-file={os.path.join(inforoot, 'dir')}",
+                            os.path.join(inforoot, x),
+                        ],
+                                                env=dict(os.environ, LANG="C", LANGUAGE="C"),
+                                                stdout=subprocess.PIPE,
+                                                stderr=subprocess.STDOUT,
+                                                )
                     except OSError:
                         myso = None
                     else:

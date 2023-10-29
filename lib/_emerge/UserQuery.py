@@ -39,10 +39,7 @@ class UserQuery:
         printed."""
         if responses is None:
             responses = ["Yes", "No"]
-            colours = [
-                create_color_func("PROMPT_CHOICE_DEFAULT"),
-                create_color_func("PROMPT_CHOICE_OTHER"),
-            ]
+            colours = [create_color_func("PROMPT_CHOICE_DEFAULT"), create_color_func("PROMPT_CHOICE_OTHER"), ]
         elif colours is None:
             colours = [bold]
         colours = (colours * len(responses))[:len(responses)]

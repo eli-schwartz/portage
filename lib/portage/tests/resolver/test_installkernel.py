@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class InstallKernelTestCase(TestCase):
@@ -44,41 +41,31 @@ class InstallKernelTestCase(TestCase):
         }
 
         test_cases = (
-            ResolverPlaygroundTestCase(
-                [
-                    "sys-kernel/installkernel-systemd-boot",
-                ],
-                ambiguous_merge_order=True,
-                success=True,
-                mergelist=[
-                    "sys-kernel/installkernel-systemd-boot-1",
-                    "[uninstall]sys-kernel/installkernel-gentoo-3",
-                    (
-                        "!sys-kernel/installkernel-gentoo",
-                        "!sys-kernel/installkernel-systemd-boot",
-                    ),
-                ],
-            ),
+            ResolverPlaygroundTestCase(["sys-kernel/installkernel-systemd-boot", ],
+                                       ambiguous_merge_order=True,
+                                       success=True,
+                                       mergelist=[
+                                           "sys-kernel/installkernel-systemd-boot-1",
+                                           "[uninstall]sys-kernel/installkernel-gentoo-3",
+                                           ("!sys-kernel/installkernel-gentoo",
+                                            "!sys-kernel/installkernel-systemd-boot",
+                                            ),
+                                       ],
+                                       ),
             # Test bug 833014, where the calculation failed unless
             # --update and --deep are specified.
-            ResolverPlaygroundTestCase(
-                [
-                    "sys-kernel/installkernel-systemd-boot",
-                    "sys-kernel/gentoo-kernel-bin",
-                ],
-                ambiguous_merge_order=True,
-                success=True,
-                mergelist=[
-                    "virtual/dist-kernel-5.15.23",
-                    "sys-kernel/installkernel-systemd-boot-1",
-                    "sys-kernel/gentoo-kernel-bin-5.15.23",
-                    "[uninstall]sys-kernel/installkernel-gentoo-3",
-                    (
-                        "!sys-kernel/installkernel-systemd-boot",
-                        "!sys-kernel/installkernel-gentoo",
-                    ),
-                ],
-            ),
+            ResolverPlaygroundTestCase(["sys-kernel/installkernel-systemd-boot", "sys-kernel/gentoo-kernel-bin", ],
+                                       ambiguous_merge_order=True,
+                                       success=True,
+                                       mergelist=[
+                                           "virtual/dist-kernel-5.15.23", "sys-kernel/installkernel-systemd-boot-1",
+                                           "sys-kernel/gentoo-kernel-bin-5.15.23",
+                                           "[uninstall]sys-kernel/installkernel-gentoo-3",
+                                           ("!sys-kernel/installkernel-systemd-boot",
+                                            "!sys-kernel/installkernel-gentoo",
+                                            ),
+                                       ],
+                                       ),
         )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed)

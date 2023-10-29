@@ -26,19 +26,11 @@ class SpawnWarnLargeEnvTestCase(TestCase):
         try:
             logfile = tmpdir / Path("logfile")
             echo_output = "This is an echo process with a large env"
-            retval = portage.process.spawn(
-                ["echo", echo_output],
-                env=env,
-                logfile=logfile,
-                warn_on_large_env=True,
-            )
+            retval = portage.process.spawn(["echo", echo_output], env=env, logfile=logfile, warn_on_large_env=True, )
 
             with open(logfile) as f:
                 logfile_content = f.read()
-                self.assertIn(
-                    echo_output,
-                    logfile_content,
-                )
+                self.assertIn(echo_output, logfile_content, )
             self.assertTrue(portage.process.env_too_large_warnings > previous_env_too_large_warnings)
             self.assertEqual(retval, 0)
         finally:

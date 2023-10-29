@@ -2,14 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # Author(s): Brian Harring (ferringb@gentoo.org)
 
-__all__ = [
-    "Mapping",
-    "MutableMapping",
-    "UserDict",
-    "ProtectedDict",
-    "LazyLoad",
-    "slot_dict_class",
-]
+__all__ = ["Mapping", "MutableMapping", "UserDict", "ProtectedDict", "LazyLoad", "slot_dict_class", ]
 
 import weakref
 
@@ -285,11 +278,7 @@ class _SlotDict:
             self.update(kwargs)
 
     def __reduce__(self):
-        return _PickledSlotDict, (
-            self._prefix,
-            self.allowed_keys,
-            dict(self),
-        )
+        return _PickledSlotDict, (self._prefix, self.allowed_keys, dict(self), )
 
     def __eq__(self, other):
         return dict(self) == dict(other)

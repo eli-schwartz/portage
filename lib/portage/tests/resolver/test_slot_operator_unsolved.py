@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -69,19 +66,18 @@ class SlotOperatorUnsolvedTestCase(TestCase):
 
         world = ["net-libs/webkit-gtk", "dev-ruby/hoe"]
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["@world"],
-            options={
-                "--update": True,
-                "--deep": True,
-                "--usepkg": True
-            },
-            circular_dependency_solutions={
-                "dev-ruby/hoe-2.13.0": frozenset([frozenset([("test", False)])]),
-                "dev-ruby/rdoc-3.12.1": frozenset([frozenset([("test", False)])]),
-            },
-            success=False,
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True,
+                                                     "--usepkg": True
+                                                 },
+                                                 circular_dependency_solutions={
+                                                     "dev-ruby/hoe-2.13.0": frozenset([frozenset([("test", False)])]),
+                                                     "dev-ruby/rdoc-3.12.1": frozenset([frozenset([("test", False)])]),
+                                                 },
+                                                 success=False,
+                                                 ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -89,14 +85,13 @@ class SlotOperatorUnsolvedTestCase(TestCase):
                 sys.stdout.flush()
                 _user_config = user_config.copy()
                 _user_config["make.conf"] += (f'BINPKG_FORMAT="{binpkg_format}"', )
-                playground = ResolverPlayground(
-                    ebuilds=ebuilds,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    user_config=_user_config,
-                    world=world,
-                    debug=False,
-                )
+                playground = ResolverPlayground(ebuilds=ebuilds,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                user_config=_user_config,
+                                                world=world,
+                                                debug=False,
+                                                )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)

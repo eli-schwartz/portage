@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SolveNonSlotOperatorSlotConflictsTestCase(TestCase):
@@ -49,15 +46,14 @@ class SolveNonSlotOperatorSlotConflictsTestCase(TestCase):
             # they didn't have any non-conflict parents (except for
             # @selected which matched both instances). The result was
             # a missed update.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=["app-misc/A-2", "app-misc/B-0"],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       mergelist=["app-misc/A-2", "app-misc/B-0"],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:

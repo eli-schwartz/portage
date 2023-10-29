@@ -20,12 +20,9 @@ class FileCopier(AsyncTaskFuture):
 
     def _start(self):
         self.future = asyncio.ensure_future(
-            self.scheduler.run_in_executor(
-                ForkExecutor(loop=self.scheduler),
-                self._target,
-                self.src_path,
-                self.dest_path,
-            ))
+            self.scheduler.run_in_executor(ForkExecutor(loop=self.scheduler), self._target, self.src_path,
+                                           self.dest_path,
+                                           ))
         super()._start()
 
     @staticmethod

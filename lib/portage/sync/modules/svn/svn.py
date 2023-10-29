@@ -31,11 +31,8 @@ class SVNSync(NewBase):
         # initial checkout
         svn_root = self.repo.sync_uri
         exitcode = portage.process.spawn_bash(
-            "cd %s; exec svn co %s ." % (
-                portage._shell_quote(self.repo.location),
-                portage._shell_quote(svn_root),
-            ),
-            **self.spawn_kwargs,
+            "cd %s; exec svn co %s ." % (portage._shell_quote(self.repo.location), portage._shell_quote(svn_root),
+                                         ), **self.spawn_kwargs,
         )
         if exitcode != os.EX_OK:
             msg = "!!! svn checkout error; exiting."
@@ -57,10 +54,9 @@ class SVNSync(NewBase):
             return (exitcode, False)
 
         # svn update
-        exitcode = portage.process.spawn_bash(
-            f"cd {portage._shell_quote(self.repo.location)}; exec svn update",
-            **self.spawn_kwargs,
-        )
+        exitcode = portage.process.spawn_bash(f"cd {portage._shell_quote(self.repo.location)}; exec svn update",
+                                              **self.spawn_kwargs,
+                                              )
         if exitcode != os.EX_OK:
             msg = "!!! svn update error; exiting."
             self.logger(self.xterm_titles, msg)
@@ -75,10 +71,9 @@ class SVNSync(NewBase):
                 needs to be updated
         @rtype: (int, bool)
         """
-        exitcode = portage.process.spawn_bash(
-            f"cd {portage._shell_quote(self.repo.location)}; exec svn upgrade",
-            **self.spawn_kwargs,
-        )
+        exitcode = portage.process.spawn_bash(f"cd {portage._shell_quote(self.repo.location)}; exec svn upgrade",
+                                              **self.spawn_kwargs,
+                                              )
         if exitcode != os.EX_OK:
             msg = "!!! svn upgrade error; exiting."
             self.logger(self.xterm_titles, msg)

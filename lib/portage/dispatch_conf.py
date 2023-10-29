@@ -124,10 +124,7 @@ def read_config(mandatory_opts):
             if key == "merge":
                 opts["merge"] = "sdiff --suppress-common-lines --output='%s' '%s' '%s'"
             else:
-                print(
-                    _(f'dispatch-conf: Missing option "{key}" in /etc/dispatch-conf.conf; fatal'),
-                    file=sys.stderr,
-                )
+                print(_(f'dispatch-conf: Missing option "{key}" in /etc/dispatch-conf.conf; fatal'), file=sys.stderr, )
 
     # archive-dir supports ${EPREFIX} expansion, in order to avoid hardcoding
     variables = {"EPREFIX": eprefix}
@@ -139,10 +136,7 @@ def read_config(mandatory_opts):
         # against vulnerabilities (like bug #315603 involving rcs).
         os.chmod(opts["archive-dir"], 0o700)
     elif not os.path.isdir(opts["archive-dir"]):
-        print(
-            _(rf"""dispatch-conf: Config archive dir [{opts["archive-dir"]}] must exist; fatal"""),
-            file=sys.stderr,
-        )
+        print(_(rf"""dispatch-conf: Config archive dir [{opts["archive-dir"]}] must exist; fatal"""), file=sys.stderr, )
         sys.exit(1)
 
     return opts
@@ -173,10 +167,7 @@ def _archive_copy(src_st, src_path, dest_path):
         else:
             shutil.copy2(src_path, dest_path)
     except OSError as e:
-        portage.util.writemsg(
-            f"dispatch-conf: Error copying {src_path} to {dest_path}: {e}\n",
-            noiselevel=-1,
-        )
+        portage.util.writemsg(f"dispatch-conf: Error copying {src_path} to {dest_path}: {e}\n", noiselevel=-1, )
 
 
 def rcs_archive(archive, curconf, newconf, mrgconf):

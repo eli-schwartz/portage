@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.util.futures import asyncio
-from portage.util.futures.compat_coroutine import (
-    coroutine,
-    coroutine_return,
-)
+from portage.util.futures.compat_coroutine import (coroutine, coroutine_return, )
 from portage.util.futures._sync_decorator import _sync_decorator, _sync_methods
 from portage.tests import TestCase
 
@@ -20,10 +17,7 @@ class CompatCoroutineTestCase(TestCase):
             coroutine_return("success")
 
         loop = asyncio.get_event_loop()
-        self.assertEqual(
-            "success",
-            asyncio.get_event_loop().run_until_complete(returning_coroutine(loop=loop)),
-        )
+        self.assertEqual("success", asyncio.get_event_loop().run_until_complete(returning_coroutine(loop=loop)), )
 
     def test_raising_coroutine(self):
 

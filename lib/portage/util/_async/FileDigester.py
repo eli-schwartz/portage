@@ -15,10 +15,7 @@ class FileDigester(AsyncFunction):
     digests.
     """
 
-    __slots__ = (
-        "file_path",
-        "hash_names",
-    )
+    __slots__ = ("file_path", "hash_names", )
 
     def _start(self):
         self.target = functools.partial(perform_multiple_checksums, self.file_path, hashes=self.hash_names)

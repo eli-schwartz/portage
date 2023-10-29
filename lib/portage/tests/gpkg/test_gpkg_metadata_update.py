@@ -15,9 +15,7 @@ from portage.gpkg import gpkg
 class test_gpkg_metadata_case(TestCase):
 
     def test_gpkg_update_metadata(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('BINPKG_COMPRESS="gzip"', ),
-        })
+        playground = ResolverPlayground(user_config={"make.conf": ('BINPKG_COMPRESS="gzip"', ), })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -44,11 +42,10 @@ class test_gpkg_metadata_case(TestCase):
             self.assertEqual(meta_new, meta_result)
 
             test_gpkg.decompress(os.path.join(tmpdir, "test"))
-            r = compare_files(
-                os.path.join(tmpdir, "orig/" + "test"),
-                os.path.join(tmpdir, "test/" + "test"),
-                skipped_types=("atime", "mtime", "ctime"),
-            )
+            r = compare_files(os.path.join(tmpdir, "orig/" + "test"),
+                              os.path.join(tmpdir, "test/" + "test"),
+                              skipped_types=("atime", "mtime", "ctime"),
+                              )
             self.assertEqual(r, ())
         finally:
             shutil.rmtree(tmpdir)

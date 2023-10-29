@@ -19,11 +19,9 @@ class test_gpkg_gpg_case(TestCase):
 
     def test_gpkg_missing_manifest_signature(self):
         playground = ResolverPlayground(user_config={
-            "make.conf": (
-                'FEATURES="${FEATURES} binpkg-signing '
-                'binpkg-request-signature"',
-                'BINPKG_FORMAT="gpkg"',
-            ),
+            "make.conf": ('FEATURES="${FEATURES} binpkg-signing '
+                          'binpkg-request-signature"', 'BINPKG_FORMAT="gpkg"',
+                          ),
         })
         tmpdir = tempfile.mkdtemp()
 
@@ -65,11 +63,9 @@ class test_gpkg_gpg_case(TestCase):
 
     def test_gpkg_missing_signature(self):
         playground = ResolverPlayground(user_config={
-            "make.conf": (
-                'FEATURES="${FEATURES} binpkg-signing '
-                'binpkg-request-signature"',
-                'BINPKG_FORMAT="gpkg"',
-            ),
+            "make.conf": ('FEATURES="${FEATURES} binpkg-signing '
+                          'binpkg-request-signature"', 'BINPKG_FORMAT="gpkg"',
+                          ),
         })
         tmpdir = tempfile.mkdtemp()
 
@@ -107,17 +103,15 @@ class test_gpkg_gpg_case(TestCase):
 
         playground = ResolverPlayground(
             user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} binpkg-signing '
-                    'binpkg-ignore-signature"',
-                    'BINPKG_FORMAT="gpkg"',
-                    f'BINPKG_GPG_SIGNING_BASE_COMMAND="flock {gpg_test_path}/portage-binpkg-gpg.lock /usr/bin/gpg --sign --armor --batch --no-tty --yes --pinentry-mode loopback --passphrase GentooTest [PORTAGE_CONFIG]"',
-                    'BINPKG_GPG_SIGNING_DIGEST="SHA512"',
-                    f'BINPKG_GPG_SIGNING_GPG_HOME="{gpg_test_path}"',
-                    'BINPKG_GPG_SIGNING_KEY="0x8812797DDF1DD192"',
-                    'BINPKG_GPG_VERIFY_BASE_COMMAND="/usr/bin/gpg --verify --batch --no-tty --yes --no-auto-check-trustdb --status-fd 2 [PORTAGE_CONFIG] [SIGNATURE]"',
-                    f'BINPKG_GPG_VERIFY_GPG_HOME="{gpg_test_path}"',
-                ),
+                "make.conf":
+                ('FEATURES="${FEATURES} binpkg-signing '
+                 'binpkg-ignore-signature"', 'BINPKG_FORMAT="gpkg"',
+                 f'BINPKG_GPG_SIGNING_BASE_COMMAND="flock {gpg_test_path}/portage-binpkg-gpg.lock /usr/bin/gpg --sign --armor --batch --no-tty --yes --pinentry-mode loopback --passphrase GentooTest [PORTAGE_CONFIG]"',
+                 'BINPKG_GPG_SIGNING_DIGEST="SHA512"', f'BINPKG_GPG_SIGNING_GPG_HOME="{gpg_test_path}"',
+                 'BINPKG_GPG_SIGNING_KEY="0x8812797DDF1DD192"',
+                 'BINPKG_GPG_VERIFY_BASE_COMMAND="/usr/bin/gpg --verify --batch --no-tty --yes --no-auto-check-trustdb --status-fd 2 [PORTAGE_CONFIG] [SIGNATURE]"',
+                 f'BINPKG_GPG_VERIFY_GPG_HOME="{gpg_test_path}"',
+                 ),
             })
         tmpdir = tempfile.mkdtemp()
 
@@ -143,11 +137,9 @@ class test_gpkg_gpg_case(TestCase):
 
     def test_gpkg_auto_use_signature(self):
         playground = ResolverPlayground(user_config={
-            "make.conf": (
-                'FEATURES="${FEATURES} binpkg-signing '
-                '-binpkg-request-signature"',
-                'BINPKG_FORMAT="gpkg"',
-            ),
+            "make.conf": ('FEATURES="${FEATURES} binpkg-signing '
+                          '-binpkg-request-signature"', 'BINPKG_FORMAT="gpkg"',
+                          ),
         })
         tmpdir = tempfile.mkdtemp()
 
@@ -181,11 +173,9 @@ class test_gpkg_gpg_case(TestCase):
 
     def test_gpkg_invalid_signature(self):
         playground = ResolverPlayground(user_config={
-            "make.conf": (
-                'FEATURES="${FEATURES} binpkg-signing '
-                'binpkg-request-signature"',
-                'BINPKG_FORMAT="gpkg"',
-            ),
+            "make.conf": ('FEATURES="${FEATURES} binpkg-signing '
+                          'binpkg-request-signature"', 'BINPKG_FORMAT="gpkg"',
+                          ),
         })
         tmpdir = tempfile.mkdtemp()
 
@@ -248,17 +238,15 @@ qGAN3VUF+8EsdcsV781H0F86PANhyBgEYTGDrnItTGe3/vAPjCo=
 
         playground = ResolverPlayground(
             user_config={
-                "make.conf": (
-                    'FEATURES="${FEATURES} binpkg-signing '
-                    'binpkg-request-signature"',
-                    'BINPKG_FORMAT="gpkg"',
-                    f'BINPKG_GPG_SIGNING_BASE_COMMAND="flock {gpg_test_path}/portage-binpkg-gpg.lock /usr/bin/gpg --sign --armor --batch --no-tty --yes --pinentry-mode loopback --passphrase GentooTest [PORTAGE_CONFIG]"',
-                    'BINPKG_GPG_SIGNING_DIGEST="SHA512"',
-                    f'BINPKG_GPG_SIGNING_GPG_HOME="{gpg_test_path}"',
-                    'BINPKG_GPG_SIGNING_KEY="0x8812797DDF1DD192"',
-                    'BINPKG_GPG_VERIFY_BASE_COMMAND="/usr/bin/gpg --verify --batch --no-tty --yes --no-auto-check-trustdb --status-fd 2 [PORTAGE_CONFIG] [SIGNATURE]"',
-                    f'BINPKG_GPG_VERIFY_GPG_HOME="{gpg_test_path}"',
-                ),
+                "make.conf":
+                ('FEATURES="${FEATURES} binpkg-signing '
+                 'binpkg-request-signature"', 'BINPKG_FORMAT="gpkg"',
+                 f'BINPKG_GPG_SIGNING_BASE_COMMAND="flock {gpg_test_path}/portage-binpkg-gpg.lock /usr/bin/gpg --sign --armor --batch --no-tty --yes --pinentry-mode loopback --passphrase GentooTest [PORTAGE_CONFIG]"',
+                 'BINPKG_GPG_SIGNING_DIGEST="SHA512"', f'BINPKG_GPG_SIGNING_GPG_HOME="{gpg_test_path}"',
+                 'BINPKG_GPG_SIGNING_KEY="0x8812797DDF1DD192"',
+                 'BINPKG_GPG_VERIFY_BASE_COMMAND="/usr/bin/gpg --verify --batch --no-tty --yes --no-auto-check-trustdb --status-fd 2 [PORTAGE_CONFIG] [SIGNATURE]"',
+                 f'BINPKG_GPG_VERIFY_GPG_HOME="{gpg_test_path}"',
+                 ),
             })
         tmpdir = tempfile.mkdtemp()
 
@@ -285,11 +273,9 @@ qGAN3VUF+8EsdcsV781H0F86PANhyBgEYTGDrnItTGe3/vAPjCo=
 
     def test_gpkg_unknown_signature(self):
         playground = ResolverPlayground(user_config={
-            "make.conf": (
-                'FEATURES="${FEATURES} binpkg-signing '
-                'binpkg-request-signature"',
-                'BINPKG_FORMAT="gpkg"',
-            ),
+            "make.conf": ('FEATURES="${FEATURES} binpkg-signing '
+                          'binpkg-request-signature"', 'BINPKG_FORMAT="gpkg"',
+                          ),
         })
         tmpdir = tempfile.mkdtemp()
 

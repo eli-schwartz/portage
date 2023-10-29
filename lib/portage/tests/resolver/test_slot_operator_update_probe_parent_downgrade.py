@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotOperatorUpdateProbeParentDowngradeTestCase(TestCase):
@@ -48,15 +45,14 @@ class SlotOperatorUpdateProbeParentDowngradeTestCase(TestCase):
             # inappropriately, due to slot_operator_update_probe
             # selecting an inappropriate replacement parent of
             # a lower version than desired.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                success=True,
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                mergelist=[],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       success=True,
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       mergelist=[],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:

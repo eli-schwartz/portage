@@ -5,15 +5,8 @@ Portage: Lock management code
 """
 
 __all__ = [
-    "lockdir",
-    "unlockdir",
-    "lockfile",
-    "unlockfile",
-    "hardlock_name",
-    "hardlink_is_mine",
-    "hardlink_lockfile",
-    "unhardlink_lockfile",
-    "hardlock_cleanup",
+    "lockdir", "unlockdir", "lockfile", "unlockfile", "hardlock_name", "hardlink_is_mine", "hardlink_lockfile",
+    "unhardlink_lockfile", "hardlock_cleanup",
 ]
 
 import errno
@@ -28,15 +21,9 @@ import warnings
 
 import portage
 from portage import os, _encodings, _unicode_decode
-from portage.exception import (
-    DirectoryNotFound,
-    FileNotFound,
-    InvalidData,
-    TryAgain,
-    OperationNotPermitted,
-    PermissionDenied,
-    ReadOnlyFileSystem,
-)
+from portage.exception import (DirectoryNotFound, FileNotFound, InvalidData, TryAgain, OperationNotPermitted,
+                               PermissionDenied, ReadOnlyFileSystem,
+                               )
 from portage.util import writemsg
 from portage.util.install_mask import _raise_exc
 from portage.localization import _
@@ -115,9 +102,7 @@ def _test_lock_fn(lock_fn: typing.Callable[[str, int, int], typing.Callable[[], 
                     # Since file descriptors are not inherited unless the fork start
                     # method is used, the subprocess should only try to close an
                     # inherited file descriptor for the fork start method.
-                    fd if multiprocessing.get_start_method() == "fork" else None,
-                    lock_fn,
-                    lock_path,
+                    fd if multiprocessing.get_start_method() == "fork" else None, lock_fn, lock_path,
                 ),
             )
             proc.start()
@@ -176,13 +161,12 @@ def lockfile(mypath, wantnewlockfile=0, unlinkfile=0, waiting_msg=None, flags=0)
     """
     lock = None
     while lock is None:
-        lock = _lockfile_iteration(
-            mypath,
-            wantnewlockfile=wantnewlockfile,
-            unlinkfile=unlinkfile,
-            waiting_msg=waiting_msg,
-            flags=flags,
-        )
+        lock = _lockfile_iteration(mypath,
+                                   wantnewlockfile=wantnewlockfile,
+                                   unlinkfile=unlinkfile,
+                                   waiting_msg=waiting_msg,
+                                   flags=flags,
+                                   )
         if lock is None:
             writemsg(_("lockfile removed by previous lock holder, retrying\n"), 1)
     return lock
@@ -273,18 +257,11 @@ def _lockfile_iteration(mypath, wantnewlockfile=False, unlinkfile=False, waiting
                     if e.errno in (errno.ENOENT, errno.ESTALE):
                         os.close(myfd)
                         return None
-                    writemsg(
-                        "%s: chown('%s', -1, %d)\n" % (e, lockfilename, portage_gid),
-                        noiselevel=-1,
-                    )
-                    writemsg(
-                        _("Cannot chown a lockfile: '%s'\n") % lockfilename,
-                        noiselevel=-1,
-                    )
-                    writemsg(
-                        _("Group IDs of current user: %s\n") % " ".join(str(n) for n in os.getgroups()),
-                        noiselevel=-1,
-                    )
+                    writemsg("%s: chown('%s', -1, %d)\n" % (e, lockfilename, portage_gid), noiselevel=-1, )
+                    writemsg(_("Cannot chown a lockfile: '%s'\n") % lockfilename, noiselevel=-1, )
+                    writemsg(_("Group IDs of current user: %s\n") % " ".join(str(n) for n in os.getgroups()),
+                             noiselevel=-1,
+                             )
         finally:
             os.umask(old_mask)
 
@@ -558,10 +535,8 @@ def unlockfile(mytuple):
 
 def hardlock_name(path):
     base, tail = os.path.split(path)
-    return os.path.join(
-        base,
-        ".%s.hardlock-%s-%s" % (tail, portage._decode_argv([os.uname()[1]])[0], portage.getpid()),
-    )
+    return os.path.join(base, ".%s.hardlock-%s-%s" % (tail, portage._decode_argv([os.uname()[1]])[0], portage.getpid()),
+                        )
 
 
 def hardlink_is_mine(link, lock):
@@ -642,18 +617,11 @@ def hardlink_lockfile(lockfilename, max_wait=DeprecationWarning, waiting_msg=Non
                         os.fchown(myfd, -1, portage_gid)
             except OSError as e:
                 if e.errno not in (errno.ENOENT, errno.ESTALE):
-                    writemsg(
-                        "%s: fchown('%s', -1, %d)\n" % (e, lockfilename, portage_gid),
-                        noiselevel=-1,
-                    )
-                    writemsg(
-                        _("Cannot chown a lockfile: '%s'\n") % lockfilename,
-                        noiselevel=-1,
-                    )
-                    writemsg(
-                        _("Group IDs of current user: %s\n") % " ".join(str(n) for n in os.getgroups()),
-                        noiselevel=-1,
-                    )
+                    writemsg("%s: fchown('%s', -1, %d)\n" % (e, lockfilename, portage_gid), noiselevel=-1, )
+                    writemsg(_("Cannot chown a lockfile: '%s'\n") % lockfilename, noiselevel=-1, )
+                    writemsg(_("Group IDs of current user: %s\n") % " ".join(str(n) for n in os.getgroups()),
+                             noiselevel=-1,
+                             )
                 else:
                     # another process has removed the file, so we'll have
                     # to create it again

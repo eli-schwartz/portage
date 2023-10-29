@@ -1,10 +1,7 @@
 # Copyright 2018-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = (
-    "RetryError",
-    "retry",
-)
+__all__ = ("RetryError", "retry", )
 
 import functools
 
@@ -19,14 +16,7 @@ class RetryError(PortageException):
         PortageException.__init__(self, "retry error")
 
 
-def retry(
-    try_max=None,
-    try_timeout=None,
-    overall_timeout=None,
-    delay_func=None,
-    reraise=False,
-    loop=None,
-):
+def retry(try_max=None, try_timeout=None, overall_timeout=None, delay_func=None, reraise=False, loop=None, ):
     """
     Create and return a retry decorator. The decorator is intended to
     operate only on a coroutine function.
@@ -59,29 +49,10 @@ def _retry_wrapper(_loop, try_max, try_timeout, overall_timeout, delay_func, rer
     """
     Create and return a decorated function.
     """
-    return functools.partial(
-        _retry,
-        loop or _loop,
-        try_max,
-        try_timeout,
-        overall_timeout,
-        delay_func,
-        reraise,
-        func,
-    )
+    return functools.partial(_retry, loop or _loop, try_max, try_timeout, overall_timeout, delay_func, reraise, func, )
 
 
-def _retry(
-    loop,
-    try_max,
-    try_timeout,
-    overall_timeout,
-    delay_func,
-    reraise,
-    func,
-    *args,
-    **kwargs,
-):
+def _retry(loop, try_max, try_timeout, overall_timeout, delay_func, reraise, func, *args, **kwargs, ):
     """
     Retry coroutine, used to implement retry decorator.
 
@@ -90,32 +61,15 @@ def _retry(
     """
     loop = asyncio._wrap_loop(loop)
     future = loop.create_future()
-    _Retry(
-        future,
-        loop,
-        try_max,
-        try_timeout,
-        overall_timeout,
-        delay_func,
-        reraise,
-        functools.partial(func, *args, **kwargs),
-    )
+    _Retry(future, loop, try_max, try_timeout, overall_timeout, delay_func, reraise,
+           functools.partial(func, *args, **kwargs),
+           )
     return future
 
 
 class _Retry:
 
-    def __init__(
-        self,
-        future,
-        loop,
-        try_max,
-        try_timeout,
-        overall_timeout,
-        delay_func,
-        reraise,
-        func,
-    ):
+    def __init__(self, future, loop, try_max, try_timeout, overall_timeout, delay_func, reraise, func, ):
         self._future = future
         self._loop = loop
         self._try_max = try_max

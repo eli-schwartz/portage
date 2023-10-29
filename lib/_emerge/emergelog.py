@@ -33,12 +33,11 @@ def emergelog(xterm_titles, mystr, short_msg=None):
     try:
         file_path = os.path.join(_emerge_log_dir, "emerge.log")
         existing_log = os.path.exists(file_path)
-        mylogfile = open(
-            _unicode_encode(file_path, encoding=_encodings["fs"], errors="strict"),
-            mode="a",
-            encoding=_encodings["content"],
-            errors="backslashreplace",
-        )
+        mylogfile = open(_unicode_encode(file_path, encoding=_encodings["fs"], errors="strict"),
+                         mode="a",
+                         encoding=_encodings["content"],
+                         errors="backslashreplace",
+                         )
         if not existing_log:
             portage.util.apply_secpass_permissions(file_path,
                                                    uid=portage.portage_uid,

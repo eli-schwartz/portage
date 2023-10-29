@@ -6,10 +6,7 @@ from unittest.mock import patch
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -21,10 +18,7 @@ class SonameSkipUpdateTestCase(TestCase):
         disable prune_rebuilds backtracking, which shows that
         _eliminate_rebuilds works for the purposes of bug 915494.
         """
-        with patch(
-                "_emerge.depgraph._dynamic_depgraph_config._ENABLE_PRUNE_REBUILDS",
-                new=False,
-        ):
+        with patch("_emerge.depgraph._dynamic_depgraph_config._ENABLE_PRUNE_REBUILDS", new=False, ):
             self.testSonameSkipUpdate(backtrack=2)
 
     def testSonameSkipUpdate(self, backtrack=3):
@@ -69,9 +63,7 @@ class SonameSkipUpdateTestCase(TestCase):
                     "--backtrack": backtrack,
                 },
                 success=True,
-                mergelist=[
-                    "[binary]dev-libs/B-2",
-                ],
+                mergelist=["[binary]dev-libs/B-2", ],
             ),
             # Test that upgrade to B-2 is skipped with --usepkgonly
             # because it will break an soname dependency that
@@ -94,15 +86,14 @@ class SonameSkipUpdateTestCase(TestCase):
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    debug=False,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(debug=False,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)

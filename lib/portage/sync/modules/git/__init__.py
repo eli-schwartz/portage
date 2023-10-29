@@ -28,11 +28,10 @@ class CheckGitConfig(CheckSyncConfig):
             try:
                 d = int(d)
             except ValueError:
-                writemsg_level(
-                    "!!! %s\n" % _("%s value is not a number: '%s'") % (attr.replace("_", "-"), d),
-                    level=self.logger.ERROR,
-                    noiselevel=-1,
-                )
+                writemsg_level("!!! %s\n" % _("%s value is not a number: '%s'") % (attr.replace("_", "-"), d),
+                               level=self.logger.ERROR,
+                               noiselevel=-1,
+                               )
             else:
                 setattr(self.repo, attr, d)
 
@@ -40,11 +39,11 @@ class CheckGitConfig(CheckSyncConfig):
         v = self.repo.module_specific_options.get("sync-git-verify-commit-signature", "false").lower()
 
         if v not in ("yes", "no", "true", "false"):
-            writemsg_level(
-                "!!! %s\n" % _("sync-git-verify-commit-signature not one of: %s") % ("{yes, no, true, false}"),
-                level=self.logger.ERROR,
-                noiselevel=-1,
-            )
+            writemsg_level("!!! %s\n" % _("sync-git-verify-commit-signature not one of: %s") %
+                           ("{yes, no, true, false}"),
+                           level=self.logger.ERROR,
+                           noiselevel=-1,
+                           )
 
 
 module_spec = {
@@ -69,14 +68,10 @@ module_spec = {
             },
             "validate_config":
             CheckGitConfig,
-            "module_specific_options": (
-                "sync-git-clone-env",
-                "sync-git-clone-extra-opts",
-                "sync-git-env",
-                "sync-git-pull-env",
-                "sync-git-pull-extra-opts",
-                "sync-git-verify-commit-signature",
-            ),
+            "module_specific_options":
+            ("sync-git-clone-env", "sync-git-clone-extra-opts", "sync-git-env", "sync-git-pull-env",
+             "sync-git-pull-extra-opts", "sync-git-verify-commit-signature",
+             ),
         }
     },
 }

@@ -77,16 +77,15 @@ def cacheddir(my_original_path, ignorecvs, ignorelist, EmptyOnError, followSymli
     return ret_list, ret_ftype
 
 
-def listdir(
-    mypath,
-    recursive=False,
-    filesonly=False,
-    ignorecvs=False,
-    ignorelist=[],
-    followSymlinks=True,
-    EmptyOnError=False,
-    dirsonly=False,
-):
+def listdir(mypath,
+            recursive=False,
+            filesonly=False,
+            ignorecvs=False,
+            ignorelist=[],
+            followSymlinks=True,
+            EmptyOnError=False,
+            dirsonly=False,
+            ):
     """
     Portage-specific implementation of os.listdir
 
@@ -129,13 +128,9 @@ def listdir(
             fpaths.append(file_path)
             ftype.append(file_type)
             if file_type == 1:
-                subdir_list, subdir_types = cacheddir(
-                    os.path.join(mypath, file_path),
-                    ignorecvs,
-                    ignorelist,
-                    EmptyOnError,
-                    followSymlinks,
-                )
+                subdir_list, subdir_types = cacheddir(os.path.join(mypath, file_path), ignorecvs, ignorelist,
+                                                      EmptyOnError, followSymlinks,
+                                                      )
                 stack.extend((os.path.join(file_path, x), x_type) for x, x_type in zip(subdir_list, subdir_types))
 
     if filesonly:

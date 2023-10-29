@@ -91,14 +91,13 @@ class features_set:
                 unknown_features = unknown_features.difference(self._settings._unknown_features)
                 if unknown_features:
                     self._settings._unknown_features.update(unknown_features)
-                    writemsg_level(
-                        colorize(
-                            "BAD",
-                            _("FEATURES variable contains unknown value(s): %s") % ", ".join(sorted(unknown_features)),
-                        ) + "\n",
-                        level=logging.WARNING,
-                        noiselevel=-1,
-                    )
+                    writemsg_level(colorize(
+                        "BAD",
+                        _("FEATURES variable contains unknown value(s): %s") % ", ".join(sorted(unknown_features)),
+                    ) + "\n",
+                                   level=logging.WARNING,
+                                   noiselevel=-1,
+                                   )
 
         if "unknown-features-filter" in self._features:
             unknown_features = self._features.difference(SUPPORTED_FEATURES)

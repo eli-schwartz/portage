@@ -27,24 +27,10 @@ default_fetchcommand = 'wget -c -v -t 1 --passive-ftp --no-check-certificate --t
 
 
 class FetchTask(CompositeTask):
-    __slots__ = (
-        "distfile",
-        "digests",
-        "config",
-        "cpv",
-        "restrict",
-        "uri_tuple",
-        "_current_mirror",
-        "_current_stat",
-        "_fetch_tmp_dir_info",
-        "_fetch_tmp_file",
-        "_fs_mirror_stack",
-        "_mirror_stack",
-        "_previously_added",
-        "_primaryuri_stack",
-        "_log_path",
-        "_tried_uris",
-    )
+    __slots__ = ("distfile", "digests", "config", "cpv", "restrict", "uri_tuple", "_current_mirror", "_current_stat",
+                 "_fetch_tmp_dir_info", "_fetch_tmp_file", "_fs_mirror_stack", "_mirror_stack", "_previously_added",
+                 "_primaryuri_stack", "_log_path", "_tried_uris",
+                 )
 
     def _start(self):
         if (self.config.options.fetch_log_dir is not None and not self.config.options.dry_run):
@@ -110,13 +96,11 @@ class FetchTask(CompositeTask):
         if size_ok:
             if self.config.options.verify_existing_digest:
                 self._start_task(
-                    FileDigester(
-                        file_path=distfile_path,
-                        hash_names=(self._select_hash(), ),
-                        background=self.background,
-                        logfile=self._log_path,
-                    ),
-                    self._distfiles_digester_exit,
+                    FileDigester(file_path=distfile_path,
+                                 hash_names=(self._select_hash(), ),
+                                 background=self.background,
+                                 logfile=self._log_path,
+                                 ), self._distfiles_digester_exit,
                 )
                 return
 
@@ -280,13 +264,11 @@ class FetchTask(CompositeTask):
         if size_ok:
             self._current_mirror = mirror_info
             self._start_task(
-                FileDigester(
-                    file_path=file_path,
-                    hash_names=(self._select_hash(), ),
-                    background=self.background,
-                    logfile=self._log_path,
-                ),
-                self._fs_mirror_digester_exit,
+                FileDigester(file_path=file_path,
+                             hash_names=(self._select_hash(), ),
+                             background=self.background,
+                             logfile=self._log_path,
+                             ), self._fs_mirror_digester_exit,
             )
         else:
             self._try_next_mirror()
@@ -305,13 +287,10 @@ class FetchTask(CompositeTask):
         else:
             bad_digest = self._find_bad_digest(digester.digests)
             if bad_digest is not None:
-                msg = "{} {} has bad {} digest: expected {}, got {}".format(
-                    self.distfile,
-                    current_mirror.name,
-                    bad_digest,
-                    self.digests[bad_digest],
-                    digester.digests[bad_digest],
-                )
+                msg = "{} {} has bad {} digest: expected {}, got {}".format(self.distfile, current_mirror.name,
+                                                                            bad_digest, self.digests[bad_digest],
+                                                                            digester.digests[bad_digest],
+                                                                            )
                 self.scheduler.output(msg + "\n", background=True, log_path=self._log_path)
                 logger.error(msg)
             elif self.config.options.dry_run:
@@ -327,10 +306,7 @@ class FetchTask(CompositeTask):
                 return
             else:
                 src = os.path.join(current_mirror.location, self.distfile)
-                dest = os.path.join(
-                    self.config.options.distfiles,
-                    self.config.layouts[0].get_path(self.distfile),
-                )
+                dest = os.path.join(self.config.options.distfiles, self.config.layouts[0].get_path(self.distfile), )
                 if self._hardlink_atomic(src, dest, f"{current_mirror.name} to distfiles"):
                     logger.debug("hardlink '%s' from %s to distfiles" % (self.distfile, current_mirror.name))
                     self._success()
@@ -339,13 +315,11 @@ class FetchTask(CompositeTask):
                     return
 
                 self._start_task(
-                    FileCopier(
-                        src_path=src,
-                        dest_path=dest,
-                        background=(self.background and self._log_path is not None),
-                        logfile=self._log_path,
-                    ),
-                    self._fs_mirror_copier_exit,
+                    FileCopier(src_path=src,
+                               dest_path=dest,
+                               background=(self.background and self._log_path is not None),
+                               logfile=self._log_path,
+                               ), self._fs_mirror_copier_exit,
                 )
                 return
 
@@ -359,11 +333,9 @@ class FetchTask(CompositeTask):
 
         current_mirror = self._current_mirror
         if copier.returncode != os.EX_OK:
-            msg = "{} {} copy failed unexpectedly: {}".format(
-                self.distfile,
-                current_mirror.name,
-                copier.future.exception(),
-            )
+            msg = "{} {} copy failed unexpectedly: {}".format(self.distfile, current_mirror.name,
+                                                              copier.future.exception(),
+                                                              )
             self.scheduler.output(msg + "\n", background=True, log_path=self._log_path)
             logger.error(msg)
         else:
@@ -372,16 +344,9 @@ class FetchTask(CompositeTask):
             # Apply the timestamp from the source file, but
             # just rely on umask for permissions.
             try:
-                os.utime(
-                    copier.dest_path,
-                    ns=(self._current_stat.st_mtime_ns, self._current_stat.st_mtime_ns),
-                )
+                os.utime(copier.dest_path, ns=(self._current_stat.st_mtime_ns, self._current_stat.st_mtime_ns), )
             except OSError as e:
-                msg = "{} {} utime failed unexpectedly: {}".format(
-                    self.distfile,
-                    current_mirror.name,
-                    e,
-                )
+                msg = "{} {} utime failed unexpectedly: {}".format(self.distfile, current_mirror.name, e, )
                 self.scheduler.output(msg + "\n", background=True, log_path=self._log_path)
                 logger.error(msg)
 
@@ -425,19 +390,20 @@ class FetchTask(CompositeTask):
         args = [_unicode_encode(x, encoding=_encodings["fs"], errors="strict") for x in args]
 
         null_fd = os.open(os.devnull, os.O_RDONLY)
-        fetcher = PopenProcess(
-            background=self.background,
-            proc=subprocess.Popen(args, stdin=null_fd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT),
-            scheduler=self.scheduler,
-        )
+        fetcher = PopenProcess(background=self.background,
+                               proc=subprocess.Popen(args,
+                                                     stdin=null_fd,
+                                                     stdout=subprocess.PIPE,
+                                                     stderr=subprocess.STDOUT),
+                               scheduler=self.scheduler,
+                               )
         os.close(null_fd)
 
-        fetcher.pipe_reader = PipeLogger(
-            background=self.background,
-            input_fd=fetcher.proc.stdout,
-            log_file_path=self._log_path,
-            scheduler=self.scheduler,
-        )
+        fetcher.pipe_reader = PipeLogger(background=self.background,
+                                         input_fd=fetcher.proc.stdout,
+                                         log_file_path=self._log_path,
+                                         scheduler=self.scheduler,
+                                         )
 
         self._start_task(fetcher, self._fetcher_exit)
 
@@ -449,13 +415,11 @@ class FetchTask(CompositeTask):
 
         if os.path.exists(self._fetch_tmp_file):
             self._start_task(
-                FileDigester(
-                    file_path=self._fetch_tmp_file,
-                    hash_names=(self._select_hash(), ),
-                    background=self.background,
-                    logfile=self._log_path,
-                ),
-                self._fetch_digester_exit,
+                FileDigester(file_path=self._fetch_tmp_file,
+                             hash_names=(self._select_hash(), ),
+                             background=self.background,
+                             logfile=self._log_path,
+                             ), self._fetch_digester_exit,
             )
         else:
             self._try_next_mirror()
@@ -467,43 +431,33 @@ class FetchTask(CompositeTask):
             return
 
         if digester.returncode != os.EX_OK:
-            msg = "{} {} digester failed unexpectedly".format(
-                self.distfile,
-                self._fetch_tmp_dir_info,
-            )
+            msg = "{} {} digester failed unexpectedly".format(self.distfile, self._fetch_tmp_dir_info, )
             self.scheduler.output(msg + "\n", background=True, log_path=self._log_path)
             logger.error(msg)
         else:
             bad_digest = self._find_bad_digest(digester.digests)
             if bad_digest is not None:
-                msg = "{} has bad {} digest: expected {}, got {}".format(
-                    self.distfile,
-                    bad_digest,
-                    self.digests[bad_digest],
-                    digester.digests[bad_digest],
-                )
+                msg = "{} has bad {} digest: expected {}, got {}".format(self.distfile, bad_digest,
+                                                                         self.digests[bad_digest],
+                                                                         digester.digests[bad_digest],
+                                                                         )
                 self.scheduler.output(msg + "\n", background=True, log_path=self._log_path)
                 try:
                     os.unlink(self._fetch_tmp_file)
                 except OSError:
                     pass
             else:
-                dest = os.path.join(
-                    self.config.options.distfiles,
-                    self.config.layouts[0].get_path(self.distfile),
-                )
+                dest = os.path.join(self.config.options.distfiles, self.config.layouts[0].get_path(self.distfile), )
                 ensure_dirs(os.path.dirname(dest))
                 try:
                     os.rename(self._fetch_tmp_file, dest)
                 except OSError:
                     self._start_task(
-                        FileCopier(
-                            src_path=self._fetch_tmp_file,
-                            dest_path=dest,
-                            background=(self.background and self._log_path is not None),
-                            logfile=self._log_path,
-                        ),
-                        self._fetch_copier_exit,
+                        FileCopier(src_path=self._fetch_tmp_file,
+                                   dest_path=dest,
+                                   background=(self.background and self._log_path is not None),
+                                   logfile=self._log_path,
+                                   ), self._fetch_copier_exit,
                     )
                     return
                 else:
@@ -528,11 +482,9 @@ class FetchTask(CompositeTask):
             self._make_layout_links()
         else:
             # out of space?
-            msg = "{} {} copy failed unexpectedly: {}".format(
-                self.distfile,
-                self._fetch_tmp_dir_info,
-                copier.future.exception(),
-            )
+            msg = "{} {} copy failed unexpectedly: {}".format(self.distfile, self._fetch_tmp_dir_info,
+                                                              copier.future.exception(),
+                                                              )
             self.scheduler.output(msg + "\n", background=True, log_path=self._log_path)
             logger.error(msg)
             self.config.log_failure(f"{self.cpv}\t{self.distfile}\t{msg}")
@@ -545,22 +497,17 @@ class FetchTask(CompositeTask):
         success = True
         for layout in self.config.layouts[1:]:
             if dist_path is None:
-                dist_path = os.path.join(
-                    self.config.options.distfiles,
-                    self.config.layouts[0].get_path(self.distfile),
-                )
+                dist_path = os.path.join(self.config.options.distfiles, self.config.layouts[0].get_path(self.distfile),
+                                         )
             link_path = os.path.join(self.config.options.distfiles, layout.get_path(self.distfile))
             ensure_dirs(os.path.dirname(link_path))
             src_path = dist_path
             if self.config.options.symlinks:
                 src_path = os.path.relpath(dist_path, os.path.dirname(link_path))
 
-            if not self._hardlink_atomic(
-                    src_path,
-                    link_path,
-                    f"{link_path} -> {src_path}",
-                    self.config.options.symlinks,
-            ):
+            if not self._hardlink_atomic(src_path, link_path, f"{link_path} -> {src_path}",
+                                         self.config.options.symlinks,
+                                         ):
                 success = False
                 break
 

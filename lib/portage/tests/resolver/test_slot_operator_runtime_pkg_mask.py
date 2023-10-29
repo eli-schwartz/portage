@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotOperatorRuntimePkgMaskTestCase(TestCase):
@@ -91,19 +88,17 @@ class SlotOperatorRuntimePkgMaskTestCase(TestCase):
 
         world = ("app-misc/meta-pkg", )
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["=app-misc/meta-pkg-2"],
-            options={
-                "--backtrack": 14,
-            },
-            success=True,
-            ambiguous_merge_order=True,
-            mergelist=[
-                "dev-libs/foo-2",
-                ("app-misc/D-1", "app-misc/C-1", "app-misc/B-2"),
-                "app-misc/meta-pkg-2",
-            ],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["=app-misc/meta-pkg-2"],
+                                                 options={
+                                                     "--backtrack": 14,
+                                                 },
+                                                 success=True,
+                                                 ambiguous_merge_order=True,
+                                                 mergelist=[
+                                                     "dev-libs/foo-2", ("app-misc/D-1", "app-misc/C-1", "app-misc/B-2"),
+                                                     "app-misc/meta-pkg-2",
+                                                 ],
+                                                 ), )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
         try:

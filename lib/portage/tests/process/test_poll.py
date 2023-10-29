@@ -51,13 +51,9 @@ class PipeReaderTestCase(TestCase):
             tempdir = tempfile.mkdtemp()
             fifo_path = os.path.join(tempdir, "fifo")
             os.mkfifo(fifo_path)
-            return (
-                (
-                    os.open(fifo_path, os.O_NONBLOCK | os.O_RDONLY),
-                    os.open(fifo_path, os.O_NONBLOCK | os.O_WRONLY),
-                ),
-                functools.partial(shutil.rmtree, tempdir),
-            )
+            return ((os.open(fifo_path, os.O_NONBLOCK | os.O_RDONLY), os.open(fifo_path, os.O_NONBLOCK | os.O_WRONLY),
+                     ), functools.partial(shutil.rmtree, tempdir),
+                    )
 
         self._do_test(make_pipes)
 
@@ -73,21 +69,16 @@ class PipeReaderTestCase(TestCase):
         master_file = os.fdopen(master_fd, "rb", 0)
         scheduler = global_event_loop()
 
-        consumer = PipeReader(
-            input_files={"producer": master_file},
-            _use_array=self._use_array,
-            scheduler=scheduler,
-        )
+        consumer = PipeReader(input_files={"producer": master_file}, _use_array=self._use_array, scheduler=scheduler, )
         consumer.start()
 
         producer = scheduler.run_until_complete(
-            asyncio.create_subprocess_exec(
-                "bash",
-                "-c",
-                self._echo_cmd % test_string,
-                stdout=slave_fd,
-                loop=scheduler,
-            ))
+            asyncio.create_subprocess_exec("bash",
+                                           "-c",
+                                           self._echo_cmd % test_string,
+                                           stdout=slave_fd,
+                                           loop=scheduler,
+                                           ))
 
         os.close(slave_fd)
         scheduler.run_until_complete(producer.wait())
@@ -104,11 +95,7 @@ class PipeReaderTestCase(TestCase):
             (read_end, write_end), cleanup = make_pipes()
             try:
                 output = self._testPipeReader(read_end, write_end, test_string)
-                self.assertEqual(
-                    test_string,
-                    output,
-                    f"x = {x}, len(output) = {len(output)}",
-                )
+                self.assertEqual(test_string, output, f"x = {x}, len(output) = {len(output)}", )
             finally:
                 if cleanup is not None:
                     cleanup()

@@ -36,12 +36,9 @@ import portage
 portage._internal_caller = True
 from portage import os, shutil
 from portage import _encodings, _unicode_decode
-from portage.dispatch_conf import (
-    diffstatusoutput,
-    diff_mixed_wrapper,
-    perform_conf_update_hooks,
-    perform_conf_update_session_hooks,
-)
+from portage.dispatch_conf import (diffstatusoutput, diff_mixed_wrapper, perform_conf_update_hooks,
+                                   perform_conf_update_session_hooks,
+                                   )
 from portage.process import find_binary, spawn
 from portage.util import writemsg, writemsg_stdout
 
@@ -156,23 +153,12 @@ class dispatch:
                 find_opts += ["-iname"]
             else:
                 find_opts += ["-name"]
-            find_opts += [
-                f"._cfg????_{basename}",
-                "!",
-                "-name",
-                ".*~",
-                "!",
-                "-iname",
-                ".*.bak",
-                "-print",
-            ]
+            find_opts += [f"._cfg????_{basename}", "!", "-name", ".*~", "!", "-iname", ".*.bak", "-print", ]
 
             try:
                 # Find existing configs
-                path_list = _unicode_decode(
-                    subprocess.check_output(["find", path] + find_opts),
-                    errors="strict",
-                ).splitlines()
+                path_list = _unicode_decode(subprocess.check_output(["find", path] + find_opts), errors="strict",
+                                            ).splitlines()
             except subprocess.CalledProcessError:
                 pass
             else:
@@ -181,22 +167,21 @@ class dispatch:
         if self.options["use-rcs"] == "yes":
             for rcs_util in ("rcs", "ci", "co", "rcsmerge"):
                 if not find_binary(rcs_util):
-                    print(
-                        'dispatch-conf: Error finding all RCS utils and " + \
+                    print('dispatch-conf: Error finding all RCS utils and " + \
                         "use-rcs=yes in config; fatal',
-                        file=sys.stderr,
-                    )
+                          file=sys.stderr,
+                          )
                     return False
 
         # config file freezing support
         frozen_files = set(self.options.get("frozen-files", "").split())
         auto_zapped = []
-        protect_obj = portage.util.ConfigProtect(
-            config_root,
-            config_paths,
-            portage.util.shlex_split(portage.settings.get("CONFIG_PROTECT_MASK", "")),
-            case_insensitive=("case-insensitive-fs" in portage.settings.features),
-        )
+        protect_obj = portage.util.ConfigProtect(config_root,
+                                                 config_paths,
+                                                 portage.util.shlex_split(
+                                                     portage.settings.get("CONFIG_PROTECT_MASK", "")),
+                                                 case_insensitive=("case-insensitive-fs" in portage.settings.features),
+                                                 )
 
         #
         # Remove new configs identical to current
@@ -323,10 +308,7 @@ class dispatch:
                     diff_pager(conf["current"], newconf)
 
                 print()
-                writemsg_stdout(
-                    f">> ({count} of {len(confs)}) -- {conf['current']}\n",
-                    noiselevel=-1,
-                )
+                writemsg_stdout(f">> ({count} of {len(confs)}) -- {conf['current']}\n", noiselevel=-1, )
                 print(
                     ">> q quit, h help, n next, e edit-new, z zap-new, u use-new\n   m merge, t toggle-merge, l look-merge: ",
                     end=" ",
@@ -421,20 +403,14 @@ class dispatch:
             if e.errno == errno.ENOTSUP:
                 # Filesystem does not support xattrs
                 return
-            writemsg(
-                f"dispatch-conf: Failed getting SELinux label on {curconf}; ignoring...\n",
-                noiselevel=-1,
-            )
+            writemsg(f"dispatch-conf: Failed getting SELinux label on {curconf}; ignoring...\n", noiselevel=-1, )
             return
 
         if label:
             try:
                 os.setxattr(newconf, "security.selinux", label)
             except OSError:
-                writemsg(
-                    f"dispatch-conf: Failed setting SELinux label on {newconf}; ignoring...\n",
-                    noiselevel=-1,
-                )
+                writemsg(f"dispatch-conf: Failed setting SELinux label on {newconf}; ignoring...\n", noiselevel=-1, )
 
     def replace(self, newconf, curconf):
         """Replace current config with the new/merged version.  Also logs
@@ -449,10 +425,7 @@ class dispatch:
         try:
             os.rename(newconf, curconf)
         except (OSError, os.error) as why:
-            writemsg(
-                f"dispatch-conf: Error renaming {newconf} to {curconf}: {str(why)}; fatal\n",
-                noiselevel=-1,
-            )
+            writemsg(f"dispatch-conf: Error renaming {newconf} to {curconf}: {str(why)}; fatal\n", noiselevel=-1, )
             return
 
         perform_conf_update_hooks("post-update", curconf)
@@ -482,11 +455,7 @@ class dispatch:
             nconf = _unicode_decode(nconf, errors="strict").rstrip()
             conf = re.sub(r"\._cfg\d+_", "", nconf)
             dirname = os.path.dirname(nconf)
-            conf_map = {
-                "current": conf,
-                "dir": dirname,
-                "new": nconf,
-            }
+            conf_map = {"current": conf, "dir": dirname, "new": nconf, }
 
             if conf in h:
                 mrgconf = re.sub(r"\._cfg", "._mrg", h[conf]["new"])
@@ -555,15 +524,14 @@ def spawn_shell(cmd):
     if shell:
         sys.__stdout__.flush()
         sys.__stderr__.flush()
-        spawn(
-            [shell, "-c", cmd],
-            env=os.environ,
-            fd_pipes={
-                0: portage._get_stdin().fileno(),
-                1: sys.__stdout__.fileno(),
-                2: sys.__stderr__.fileno(),
-            },
-        )
+        spawn([shell, "-c", cmd],
+              env=os.environ,
+              fd_pipes={
+                  0: portage._get_stdin().fileno(),
+                  1: sys.__stdout__.fileno(),
+                  2: sys.__stderr__.fileno(),
+              },
+              )
     else:
         os.system(cmd)
 

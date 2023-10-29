@@ -41,8 +41,4 @@ class BashSyntaxTestCase(TestCase):
                     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     output = _unicode_decode(proc.communicate()[0], encoding=_encodings["fs"])
                     status = proc.wait()
-                    self.assertEqual(
-                        os.WIFEXITED(status) and os.WEXITSTATUS(status) == os.EX_OK,
-                        True,
-                        msg=output,
-                    )
+                    self.assertEqual(os.WIFEXITED(status) and os.WEXITSTATUS(status) == os.EX_OK, True, msg=output, )

@@ -13,9 +13,7 @@ from portage.gpkg import gpkg
 class test_gpkg_large_size_case(TestCase):
 
     def test_gpkg_large_size(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('BINPKG_COMPRESS="gzip"', ),
-        })
+        playground = ResolverPlayground(user_config={"make.conf": ('BINPKG_COMPRESS="gzip"', ), })
         tmpdir = tempfile.mkdtemp()
 
         try:

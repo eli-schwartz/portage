@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -52,59 +49,50 @@ class SonameSlotConflictUpdateTestCase(TestCase):
             },
         }
 
-        world = [
-            "dev-cpp/libcmis",
-            "dev-libs/boost",
-            "app-text/podofo",
-        ]
+        world = ["dev-cpp/libcmis", "dev-libs/boost", "app-text/podofo", ]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                world,
-                all_permutations=True,
-                options={
-                    "--deep": True,
-                    "--ignore-soname-deps": "n",
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]dev-util/boost-build-1.53.0",
-                    "[binary]dev-libs/boost-1.53.0",
-                    "[binary]dev-cpp/libcmis-0.3.1",
-                ],
-            ),
-            ResolverPlaygroundTestCase(
-                world,
-                all_permutations=True,
-                options={
-                    "--deep": True,
-                    "--ignore-soname-deps": "y",
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]dev-util/boost-build-1.53.0",
-                    "[binary]dev-libs/boost-1.53.0",
-                ],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(world,
+                                                 all_permutations=True,
+                                                 options={
+                                                     "--deep": True,
+                                                     "--ignore-soname-deps": "n",
+                                                     "--update": True,
+                                                     "--usepkgonly": True,
+                                                 },
+                                                 success=True,
+                                                 mergelist=[
+                                                     "[binary]dev-util/boost-build-1.53.0",
+                                                     "[binary]dev-libs/boost-1.53.0", "[binary]dev-cpp/libcmis-0.3.1",
+                                                 ],
+                                                 ),
+                      ResolverPlaygroundTestCase(world,
+                                                 all_permutations=True,
+                                                 options={
+                                                     "--deep": True,
+                                                     "--ignore-soname-deps": "y",
+                                                     "--update": True,
+                                                     "--usepkgonly": True,
+                                                 },
+                                                 success=True,
+                                                 mergelist=[
+                                                     "[binary]dev-util/boost-build-1.53.0",
+                                                     "[binary]dev-libs/boost-1.53.0",
+                                                 ],
+                                                 ),
+                      )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:

@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class RequiredUSETestCase(TestCase):
@@ -203,45 +200,44 @@ class RequiredUSETestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(["=dev-libs/A-1"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/A-2"], success=True, mergelist=["dev-libs/A-2"]),
-            ResolverPlaygroundTestCase(["=dev-libs/A-3"], success=True, mergelist=["dev-libs/A-3"]),
-            ResolverPlaygroundTestCase(["=dev-libs/A-4"], success=True, mergelist=["dev-libs/A-4"]),
-            ResolverPlaygroundTestCase(["=dev-libs/A-5"], success=True, mergelist=["dev-libs/A-5"]),
-            ResolverPlaygroundTestCase(["=dev-libs/B-1"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/B-2"], success=True, mergelist=["dev-libs/B-2"]),
-            ResolverPlaygroundTestCase(["=dev-libs/B-3"], success=True, mergelist=["dev-libs/B-3"]),
-            ResolverPlaygroundTestCase(["=dev-libs/B-4"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/B-5"], success=True, mergelist=["dev-libs/B-5"]),
-            ResolverPlaygroundTestCase(["=dev-libs/C-1"], success=True, mergelist=["dev-libs/C-1"]),
-            ResolverPlaygroundTestCase(["=dev-libs/C-2"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/C-3"], success=True, mergelist=["dev-libs/C-3"]),
-            ResolverPlaygroundTestCase(["=dev-libs/C-4"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/C-5"], success=True, mergelist=["dev-libs/C-5"]),
-            ResolverPlaygroundTestCase(["=dev-libs/C-6"], success=True, mergelist=["dev-libs/C-6"]),
-            ResolverPlaygroundTestCase(["=dev-libs/C-7"], success=True, mergelist=["dev-libs/C-7"]),
-            ResolverPlaygroundTestCase(["=dev-libs/C-8"], success=True, mergelist=["dev-libs/C-8"]),
-            ResolverPlaygroundTestCase(["=dev-libs/C-9"], success=True, mergelist=["dev-libs/C-9"]),
-            ResolverPlaygroundTestCase(["=dev-libs/C-10"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/C-11"], success=True, mergelist=["dev-libs/C-11"]),
-            ResolverPlaygroundTestCase(["=dev-libs/C-12"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/C-13"], success=True, mergelist=["dev-libs/C-13"]),
-            ResolverPlaygroundTestCase(["=dev-libs/C-14"], success=True, mergelist=["dev-libs/C-14"]),
-            ResolverPlaygroundTestCase(["=dev-libs/D-1"], success=True, mergelist=["dev-libs/D-1"]),
-            ResolverPlaygroundTestCase(["=dev-libs/D-2"], success=True, mergelist=["dev-libs/D-2"]),
-            ResolverPlaygroundTestCase(["=dev-libs/D-3"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/D-4"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/D-5"], success=True, mergelist=["dev-libs/D-5"]),
-            ResolverPlaygroundTestCase(["=dev-libs/E-1"], success=True, mergelist=["dev-libs/E-1"]),
-            ResolverPlaygroundTestCase(["=dev-libs/E-2"], success=True, mergelist=["dev-libs/E-2"]),
-            ResolverPlaygroundTestCase(["=dev-libs/E-3"], success=True, mergelist=["dev-libs/E-3"]),
-            ResolverPlaygroundTestCase(["=dev-libs/E-4"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/E-5"], success=True, mergelist=["dev-libs/E-5"]),
-            ResolverPlaygroundTestCase(["=dev-libs/F-1"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/F-2"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/F-3"], success=True, mergelist=["dev-libs/F-3"]),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["=dev-libs/A-1"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/A-2"], success=True, mergelist=["dev-libs/A-2"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/A-3"], success=True, mergelist=["dev-libs/A-3"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/A-4"], success=True, mergelist=["dev-libs/A-4"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/A-5"], success=True, mergelist=["dev-libs/A-5"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/B-1"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/B-2"], success=True, mergelist=["dev-libs/B-2"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/B-3"], success=True, mergelist=["dev-libs/B-3"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/B-4"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/B-5"], success=True, mergelist=["dev-libs/B-5"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-1"], success=True, mergelist=["dev-libs/C-1"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-2"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-3"], success=True, mergelist=["dev-libs/C-3"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-4"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-5"], success=True, mergelist=["dev-libs/C-5"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-6"], success=True, mergelist=["dev-libs/C-6"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-7"], success=True, mergelist=["dev-libs/C-7"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-8"], success=True, mergelist=["dev-libs/C-8"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-9"], success=True, mergelist=["dev-libs/C-9"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-10"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-11"], success=True, mergelist=["dev-libs/C-11"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-12"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-13"], success=True, mergelist=["dev-libs/C-13"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/C-14"], success=True, mergelist=["dev-libs/C-14"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/D-1"], success=True, mergelist=["dev-libs/D-1"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/D-2"], success=True, mergelist=["dev-libs/D-2"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/D-3"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/D-4"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/D-5"], success=True, mergelist=["dev-libs/D-5"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/E-1"], success=True, mergelist=["dev-libs/E-1"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/E-2"], success=True, mergelist=["dev-libs/E-2"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/E-3"], success=True, mergelist=["dev-libs/E-3"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/E-4"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/E-5"], success=True, mergelist=["dev-libs/E-5"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/F-1"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/F-2"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/F-3"], success=True, mergelist=["dev-libs/F-3"]),
+                      )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:

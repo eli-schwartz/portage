@@ -6,15 +6,10 @@ __all__ = ["close_portdbapi_caches", "FetchlistDict", "portagetree", "portdbapi"
 import portage
 
 portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.checksum",
-    "portage.data:portage_gid,secpass",
-    "portage.dbapi.dep_expand:dep_expand",
-    "portage.dep:Atom,dep_getkey,match_from_list,use_reduce,_match_slot",
-    "portage.package.ebuild.doebuild:doebuild",
+    globals(), "portage.checksum", "portage.data:portage_gid,secpass", "portage.dbapi.dep_expand:dep_expand",
+    "portage.dep:Atom,dep_getkey,match_from_list,use_reduce,_match_slot", "portage.package.ebuild.doebuild:doebuild",
     "portage.package.ebuild.fetch:get_mirror_url,_download_suffix",
-    "portage.util:ensure_dirs,shlex_split,writemsg,writemsg_level",
-    "portage.util.listdir:listdir",
+    "portage.util:ensure_dirs,shlex_split,writemsg,writemsg_level", "portage.util.listdir:listdir",
     "portage.versions:best,catsplit,catpkgsplit,_pkgsplit@pkgsplit,ver_regexp,_pkg_str",
 )
 
@@ -22,15 +17,9 @@ from portage.cache import volatile
 from portage.cache.cache_errors import CacheError
 from portage.cache.mappings import Mapping
 from portage.dbapi import dbapi
-from portage.exception import (
-    PortageException,
-    PortageKeyError,
-    FileNotFound,
-    InvalidAtom,
-    InvalidData,
-    InvalidDependString,
-    InvalidPackageName,
-)
+from portage.exception import (PortageException, PortageKeyError, FileNotFound, InvalidAtom, InvalidData,
+                               InvalidDependString, InvalidPackageName,
+                               )
 from portage.localization import _
 
 from portage import eclass_cache, eapi_is_supported, _eapi_is_deprecated
@@ -221,12 +210,11 @@ class portdbapi(dbapi):
             self.settings = config(clone=settings)
 
         if _unused_param is not DeprecationWarning:
-            warnings.warn(
-                "The first parameter of the " + "portage.dbapi.porttree.portdbapi" +
-                " constructor is unused since portage-2.1.8. " + "mysettings['PORTDIR'] is used instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+            warnings.warn("The first parameter of the " + "portage.dbapi.porttree.portdbapi" +
+                          " constructor is unused since portage-2.1.8. " + "mysettings['PORTDIR'] is used instead.",
+                          DeprecationWarning,
+                          stacklevel=2,
+                          )
 
         self.repositories = self.settings.repositories
         self.treemap = self.repositories.treemap
@@ -297,13 +285,12 @@ class portdbapi(dbapi):
             for x in self.porttrees:
                 self.auxdb[x] = volatile.database(self.depcachedir, x, self._known_keys, **cache_kwargs)
                 try:
-                    self._ro_auxdb[x] = self.auxdbmodule(
-                        self.depcachedir,
-                        x,
-                        self._known_keys,
-                        readonly=True,
-                        **cache_kwargs,
-                    )
+                    self._ro_auxdb[x] = self.auxdbmodule(self.depcachedir,
+                                                         x,
+                                                         self._known_keys,
+                                                         readonly=True,
+                                                         **cache_kwargs,
+                                                         )
                 except CacheError:
                     pass
         else:
@@ -321,22 +308,8 @@ class portdbapi(dbapi):
                     self._pregen_auxdb[x] = cache
         # Selectively cache metadata in order to optimize dep matching.
         self._aux_cache_keys = {
-            "BDEPEND",
-            "DEPEND",
-            "EAPI",
-            "IDEPEND",
-            "INHERITED",
-            "IUSE",
-            "KEYWORDS",
-            "LICENSE",
-            "PDEPEND",
-            "PROPERTIES",
-            "RDEPEND",
-            "repository",
-            "RESTRICT",
-            "SLOT",
-            "DEFINED_PHASES",
-            "REQUIRED_USE",
+            "BDEPEND", "DEPEND", "EAPI", "IDEPEND", "INHERITED", "IUSE", "KEYWORDS", "LICENSE", "PDEPEND", "PROPERTIES",
+            "RDEPEND", "repository", "RESTRICT", "SLOT", "DEFINED_PHASES", "REQUIRED_USE",
         }
 
         self._aux_cache = {}
@@ -377,11 +350,9 @@ class portdbapi(dbapi):
                 pass
 
             if not cache.complete_eclass_entries:
-                warnings.warn(
-                    ("Repository '%s' used deprecated 'pms' cache format. "
-                     "Please migrate to 'md5-dict' format.") % (conf.name, ),
-                    DeprecationWarning,
-                )
+                warnings.warn(("Repository '%s' used deprecated 'pms' cache format. "
+                               "Please migrate to 'md5-dict' format.") % (conf.name, ), DeprecationWarning,
+                              )
 
         return cache
 
@@ -475,12 +446,11 @@ class portdbapi(dbapi):
         """
         return self.settings.repositories.ignored_repos
 
-    def findname2(
-        self,
-        mycpv: str,
-        mytree: Optional[str] = None,
-        myrepo: Optional[str] = None,
-    ) -> Union[tuple[None, int], tuple[str, str], tuple[str, None]]:
+    def findname2(self,
+                  mycpv: str,
+                  mytree: Optional[str] = None,
+                  myrepo: Optional[str] = None,
+                  ) -> Union[tuple[None, int], tuple[str, str], tuple[str, None]]:
         """
         Returns the location of the CPV, and what overlay it was in.
         Searches overlays first, then PORTDIR; this allows us to return the first
@@ -573,11 +543,9 @@ class portdbapi(dbapi):
             # if it doesn't exist
             ebuild_hash.mtime
         except FileNotFound:
-            writemsg(
-                _("!!! aux_get(): ebuild for "
-                  "'%s' does not exist at:\n") % (cpv, ),
-                noiselevel=-1,
-            )
+            writemsg(_("!!! aux_get(): ebuild for "
+                       "'%s' does not exist at:\n") % (cpv, ), noiselevel=-1,
+                     )
             writemsg(f"!!!            {ebuild_path}\n", noiselevel=-1)
             raise PortageKeyError(cpv)
 
@@ -622,13 +590,12 @@ class portdbapi(dbapi):
 
         return (metadata, ebuild_hash)
 
-    def aux_get(
-        self,
-        mycpv: str,
-        mylist: Sequence[str],
-        mytree: Optional[str] = None,
-        myrepo: Optional[str] = None,
-    ) -> list[str]:
+    def aux_get(self,
+                mycpv: str,
+                mylist: Sequence[str],
+                mytree: Optional[str] = None,
+                myrepo: Optional[str] = None,
+                ) -> list[str]:
         "stub code for returning auxilliary db information, such as SLOT, DEPEND, etc."
         'input: "sys-apps/foo-1.0",["SLOT","DEPEND","HOMEPAGE"]'
         'return: ["0",">=sys-libs/bar-1.0","http://www.foo.com"] or raise PortageKeyError if error'
@@ -696,54 +663,32 @@ class portdbapi(dbapi):
         myebuild, mylocation = self.findname2(mycpv, mytree)
 
         if not myebuild:
-            writemsg(
-                "!!! aux_get(): %s\n" % _("ebuild not found for '%s'") % mycpv,
-                noiselevel=1,
-            )
+            writemsg("!!! aux_get(): %s\n" % _("ebuild not found for '%s'") % mycpv, noiselevel=1, )
             future.set_exception(PortageKeyError(mycpv))
             return future
 
         mydata, ebuild_hash = self._pull_valid_cache(mycpv, myebuild, mylocation)
 
         if mydata is not None:
-            self._aux_get_return(
-                future,
-                mycpv,
-                mylist,
-                myebuild,
-                ebuild_hash,
-                mydata,
-                mylocation,
-                cache_me,
-                None,
-            )
+            self._aux_get_return(future, mycpv, mylist, myebuild, ebuild_hash, mydata, mylocation, cache_me, None, )
             return future
 
         if myebuild in self._broken_ebuilds:
             future.set_exception(PortageKeyError(mycpv))
             return future
 
-        proc = EbuildMetadataPhase(
-            cpv=mycpv,
-            ebuild_hash=ebuild_hash,
-            portdb=self,
-            repo_path=mylocation,
-            scheduler=loop,
-            settings=self.doebuild_settings,
-        )
+        proc = EbuildMetadataPhase(cpv=mycpv,
+                                   ebuild_hash=ebuild_hash,
+                                   portdb=self,
+                                   repo_path=mylocation,
+                                   scheduler=loop,
+                                   settings=self.doebuild_settings,
+                                   )
 
         proc.addExitListener(
-            functools.partial(
-                self._aux_get_return,
-                future,
-                mycpv,
-                mylist,
-                myebuild,
-                ebuild_hash,
-                mydata,
-                mylocation,
-                cache_me,
-            ))
+            functools.partial(self._aux_get_return, future, mycpv, mylist, myebuild, ebuild_hash, mydata, mylocation,
+                              cache_me,
+                              ))
         future.add_done_callback(functools.partial(self._aux_get_cancel, proc))
         proc.start()
         return future
@@ -753,18 +698,7 @@ class portdbapi(dbapi):
         if future.cancelled() and proc.returncode is None:
             proc.cancel()
 
-    def _aux_get_return(
-        self,
-        future,
-        mycpv,
-        mylist,
-        myebuild,
-        ebuild_hash,
-        mydata,
-        mylocation,
-        cache_me,
-        proc,
-    ):
+    def _aux_get_return(self, future, mycpv, mylist, myebuild, ebuild_hash, mydata, mylocation, cache_me, proc, ):
         if future.cancelled():
             return
         if proc is not None:
@@ -1062,31 +996,21 @@ class portdbapi(dbapi):
                 if pf is not None:
                     ps = pkgsplit(pf)
                     if not ps:
-                        writemsg(
-                            _("\nInvalid ebuild name: %s\n") % os.path.join(oroot, mycp, x),
-                            noiselevel=-1,
-                        )
+                        writemsg(_("\nInvalid ebuild name: %s\n") % os.path.join(oroot, mycp, x), noiselevel=-1, )
                         continue
                     if ps[0] != mysplit[1]:
-                        writemsg(
-                            _("\nInvalid ebuild name: %s\n") % os.path.join(oroot, mycp, x),
-                            noiselevel=-1,
-                        )
+                        writemsg(_("\nInvalid ebuild name: %s\n") % os.path.join(oroot, mycp, x), noiselevel=-1, )
                         continue
                     ver_match = ver_regexp.match("-".join(ps[1:]))
                     if ver_match is None or not ver_match.groups():
-                        writemsg(
-                            _("\nInvalid ebuild version: %s\n") % os.path.join(oroot, mycp, x),
-                            noiselevel=-1,
-                        )
+                        writemsg(_("\nInvalid ebuild version: %s\n") % os.path.join(oroot, mycp, x), noiselevel=-1, )
                         continue
                     mylist.append(_pkg_str(mysplit[0] + "/" + pf, db=self, repo=repo.name))
         if invalid_category and mylist:
-            writemsg(
-                _("\n!!! '%s' has a category that is not listed in "
-                  "%setc/portage/categories\n") % (mycp, self.settings["PORTAGE_CONFIGROOT"]),
-                noiselevel=-1,
-            )
+            writemsg(_("\n!!! '%s' has a category that is not listed in "
+                       "%setc/portage/categories\n") % (mycp, self.settings["PORTAGE_CONFIGROOT"]),
+                     noiselevel=-1,
+                     )
             mylist = []
         # Always sort in ascending order here since it's handy and
         # the result can be easily cached and reused. Since mylist
@@ -1101,16 +1025,9 @@ class portdbapi(dbapi):
         return mylist
 
     def freeze(self):
-        for x in (
-                "bestmatch-visible",
-                "cp-list",
-                "match-all",
-                "match-all-cpv-only",
-                "match-visible",
-                "minimum-all",
-                "minimum-all-ignore-profile",
-                "minimum-visible",
-        ):
+        for x in ("bestmatch-visible", "cp-list", "match-all", "match-all-cpv-only", "match-visible", "minimum-all",
+                  "minimum-all-ignore-profile", "minimum-visible",
+                  ):
             self.xcache[x] = {}
         self.frozen = 1
         self._better_cache = _better_cache(self.repositories)
@@ -1121,14 +1038,13 @@ class portdbapi(dbapi):
         self._better_cache = None
         self.frozen = 0
 
-    def xmatch(
-        self,
-        level: str,
-        origdep: str,
-        mydep: type[DeprecationWarning] = DeprecationWarning,
-        mykey: type[DeprecationWarning] = DeprecationWarning,
-        mylist: type[DeprecationWarning] = DeprecationWarning,
-    ) -> Union[Sequence[str], str]:
+    def xmatch(self,
+               level: str,
+               origdep: str,
+               mydep: type[DeprecationWarning] = DeprecationWarning,
+               mykey: type[DeprecationWarning] = DeprecationWarning,
+               mylist: type[DeprecationWarning] = DeprecationWarning,
+               ) -> Union[Sequence[str], str]:
         """
         Caching match function.
 
@@ -1218,14 +1134,9 @@ class portdbapi(dbapi):
             else:
                 myval = match_from_list(mydep, self.cp_list(mykey, mytree=mytree))
 
-        elif level in (
-                "bestmatch-visible",
-                "match-all",
-                "match-visible",
-                "minimum-all",
-                "minimum-all-ignore-profile",
-                "minimum-visible",
-        ):
+        elif level in ("bestmatch-visible", "match-all", "match-visible", "minimum-all", "minimum-all-ignore-profile",
+                       "minimum-visible",
+                       ):
             # Find the minimum matching visible version. This is optimized to
             # minimize the number of metadata accesses (improves performance
             # especially in cases where metadata needs to be generated).
@@ -1235,11 +1146,7 @@ class portdbapi(dbapi):
                 mylist = match_from_list(mydep, self.cp_list(mykey, mytree=mytree))
 
             ignore_profile = level in ("minimum-all-ignore-profile", )
-            visibility_filter = level not in (
-                "match-all",
-                "minimum-all",
-                "minimum-all-ignore-profile",
-            )
+            visibility_filter = level not in ("match-all", "minimum-all", "minimum-all-ignore-profile", )
             single_match = level not in ("match-all", "match-visible")
             myval = []
             aux_keys = list(self._aux_cache_keys)
@@ -1251,10 +1158,8 @@ class portdbapi(dbapi):
             for cpv in iterfunc(mylist):
                 try:
                     metadata = dict(
-                        zip(
-                            aux_keys,
-                            (await self.async_aux_get(cpv, aux_keys, myrepo=cpv.repo, loop=loop)),
-                        ))
+                        zip(aux_keys, (await self.async_aux_get(cpv, aux_keys, myrepo=cpv.repo, loop=loop)),
+                            ))
                 except KeyError:
                     # ebuild not in this repo, or masked by corruption
                     continue
@@ -1300,23 +1205,21 @@ class portdbapi(dbapi):
         return self.xmatch("match-visible", mydep)
 
     def gvisible(self, mylist):
-        warnings.warn(
-            "The 'gvisible' method of "
-            "portage.dbapi.porttree.portdbapi "
-            "is deprecated",
-            DeprecationWarning,
-            stacklevel=2,
-        )
+        warnings.warn("The 'gvisible' method of "
+                      "portage.dbapi.porttree.portdbapi "
+                      "is deprecated",
+                      DeprecationWarning,
+                      stacklevel=2,
+                      )
         return list(self._iter_visible(iter(mylist)))
 
     def visible(self, cpv_iter):
-        warnings.warn(
-            "The 'visible' method of "
-            "portage.dbapi.porttree.portdbapi "
-            "is deprecated",
-            DeprecationWarning,
-            stacklevel=2,
-        )
+        warnings.warn("The 'visible' method of "
+                      "portage.dbapi.porttree.portdbapi "
+                      "is deprecated",
+                      DeprecationWarning,
+                      stacklevel=2,
+                      )
         if cpv_iter is None:
             return []
         return list(self._iter_visible(iter(cpv_iter)))
@@ -1345,10 +1248,7 @@ class portdbapi(dbapi):
                 except KeyError:
                     continue
                 except PortageException as e:
-                    writemsg(
-                        f"!!! Error: aux_get('{mycpv}', {aux_keys})\n",
-                        noiselevel=-1,
-                    )
+                    writemsg(f"!!! Error: aux_get('{mycpv}', {aux_keys})\n", noiselevel=-1, )
                     writemsg(f"!!! {e}\n", noiselevel=-1)
                     del e
                     continue
@@ -1414,12 +1314,11 @@ class portagetree:
         self.settings = settings
 
         if root is not DeprecationWarning:
-            warnings.warn(
-                "The root parameter of the " + "portage.dbapi.porttree.portagetree" +
-                " constructor is now unused. Use " + "settings['ROOT'] instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+            warnings.warn("The root parameter of the " + "portage.dbapi.porttree.portagetree" +
+                          " constructor is now unused. Use " + "settings['ROOT'] instead.",
+                          DeprecationWarning,
+                          stacklevel=2,
+                          )
 
         if virtual is not DeprecationWarning:
             warnings.warn(
@@ -1447,21 +1346,19 @@ class portagetree:
 
     @property
     def root(self):
-        warnings.warn(
-            "The root attribute of " + "portage.dbapi.porttree.portagetree" + " is deprecated. Use " +
-            "settings['ROOT'] instead.",
-            DeprecationWarning,
-            stacklevel=3,
-        )
+        warnings.warn("The root attribute of " + "portage.dbapi.porttree.portagetree" + " is deprecated. Use " +
+                      "settings['ROOT'] instead.",
+                      DeprecationWarning,
+                      stacklevel=3,
+                      )
         return self.settings["ROOT"]
 
     @property
     def virtual(self):
-        warnings.warn(
-            "The 'virtual' attribute of " + "portage.dbapi.porttree.portagetree" + " is deprecated.",
-            DeprecationWarning,
-            stacklevel=3,
-        )
+        warnings.warn("The 'virtual' attribute of " + "portage.dbapi.porttree.portagetree" + " is deprecated.",
+                      DeprecationWarning,
+                      stacklevel=3,
+                      )
         return self.__virtual
 
     def dep_bestmatch(self, mydep):
@@ -1536,12 +1433,11 @@ class FetchlistDict(Mapping):
 
     def has_key(self, pkg_key):
         """Returns true if the given package exists within pkgdir."""
-        warnings.warn(
-            "portage.dbapi.porttree.FetchlistDict.has_key() is "
-            "deprecated, use the 'in' operator instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
+        warnings.warn("portage.dbapi.porttree.FetchlistDict.has_key() is "
+                      "deprecated, use the 'in' operator instead",
+                      DeprecationWarning,
+                      stacklevel=2,
+                      )
         return pkg_key in self
 
     def __iter__(self):
@@ -1617,13 +1513,12 @@ def _async_manifest_fetchlist(portdb, repo_config, cp, cpv_list=None, max_jobs=N
 
 
 def _parse_uri_map(cpv, metadata, use=None):
-    myuris = use_reduce(
-        metadata.get("SRC_URI", ""),
-        uselist=use,
-        matchall=(use is None),
-        is_src_uri=True,
-        eapi=metadata["EAPI"],
-    )
+    myuris = use_reduce(metadata.get("SRC_URI", ""),
+                        uselist=use,
+                        matchall=(use is None),
+                        is_src_uri=True,
+                        eapi=metadata["EAPI"],
+                        )
 
     uri_map = OrderedDict()
 

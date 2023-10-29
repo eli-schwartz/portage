@@ -40,12 +40,11 @@ def parse_args(argv):
               "                 snapshot_uri")
 
     parser = argparse.ArgumentParser(usage=usage)
-    parser.add_argument(
-        "--hardlinks",
-        help="create hardlinks (y or n, default is y)",
-        choices=("y", "n"),
-        default="y",
-    )
+    parser.add_argument("--hardlinks",
+                        help="create hardlinks (y or n, default is y)",
+                        choices=("y", "n"),
+                        default="y",
+                        )
     options, args = parser.parse_known_args(argv[1:])
 
     if len(args) != 4:
@@ -94,27 +93,21 @@ def main(argv):
     else:
         cp_opts += "l"
 
-    cp_cmd = "cp -{} {} {}".format(
-        cp_opts,
-        portage._shell_quote(src_pkg_dir),
-        portage._shell_quote(snapshot_dir),
-    )
+    cp_cmd = "cp -{} {} {}".format(cp_opts, portage._shell_quote(src_pkg_dir), portage._shell_quote(snapshot_dir), )
 
     ret = os.system(cp_cmd)
     if not (os.WIFEXITED(ret) and os.WEXITSTATUS(ret) == os.EX_OK):
         return 1
 
-    infile = open(
-        portage._unicode_encode(src_pkgs_index, encoding=portage._encodings["fs"], errors="strict"),
-        encoding=portage._encodings["repo.content"],
-        errors="strict",
-    )
+    infile = open(portage._unicode_encode(src_pkgs_index, encoding=portage._encodings["fs"], errors="strict"),
+                  encoding=portage._encodings["repo.content"],
+                  errors="strict",
+                  )
 
-    outfile = portage.util.atomic_ofstream(
-        os.path.join(binhost_dir, "Packages"),
-        encoding=portage._encodings["repo.content"],
-        errors="strict",
-    )
+    outfile = portage.util.atomic_ofstream(os.path.join(binhost_dir, "Packages"),
+                                           encoding=portage._encodings["repo.content"],
+                                           errors="strict",
+                                           )
 
     for line in infile:
         if line[:4] == "URI:":

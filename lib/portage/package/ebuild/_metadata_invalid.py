@@ -12,11 +12,9 @@ from portage.elog.messages import eerror
 def eapi_invalid(self, cpv, repo_name, settings, eapi_var, eapi_parsed, eapi_lineno):
     msg = []
     msg.extend(
-        textwrap.wrap(
-            ("EAPI assignment in ebuild '%s%s%s' does not"
-             " conform with PMS section 7.3.1 (see bug #402167):") % (cpv, _repo_separator, repo_name),
-            70,
-        ))
+        textwrap.wrap(("EAPI assignment in ebuild '%s%s%s' does not"
+                       " conform with PMS section 7.3.1 (see bug #402167):") % (cpv, _repo_separator, repo_name), 70,
+                      ))
 
     if not eapi_parsed:
         # None means the assignment was not found, while an

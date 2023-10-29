@@ -56,10 +56,7 @@ class VirtualsManager:
                     if virt_atom.blocker or str(virt_atom) != str(virt_atom.cp):
                         virt_atom = None
                 if virt_atom is None:
-                    writemsg(
-                        _("--- Invalid virtuals atom in %s: %s\n") % (virtuals_file, k),
-                        noiselevel=-1,
-                    )
+                    writemsg(_("--- Invalid virtuals atom in %s: %s\n") % (virtuals_file, k), noiselevel=-1, )
                     continue
                 providers = []
                 for atom in v:
@@ -75,10 +72,7 @@ class VirtualsManager:
                         if atom.blocker:
                             atom = None
                     if atom is None:
-                        writemsg(
-                            _("--- Invalid atom in %s: %s\n") % (virtuals_file, atom_orig),
-                            noiselevel=-1,
-                        )
+                        writemsg(_("--- Invalid atom in %s: %s\n") % (virtuals_file, atom_orig), noiselevel=-1, )
                     else:
                         if atom_orig == str(atom):
                             # normal atom, so return as Atom instance

@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class BacktrackMissedUpdateTestCase(TestCase):
@@ -95,20 +92,18 @@ class BacktrackMissedUpdateTestCase(TestCase):
 
         test_cases = (
             # Bug 743115: missed updates trigger excessive backtracking
-            ResolverPlaygroundTestCase(
-                [">=dev-python/pypy3-7.3.2_rc", "@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--backtrack": 4
-                },
-                success=True,
-                mergelist=[
-                    "dev-python/pypy3-7.3.2_rc2_p37-r1",
-                    "dev-python/setuptools-46.4.0-r2",
-                    "dev-vcs/mercurial-5.5.1",
-                ],
-            ), )
+            ResolverPlaygroundTestCase([">=dev-python/pypy3-7.3.2_rc", "@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True,
+                                           "--backtrack": 4
+                                       },
+                                       success=True,
+                                       mergelist=[
+                                           "dev-python/pypy3-7.3.2_rc2_p37-r1", "dev-python/setuptools-46.4.0-r2",
+                                           "dev-vcs/mercurial-5.5.1",
+                                       ],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:

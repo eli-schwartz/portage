@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -50,12 +47,7 @@ class SlotOperatorRebuildTestCase(TestCase):
             },
         }
 
-        binpkgs = {
-            "app-misc/E-1": {
-                "EAPI": "6",
-                "RDEPEND": "app-misc/F:0/1=",
-            },
-        }
+        binpkgs = {"app-misc/E-1": {"EAPI": "6", "RDEPEND": "app-misc/F:0/1=", }, }
 
         installed = {
             "app-misc/A-1": {
@@ -83,40 +75,37 @@ class SlotOperatorRebuildTestCase(TestCase):
             # atom is selected, and the dependency is placed into
             # _initially_unsatisfied_deps where it is ignored, causing
             # the app-misc/C-0 rebuild to be missed.
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"],
-                options={"--dynamic-deps": "n"},
-                success=True,
-                ambiguous_merge_order=True,
-                mergelist=["app-misc/A-2", ("app-misc/B-0", "app-misc/C-0")],
-            ),
+            ResolverPlaygroundTestCase(["app-misc/A"],
+                                       options={"--dynamic-deps": "n"},
+                                       success=True,
+                                       ambiguous_merge_order=True,
+                                       mergelist=["app-misc/A-2", ("app-misc/B-0", "app-misc/C-0")],
+                                       ),
             # Test bug #652938, where a binary package built against an
             # older subslot triggered downgrade of an installed package.
             # In this case we want to reject the app-misc/E-1 binary
             # package, and rebuild it against the installed instance of
             # app-misc/F.
-            ResolverPlaygroundTestCase(
-                ["app-misc/D"],
-                options={"--usepkg": True},
-                success=True,
-                mergelist=["app-misc/E-1", "app-misc/D-1"],
-            ),
+            ResolverPlaygroundTestCase(["app-misc/D"],
+                                       options={"--usepkg": True},
+                                       success=True,
+                                       mergelist=["app-misc/E-1", "app-misc/D-1"],
+                                       ),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    ebuilds=ebuilds,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(ebuilds=ebuilds,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)

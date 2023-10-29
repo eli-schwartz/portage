@@ -3,20 +3,12 @@
 # Distributed under the terms of the GNU General Public License v2
 
 __all__ = [
-    "ConfigLoaderKlass",
-    "GenericFile",
-    "PackageKeywordsFile",
-    "PackageUseFile",
-    "PackageMaskFile",
+    "ConfigLoaderKlass", "GenericFile", "PackageKeywordsFile", "PackageUseFile", "PackageMaskFile",
     "PortageModulesFile",
 ]
 
 from portage.cache.mappings import UserDict
-from portage.env.loaders import (
-    KeyListFileLoader,
-    KeyValuePairFileLoader,
-    ItemFileLoader,
-)
+from portage.env.loaders import (KeyListFileLoader, KeyValuePairFileLoader, ItemFileLoader, )
 
 
 class ConfigLoaderKlass(UserDict):

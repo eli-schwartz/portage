@@ -226,10 +226,9 @@ def emaint_main(myargv):
     elif long_action in module_controller.get_functions(args[0]):
         tasks = [module_controller.get_class(args[0])]
     else:
-        portage.util.writemsg(
-            f"\nERROR: module '{args[0]}' does not have option '--{long_action}'\n\n",
-            noiselevel=-1,
-        )
+        portage.util.writemsg(f"\nERROR: module '{args[0]}' does not have option '--{long_action}'\n\n",
+                              noiselevel=-1,
+                              )
         portage.util.writemsg(module_opts(module_controller, args[0]), noiselevel=-1)
         sys.exit(1)
 

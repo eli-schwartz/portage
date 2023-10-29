@@ -11,22 +11,13 @@ import time
 import portage
 from portage import os, shutil, _encodings, _unicode_encode, _unicode_decode
 from portage.data import portage_gid, portage_uid, secpass
-from portage.exception import (
-    DirectoryNotFound,
-    FileNotFound,
-    OperationNotPermitted,
-    PermissionDenied,
-    PortageException,
-)
+from portage.exception import (DirectoryNotFound, FileNotFound, OperationNotPermitted, PermissionDenied,
+                               PortageException,
+                               )
 from portage.localization import _
 from portage.output import colorize
-from portage.util import (
-    apply_recursive_permissions,
-    apply_secpass_permissions,
-    ensure_dirs,
-    normalize_path,
-    writemsg,
-)
+from portage.util import (apply_recursive_permissions, apply_secpass_permissions, ensure_dirs, normalize_path, writemsg,
+                          )
 from portage.util.install_mask import _raise_exc
 
 
@@ -55,10 +46,7 @@ def prepare_build_dirs(myroot=None, settings=None, cleanup=False):
                 pass
             elif errno.EPERM == oe.errno:
                 writemsg(f"{oe}\n", noiselevel=-1)
-                writemsg(
-                    _("Operation Not Permitted: rmtree('%s')\n") % clean_dir,
-                    noiselevel=-1,
-                )
+                writemsg(_("Operation Not Permitted: rmtree('%s')\n") % clean_dir, noiselevel=-1, )
                 return 1
             else:
                 # Wrap with PermissionDenied if appropriate, so that callers
@@ -73,10 +61,7 @@ def prepare_build_dirs(myroot=None, settings=None, cleanup=False):
                 pass
             elif errno.EPERM == oe.errno:
                 writemsg(f"{oe}\n", noiselevel=-1)
-                writemsg(
-                    _("Operation Not Permitted: makedirs('%s')\n") % dir_path,
-                    noiselevel=-1,
-                )
+                writemsg(_("Operation Not Permitted: makedirs('%s')\n") % dir_path, noiselevel=-1, )
                 return False
             else:
                 raise
@@ -103,10 +88,7 @@ def prepare_build_dirs(myroot=None, settings=None, cleanup=False):
         if portage.data.secpass >= 1:
             ipc_kwargs["gid"] = portage_gid
             ipc_kwargs["mode"] = 0o2770
-        ensure_dirs(
-            os.path.join(mysettings["PORTAGE_BUILDDIR"], ".ipc"),
-            **ipc_kwargs,
-        )
+        ensure_dirs(os.path.join(mysettings["PORTAGE_BUILDDIR"], ".ipc"), **ipc_kwargs, )
     except PermissionDenied as e:
         writemsg(_("Permission Denied: %s\n") % str(e), noiselevel=-1)
         return 1
@@ -143,10 +125,7 @@ def _adjust_perms_msg(settings, msg):
 
     if background and log_path is not None:
         try:
-            log_file = open(
-                _unicode_encode(log_path, encoding=_encodings["fs"], errors="strict"),
-                mode="ab",
-            )
+            log_file = open(_unicode_encode(log_path, encoding=_encodings["fs"], errors="strict"), mode="ab", )
             log_file_real = log_file
         except OSError:
 
@@ -250,15 +229,14 @@ def _prepare_features_dirs(mysettings):
                             raise  # The feature is disabled if a single error
                             # occurs during permissions adjustment.
 
-                        if not apply_recursive_permissions(
-                                mydir,
-                                gid=portage_gid,
-                                dirmode=dirmode,
-                                dirmask=modemask,
-                                filemode=filemode,
-                                filemask=modemask,
-                                onerror=onerror,
-                        ):
+                        if not apply_recursive_permissions(mydir,
+                                                           gid=portage_gid,
+                                                           dirmode=dirmode,
+                                                           dirmask=modemask,
+                                                           filemode=filemode,
+                                                           filemask=modemask,
+                                                           onerror=onerror,
+                                                           ):
                             raise OperationNotPermitted(
                                 _("Failed to apply recursive permissions for the portage group."))
 
@@ -270,10 +248,9 @@ def _prepare_features_dirs(mysettings):
             except PortageException as e:
                 failure = True
                 writemsg(f"\n!!! {str(e)}\n", noiselevel=-1)
-                writemsg(
-                    _("!!! Failed resetting perms on %s='%s'\n") % (kwargs["basedir_var"], basedir),
-                    noiselevel=-1,
-                )
+                writemsg(_("!!! Failed resetting perms on %s='%s'\n") % (kwargs["basedir_var"], basedir),
+                         noiselevel=-1,
+                         )
                 writemsg(_("!!! Disabled FEATURES='%s'\n") % myfeature, noiselevel=-1)
 
             if failure:
@@ -329,18 +306,12 @@ def _prepare_workdir(mysettings):
                 # were previously set by the administrator.
                 # NOTE: These permissions should be compatible with our
                 # default logrotate config as discussed in bug 374287.
-                apply_secpass_permissions(
-                    mysettings["PORTAGE_LOGDIR"],
-                    uid=portage_uid,
-                    gid=portage_gid,
-                    mode=0o2770,
-                )
+                apply_secpass_permissions(mysettings["PORTAGE_LOGDIR"], uid=portage_uid, gid=portage_gid, mode=0o2770, )
         except PortageException as e:
             writemsg(f"!!! {str(e)}\n", noiselevel=-1)
-            writemsg(
-                _("!!! Permission issues with PORTAGE_LOGDIR='%s'\n") % mysettings["PORTAGE_LOGDIR"],
-                noiselevel=-1,
-            )
+            writemsg(_("!!! Permission issues with PORTAGE_LOGDIR='%s'\n") % mysettings["PORTAGE_LOGDIR"],
+                     noiselevel=-1,
+                     )
             writemsg(_("!!! Disabling logging.\n"), noiselevel=-1)
             while "PORTAGE_LOGDIR" in mysettings:
                 del mysettings["PORTAGE_LOGDIR"]
@@ -355,28 +326,21 @@ def _prepare_workdir(mysettings):
         logid_path = os.path.join(mysettings["PORTAGE_BUILDDIR"], ".logid")
         if not os.path.exists(logid_path):
             open(_unicode_encode(logid_path), "w").close()
-        logid_time = _unicode_decode(
-            time.strftime("%Y%m%d-%H%M%S", time.gmtime(os.stat(logid_path).st_mtime)),
-            encoding=_encodings["content"],
-            errors="replace",
-        )
+        logid_time = _unicode_decode(time.strftime("%Y%m%d-%H%M%S", time.gmtime(os.stat(logid_path).st_mtime)),
+                                     encoding=_encodings["content"],
+                                     errors="replace",
+                                     )
 
         if "split-log" in mysettings.features:
             log_subdir = os.path.join(logdir, "build", mysettings["CATEGORY"])
-            mysettings["PORTAGE_LOG_FILE"] = os.path.join(
-                log_subdir,
-                f"{mysettings['PF']}:{logid_time}.log{compress_log_ext}",
-            )
+            mysettings["PORTAGE_LOG_FILE"] = os.path.join(log_subdir,
+                                                          f"{mysettings['PF']}:{logid_time}.log{compress_log_ext}",
+                                                          )
         else:
             log_subdir = logdir
             mysettings["PORTAGE_LOG_FILE"] = os.path.join(
-                logdir,
-                "%s:%s:%s.log%s" % (
-                    mysettings["CATEGORY"],
-                    mysettings["PF"],
-                    logid_time,
-                    compress_log_ext,
-                ),
+                logdir, "%s:%s:%s.log%s" % (mysettings["CATEGORY"], mysettings["PF"], logid_time, compress_log_ext,
+                                            ),
             )
 
         if log_subdir is logdir:
@@ -390,10 +354,7 @@ def _prepare_workdir(mysettings):
             if os.access(log_subdir, os.W_OK):
                 logdir_subdir_ok = True
             else:
-                writemsg(
-                    f"!!! {_('Permission Denied')}: {log_subdir}\n",
-                    noiselevel=-1,
-                )
+                writemsg(f"!!! {_('Permission Denied')}: {log_subdir}\n", noiselevel=-1, )
 
     tmpdir_log_path = os.path.join(mysettings["T"], f"build.log{compress_log_ext}")
     if not logdir_subdir_ok:

@@ -3,14 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 __all__ = [
-    "NewsManager",
-    "NewsItem",
-    "DisplayRestriction",
-    "DisplayProfileRestriction",
-    "DisplayKeywordRestriction",
-    "DisplayInstalledRestriction",
-    "count_unread_news",
-    "display_news_notifications",
+    "NewsManager", "NewsItem", "DisplayRestriction", "DisplayProfileRestriction", "DisplayKeywordRestriction",
+    "DisplayInstalledRestriction", "count_unread_news", "display_news_notifications",
 ]
 
 from collections import OrderedDict
@@ -30,25 +24,15 @@ from portage import _encodings
 from portage import _unicode_decode
 from portage import _unicode_encode
 from portage.const import NEWS_LIB_PATH
-from portage.util import (
-    apply_secpass_permissions,
-    ensure_dirs,
-    grabfile,
-    normalize_path,
-    write_atomic,
-    writemsg_level,
-)
+from portage.util import (apply_secpass_permissions, ensure_dirs, grabfile, normalize_path, write_atomic,
+                          writemsg_level,
+                          )
 from portage.data import portage_gid
 from portage.dep import isvalidatom
 from portage.localization import _
 from portage.locks import lockfile, unlockfile
 from portage.output import colorize
-from portage.exception import (
-    InvalidLocation,
-    OperationNotPermitted,
-    PermissionDenied,
-    ReadOnlyFileSystem,
-)
+from portage.exception import (InvalidLocation, OperationNotPermitted, PermissionDenied, ReadOnlyFileSystem, )
 
 
 class NewsManager:
@@ -64,14 +48,13 @@ class NewsManager:
 
     """
 
-    def __init__(
-        self,
-        portdb: "portage.dbapi.porttree.portdbapi",
-        vardb: "portage.dbapi.vartree.vardbapi",
-        news_path: str,
-        unread_path: str,
-        language_id: str = "en",
-    ) -> None:
+    def __init__(self,
+                 portdb: "portage.dbapi.porttree.portdbapi",
+                 vardb: "portage.dbapi.vartree.vardbapi",
+                 news_path: str,
+                 unread_path: str,
+                 language_id: str = "en",
+                 ) -> None:
         self.news_path = news_path
         self.unread_path = unread_path
         self.language_id = language_id
@@ -122,13 +105,7 @@ class NewsManager:
         # Ensure that the unread path exists and is writable.
 
         try:
-            ensure_dirs(
-                self.unread_path,
-                uid=self._uid,
-                gid=self._gid,
-                mode=self._dir_mode,
-                mask=self._mode_mask,
-            )
+            ensure_dirs(self.unread_path, uid=self._uid, gid=self._gid, mode=self._dir_mode, mask=self._mode_mask, )
         except (OperationNotPermitted, PermissionDenied):
             return
 
@@ -158,11 +135,10 @@ class NewsManager:
                     itemid = _unicode_decode(itemid, encoding=_encodings["fs"], errors="strict")
                 except UnicodeDecodeError:
                     itemid = _unicode_decode(itemid, encoding=_encodings["fs"], errors="replace")
-                    writemsg_level(
-                        _("!!! Invalid encoding in news item name: '%s'\n") % itemid,
-                        level=logging.ERROR,
-                        noiselevel=-1,
-                    )
+                    writemsg_level(_("!!! Invalid encoding in news item name: '%s'\n") % itemid,
+                                   level=logging.ERROR,
+                                   noiselevel=-1,
+                                   )
                     continue
 
                 if itemid in skip:
@@ -179,23 +155,21 @@ class NewsManager:
 
             if unread != unread_orig:
                 write_atomic(unread_filename, "".join(f"{x}\n" for x in sorted(unread)))
-                apply_secpass_permissions(
-                    unread_filename,
-                    uid=self._uid,
-                    gid=self._gid,
-                    mode=self._file_mode,
-                    mask=self._mode_mask,
-                )
+                apply_secpass_permissions(unread_filename,
+                                          uid=self._uid,
+                                          gid=self._gid,
+                                          mode=self._file_mode,
+                                          mask=self._mode_mask,
+                                          )
 
             if skip != skip_orig:
                 write_atomic(skip_filename, "".join(f"{x}\n" for x in sorted(skip)))
-                apply_secpass_permissions(
-                    skip_filename,
-                    uid=self._uid,
-                    gid=self._gid,
-                    mode=self._file_mode,
-                    mask=self._mode_mask,
-                )
+                apply_secpass_permissions(skip_filename,
+                                          uid=self._uid,
+                                          gid=self._gid,
+                                          mode=self._file_mode,
+                                          mask=self._mode_mask,
+                                          )
 
         finally:
             unlockfile(unread_lock)
@@ -215,12 +189,7 @@ class NewsManager:
         unread_lock: Optional[bool] = None
         try:
             unread_lock = lockfile(unread_filename, wantnewlockfile=1)
-        except (
-                InvalidLocation,
-                OperationNotPermitted,
-                PermissionDenied,
-                ReadOnlyFileSystem,
-        ):
+        except (InvalidLocation, OperationNotPermitted, PermissionDenied, ReadOnlyFileSystem, ):
             pass
         try:
             try:
@@ -259,12 +228,9 @@ class NewsItem:
         self._parsed = False
         self._valid = True
 
-    def isRelevant(
-        self,
-        vardb: "portage.dbapi.vartree.vardbapi",
-        config: "portage.package.ebuild.config.config",
-        profile: Optional[str],
-    ) -> bool:
+    def isRelevant(self, vardb: "portage.dbapi.vartree.vardbapi", config: "portage.package.ebuild.config.config",
+                   profile: Optional[str],
+                   ) -> bool:
         """
         This function takes a dict of keyword arguments; one should pass in any
         objects need to do to lookups (like what keywords we are on, what profile,
@@ -304,11 +270,10 @@ class NewsItem:
         return self._valid
 
     def parse(self) -> None:
-        with open(
-                _unicode_encode(self.path, encoding=_encodings["fs"], errors="strict"),
-                encoding=_encodings["content"],
-                errors="replace",
-        ) as f:
+        with open(_unicode_encode(self.path, encoding=_encodings["fs"], errors="strict"),
+                  encoding=_encodings["content"],
+                  errors="replace",
+                  ) as f:
             lines = f.readlines()
         self.restrictions = {}
         invalids = []
@@ -350,8 +315,7 @@ class NewsItem:
         if invalids:
             self._valid = False
             msg = [
-                _(f"Invalid news item: {self.path}"),
-                *(_(f"  line {lineno}: {line}") for lineno, line in invalids),
+                _(f"Invalid news item: {self.path}"), *(_(f"  line {lineno}: {line}") for lineno, line in invalids),
             ]
             writemsg_level("".join(f"!!! {x}\n" for x in msg), level=logging.ERROR, noiselevel=-1)
 
@@ -430,12 +394,11 @@ class DisplayInstalledRestriction(DisplayRestriction):
         return kwargs["vardb"].match(self.atom)
 
 
-def count_unread_news(
-    portdb: "portage.dbapi.porttree.portdbapi",
-    vardb: "portage.dbapi.vartree.vardbapi",
-    repos: Optional[list[Any]] = None,
-    update: bool = True,
-) -> dict[str, int]:
+def count_unread_news(portdb: "portage.dbapi.porttree.portdbapi",
+                      vardb: "portage.dbapi.vartree.vardbapi",
+                      repos: Optional[list[Any]] = None,
+                      update: bool = True,
+                      ) -> dict[str, int]:
     """
     Returns a dictionary mapping repos to integer counts of unread news items.
     By default, this will scan all repos and check for new items that have

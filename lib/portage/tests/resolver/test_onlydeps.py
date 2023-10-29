@@ -2,32 +2,21 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class OnlydepsTestCase(TestCase):
 
     def testOnlydeps(self):
-        ebuilds = {
-            "dev-libs/A-1": {
-                "DEPEND": "dev-libs/B"
-            },
-            "dev-libs/B-1": {},
-        }
-        installed = {
-            "dev-libs/B-1": {},
-        }
+        ebuilds = {"dev-libs/A-1": {"DEPEND": "dev-libs/B"}, "dev-libs/B-1": {}, }
+        installed = {"dev-libs/B-1": {}, }
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["dev-libs/A", "dev-libs/B"],
-            all_permutations=True,
-            success=True,
-            options={"--onlydeps": True},
-            mergelist=["dev-libs/B-1"],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A", "dev-libs/B"],
+                                                 all_permutations=True,
+                                                 success=True,
+                                                 options={"--onlydeps": True},
+                                                 mergelist=["dev-libs/B-1"],
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, debug=False)
         try:

@@ -9,8 +9,7 @@ from portage.dep import Atom
 class ParseUpdatesTestCase(TestCase):
 
     def testParseUpdates(self):
-        test_cases = ((
-            """
+        test_cases = (("""
 slotmove invalid_atom 0 3
 slotmove !=invalid/blocker-3* 0 3
 slotmove =valid/atom-3* 0 3 invalid_extra_token
@@ -25,13 +24,9 @@ move valid/atom1 !invalid/blocker2
 move =invalid/operator-1* valid/atom2
 move valid/atom1 =invalid/operator-2*
 move valid/atom1 valid/atom2
-""",
-            [
-                ["slotmove", Atom("=valid/atom-3*"), "0", "3"],
-                ["move", Atom("valid/atom1"), Atom("valid/atom2")],
-            ],
-            12,
-        ), )
+""", [["slotmove", Atom("=valid/atom-3*"), "0", "3"], ["move", Atom("valid/atom1"),
+                                                       Atom("valid/atom2")], ], 12,
+                       ), )
 
         for input_content, expected_output, expected_error_count in test_cases:
             output_data, errors = parse_updates(input_content)

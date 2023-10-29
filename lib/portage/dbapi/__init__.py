@@ -11,14 +11,11 @@ from collections.abc import Sequence
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.dbapi.dep_expand:dep_expand@_dep_expand",
-    "portage.dep:Atom,match_from_list,_match_slot",
-    "portage.output:colorize",
-    "portage.util:cmp_sort_key,writemsg",
-    "portage.versions:catsplit,catpkgsplit,vercmp,_pkg_str",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.dbapi.dep_expand:dep_expand@_dep_expand",
+                                    "portage.dep:Atom,match_from_list,_match_slot", "portage.output:colorize",
+                                    "portage.util:cmp_sort_key,writemsg",
+                                    "portage.versions:catsplit,catpkgsplit,vercmp,_pkg_str",
+                                    )
 
 from portage.const import MERGING_IDENTIFIER
 
@@ -161,10 +158,7 @@ class dbapi:
         else:
             return cpv
 
-        metadata = dict(zip(
-            self._pkg_str_aux_keys,
-            self.aux_get(cpv, self._pkg_str_aux_keys, myrepo=repo),
-        ))
+        metadata = dict(zip(self._pkg_str_aux_keys, self.aux_get(cpv, self._pkg_str_aux_keys, myrepo=repo), ))
 
         return _pkg_str(cpv, metadata=metadata, settings=self.settings, db=self)
 
@@ -252,22 +246,15 @@ class dbapi:
             # This behavior is only used for EAPIs that support IUSE_EFFECTIVE,
             # since built USE settings for earlier EAPIs may contain a large
             # number of irrelevant flags.
-            iuse_implicit_match = functools.partial(
-                self._iuse_implicit_built,
-                iuse_implicit_match,
-                frozenset(metadata["USE"].split()),
-            )
+            iuse_implicit_match = functools.partial(self._iuse_implicit_built, iuse_implicit_match,
+                                                    frozenset(metadata["USE"].split()),
+                                                    )
 
         return iuse_implicit_match
 
     def _match_use(self, atom, pkg, metadata, ignore_profile=False):
         iuse_implicit_match = self._iuse_implicit_cnstr(pkg, metadata)
-        iuse = Package._iuse(
-            None,
-            metadata["IUSE"].split(),
-            iuse_implicit_match,
-            metadata["EAPI"],
-        )
+        iuse = Package._iuse(None, metadata["IUSE"].split(), iuse_implicit_match, metadata["EAPI"], )
 
         for x in atom.unevaluated_atom.use.required:
             if iuse.get_flag(x) is None:
@@ -331,10 +318,7 @@ class dbapi:
     def invalidentry(self, mypath):
         if "/" + MERGING_IDENTIFIER in mypath:
             if os.path.exists(mypath):
-                writemsg(
-                    colorize("BAD", _("INCOMPLETE MERGE:")) + f" {mypath}\n",
-                    noiselevel=-1,
-                )
+                writemsg(colorize("BAD", _("INCOMPLETE MERGE:")) + f" {mypath}\n", noiselevel=-1, )
         else:
             writemsg(f"!!! Invalid db entry: {mypath}\n", noiselevel=-1)
 

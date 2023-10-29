@@ -187,10 +187,9 @@ class MetaDataXML:
         self._xml_tree = None
 
         try:
-            self._xml_tree = etree.parse(
-                _unicode_encode(metadata_xml_path, encoding=_encodings["fs"], errors="strict"),
-                parser=etree.XMLParser(target=_MetadataTreeBuilder()),
-            )
+            self._xml_tree = etree.parse(_unicode_encode(metadata_xml_path, encoding=_encodings["fs"], errors="strict"),
+                                         parser=etree.XMLParser(target=_MetadataTreeBuilder()),
+                                         )
         except ImportError:
             pass
         except ExpatError as e:
@@ -227,10 +226,11 @@ class MetaDataXML:
 
         if self._herdstree is None:
             try:
-                self._herdstree = etree.parse(
-                    _unicode_encode(self._herds_path, encoding=_encodings["fs"], errors="strict"),
-                    parser=etree.XMLParser(target=_MetadataTreeBuilder()),
-                )
+                self._herdstree = etree.parse(_unicode_encode(self._herds_path,
+                                                              encoding=_encodings["fs"],
+                                                              errors="strict"),
+                                              parser=etree.XMLParser(target=_MetadataTreeBuilder()),
+                                              )
             except (ImportError, OSError, SyntaxError):
                 return None
 
@@ -404,10 +404,7 @@ class MetaDataXML:
 
 
 # lang with higher value is preferred
-_lang_pref = {
-    "": 0,
-    "en": 1,
-}
+_lang_pref = {"": 0, "en": 1, }
 
 
 def _cmp_lang(a, b):

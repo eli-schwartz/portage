@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -46,39 +43,35 @@ class SonameProvidedTestCase(TestCase):
 
         world = ["app-misc/B"]
 
-        profile = {
-            "soname.provided": ("x86_32 libA.so.2", ),
-        }
+        profile = {"soname.provided": ("x86_32 libA.so.2", ), }
 
         test_cases = (
             # Allow update due to soname dependency satisfied by
             # soname.provided.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--deep": True,
-                    "--ignore-soname-deps": "n",
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=["[binary]app-misc/B-1"],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--deep": True,
+                                           "--ignore-soname-deps": "n",
+                                           "--update": True,
+                                           "--usepkgonly": True,
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]app-misc/B-1"],
+                                       ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    binpkgs=binpkgs,
-                    debug=False,
-                    profile=profile,
-                    installed=installed,
-                    world=world,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(binpkgs=binpkgs,
+                                                debug=False,
+                                                profile=profile,
+                                                installed=installed,
+                                                world=world,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:

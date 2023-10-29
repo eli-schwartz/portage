@@ -15,12 +15,7 @@ def iter_iuse_vars(env):
     @return: iterator over (key, value) pairs of profile variables
     """
 
-    for k in (
-            "IUSE_IMPLICIT",
-            "USE_EXPAND_IMPLICIT",
-            "USE_EXPAND_UNPREFIXED",
-            "USE_EXPAND",
-    ):
+    for k in ("IUSE_IMPLICIT", "USE_EXPAND_IMPLICIT", "USE_EXPAND_UNPREFIXED", "USE_EXPAND", ):
         v = env.get(k)
         if v is not None:
             yield (k, v)

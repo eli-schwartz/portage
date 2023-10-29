@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -73,32 +70,30 @@ class SonameSlotConflictReinstallTestCase(TestCase):
         test_cases = (
             # Test bug #439688, where a slot conflict prevents an
             # upgrade and we don't want to trigger unnecessary rebuilds.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--deep": True,
-                    "--ignore-soname-deps": "n",
-                    "--update": True,
-                    "--usepkgonly": True,
-                    "--backtrack": 10,
-                },
-                success=True,
-                mergelist=["[binary]app-misc/D-2", "[binary]app-misc/E-0"],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--deep": True,
+                                           "--ignore-soname-deps": "n",
+                                           "--update": True,
+                                           "--usepkgonly": True,
+                                           "--backtrack": 10,
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]app-misc/D-2", "[binary]app-misc/E-0"],
+                                       ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
@@ -130,12 +125,7 @@ class SonameSlotConflictReinstallTestCase(TestCase):
             },
         }
 
-        installed = {
-            "app-misc/B-1": {
-                "SLOT": "1",
-                "PROVIDES": "x86_32: libB-1.so",
-            },
-        }
+        installed = {"app-misc/B-1": {"SLOT": "1", "PROVIDES": "x86_32: libB-1.so", }, }
 
         expected_mergelist = ["[binary]app-misc/A-1", "[binary]app-misc/B-2"]
 
@@ -177,15 +167,14 @@ class SonameSlotConflictReinstallTestCase(TestCase):
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:
@@ -235,35 +224,28 @@ class SonameSlotConflictReinstallTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"],
-                options={
-                    "--ignore-soname-deps": "n",
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]app-misc/B-2",
-                    "[binary]app-misc/A-2",
-                ],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--ignore-soname-deps": "n",
-                    "--usepkgonly": True,
-                    "--update": True,
-                    "--deep": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]app-misc/B-2",
-                    "[binary]app-misc/C-1",
-                    "[binary]app-misc/A-2",
-                ],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["app-misc/A"],
+                                                 options={
+                                                     "--ignore-soname-deps": "n",
+                                                     "--usepkgonly": True,
+                                                 },
+                                                 success=True,
+                                                 mergelist=["[binary]app-misc/B-2", "[binary]app-misc/A-2", ],
+                                                 ),
+                      ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--ignore-soname-deps": "n",
+                                                     "--usepkgonly": True,
+                                                     "--update": True,
+                                                     "--deep": True,
+                                                 },
+                                                 success=True,
+                                                 mergelist=[
+                                                     "[binary]app-misc/B-2", "[binary]app-misc/C-1",
+                                                     "[binary]app-misc/A-2",
+                                                 ],
+                                                 ),
+                      )
 
         world = ["app-misc/A"]
 
@@ -271,15 +253,14 @@ class SonameSlotConflictReinstallTestCase(TestCase):
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:
@@ -336,17 +317,16 @@ class SonameSlotConflictReinstallTestCase(TestCase):
             },
         }
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["cat/user"],
-            options={
-                "--deep": True,
-                "--ignore-soname-deps": "n",
-                "--update": True,
-                "--usepkgonly": True,
-            },
-            success=True,
-            mergelist=[],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["cat/user"],
+                                                 options={
+                                                     "--deep": True,
+                                                     "--ignore-soname-deps": "n",
+                                                     "--update": True,
+                                                     "--usepkgonly": True,
+                                                 },
+                                                 success=True,
+                                                 mergelist=[],
+                                                 ), )
 
         world = []
 
@@ -354,15 +334,14 @@ class SonameSlotConflictReinstallTestCase(TestCase):
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)

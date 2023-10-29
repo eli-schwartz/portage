@@ -56,14 +56,13 @@ class DoebuildSpawnTestCase(TestCase):
             cpv = "sys-apps/portage-2.1"
             metadata = dict(zip(Package.metadata_keys, portdb.aux_get(cpv, Package.metadata_keys)))
 
-            pkg = Package(
-                built=False,
-                cpv=cpv,
-                installed=False,
-                metadata=metadata,
-                root_config=root_config,
-                type_name="ebuild",
-            )
+            pkg = Package(built=False,
+                          cpv=cpv,
+                          installed=False,
+                          metadata=metadata,
+                          root_config=root_config,
+                          type_name="ebuild",
+                          )
             settings.setcpv(pkg)
             settings["PORTAGE_PYTHON"] = _python_interpreter
             settings["PORTAGE_BUILDDIR"] = os.path.join(settings["PORTAGE_TMPDIR"], cpv)
@@ -84,34 +83,25 @@ class DoebuildSpawnTestCase(TestCase):
                 # internals since EbuildPhase is used instead and that passes
                 # returnpid=True to doebuild.spawn().
                 rval = doebuild_spawn(
-                    "%s %s" % (
-                        _shell_quote(os.path.join(
-                            settings["PORTAGE_BIN_PATH"],
-                            os.path.basename(EBUILD_SH_BINARY),
-                        )),
-                        phase,
-                    ),
+                    "%s %s" %
+                    (_shell_quote(os.path.join(settings["PORTAGE_BIN_PATH"], os.path.basename(EBUILD_SH_BINARY),
+                                               )), phase,
+                     ),
                     settings,
                     free=1,
                 )
                 self.assertEqual(rval, os.EX_OK)
 
-                ebuild_phase = EbuildPhase(
-                    background=False,
-                    phase=phase,
-                    scheduler=scheduler,
-                    settings=settings,
-                )
+                ebuild_phase = EbuildPhase(background=False, phase=phase, scheduler=scheduler, settings=settings, )
                 ebuild_phase.start()
                 ebuild_phase.wait()
                 self.assertEqual(ebuild_phase.returncode, os.EX_OK)
 
-            ebuild_phase = MiscFunctionsProcess(
-                background=False,
-                commands=["success_hooks"],
-                scheduler=scheduler,
-                settings=settings,
-            )
+            ebuild_phase = MiscFunctionsProcess(background=False,
+                                                commands=["success_hooks"],
+                                                scheduler=scheduler,
+                                                settings=settings,
+                                                )
             ebuild_phase.start()
             ebuild_phase.wait()
             self.assertEqual(ebuild_phase.returncode, os.EX_OK)

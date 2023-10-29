@@ -18,10 +18,7 @@ class AsyncFunction(ForkProcess):
     "result" attribute after the forked process has exited.
     """
 
-    __slots__ = (
-        "result",
-        "_async_func_reader",
-    )
+    __slots__ = ("result", "_async_func_reader", )
 
     def _start(self):
         pr, pw = multiprocessing.Pipe(duplex=False)

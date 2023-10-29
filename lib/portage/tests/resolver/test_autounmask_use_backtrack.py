@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class AutounmaskUseBacktrackTestCase(TestCase):
@@ -59,23 +56,19 @@ class AutounmaskUseBacktrackTestCase(TestCase):
             # Test bug 632598, where autounmask USE changes triggered
             # unnecessary backtracking. The following case should
             # require a --backtrack setting no larger than 2.
-            ResolverPlaygroundTestCase(
-                ["dev-libs/D"],
-                options={
-                    "--autounmask-backtrack": "y",
-                    "--backtrack": 2,
-                },
-                success=False,
-                ambiguous_merge_order=True,
-                mergelist=[
-                    ("dev-libs/C-1", "dev-libs/A-2"),
-                    "dev-libs/D-1",
-                ],
-                use_changes={"dev-libs/C-1": {
-                    "y": True,
-                    "x": True
-                }},
-            ), )
+            ResolverPlaygroundTestCase(["dev-libs/D"],
+                                       options={
+                                           "--autounmask-backtrack": "y",
+                                           "--backtrack": 2,
+                                       },
+                                       success=False,
+                                       ambiguous_merge_order=True,
+                                       mergelist=[("dev-libs/C-1", "dev-libs/A-2"), "dev-libs/D-1", ],
+                                       use_changes={"dev-libs/C-1": {
+                                           "y": True,
+                                           "x": True
+                                       }},
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
 

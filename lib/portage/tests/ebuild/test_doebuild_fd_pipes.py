@@ -24,30 +24,16 @@ class DoebuildFdPipesTestCase(TestCase):
 
         output_fd = 200
         ebuild_body = ["S=${WORKDIR}"]
-        for phase_func in (
-                "pkg_info",
-                "pkg_nofetch",
-                "pkg_pretend",
-                "pkg_setup",
-                "src_unpack",
-                "src_prepare",
-                "src_configure",
-                "src_compile",
-                "src_test",
-                "src_install",
-        ):
+        for phase_func in ("pkg_info", "pkg_nofetch", "pkg_pretend", "pkg_setup", "src_unpack", "src_prepare",
+                           "src_configure", "src_compile", "src_test", "src_install",
+                           ):
             ebuild_body.append(("%s() { echo ${EBUILD_PHASE}"
                                 " 1>&%s; }") % (phase_func, output_fd))
 
         ebuild_body.append("")
         ebuild_body = "\n".join(ebuild_body)
 
-        ebuilds = {
-            "app-misct/foo-1": {
-                "EAPI": "5",
-                "MISC_CONTENT": ebuild_body,
-            }
-        }
+        ebuilds = {"app-misct/foo-1": {"EAPI": "5", "MISC_CONTENT": ebuild_body, }}
 
         # Override things that may be unavailable, or may have portability
         # issues when running tests in exotic environments.
@@ -84,51 +70,37 @@ class DoebuildFdPipesTestCase(TestCase):
             cpv = "app-misct/foo-1"
             metadata = dict(zip(Package.metadata_keys, portdb.aux_get(cpv, Package.metadata_keys)))
 
-            pkg = Package(
-                built=False,
-                cpv=cpv,
-                installed=False,
-                metadata=metadata,
-                root_config=root_config,
-                type_name="ebuild",
-            )
+            pkg = Package(built=False,
+                          cpv=cpv,
+                          installed=False,
+                          metadata=metadata,
+                          root_config=root_config,
+                          type_name="ebuild",
+                          )
             settings.setcpv(pkg)
             ebuildpath = portdb.findname(cpv)
             self.assertNotEqual(ebuildpath, None)
 
-            for phase in (
-                    "info",
-                    "nofetch",
-                    "pretend",
-                    "setup",
-                    "unpack",
-                    "prepare",
-                    "configure",
-                    "compile",
-                    "test",
-                    "install",
-                    "qmerge",
-                    "clean",
-                    "merge",
-            ):
+            for phase in ("info", "nofetch", "pretend", "setup", "unpack", "prepare", "configure", "compile", "test",
+                          "install", "qmerge", "clean", "merge",
+                          ):
                 pr, pw = os.pipe()
 
-                producer = ForkProcess(
-                    target=portage.doebuild,
-                    args=(ebuildpath, phase),
-                    kwargs={
-                        "settings": settings,
-                        "mydbapi": portdb,
-                        "tree": "porttree",
-                        "vartree": root_config.trees["vartree"],
-                        "fd_pipes": {
-                            1: dev_null.fileno(),
-                            2: dev_null.fileno(),
-                            output_fd: pw,
-                        },
-                        "prev_mtimes": {},
-                    },
-                )
+                producer = ForkProcess(target=portage.doebuild,
+                                       args=(ebuildpath, phase),
+                                       kwargs={
+                                           "settings": settings,
+                                           "mydbapi": portdb,
+                                           "tree": "porttree",
+                                           "vartree": root_config.trees["vartree"],
+                                           "fd_pipes": {
+                                               1: dev_null.fileno(),
+                                               2: dev_null.fileno(),
+                                               output_fd: pw,
+                                           },
+                                           "prev_mtimes": {},
+                                       },
+                                       )
 
                 consumer = PipeReader(input_files={"producer": pr})
 

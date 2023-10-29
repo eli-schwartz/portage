@@ -1,10 +1,7 @@
 # Copyright 2010-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = (
-    "ordered_by_atom_specificity",
-    "prune_incremental",
-)
+__all__ = ("ordered_by_atom_specificity", "prune_incremental", )
 
 from _emerge.Package import Package
 from portage.dep import best_match_to_list, _repo_separator

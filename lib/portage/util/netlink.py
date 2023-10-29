@@ -6,13 +6,7 @@ from os import strerror
 from struct import Struct
 
 import socket
-from socket import (
-    AF_NETLINK,
-    AF_UNSPEC,
-    NETLINK_ROUTE,
-    SOCK_DGRAM,
-    inet_pton,
-)
+from socket import (AF_NETLINK, AF_UNSPEC, NETLINK_ROUTE, SOCK_DGRAM, inet_pton, )
 
 IFA_LOCAL = 2
 IFF_UP = 0x1

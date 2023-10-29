@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class UseDepDefaultsTestCase(TestCase):
@@ -34,23 +31,19 @@ class UseDepDefaultsTestCase(TestCase):
             "dev-libs/B-2": {},
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-1"],
-                success=True,
-                mergelist=["dev-libs/B-1", "dev-libs/A-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-2"],
-                success=True,
-                mergelist=["dev-libs/B-2", "dev-libs/A-2"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/A-3"],
-                success=True,
-                mergelist=["dev-libs/B-1", "dev-libs/A-3"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["=dev-libs/A-1"],
+                                                 success=True,
+                                                 mergelist=["dev-libs/B-1", "dev-libs/A-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["=dev-libs/A-2"],
+                                                 success=True,
+                                                 mergelist=["dev-libs/B-2", "dev-libs/A-2"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["=dev-libs/A-3"],
+                                                 success=True,
+                                                 mergelist=["dev-libs/B-1", "dev-libs/A-3"],
+                                                 ),
+                      )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:

@@ -17,13 +17,10 @@ from portage.util._async.AsyncScheduler import AsyncScheduler
 import _emerge
 from _emerge.emergelog import emergelog
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "_emerge.actions:adjust_configs,load_emerge_config",
-    "_emerge.chk_updated_cfg_files:chk_updated_cfg_files",
-    "_emerge.main:parse_opts",
-    "_emerge.post_emerge:display_news_notification",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "_emerge.actions:adjust_configs,load_emerge_config",
+                                    "_emerge.chk_updated_cfg_files:chk_updated_cfg_files", "_emerge.main:parse_opts",
+                                    "_emerge.post_emerge:display_news_notification",
+                                    )
 
 warn = create_color_func("WARN")
 
@@ -204,13 +201,12 @@ class SyncRepos:
 
         max_jobs = (self.emerge_config.opts.get("--jobs", 1)
                     if "parallel-fetch" in self.emerge_config.target_config.settings.features else 1)
-        sync_scheduler = SyncScheduler(
-            emerge_config=self.emerge_config,
-            selected_repos=selected_repos,
-            sync_manager=sync_manager,
-            max_jobs=max_jobs,
-            event_loop=asyncio._safe_loop(),
-        )
+        sync_scheduler = SyncScheduler(emerge_config=self.emerge_config,
+                                       selected_repos=selected_repos,
+                                       sync_manager=sync_manager,
+                                       max_jobs=max_jobs,
+                                       event_loop=asyncio._safe_loop(),
+                                       )
 
         sync_scheduler.start()
         sync_scheduler.wait()
@@ -430,11 +426,10 @@ class SyncScheduler(AsyncScheduler):
         self._running_repos.add(node)
         self._update_leaf_nodes()
 
-        return self._sync_manager.sync_async(
-            emerge_config=self._emerge_config,
-            repo=self._repo_map[node],
-            master_hooks=self._master_hooks(node),
-        )
+        return self._sync_manager.sync_async(emerge_config=self._emerge_config,
+                                             repo=self._repo_map[node],
+                                             master_hooks=self._master_hooks(node),
+                                             )
 
     def _can_add_job(self):
         """

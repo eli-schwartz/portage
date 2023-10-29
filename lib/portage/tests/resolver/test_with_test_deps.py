@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class WithTestDepsTestCase(TestCase):
@@ -50,34 +47,31 @@ class WithTestDepsTestCase(TestCase):
         test_cases = (
             # Test that --with-test-deps only pulls in direct
             # test deps of packages matched by arguments.
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"],
-                success=True,
-                options={
-                    "--onlydeps": True,
-                    "--with-test-deps": True
-                },
-                mergelist=["app-misc/B-0"],
-            ),
+            ResolverPlaygroundTestCase(["app-misc/A"],
+                                       success=True,
+                                       options={
+                                           "--onlydeps": True,
+                                           "--with-test-deps": True
+                                       },
+                                       mergelist=["app-misc/B-0"],
+                                       ),
             # Test that --with-test-deps allows circular dependencies.
-            ResolverPlaygroundTestCase(
-                ["app-misc/D"],
-                success=True,
-                options={"--with-test-deps": True},
-                mergelist=[("app-misc/D-0", "app-misc/E-0")],
-                ambiguous_merge_order=True,
-            ),
+            ResolverPlaygroundTestCase(["app-misc/D"],
+                                       success=True,
+                                       options={"--with-test-deps": True},
+                                       mergelist=[("app-misc/D-0", "app-misc/E-0")],
+                                       ambiguous_merge_order=True,
+                                       ),
             # Test that --with-test-deps does not allow circular dependencies
             # when USE=test is explicitly enabled.
-            ResolverPlaygroundTestCase(
-                ["app-misc/F"],
-                success=False,
-                options={"--with-test-deps": True},
-                circular_dependency_solutions={
-                    "app-misc/G-0": {frozenset({("test", False)})},
-                    "app-misc/F-0": {frozenset({("test", False)})},
-                },
-            ),
+            ResolverPlaygroundTestCase(["app-misc/F"],
+                                       success=False,
+                                       options={"--with-test-deps": True},
+                                       circular_dependency_solutions={
+                                           "app-misc/G-0": {frozenset({("test", False)})},
+                                           "app-misc/F-0": {frozenset({("test", False)})},
+                                       },
+                                       ),
         )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)

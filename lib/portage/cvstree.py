@@ -46,15 +46,13 @@ def isadded(entries, path):
     filename = os.path.basename(path)
 
     try:
-        myfile = open(
-            _unicode_encode(
-                os.path.join(basedir, "CVS", "Entries"),
-                encoding=_encodings["fs"],
-                errors="strict",
-            ),
-            encoding=_encodings["content"],
-            errors="strict",
-        )
+        myfile = open(_unicode_encode(os.path.join(basedir, "CVS", "Entries"),
+                                      encoding=_encodings["fs"],
+                                      errors="strict",
+                                      ),
+                      encoding=_encodings["content"],
+                      errors="strict",
+                      )
     except OSError:
         return 0
     mylines = myfile.readlines()
@@ -231,11 +229,10 @@ def getentries(mydir, recursive=0):
     if not os.path.exists(mydir):
         return entries
     try:
-        myfile = open(
-            _unicode_encode(myfn, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["content"],
-            errors="strict",
-        )
+        myfile = open(_unicode_encode(myfn, encoding=_encodings["fs"], errors="strict"),
+                      encoding=_encodings["content"],
+                      errors="strict",
+                      )
         mylines = myfile.readlines()
         myfile.close()
     except SystemExit as e:
@@ -297,12 +294,7 @@ def getentries(mydir, recursive=0):
             if file not in entries["files"]:
                 if ignore_list.match(file) is not None:
                     continue
-                entries["files"][file] = {
-                    "revision": "",
-                    "date": "",
-                    "flags": "",
-                    "tags": "",
-                }
+                entries["files"][file] = {"revision": "", "date": "", "flags": "", "tags": "", }
             if "status" in entries["files"][file]:
                 if "exists" not in entries["files"][file]["status"]:
                     entries["files"][file]["status"] += ["exists"]

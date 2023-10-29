@@ -7,38 +7,16 @@ import warnings
 
 import portage
 from portage import os, eapi_is_supported, _encodings, _unicode_encode
-from portage.const import (
-    CUSTOM_PROFILE_PATH,
-    GLOBAL_CONFIG_PATH,
-    PROFILE_PATH,
-    USER_CONFIG_PATH,
-)
+from portage.const import (CUSTOM_PROFILE_PATH, GLOBAL_CONFIG_PATH, PROFILE_PATH, USER_CONFIG_PATH, )
 from portage.eapi import eapi_allows_directories_on_profile_level_and_repository_level
 from portage.exception import DirectoryNotFound, InvalidLocation, ParseError
 from portage.localization import _
-from portage.util import (
-    ensure_dirs,
-    grabfile,
-    normalize_path,
-    read_corresponding_eapi_file,
-    shlex_split,
-    writemsg,
-)
+from portage.util import (ensure_dirs, grabfile, normalize_path, read_corresponding_eapi_file, shlex_split, writemsg, )
 from portage.util._path import exists_raise_eaccess, isdir_raise_eaccess
-from portage.repository.config import (
-    parse_layout_conf,
-    _portage1_profiles_allow_directories,
-    _profile_node,
-)
+from portage.repository.config import (parse_layout_conf, _portage1_profiles_allow_directories, _profile_node, )
 
 _PORTAGE1_DIRECTORIES = frozenset([
-    "package.mask",
-    "package.provided",
-    "package.use",
-    "package.use.mask",
-    "package.use.force",
-    "use.mask",
-    "use.force",
+    "package.mask", "package.provided", "package.use", "package.use.mask", "package.use.force", "use.mask", "use.force",
 ])
 
 _allow_parent_colon = frozenset(["portage-2"])
@@ -46,15 +24,14 @@ _allow_parent_colon = frozenset(["portage-2"])
 
 class LocationsManager:
 
-    def __init__(
-        self,
-        config_root=None,
-        eprefix=None,
-        config_profile_path=None,
-        local_config=True,
-        target_root=None,
-        sysroot=None,
-    ):
+    def __init__(self,
+                 config_root=None,
+                 eprefix=None,
+                 config_profile_path=None,
+                 local_config=True,
+                 target_root=None,
+                 sysroot=None,
+                 ):
         self.user_profile_dir = None
         self._local_repo_conf_path = None
         self.eprefix = eprefix
@@ -98,10 +75,7 @@ class LocationsManager:
             except KeyError:
                 layout_data = parse_layout_conf(x)[0]
             else:
-                layout_data = {
-                    "profile-formats": repo.profile_formats,
-                    "profile_eapi_when_unspecified": repo.eapi,
-                }
+                layout_data = {"profile-formats": repo.profile_formats, "profile_eapi_when_unspecified": repo.eapi, }
             # force a trailing '/' for ease of doing startswith checks
             known_repos.append((x + "/", layout_data))
         known_repos = tuple(known_repos)
@@ -116,11 +90,10 @@ class LocationsManager:
                     # Don't warn if they refer to the same path, since
                     # that can be used for backward compatibility with
                     # old software.
-                    writemsg(
-                        "!!! %s\n" % _("Found 2 make.profile dirs: "
-                                       "using '%s', ignoring '%s'") % (self.profile_path, deprecated_profile_path),
-                        noiselevel=-1,
-                    )
+                    writemsg("!!! %s\n" % _("Found 2 make.profile dirs: "
+                                            "using '%s', ignoring '%s'") % (self.profile_path, deprecated_profile_path),
+                             noiselevel=-1,
+                             )
             else:
                 self.config_profile_path = deprecated_profile_path
                 if isdir_raise_eaccess(self.config_profile_path):
@@ -142,10 +115,7 @@ class LocationsManager:
                 self._addProfile(os.path.realpath(self.profile_path), repositories, known_repos, ())
             except ParseError as e:
                 if not portage._sync_mode:
-                    writemsg(
-                        _("!!! Unable to parse profile: '%s'\n") % self.profile_path,
-                        noiselevel=-1,
-                    )
+                    writemsg(_("!!! Unable to parse profile: '%s'\n") % self.profile_path, noiselevel=-1, )
                     writemsg(f"!!! ParseError: {str(e)}\n", noiselevel=-1)
                 self.profiles = []
                 self.profiles_complex = []
@@ -159,15 +129,13 @@ class LocationsManager:
                 self.user_profile_dir = custom_prof
                 self.profiles.append(custom_prof)
                 self.profiles_complex.append(
-                    _profile_node(
-                        custom_prof,
-                        True,
-                        True,
-                        ("profile-bashrcs", "profile-set"),
-                        read_corresponding_eapi_file(custom_prof + os.sep, default=None),
-                        True,
-                        show_deprecated_warning=False,
-                    ))
+                    _profile_node(custom_prof,
+                                  True,
+                                  True, ("profile-bashrcs", "profile-set"),
+                                  read_corresponding_eapi_file(custom_prof + os.sep, default=None),
+                                  True,
+                                  show_deprecated_warning=False,
+                                  ))
             del custom_prof
 
         self.profiles = tuple(self.profiles)
@@ -175,11 +143,10 @@ class LocationsManager:
 
     def _check_var_directory(self, varname, var):
         if not isdir_raise_eaccess(var):
-            writemsg(
-                _("!!! Error: %s='%s' is not a directory. "
-                  "Please correct this.\n") % (varname, var),
-                noiselevel=-1,
-            )
+            writemsg(_("!!! Error: %s='%s' is not a directory. "
+                       "Please correct this.\n") % (varname, var),
+                     noiselevel=-1,
+                     )
             raise DirectoryNotFound(var)
 
     def _addProfile(self, currentPath, repositories, known_repos, previous_repos):
@@ -202,11 +169,10 @@ class LocationsManager:
         eapi = eapi or "0"
         f = None
         try:
-            f = open(
-                _unicode_encode(eapi_file, encoding=_encodings["fs"], errors="strict"),
-                encoding=_encodings["content"],
-                errors="replace",
-            )
+            f = open(_unicode_encode(eapi_file, encoding=_encodings["fs"], errors="strict"),
+                     encoding=_encodings["content"],
+                     errors="replace",
+                     )
             eapi = f.readline().strip()
         except OSError:
             pass
@@ -214,10 +180,8 @@ class LocationsManager:
             if not eapi_is_supported(eapi):
                 raise ParseError(
                     _("Profile contains unsupported "
-                      "EAPI '%s': '%s'") % (
-                          eapi,
-                          os.path.realpath(eapi_file),
-                      ))
+                      "EAPI '%s': '%s'") % (eapi, os.path.realpath(eapi_file),
+                                            ))
         finally:
             if f is not None:
                 f.close()
@@ -251,11 +215,9 @@ class LocationsManager:
                       "This will break in the future.  Please convert these dirs to files:\n"
                       "\t%(files)s\n"
                       "Or, add this line to the repository's layout.conf:\n"
-                      "\tprofile-formats = portage-1") % dict(
-                          profile_path=currentPath,
-                          repo_name=repo_loc,
-                          files="\n\t".join(offenders),
-                      ))
+                      "\tprofile-formats = portage-1") %
+                    dict(profile_path=currentPath, repo_name=repo_loc, files="\n\t".join(offenders),
+                         ))
 
         parentsFile = os.path.join(currentPath, "parent")
         if exists_raise_eaccess(parentsFile):
@@ -283,15 +245,14 @@ class LocationsManager:
 
         self.profiles.append(currentPath)
         self.profiles_complex.append(
-            _profile_node(
-                currentPath,
-                allow_directories,
-                False,
-                current_formats,
-                eapi,
-                "build-id" in current_formats,
-                show_deprecated_warning=show_deprecated_warning,
-            ))
+            _profile_node(currentPath,
+                          allow_directories,
+                          False,
+                          current_formats,
+                          eapi,
+                          "build-id" in current_formats,
+                          show_deprecated_warning=show_deprecated_warning,
+                          ))
 
     def _expand_parent_colon(self, parentsFile, parentPath, repo_loc, repositories):
         colon = parentPath.find(":")
@@ -326,11 +287,10 @@ class LocationsManager:
         self.target_root = (normalize_path(os.path.abspath(self.target_root)).rstrip(os.path.sep) + os.path.sep)
 
         if self.sysroot != "/" and self.target_root == "/":
-            writemsg(
-                _("!!! Error: SYSROOT (currently %s) must "
-                  "be set to / when ROOT is /.\n") % self.sysroot,
-                noiselevel=-1,
-            )
+            writemsg(_("!!! Error: SYSROOT (currently %s) must "
+                       "be set to / when ROOT is /.\n") % self.sysroot,
+                     noiselevel=-1,
+                     )
             raise InvalidLocation(self.sysroot)
 
         ensure_dirs(self.target_root)

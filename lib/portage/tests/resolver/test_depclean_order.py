@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SimpleDepcleanTestCase(TestCase):
@@ -40,13 +37,12 @@ class SimpleDepcleanTestCase(TestCase):
         test_cases = (
             # Remove dev-libs/A-1 first because of dev-libs/B:0/0= (built
             # slot-operator dep).
-            ResolverPlaygroundTestCase(
-                [],
-                options={"--depclean": True},
-                success=True,
-                ordered=True,
-                cleanlist=["dev-libs/A-1", "dev-libs/B-1"],
-            ), )
+            ResolverPlaygroundTestCase([],
+                                       options={"--depclean": True},
+                                       success=True,
+                                       ordered=True,
+                                       cleanlist=["dev-libs/A-1", "dev-libs/B-1"],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:

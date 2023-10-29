@@ -13,12 +13,7 @@ from portage import _unicode_encode
 from portage import _unicode_decode
 from portage.checksum import _hash_filter
 from portage.elog.messages import eerror
-from portage.package.ebuild.fetch import (
-    _check_distfile,
-    _drop_privs_userfetch,
-    _want_userfetch,
-    fetch,
-)
+from portage.package.ebuild.fetch import (_check_distfile, _drop_privs_userfetch, _want_userfetch, fetch, )
 from portage.util._async.AsyncTaskFuture import AsyncTaskFuture
 from portage.util._async.ForkProcess import ForkProcess
 from portage.util._pty import _create_pty_or_pipe
@@ -26,16 +21,7 @@ from _emerge.CompositeTask import CompositeTask
 
 
 class EbuildFetcher(CompositeTask):
-    __slots__ = (
-        "config_pool",
-        "ebuild_path",
-        "fetchonly",
-        "fetchall",
-        "logfile",
-        "pkg",
-        "prefetch",
-        "_fetcher_proc",
-    )
+    __slots__ = ("config_pool", "ebuild_path", "fetchonly", "fetchall", "logfile", "pkg", "prefetch", "_fetcher_proc", )
 
     def __init__(self, **kwargs):
         CompositeTask.__init__(self, **kwargs)
@@ -54,10 +40,7 @@ class EbuildFetcher(CompositeTask):
         return self._fetcher_proc.async_already_fetched(settings)
 
     def _start(self):
-        self._start_task(
-            AsyncTaskFuture(future=self._fetcher_proc._async_uri_map()),
-            self._start_fetch,
-        )
+        self._start_task(AsyncTaskFuture(future=self._fetcher_proc._async_uri_map()), self._start_fetch, )
 
     def _start_fetch(self, uri_map_task):
         self._assert_current(uri_map_task)
@@ -81,8 +64,7 @@ class EbuildFetcher(CompositeTask):
         # because some packages have an extremely large SRC_URI value).
         self._start_task(
             AsyncTaskFuture(future=self.pkg.root_config.trees["porttree"].dbapi.async_aux_get(
-                self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler)),
-            self._start_with_metadata,
+                self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler)), self._start_with_metadata,
         )
 
     def _start_with_metadata(self, aux_get_task):
@@ -96,19 +78,9 @@ class EbuildFetcher(CompositeTask):
 
 
 class _EbuildFetcherProcess(ForkProcess):
-    __slots__ = (
-        "config_pool",
-        "ebuild_path",
-        "fetchonly",
-        "fetchall",
-        "pkg",
-        "prefetch",
-        "src_uri",
-        "_digests",
-        "_manifest",
-        "_settings",
-        "_uri_map",
-    )
+    __slots__ = ("config_pool", "ebuild_path", "fetchonly", "fetchall", "pkg", "prefetch", "src_uri", "_digests",
+                 "_manifest", "_settings", "_uri_map",
+                 )
 
     def async_already_fetched(self, settings):
         result = self.scheduler.create_future()
@@ -177,13 +149,12 @@ class _EbuildFetcherProcess(ForkProcess):
                         success = False
                         break
                     continue
-                ok, st = _check_distfile(
-                    os.path.join(distdir, filename),
-                    mydigests,
-                    eout,
-                    show_errors=False,
-                    hash_filter=hash_filter,
-                )
+                ok, st = _check_distfile(os.path.join(distdir, filename),
+                                         mydigests,
+                                         eout,
+                                         show_errors=False,
+                                         hash_filter=hash_filter,
+                                         )
                 if not ok:
                     success = False
                     break
@@ -242,13 +213,9 @@ class _EbuildFetcherProcess(ForkProcess):
 
         self._settings = settings
         self.log_filter_file = settings.get("PORTAGE_LOG_FILTER_FILE_CMD")
-        self.target = functools.partial(
-            self._target,
-            self._settings,
-            self._get_manifest(),
-            self._uri_map,
-            self.fetchonly,
-        )
+        self.target = functools.partial(self._target, self._settings, self._get_manifest(), self._uri_map,
+                                        self.fetchonly,
+                                        )
         ForkProcess._start(self)
 
         # Free settings now since it's no longer needed in
@@ -270,13 +237,12 @@ class _EbuildFetcherProcess(ForkProcess):
 
         rval = 1
         allow_missing = manifest.allow_missing or "digest" in settings.features
-        if fetch(
-                uri_map,
-                settings,
-                fetchonly=fetchonly,
-                digests=copy.deepcopy(manifest.getTypeDigests("DIST")),
-                allow_missing_digests=allow_missing,
-        ):
+        if fetch(uri_map,
+                 settings,
+                 fetchonly=fetchonly,
+                 digests=copy.deepcopy(manifest.getTypeDigests("DIST")),
+                 allow_missing_digests=allow_missing,
+                 ):
             rval = os.EX_OK
         return rval
 
@@ -356,12 +322,11 @@ class _EbuildFetcherProcess(ForkProcess):
         # fetch code will be skipped, so we need to generate equivalent
         # output here.
         if self.logfile is not None:
-            f = open(
-                _unicode_encode(self.logfile, encoding=_encodings["fs"], errors="strict"),
-                mode="a",
-                encoding=_encodings["content"],
-                errors="backslashreplace",
-            )
+            f = open(_unicode_encode(self.logfile, encoding=_encodings["fs"], errors="strict"),
+                     mode="a",
+                     encoding=_encodings["content"],
+                     errors="backslashreplace",
+                     )
             for filename in uri_map:
                 f.write(_unicode_decode(f" * {filename} size ;-) ...".ljust(73) + "[ ok ]\n"))
             f.close()

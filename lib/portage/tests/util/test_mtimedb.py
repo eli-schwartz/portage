@@ -201,12 +201,7 @@ class MtimeDBTestCase(TestCase):
     text = b"Unit tests for MtimeDB"
 
     def test_instances_created_with_only_expected_keys(self):
-        all_fixtures = (
-            _ONE_RESUME_LIST_JSON,
-            _EMPTY_FILE,
-            _PARTIAL_FILE_JSON,
-            _TWO_RESUME_LISTS_JSON,
-        )
+        all_fixtures = (_ONE_RESUME_LIST_JSON, _EMPTY_FILE, _PARTIAL_FILE_JSON, _TWO_RESUME_LISTS_JSON, )
         for contents in all_fixtures:
             with patch("portage.util.mtimedb.open", mock_open(read_data=contents)):
                 mtimedb = MtimeDB("/path/to/mtimedb")
@@ -231,16 +226,14 @@ class MtimeDBTestCase(TestCase):
         with patch("portage.util.mtimedb.open", mock_open(read_data=_ONE_RESUME_LIST_JSON)):
             mtimedb = MtimeDB("/some/path/mtimedb")
         self.assertEqual(
-            mtimedb["info"],
-            {
+            mtimedb["info"], {
                 "/usr/share/binutils-data/x86_64-pc-linux-gnu/2.37/info": (1711787325),
                 "/usr/share/gcc-data/x86_64-pc-linux-gnu/11.2.0/info": (1735158257),
                 "/usr/share/info": 1650633847,
             },
         )
         self.assertEqual(
-            mtimedb["ldpath"],
-            {
+            mtimedb["ldpath"], {
                 "/lib": 1748456830,
                 "/lib64": 1750523381,
                 "/usr/lib": 1750461195,
@@ -252,13 +245,10 @@ class MtimeDBTestCase(TestCase):
             },
         )
         self.assertEqual(
-            mtimedb["resume"],
-            {
+            mtimedb["resume"], {
                 "favorites": ["@world"],
-                "mergelist": [
-                    ["ebuild", "/", "some-cat/some-package-1.2.3-r4", "merge"],
-                    ["ebuild", "/", "another-cat/another-package-4.3.2-r1", "merge"],
-                ],
+                "mergelist": [["ebuild", "/", "some-cat/some-package-1.2.3-r4", "merge"],
+                              ["ebuild", "/", "another-cat/another-package-4.3.2-r1", "merge"], ],
                 "myopts": {
                     "--buildpkg": True,
                     "--deep": True,
@@ -275,8 +265,7 @@ class MtimeDBTestCase(TestCase):
         )
         self.assertEqual(mtimedb["starttime"], 0)
         self.assertEqual(
-            mtimedb["updates"],
-            {
+            mtimedb["updates"], {
                 "/var/db/repos/gentoo/profiles/updates/1Q-2022": 1747854791,
                 "/var/db/repos/gentoo/profiles/updates/2Q-2022": 1752846209,
                 "/var/db/repos/gentoo/profiles/updates/4Q-2021": 1742787797,

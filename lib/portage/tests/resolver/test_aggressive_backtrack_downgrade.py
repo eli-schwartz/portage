@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class AgressiveBacktrackDowngradeTestCase(TestCase):
@@ -67,15 +64,14 @@ class AgressiveBacktrackDowngradeTestCase(TestCase):
             # [ebuild     U  ] media-libs/libvpx-1.8.0 [1.7.0]
             # [ebuild     UD ] www-client/firefox-60.9.0 [69.0]
             # [ebuild  rR    ] media-video/ffmpeg-4.2
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=[],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       mergelist=[],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:

@@ -102,11 +102,10 @@ class RsyncSync(NewBase):
                 if self.verify_jobs < 0:
                     raise ValueError(self.verify_jobs)
             except ValueError:
-                writemsg_level(
-                    "!!! sync-rsync-verify-jobs not a positive integer: %s\n" % (self.verify_jobs, ),
-                    level=logging.WARNING,
-                    noiselevel=-1,
-                )
+                writemsg_level("!!! sync-rsync-verify-jobs not a positive integer: %s\n" % (self.verify_jobs, ),
+                               level=logging.WARNING,
+                               noiselevel=-1,
+                               )
                 self.verify_jobs = None
             else:
                 if self.verify_jobs == 0:
@@ -121,11 +120,10 @@ class RsyncSync(NewBase):
                 if self.max_age < 0:
                     raise ValueError(self.max_age)
             except ValueError:
-                writemsg_level(
-                    "!!! sync-rsync-max-age must be a non-negative integer: %s\n" % (self.max_age, ),
-                    level=logging.WARNING,
-                    noiselevel=-1,
-                )
+                writemsg_level("!!! sync-rsync-max-age must be a non-negative integer: %s\n" % (self.max_age, ),
+                               level=logging.WARNING,
+                               noiselevel=-1,
+                               )
                 self.max_age = 0
         else:
             self.max_age = 0
@@ -152,11 +150,10 @@ class RsyncSync(NewBase):
                         openpgp_env.import_key(f)
                     self._refresh_keys(openpgp_env)
                 except (GematoException, asyncio.TimeoutError) as e:
-                    writemsg_level(
-                        "!!! Manifest verification impossible due to keyring problem:\n%s\n" % (e, ),
-                        level=logging.ERROR,
-                        noiselevel=-1,
-                    )
+                    writemsg_level("!!! Manifest verification impossible due to keyring problem:\n%s\n" % (e, ),
+                                   level=logging.ERROR,
+                                   noiselevel=-1,
+                                   )
                     return (1, False)
 
             # Real local timestamp file.
@@ -199,16 +196,10 @@ class RsyncSync(NewBase):
             retries = 0
             try:
                 self.proto, user_name, hostname, port = re.split(
-                    r"(rsync|ssh)://([^:/]+@)?(\[[:\da-fA-F]*\]|[^:/]*)(:[0-9]+)?",
-                    syncuri,
-                    maxsplit=4,
+                    r"(rsync|ssh)://([^:/]+@)?(\[[:\da-fA-F]*\]|[^:/]*)(:[0-9]+)?", syncuri, maxsplit=4,
                 )[1:5]
             except ValueError:
-                writemsg_level(
-                    f"!!! sync-uri is invalid: {syncuri}\n",
-                    noiselevel=-1,
-                    level=logging.ERROR,
-                )
+                writemsg_level(f"!!! sync-uri is invalid: {syncuri}\n", noiselevel=-1, level=logging.ERROR, )
                 return (1, False)
 
             self.ssh_opts = self.settings.get("PORTAGE_SSH_OPTS")
@@ -240,11 +231,10 @@ class RsyncSync(NewBase):
                     addrinfos = getaddrinfo_validate(
                         socket.getaddrinfo(getaddrinfo_host, None, family, socket.SOCK_STREAM))
                 except OSError as e:
-                    writemsg_level(
-                        "!!! getaddrinfo failed for '%s': %s\n" % (_unicode_decode(hostname), str(e)),
-                        noiselevel=-1,
-                        level=logging.ERROR,
-                    )
+                    writemsg_level("!!! getaddrinfo failed for '%s': %s\n" % (_unicode_decode(hostname), str(e)),
+                                   noiselevel=-1,
+                                   level=logging.ERROR,
+                                   )
 
             if addrinfos:
                 AF_INET = socket.AF_INET
@@ -274,11 +264,8 @@ class RsyncSync(NewBase):
 
                 for ip in ips:
                     uris.append(
-                        syncuri.replace(
-                            "//" + user_name + hostname + port + "/",
-                            "//" + user_name + ip + port + "/",
-                            1,
-                        ))
+                        syncuri.replace("//" + user_name + hostname + port + "/", "//" + user_name + ip + port + "/", 1,
+                                        ))
 
             if not uris:
                 # With some configurations we need to use the plain hostname
@@ -305,10 +292,7 @@ class RsyncSync(NewBase):
                 if uris:
                     dosyncuri = uris.pop()
                 elif maxretries < 0 or retries > maxretries:
-                    writemsg(
-                        f"!!! Exhausted addresses for {_unicode_decode(hostname)}\n",
-                        noiselevel=-1,
-                    )
+                    writemsg(f"!!! Exhausted addresses for {_unicode_decode(hostname)}\n", noiselevel=-1, )
                     return (1, False)
                 else:
                     uris.extend(uris_orig)
@@ -319,8 +303,7 @@ class RsyncSync(NewBase):
                         uq = UserQuery(opts)
                         if (uq.query(
                                 "Do you want to sync your ebuild repository " + "with the mirror at\n" +
-                                blue(dosyncuri) + bold("?"),
-                                enter_invalid,
+                                blue(dosyncuri) + bold("?"), enter_invalid,
                         ) == "No"):
                             print()
                             print("Quitting.")
@@ -330,14 +313,13 @@ class RsyncSync(NewBase):
                     if "--quiet" not in opts:
                         print(">>> Starting rsync with " + dosyncuri + "...")
                 else:
-                    self.logger(
-                        self.xterm_titles,
-                        ">>> Starting retry %d of %d with %s" % (retries, effective_maxretries, dosyncuri),
-                    )
-                    writemsg_stdout(
-                        "\n\n>>> Starting retry %d of %d with %s\n" % (retries, effective_maxretries, dosyncuri),
-                        noiselevel=-1,
-                    )
+                    self.logger(self.xterm_titles,
+                                ">>> Starting retry %d of %d with %s" % (retries, effective_maxretries, dosyncuri),
+                                )
+                    writemsg_stdout("\n\n>>> Starting retry %d of %d with %s\n" %
+                                    (retries, effective_maxretries, dosyncuri),
+                                    noiselevel=-1,
+                                    )
 
                 if dosyncuri.startswith("ssh://"):
                     dosyncuri = dosyncuri[6:].replace("/", ":/", 1)
@@ -371,22 +353,20 @@ class RsyncSync(NewBase):
             # if synced successfully, verify now
             if exitcode == 0 and self.verify_metamanifest:
                 if gemato is None:
-                    writemsg_level(
-                        "!!! Unable to verify: gemato-14.5+ is required\n",
-                        level=logging.ERROR,
-                        noiselevel=-1,
-                    )
+                    writemsg_level("!!! Unable to verify: gemato-14.5+ is required\n",
+                                   level=logging.ERROR,
+                                   noiselevel=-1,
+                                   )
                     exitcode = 127
                 else:
                     try:
                         # we always verify the Manifest signature, in case
                         # we had to deal with key revocation case
-                        m = gemato.recursiveloader.ManifestRecursiveLoader(
-                            os.path.join(download_dir, "Manifest"),
-                            verify_openpgp=True,
-                            openpgp_env=openpgp_env,
-                            max_jobs=self.verify_jobs,
-                        )
+                        m = gemato.recursiveloader.ManifestRecursiveLoader(os.path.join(download_dir, "Manifest"),
+                                                                           verify_openpgp=True,
+                                                                           openpgp_env=openpgp_env,
+                                                                           max_jobs=self.verify_jobs,
+                                                                           )
                         if not m.openpgp_signed:
                             raise RuntimeError("OpenPGP signature not found on Manifest")
 
@@ -414,11 +394,10 @@ class RsyncSync(NewBase):
                             m.assert_directory_verifies()
                             out.eend(0)
                     except GematoException as e:
-                        writemsg_level(
-                            f"!!! Manifest verification failed:\n{e}\n",
-                            level=logging.ERROR,
-                            noiselevel=-1,
-                        )
+                        writemsg_level(f"!!! Manifest verification failed:\n{e}\n",
+                                       level=logging.ERROR,
+                                       noiselevel=-1,
+                                       )
                         exitcode = 1
                         verify_failure = True
 
@@ -474,10 +453,7 @@ class RsyncSync(NewBase):
         try:
             if not os.path.exists(self.repo.location):
                 os.makedirs(self.repo.location)
-                self.logger(
-                    self.self.xterm_titles,
-                    f"Created New Directory {self.repo.location} ",
-                )
+                self.logger(self.self.xterm_titles, f"Created New Directory {self.repo.location} ", )
         except OSError:
             return (1, False)
         return self.update()
@@ -503,14 +479,12 @@ class RsyncSync(NewBase):
             "--safe-links",  # Ignore links outside of tree
             "--perms",  # Preserve permissions
             "--times",  # Preserive mod times
-            "--omit-dir-times",
-            "--compress",  # Compress the data transmitted
+            "--omit-dir-times", "--compress",  # Compress the data transmitted
             "--force",  # Force deletion on non-empty dirs
             "--whole-file",  # Don't do block transfers, only entire files
             "--delete",  # Delete files that aren't in the master tree
             "--stats",  # Show final statistics about what was transfered
-            "--human-readable",
-            "--timeout=" + str(self.timeout),  # IO timeout if not done in X seconds
+            "--human-readable", "--timeout=" + str(self.timeout),  # IO timeout if not done in X seconds
             "--exclude=/distfiles",  # Exclude distfiles from consideration
             "--exclude=/local",  # Exclude local     from consideration
             "--exclude=/packages",  # Exclude packages  from consideration

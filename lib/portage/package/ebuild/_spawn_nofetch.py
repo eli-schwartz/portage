@@ -89,13 +89,12 @@ class SpawnNofetchWithoutBuilddir(CompositeTask):
 
         prepare_build_dirs(settings=settings)
 
-        ebuild_phase = EbuildPhase(
-            background=self.background,
-            phase="nofetch",
-            scheduler=self.scheduler,
-            fd_pipes=self.fd_pipes,
-            settings=settings,
-        )
+        ebuild_phase = EbuildPhase(background=self.background,
+                                   phase="nofetch",
+                                   scheduler=self.scheduler,
+                                   fd_pipes=self.fd_pipes,
+                                   settings=settings,
+                                   )
 
         self._start_task(ebuild_phase, self._nofetch_exit)
 
@@ -112,14 +111,13 @@ def spawn_nofetch(portdb, ebuild_path, settings=None, fd_pipes=None):
     This function must not be called from asynchronous code, since it will
     trigger event loop recursion which is incompatible with asyncio.
     """
-    nofetch = SpawnNofetchWithoutBuilddir(
-        background=False,
-        portdb=portdb,
-        ebuild_path=ebuild_path,
-        scheduler=SchedulerInterface(asyncio._safe_loop()),
-        fd_pipes=fd_pipes,
-        settings=settings,
-    )
+    nofetch = SpawnNofetchWithoutBuilddir(background=False,
+                                          portdb=portdb,
+                                          ebuild_path=ebuild_path,
+                                          scheduler=SchedulerInterface(asyncio._safe_loop()),
+                                          fd_pipes=fd_pipes,
+                                          settings=settings,
+                                          )
 
     nofetch.start()
     return nofetch.wait()

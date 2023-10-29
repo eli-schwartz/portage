@@ -15,14 +15,7 @@ from portage.versions import _pkg_str
 
 class MaskManager:
 
-    def __init__(
-        self,
-        repositories,
-        profiles,
-        abs_user_config,
-        user_config=True,
-        strict_umatched_removal=False,
-    ):
+    def __init__(self, repositories, profiles, abs_user_config, user_config=True, strict_umatched_removal=False, ):
         self._punmaskdict = ExtendedAtomDict(list)
         self._pmaskdict = ExtendedAtomDict(list)
         # Preserves atoms that are eliminated by negative
@@ -43,15 +36,14 @@ class MaskManager:
         def grab_pmask(loc, repo_config):
             if loc not in pmask_cache:
                 path = os.path.join(loc, "profiles", "package.mask")
-                pmask_cache[loc] = grabfile_package(
-                    path,
-                    recursive=repo_config.portage1_profiles,
-                    remember_source_file=True,
-                    verify_eapi=True,
-                    eapi_default=repo_config.eapi,
-                    allow_repo=allow_profile_repo_deps(repo_config),
-                    allow_build_id=("build-id" in repo_config.profile_formats),
-                )
+                pmask_cache[loc] = grabfile_package(path,
+                                                    recursive=repo_config.portage1_profiles,
+                                                    remember_source_file=True,
+                                                    verify_eapi=True,
+                                                    eapi_default=repo_config.eapi,
+                                                    allow_repo=allow_profile_repo_deps(repo_config),
+                                                    allow_build_id=("build-id" in repo_config.profile_formats),
+                                                    )
                 if repo_config.portage1_profiles_compat and os.path.isdir(path):
                     warnings.warn(
                         _("Repository '%(repo_name)s' is implicitly using "
@@ -81,12 +73,11 @@ class MaskManager:
                 # than the one with which we are currently stacking. Therefore,
                 # we disable warn_for_unmatched_removal here (see bug #386569).
                 lines.append(
-                    stack_lists(
-                        [master_lines, repo_lines],
-                        incremental=1,
-                        remember_source_file=True,
-                        warn_for_unmatched_removal=False,
-                    ))
+                    stack_lists([master_lines, repo_lines],
+                                incremental=1,
+                                remember_source_file=True,
+                                warn_for_unmatched_removal=False,
+                                ))
 
             # It's safe to warn for unmatched removal if masters have not
             # been overridden by the user, which is guaranteed when
@@ -97,54 +88,47 @@ class MaskManager:
                     source_file = os.path.join(repo.location, "profiles", "package.mask")
                     unmatched_removals = list(unmatched_removals)
                     if len(unmatched_removals) > 3:
-                        writemsg(
-                            _("--- Unmatched removal atoms in %s: %s and %s more\n") % (
-                                source_file,
-                                ", ".join("-" + x for x in unmatched_removals[:3]),
-                                len(unmatched_removals) - 3,
-                            ),
-                            noiselevel=-1,
-                        )
+                        writemsg(_("--- Unmatched removal atoms in %s: %s and %s more\n") %
+                                 (source_file, ", ".join("-" + x
+                                                         for x in unmatched_removals[:3]), len(unmatched_removals) - 3,
+                                  ),
+                                 noiselevel=-1,
+                                 )
                     else:
-                        writemsg(
-                            _("--- Unmatched removal atom(s) in %s: %s\n") % (
-                                source_file,
-                                ", ".join("-" + x for x in unmatched_removals),
-                            ),
-                            noiselevel=-1,
-                        )
+                        writemsg(_("--- Unmatched removal atom(s) in %s: %s\n") %
+                                 (source_file, ", ".join("-" + x for x in unmatched_removals),
+                                  ),
+                                 noiselevel=-1,
+                                 )
 
             else:
                 lines.append(
-                    stack_lists(
-                        [repo_lines],
-                        incremental=1,
-                        remember_source_file=True,
-                        warn_for_unmatched_removal=not user_config,
-                        strict_warn_for_unmatched_removal=strict_umatched_removal,
-                    ))
+                    stack_lists([repo_lines],
+                                incremental=1,
+                                remember_source_file=True,
+                                warn_for_unmatched_removal=not user_config,
+                                strict_warn_for_unmatched_removal=strict_umatched_removal,
+                                ))
             repo_pkgmasklines.extend(append_repo(stack_lists(lines), repo.name, remember_source_file=True))
 
         repo_pkgunmasklines = []
         for repo in repositories.repos_with_profiles():
             if not repo.portage1_profiles:
                 continue
-            repo_lines = grabfile_package(
-                os.path.join(repo.location, "profiles", "package.unmask"),
-                recursive=1,
-                remember_source_file=True,
-                verify_eapi=True,
-                eapi_default=repo.eapi,
-                allow_repo=allow_profile_repo_deps(repo),
-                allow_build_id=("build-id" in repo.profile_formats),
-            )
-            lines = stack_lists(
-                [repo_lines],
-                incremental=1,
-                remember_source_file=True,
-                warn_for_unmatched_removal=True,
-                strict_warn_for_unmatched_removal=strict_umatched_removal,
-            )
+            repo_lines = grabfile_package(os.path.join(repo.location, "profiles", "package.unmask"),
+                                          recursive=1,
+                                          remember_source_file=True,
+                                          verify_eapi=True,
+                                          eapi_default=repo.eapi,
+                                          allow_repo=allow_profile_repo_deps(repo),
+                                          allow_build_id=("build-id" in repo.profile_formats),
+                                          )
+            lines = stack_lists([repo_lines],
+                                incremental=1,
+                                remember_source_file=True,
+                                warn_for_unmatched_removal=True,
+                                strict_warn_for_unmatched_removal=strict_umatched_removal,
+                                )
             repo_pkgunmasklines.extend(append_repo(lines, repo.name, remember_source_file=True))
 
         # Read package.mask from the user's profile. Stack them in the end
@@ -153,90 +137,81 @@ class MaskManager:
         profile_pkgunmasklines = []
         for x in profiles:
             profile_pkgmasklines.append(
-                grabfile_package(
-                    os.path.join(x.location, "package.mask"),
-                    recursive=x.portage1_directories,
-                    remember_source_file=True,
-                    verify_eapi=True,
-                    eapi=x.eapi,
-                    eapi_default=None,
-                    allow_repo=allow_profile_repo_deps(x),
-                    allow_build_id=x.allow_build_id,
-                ))
+                grabfile_package(os.path.join(x.location, "package.mask"),
+                                 recursive=x.portage1_directories,
+                                 remember_source_file=True,
+                                 verify_eapi=True,
+                                 eapi=x.eapi,
+                                 eapi_default=None,
+                                 allow_repo=allow_profile_repo_deps(x),
+                                 allow_build_id=x.allow_build_id,
+                                 ))
             if x.portage1_directories:
                 profile_pkgunmasklines.append(
-                    grabfile_package(
-                        os.path.join(x.location, "package.unmask"),
-                        recursive=x.portage1_directories,
-                        remember_source_file=True,
-                        verify_eapi=True,
-                        eapi=x.eapi,
-                        eapi_default=None,
-                        allow_repo=allow_profile_repo_deps(x),
-                        allow_build_id=x.allow_build_id,
-                    ))
-        profile_pkgmasklines = stack_lists(
-            profile_pkgmasklines,
-            incremental=1,
-            remember_source_file=True,
-            warn_for_unmatched_removal=True,
-            strict_warn_for_unmatched_removal=strict_umatched_removal,
-        )
-        profile_pkgunmasklines = stack_lists(
-            profile_pkgunmasklines,
-            incremental=1,
-            remember_source_file=True,
-            warn_for_unmatched_removal=True,
-            strict_warn_for_unmatched_removal=strict_umatched_removal,
-        )
+                    grabfile_package(os.path.join(x.location, "package.unmask"),
+                                     recursive=x.portage1_directories,
+                                     remember_source_file=True,
+                                     verify_eapi=True,
+                                     eapi=x.eapi,
+                                     eapi_default=None,
+                                     allow_repo=allow_profile_repo_deps(x),
+                                     allow_build_id=x.allow_build_id,
+                                     ))
+        profile_pkgmasklines = stack_lists(profile_pkgmasklines,
+                                           incremental=1,
+                                           remember_source_file=True,
+                                           warn_for_unmatched_removal=True,
+                                           strict_warn_for_unmatched_removal=strict_umatched_removal,
+                                           )
+        profile_pkgunmasklines = stack_lists(profile_pkgunmasklines,
+                                             incremental=1,
+                                             remember_source_file=True,
+                                             warn_for_unmatched_removal=True,
+                                             strict_warn_for_unmatched_removal=strict_umatched_removal,
+                                             )
 
         # Read /etc/portage/package.mask. Don't stack it to allow the user to
         # remove mask atoms from everywhere with -atoms.
         user_pkgmasklines = []
         user_pkgunmasklines = []
         if user_config:
-            user_pkgmasklines = grabfile_package(
-                os.path.join(abs_user_config, "package.mask"),
-                recursive=1,
-                allow_wildcard=True,
-                allow_repo=True,
-                remember_source_file=True,
-                verify_eapi=False,
-                allow_build_id=True,
-            )
-            user_pkgunmasklines = grabfile_package(
-                os.path.join(abs_user_config, "package.unmask"),
-                recursive=1,
-                allow_wildcard=True,
-                allow_repo=True,
-                remember_source_file=True,
-                verify_eapi=False,
-                allow_build_id=True,
-            )
+            user_pkgmasklines = grabfile_package(os.path.join(abs_user_config, "package.mask"),
+                                                 recursive=1,
+                                                 allow_wildcard=True,
+                                                 allow_repo=True,
+                                                 remember_source_file=True,
+                                                 verify_eapi=False,
+                                                 allow_build_id=True,
+                                                 )
+            user_pkgunmasklines = grabfile_package(os.path.join(abs_user_config, "package.unmask"),
+                                                   recursive=1,
+                                                   allow_wildcard=True,
+                                                   allow_repo=True,
+                                                   remember_source_file=True,
+                                                   verify_eapi=False,
+                                                   allow_build_id=True,
+                                                   )
 
         # Stack everything together. At this point, only user_pkgmasklines may contain -atoms.
         # Don't warn for unmatched -atoms here, since we don't do it for any other user config file.
-        raw_pkgmasklines = stack_lists(
-            [repo_pkgmasklines, profile_pkgmasklines],
-            incremental=1,
-            remember_source_file=True,
-            warn_for_unmatched_removal=False,
-            ignore_repo=True,
-        )
-        pkgmasklines = stack_lists(
-            [repo_pkgmasklines, profile_pkgmasklines, user_pkgmasklines],
-            incremental=1,
-            remember_source_file=True,
-            warn_for_unmatched_removal=False,
-            ignore_repo=True,
-        )
-        pkgunmasklines = stack_lists(
-            [repo_pkgunmasklines, profile_pkgunmasklines, user_pkgunmasklines],
-            incremental=1,
-            remember_source_file=True,
-            warn_for_unmatched_removal=False,
-            ignore_repo=True,
-        )
+        raw_pkgmasklines = stack_lists([repo_pkgmasklines, profile_pkgmasklines],
+                                       incremental=1,
+                                       remember_source_file=True,
+                                       warn_for_unmatched_removal=False,
+                                       ignore_repo=True,
+                                       )
+        pkgmasklines = stack_lists([repo_pkgmasklines, profile_pkgmasklines, user_pkgmasklines],
+                                   incremental=1,
+                                   remember_source_file=True,
+                                   warn_for_unmatched_removal=False,
+                                   ignore_repo=True,
+                                   )
+        pkgunmasklines = stack_lists([repo_pkgunmasklines, profile_pkgunmasklines, user_pkgunmasklines],
+                                     incremental=1,
+                                     remember_source_file=True,
+                                     warn_for_unmatched_removal=False,
+                                     ignore_repo=True,
+                                     )
 
         for x, source_file in raw_pkgmasklines:
             self._pmaskdict_raw.setdefault(x.cp, []).append(x)

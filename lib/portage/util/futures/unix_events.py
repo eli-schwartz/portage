@@ -1,10 +1,7 @@
 # Copyright 2018-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = (
-    "AbstractChildWatcher",
-    "DefaultEventLoopPolicy",
-)
+__all__ = ("AbstractChildWatcher", "DefaultEventLoopPolicy", )
 
 import asyncio as _real_asyncio
 from asyncio import events
@@ -13,8 +10,7 @@ from asyncio.unix_events import AbstractChildWatcher
 import fcntl
 import os
 
-from portage.util._eventloop.global_event_loop import (
-    global_event_loop as _global_event_loop, )
+from portage.util._eventloop.global_event_loop import (global_event_loop as _global_event_loop, )
 
 if hasattr(os, "set_blocking"):
 

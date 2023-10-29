@@ -2,28 +2,17 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class VariableSetTestCase(TestCase):
 
     def testVariableSetEmerge(self):
-        ebuilds = {
-            "dev-go/go-pkg-1": {
-                "BDEPEND": "dev-lang/go"
-            },
-        }
+        ebuilds = {"dev-go/go-pkg-1": {"BDEPEND": "dev-lang/go"}, }
         installed = ebuilds
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed)
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["@golang-rebuild"],
-            mergelist=["dev-go/go-pkg-1"],
-            success=True,
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["@golang-rebuild"], mergelist=["dev-go/go-pkg-1"], success=True, ), )
 
         try:
             for test_case in test_cases:

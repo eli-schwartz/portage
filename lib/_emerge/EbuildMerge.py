@@ -10,20 +10,9 @@ from portage.util._async.AsyncTaskFuture import AsyncTaskFuture
 
 
 class EbuildMerge(CompositeTask):
-    __slots__ = (
-        "exit_hook",
-        "find_blockers",
-        "logger",
-        "ldpath_mtimes",
-        "pkg",
-        "pkg_count",
-        "pkg_path",
-        "postinst_failure",
-        "pretend",
-        "settings",
-        "tree",
-        "world_atom",
-    )
+    __slots__ = ("exit_hook", "find_blockers", "logger", "ldpath_mtimes", "pkg", "pkg_count", "pkg_path",
+                 "postinst_failure", "pretend", "settings", "tree", "world_atom",
+                 )
 
     def _start(self):
         root_config = self.pkg.root_config
@@ -38,22 +27,21 @@ class EbuildMerge(CompositeTask):
         background = settings.get("PORTAGE_BACKGROUND") == "1"
         logfile = settings.get("PORTAGE_LOG_FILE")
 
-        merge_task = MergeProcess(
-            mycat=mycat,
-            mypkg=mypkg,
-            settings=settings,
-            treetype=self.tree,
-            vartree=vartree,
-            scheduler=self.scheduler,
-            background=background,
-            blockers=self.find_blockers,
-            pkgloc=pkgloc,
-            infloc=infloc,
-            myebuild=myebuild,
-            mydbapi=mydbapi,
-            prev_mtimes=self.ldpath_mtimes,
-            logfile=logfile,
-        )
+        merge_task = MergeProcess(mycat=mycat,
+                                  mypkg=mypkg,
+                                  settings=settings,
+                                  treetype=self.tree,
+                                  vartree=vartree,
+                                  scheduler=self.scheduler,
+                                  background=background,
+                                  blockers=self.find_blockers,
+                                  pkgloc=pkgloc,
+                                  infloc=infloc,
+                                  myebuild=myebuild,
+                                  mydbapi=mydbapi,
+                                  prev_mtimes=self.ldpath_mtimes,
+                                  logfile=logfile,
+                                  )
 
         self._start_task(merge_task, self._merge_exit)
 
@@ -69,11 +57,7 @@ class EbuildMerge(CompositeTask):
         pkg_path = self.pkg_path
         logger = self.logger
         if "noclean" not in self.settings.features:
-            short_msg = "emerge: ({} of {}) {} Clean Post".format(
-                pkg_count.curval,
-                pkg_count.maxval,
-                pkg.cpv,
-            )
+            short_msg = "emerge: ({} of {}) {} Clean Post".format(pkg_count.curval, pkg_count.maxval, pkg.cpv, )
             logger.log(
                 f" === ({pkg_count.curval} of {pkg_count.maxval}) "
                 f"Post-Build Cleaning ({pkg.cpv}::{pkg_path})",
@@ -90,10 +74,9 @@ class EbuildMerge(CompositeTask):
         """
         # The returncode will be set after exit hook is complete.
         self.returncode = None
-        self._start_task(
-            AsyncTaskFuture(future=self.exit_hook(self)),
-            functools.partial(self._exit_hook_exit, returncode),
-        )
+        self._start_task(AsyncTaskFuture(future=self.exit_hook(self)),
+                         functools.partial(self._exit_hook_exit, returncode),
+                         )
 
     def _exit_hook_exit(self, returncode, task):
         self._assert_current(task)

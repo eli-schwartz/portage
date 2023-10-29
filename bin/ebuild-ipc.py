@@ -41,10 +41,8 @@ try:
     import time
 
     if os.path.isfile(
-            os.path.join(
-                os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-                ".portage_not_installed",
-            )):
+            os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), ".portage_not_installed",
+                         )):
         pym_paths = [os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")]
         sys.path.insert(0, pym_paths[0])
     else:
@@ -151,18 +149,16 @@ try:
 
         def _timeout_retry_msg(self, start_time, when):
             time_elapsed = time.time() - start_time
-            portage.util.writemsg_level(
-                f"ebuild-ipc timed out {when} after {time_elapsed} seconds, retrying...\n",
-                level=logging.ERROR,
-                noiselevel=-1,
-            )
+            portage.util.writemsg_level(f"ebuild-ipc timed out {when} after {time_elapsed} seconds, retrying...\n",
+                                        level=logging.ERROR,
+                                        noiselevel=-1,
+                                        )
 
         def _no_daemon_msg(self):
-            portage.util.writemsg_level(
-                portage.localization._("ebuild-ipc: daemon process not detected\n"),
-                level=logging.ERROR,
-                noiselevel=-1,
-            )
+            portage.util.writemsg_level(portage.localization._("ebuild-ipc: daemon process not detected\n"),
+                                        level=logging.ERROR,
+                                        noiselevel=-1,
+                                        )
 
         def _run_writer(self, fifo_writer, msg):
             """
@@ -216,11 +212,10 @@ try:
             retval = 2
 
             if not buf:
-                portage.util.writemsg_level(
-                    f"ebuild-ipc: {portage.localization._('read failed')}\n",
-                    level=logging.ERROR,
-                    noiselevel=-1,
-                )
+                portage.util.writemsg_level(f"ebuild-ipc: {portage.localization._('read failed')}\n",
+                                            level=logging.ERROR,
+                                            noiselevel=-1,
+                                            )
 
             else:
                 try:
@@ -260,20 +255,15 @@ try:
             # from interference between timeouts and blocking IO operations.
             msg = portage.localization._("during write")
             retval = self._run_writer(
-                FifoWriter(
-                    buf=pickle.dumps(args),
-                    fifo=self.ipc_in_fifo,
-                    scheduler=global_event_loop(),
-                ),
-                msg,
+                FifoWriter(buf=pickle.dumps(args), fifo=self.ipc_in_fifo, scheduler=global_event_loop(),
+                           ), msg,
             )
 
             if retval != os.EX_OK:
-                portage.util.writemsg_level(
-                    f"ebuild-ipc: {msg}: subprocess failure: {retval}\n",
-                    level=logging.ERROR,
-                    noiselevel=-1,
-                )
+                portage.util.writemsg_level(f"ebuild-ipc: {msg}: subprocess failure: {retval}\n",
+                                            level=logging.ERROR,
+                                            noiselevel=-1,
+                                            )
                 return retval
 
             if not self._daemon_is_alive():

@@ -6,13 +6,7 @@ from portage.util.SlotObject import SlotObject
 
 
 class AbstractDepPriority(SlotObject):
-    __slots__ = (
-        "buildtime",
-        "buildtime_slot_op",
-        "runtime",
-        "runtime_post",
-        "runtime_slot_op",
-    )
+    __slots__ = ("buildtime", "buildtime_slot_op", "runtime", "runtime_post", "runtime_slot_op", )
 
     def __lt__(self, other):
         return self.__int__() < other

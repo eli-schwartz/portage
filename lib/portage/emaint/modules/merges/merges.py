@@ -186,19 +186,10 @@ class MergesHandler:
         @return: List of results
         """
         # TODO: rewrite code to use portage's APIs instead of a subprocess
-        env = {
-            "FEATURES": "-collision-protect -protect-owned",
-            "PATH": os.environ["PATH"],
-        }
-        emerge_cmd = (
-            portage._python_interpreter,
-            "-b",
-            os.path.join(EPREFIX or "/", "usr", "bin", "emerge"),
-            "--ask=n" if yes else "--ask",
-            "--quiet",
-            "--oneshot",
-            "--complete-graph=y",
-        )
+        env = {"FEATURES": "-collision-protect -protect-owned", "PATH": os.environ["PATH"], }
+        emerge_cmd = (portage._python_interpreter, "-b", os.path.join(EPREFIX or "/", "usr", "bin", "emerge"),
+                      "--ask=n" if yes else "--ask", "--quiet", "--oneshot", "--complete-graph=y",
+                      )
         results = []
         msg = "Re-Emerging packages that failed to merge...\n"
         if module_output:
@@ -206,12 +197,7 @@ class MergesHandler:
         else:
             module_output = subprocess.PIPE
             results.append(msg)
-        proc = subprocess.Popen(
-            emerge_cmd + tuple(pkg_atoms),
-            env=env,
-            stdout=module_output,
-            stderr=sys.stderr,
-        )
+        proc = subprocess.Popen(emerge_cmd + tuple(pkg_atoms), env=env, stdout=module_output, stderr=sys.stderr, )
         output = proc.communicate()[0]
         if output:
             results.append(output)

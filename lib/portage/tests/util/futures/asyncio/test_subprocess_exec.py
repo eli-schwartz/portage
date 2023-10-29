@@ -37,37 +37,34 @@ class SubprocessExecTestCase(TestCase):
         def test(loop):
 
             async def test_coroutine():
-                proc = await create_subprocess_exec(
-                    echo_binary,
-                    *args_tuple,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                )
+                proc = await create_subprocess_exec(echo_binary,
+                                                    *args_tuple,
+                                                    stdout=subprocess.PIPE,
+                                                    stderr=subprocess.STDOUT,
+                                                    )
 
                 out, err = await proc.communicate()
                 self.assertEqual(tuple(out.split()), args_tuple)
                 self.assertEqual(proc.returncode, os.EX_OK)
 
-                proc = await create_subprocess_exec(
-                    "bash",
-                    "-c",
-                    "echo foo; echo bar 1>&2;",
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                )
+                proc = await create_subprocess_exec("bash",
+                                                    "-c",
+                                                    "echo foo; echo bar 1>&2;",
+                                                    stdout=subprocess.PIPE,
+                                                    stderr=subprocess.PIPE,
+                                                    )
 
                 out, err = await proc.communicate()
                 self.assertEqual(out, b"foo\n")
                 self.assertEqual(err, b"bar\n")
                 self.assertEqual(proc.returncode, os.EX_OK)
 
-                proc = await create_subprocess_exec(
-                    "bash",
-                    "-c",
-                    "echo foo; echo bar 1>&2;",
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                )
+                proc = await create_subprocess_exec("bash",
+                                                    "-c",
+                                                    "echo foo; echo bar 1>&2;",
+                                                    stdout=subprocess.PIPE,
+                                                    stderr=subprocess.STDOUT,
+                                                    )
 
                 out, err = await proc.communicate()
                 self.assertEqual(out, b"foo\nbar\n")
@@ -142,14 +139,13 @@ class SubprocessExecTestCase(TestCase):
         def test(loop):
             with open(os.devnull, "rb", 0) as devnull:
                 proc = loop.run_until_complete(
-                    create_subprocess_exec(
-                        echo_binary,
-                        *args_tuple,
-                        stdin=devnull,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.STDOUT,
-                        loop=loop,
-                    ))
+                    create_subprocess_exec(echo_binary,
+                                           *args_tuple,
+                                           stdin=devnull,
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.STDOUT,
+                                           loop=loop,
+                                           ))
 
             self.assertEqual(tuple(loop.run_until_complete(proc.stdout.read()).split()), args_tuple)
             self.assertEqual(loop.run_until_complete(proc.wait()), os.EX_OK)
@@ -170,13 +166,12 @@ class SubprocessExecTestCase(TestCase):
 
         def test(loop):
             proc = loop.run_until_complete(
-                create_subprocess_exec(
-                    cat_binary,
-                    stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                    loop=loop,
-                ))
+                create_subprocess_exec(cat_binary,
+                                       stdin=subprocess.PIPE,
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.STDOUT,
+                                       loop=loop,
+                                       ))
 
             # This buffers data when necessary to avoid blocking.
             proc.stdin.write(stdin_data)

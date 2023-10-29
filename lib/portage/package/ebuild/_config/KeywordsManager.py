@@ -21,15 +21,14 @@ class KeywordsManager:
     def __init__(self, profiles, abs_user_config, user_config=True, global_accept_keywords=""):
         self._pkeywords_list = []
         rawpkeywords = [
-            grabdict_package(
-                os.path.join(x.location, "package.keywords"),
-                recursive=x.portage1_directories,
-                verify_eapi=True,
-                eapi=x.eapi,
-                eapi_default=None,
-                allow_repo=allow_profile_repo_deps(x),
-                allow_build_id=x.allow_build_id,
-            ) for x in profiles
+            grabdict_package(os.path.join(x.location, "package.keywords"),
+                             recursive=x.portage1_directories,
+                             verify_eapi=True,
+                             eapi=x.eapi,
+                             eapi_default=None,
+                             allow_repo=allow_profile_repo_deps(x),
+                             allow_build_id=x.allow_build_id,
+                             ) for x in profiles
         ]
         for pkeyworddict in rawpkeywords:
             if not pkeyworddict:
@@ -43,14 +42,13 @@ class KeywordsManager:
 
         self._p_accept_keywords = []
         raw_p_accept_keywords = [
-            grabdict_package(
-                os.path.join(x.location, "package.accept_keywords"),
-                recursive=x.portage1_directories,
-                verify_eapi=True,
-                eapi=x.eapi,
-                eapi_default=None,
-                allow_repo=allow_profile_repo_deps(x),
-            ) for x in profiles
+            grabdict_package(os.path.join(x.location, "package.accept_keywords"),
+                             recursive=x.portage1_directories,
+                             verify_eapi=True,
+                             eapi=x.eapi,
+                             eapi_default=None,
+                             allow_repo=allow_profile_repo_deps(x),
+                             ) for x in profiles
         ]
         for d in raw_p_accept_keywords:
             if not d:
@@ -67,29 +65,26 @@ class KeywordsManager:
         if user_config:
             user_accept_kwrds_path = os.path.join(abs_user_config, "package.accept_keywords")
             user_kwrds_path = os.path.join(abs_user_config, "package.keywords")
-            pkgdict = grabdict_package(
-                user_kwrds_path,
-                recursive=1,
-                allow_wildcard=True,
-                allow_repo=True,
-                verify_eapi=False,
-                allow_build_id=True,
-            )
+            pkgdict = grabdict_package(user_kwrds_path,
+                                       recursive=1,
+                                       allow_wildcard=True,
+                                       allow_repo=True,
+                                       verify_eapi=False,
+                                       allow_build_id=True,
+                                       )
 
             if pkgdict and portage._internal_caller:
                 warnings.warn(
-                    _("%s is deprecated, use %s instead") % (user_kwrds_path, user_accept_kwrds_path),
-                    UserWarning,
+                    _("%s is deprecated, use %s instead") % (user_kwrds_path, user_accept_kwrds_path), UserWarning,
                 )
 
-            for k, v in grabdict_package(
-                    user_accept_kwrds_path,
-                    recursive=1,
-                    allow_wildcard=True,
-                    allow_repo=True,
-                    verify_eapi=False,
-                    allow_build_id=True,
-            ).items():
+            for k, v in grabdict_package(user_accept_kwrds_path,
+                                         recursive=1,
+                                         allow_wildcard=True,
+                                         allow_repo=True,
+                                         verify_eapi=False,
+                                         allow_build_id=True,
+                                         ).items():
                 pkgdict.setdefault(k, []).extend(v)
 
             accept_keywords_defaults = global_accept_keywords.split()
@@ -150,15 +145,7 @@ class KeywordsManager:
 
         return bool(self._getMissingKeywords(pkg, pgroups, set(unstable)))
 
-    def getMissingKeywords(
-        self,
-        cpv,
-        slot,
-        keywords,
-        repo,
-        global_accept_keywords,
-        backuped_accept_keywords,
-    ):
+    def getMissingKeywords(self, cpv, slot, keywords, repo, global_accept_keywords, backuped_accept_keywords, ):
         """
         Take a package and return a list of any KEYWORDS that the user may
         need to accept for the given package. If the KEYWORDS are empty

@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class OldDepChainDisplayTestCase(TestCase):
@@ -36,10 +33,9 @@ class OldDepChainDisplayTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(["=dev-libs/A-1"], options={"--autounmask": "n"}, success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/A-2"], options={"--autounmask": "n"}, success=False),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["=dev-libs/A-1"], options={"--autounmask": "n"}, success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/A-2"], options={"--autounmask": "n"}, success=False),
+                      )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:

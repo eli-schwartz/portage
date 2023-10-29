@@ -57,14 +57,7 @@ class LinkageMapELF:
     _soname_map_class = slot_dict_class(("consumers", "providers"), prefix="")
 
     class _obj_properties_class:
-        __slots__ = (
-            "arch",
-            "needed",
-            "runpaths",
-            "soname",
-            "alt_paths",
-            "owner",
-        )
+        __slots__ = ("arch", "needed", "runpaths", "soname", "alt_paths", "owner", )
 
         def __init__(self, arch, needed, runpaths, soname, alt_paths, owner):
             self.arch = arch
@@ -265,11 +258,7 @@ class LinkageMapELF:
             # We don't use scanelf -q, since that would omit libraries like
             # musl's /usr/lib/libc.so which do not have any DT_NEEDED or
             # DT_SONAME settings.
-            args = [
-                os.path.join(EPREFIX or "/", "usr/bin/scanelf"),
-                "-BF",
-                "%a;%F;%S;%r;%n",
-            ]
+            args = [os.path.join(EPREFIX or "/", "usr/bin/scanelf"), "-BF", "%a;%F;%S;%r;%n", ]
             args.extend(os.path.join(root, x.lstrip("." + os.sep)) for x in plibs)
             try:
                 proc = subprocess.Popen(args, stdout=subprocess.PIPE)
@@ -283,12 +272,11 @@ class LinkageMapELF:
                         l = _unicode_decode(l, encoding=_encodings["content"], errors="strict")
                     except UnicodeDecodeError:
                         l = _unicode_decode(l, encoding=_encodings["content"], errors="replace")
-                        writemsg_level(
-                            _("\nError decoding characters "
-                              "returned from scanelf: %s\n\n") % (l, ),
-                            level=logging.ERROR,
-                            noiselevel=-1,
-                        )
+                        writemsg_level(_("\nError decoding characters "
+                                         "returned from scanelf: %s\n\n") % (l, ),
+                                       level=logging.ERROR,
+                                       noiselevel=-1,
+                                       )
                     l = l[3:].rstrip("\n")
                     if not l:
                         continue
@@ -298,14 +286,9 @@ class LinkageMapELF:
                         writemsg_level(f"\n{e}\n\n", level=logging.ERROR, noiselevel=-1)
                         continue
                     try:
-                        with open(
-                                _unicode_encode(
-                                    entry.filename,
-                                    encoding=_encodings["fs"],
-                                    errors="strict",
-                                ),
-                                "rb",
-                        ) as f:
+                        with open(_unicode_encode(entry.filename, encoding=_encodings["fs"], errors="strict",
+                                                  ), "rb",
+                                  ) as f:
                             elf_header = ELFHeader.read(f)
                     except OSError as e:
                         if e.errno != errno.ENOENT:
@@ -316,17 +299,13 @@ class LinkageMapELF:
                     # Infer implicit soname from basename (bug 715162).
                     if not entry.soname:
                         try:
-                            proc = subprocess.Popen(
-                                [
-                                    b"file",
-                                    _unicode_encode(
-                                        entry.filename,
-                                        encoding=_encodings["fs"],
-                                        errors="strict",
-                                    ),
-                                ],
-                                stdout=subprocess.PIPE,
-                            )
+                            proc = subprocess.Popen([
+                                b"file",
+                                _unicode_encode(entry.filename, encoding=_encodings["fs"], errors="strict",
+                                                ),
+                            ],
+                                                    stdout=subprocess.PIPE,
+                                                    )
                             out, err = proc.communicate()
                             proc.wait()
                         except OSError:
@@ -368,12 +347,11 @@ class LinkageMapELF:
             if "\0" in l:
                 # os.stat() will raise "TypeError: must be encoded string
                 # without NULL bytes, not str" in this case.
-                writemsg_level(
-                    _("\nLine contains null byte(s) "
-                      "in %s: %s\n\n") % (location, l),
-                    level=logging.ERROR,
-                    noiselevel=-1,
-                )
+                writemsg_level(_("\nLine contains null byte(s) "
+                                 "in %s: %s\n\n") % (location, l),
+                               level=logging.ERROR,
+                               noiselevel=-1,
+                               )
                 continue
             try:
                 entry = NeededEntry.parse(location, l)
@@ -571,11 +549,10 @@ class LinkageMapELF:
                             # a library's directory.  We could catalog symlinks in
                             # LinkageMap to avoid checking for this edge case here.
                             writemsg_level(
-                                _("Found provider outside of findProviders:") + (" %s -> %s %s\n" % (
-                                    os.path.join(directory, soname),
-                                    self._obj_properties[cachedKey].alt_paths,
-                                    libraries,
-                                )),
+                                _("Found provider outside of findProviders:") +
+                                (" %s -> %s %s\n" %
+                                 (os.path.join(directory, soname), self._obj_properties[cachedKey].alt_paths, libraries,
+                                  )),
                                 level=logging.DEBUG,
                                 noiselevel=-1,
                             )
@@ -609,17 +586,16 @@ class LinkageMapELF:
                         rValue.setdefault(lib, set()).add(soname)
                         if debug:
                             if not os.path.isfile(lib):
-                                writemsg_level(
-                                    _("Missing library:") + f" {lib}\n",
-                                    level=logging.DEBUG,
-                                    noiselevel=-1,
-                                )
+                                writemsg_level(_("Missing library:") + f" {lib}\n",
+                                               level=logging.DEBUG,
+                                               noiselevel=-1,
+                                               )
                             else:
-                                writemsg_level(
-                                    _("Possibly missing symlink:") + f"{os.path.join(os.path.dirname(lib), soname)}\n",
-                                    level=logging.DEBUG,
-                                    noiselevel=-1,
-                                )
+                                writemsg_level(_("Possibly missing symlink:") +
+                                               f"{os.path.join(os.path.dirname(lib), soname)}\n",
+                                               level=logging.DEBUG,
+                                               noiselevel=-1,
+                                               )
         return rValue
 
     def listProviders(self):
@@ -874,10 +850,7 @@ class LinkageMapELF:
             except OSError:
                 pass
             else:
-                if (obj_st.st_dev, obj_st.st_ino) != (
-                        soname_st.st_dev,
-                        soname_st.st_ino,
-                ):
+                if (obj_st.st_dev, obj_st.st_ino) != (soname_st.st_dev, soname_st.st_ino, ):
                     return set()
 
         obj_props = self._obj_properties[obj_key]

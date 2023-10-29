@@ -46,15 +46,8 @@ class CompileModulesTestCase(TestCase):
                 else:
                     # Check for python shebang.
                     try:
-                        with open(
-                                _unicode_encode(x, encoding=_encodings["fs"], errors="strict"),
-                                "rb",
-                        ) as f:
-                            line = _unicode_decode(
-                                f.readline(),
-                                encoding=_encodings["content"],
-                                errors="replace",
-                            )
+                        with open(_unicode_encode(x, encoding=_encodings["fs"], errors="strict"), "rb", ) as f:
+                            line = _unicode_decode(f.readline(), encoding=_encodings["content"], errors="replace", )
                     except OSError as e:
                         # Some tests create files that are unreadable by the
                         # user (by design), so ignore EACCES issues.
@@ -64,8 +57,5 @@ class CompileModulesTestCase(TestCase):
                     if line[:2] == "#!" and "python" in line:
                         do_compile = True
                 if do_compile:
-                    with open(
-                            _unicode_encode(x, encoding=_encodings["fs"], errors="strict"),
-                            "rb",
-                    ) as f:
+                    with open(_unicode_encode(x, encoding=_encodings["fs"], errors="strict"), "rb", ) as f:
                         compile(f.read(), x, "exec")

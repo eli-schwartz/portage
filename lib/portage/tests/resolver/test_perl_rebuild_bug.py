@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class PerlRebuildBugTestCase(TestCase):
@@ -87,33 +84,25 @@ class PerlRebuildBugTestCase(TestCase):
 
         world = ["sys-apps/help2man"]
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["@world"],
-            options={
-                "--deep": True,
-                "--update": True,
-                "--verbose": True
-            },
-            success=True,
-            ambiguous_merge_order=True,
-            merge_order_assertions=((
-                "dev-lang/perl-5.36.0-r2",
-                "dev-perl/Locale-gettext-1.70.0-r1",
-            ), ),
-            mergelist=[
-                "sys-devel/automake-1.16.5",
-                "sys-libs/zlib-1.2.13-r1",
-                "dev-lang/perl-5.36.0-r2",
-                "dev-perl/Locale-gettext-1.70.0-r1",
-                "sys-apps/help2man-1.49.3",
-            ],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--deep": True,
+                                                     "--update": True,
+                                                     "--verbose": True
+                                                 },
+                                                 success=True,
+                                                 ambiguous_merge_order=True,
+                                                 merge_order_assertions=(("dev-lang/perl-5.36.0-r2",
+                                                                          "dev-perl/Locale-gettext-1.70.0-r1",
+                                                                          ), ),
+                                                 mergelist=[
+                                                     "sys-devel/automake-1.16.5", "sys-libs/zlib-1.2.13-r1",
+                                                     "dev-lang/perl-5.36.0-r2", "dev-perl/Locale-gettext-1.70.0-r1",
+                                                     "sys-apps/help2man-1.49.3",
+                                                 ],
+                                                 ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds,
-            installed=installed,
-            world=world,
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, )
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

@@ -49,12 +49,7 @@ def get_vm_info():
 
     else:
         try:
-            proc = subprocess.Popen(
-                ["sysctl", "-a"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                env=env,
-            )
+            proc = subprocess.Popen(["sysctl", "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env, )
         except OSError:
             pass
         else:

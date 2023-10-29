@@ -5,11 +5,7 @@ from _emerge.AbstractDepPriority import AbstractDepPriority
 
 
 class UnmergeDepPriority(AbstractDepPriority):
-    __slots__ = (
-        "ignored",
-        "optional",
-        "satisfied",
-    )
+    __slots__ = ("ignored", "optional", "satisfied", )
     """
 	Combination of properties           Priority  Category
 

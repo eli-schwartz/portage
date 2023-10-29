@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class AutounmaskUseBreakageTestCase(TestCase):
@@ -39,14 +36,13 @@ class AutounmaskUseBreakageTestCase(TestCase):
             # _solve_non_slot_operator_slot_conflicts throws
             # IndexError: tuple index out of range
             # due to autounmask USE breakage.
-            ResolverPlaygroundTestCase(
-                ["app-misc/C", "app-misc/B", "app-misc/A"],
-                options={"--autounmask-backtrack": "y"},
-                all_permutations=True,
-                success=False,
-                ambiguous_slot_collision_solutions=True,
-                slot_collision_solutions=[None, []],
-            ),
+            ResolverPlaygroundTestCase(["app-misc/C", "app-misc/B", "app-misc/A"],
+                                       options={"--autounmask-backtrack": "y"},
+                                       all_permutations=True,
+                                       success=False,
+                                       ambiguous_slot_collision_solutions=True,
+                                       slot_collision_solutions=[None, []],
+                                       ),
             # With --autounmask-backtrack=y:
             # emerge: there are no ebuilds built with USE flags to satisfy "app-misc/D[foo]".
             #!!! One of the following packages is required to complete your request:

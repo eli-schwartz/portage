@@ -5,10 +5,7 @@ from portage.package.ebuild._ipc.IpcCommand import IpcCommand
 
 
 class ExitCommand(IpcCommand):
-    __slots__ = (
-        "exitcode",
-        "reply_hook",
-    )
+    __slots__ = ("exitcode", "reply_hook", )
 
     def __init__(self):
         IpcCommand.__init__(self)

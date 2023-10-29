@@ -16,13 +16,7 @@ class ManifestProcess(ForkProcess):
     MODIFIED = 16
 
     def _start(self):
-        self.target = functools.partial(
-            self._target,
-            self.cp,
-            self.distdir,
-            self.fetchlist_dict,
-            self.repo_config,
-        )
+        self.target = functools.partial(self._target, self.cp, self.distdir, self.fetchlist_dict, self.repo_config, )
         super()._start()
 
     @staticmethod
@@ -30,20 +24,14 @@ class ManifestProcess(ForkProcess):
         """
         TODO: Make all arguments picklable for the multiprocessing spawn start method.
         """
-        mf = repo_config.load_manifest(
-            os.path.join(repo_config.location, cp),
-            distdir,
-            fetchlist_dict=fetchlist_dict,
-        )
+        mf = repo_config.load_manifest(os.path.join(repo_config.location, cp), distdir, fetchlist_dict=fetchlist_dict, )
 
         try:
             mf.create(assumeDistHashesAlways=True)
         except FileNotFound as e:
-            portage.writemsg(
-                _("!!! File %s doesn't exist, can't update "
-                  "Manifest\n") % e,
-                noiselevel=-1,
-            )
+            portage.writemsg(_("!!! File %s doesn't exist, can't update "
+                               "Manifest\n") % e, noiselevel=-1,
+                             )
             return 1
 
         except PortagePackageException as e:
@@ -53,10 +41,7 @@ class ManifestProcess(ForkProcess):
         try:
             modified = mf.write(sign=False)
         except PermissionDenied as e:
-            portage.writemsg(
-                f"!!! {_('Permission Denied')}: {e}\n",
-                noiselevel=-1,
-            )
+            portage.writemsg(f"!!! {_('Permission Denied')}: {e}\n", noiselevel=-1, )
             return 1
         else:
             if modified:

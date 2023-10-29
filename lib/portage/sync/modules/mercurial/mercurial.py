@@ -57,18 +57,13 @@ class MercurialSync(NewBase):
             hg_cmd_opts += " --quiet"
         if self.repo.module_specific_options.get("sync-mercurial-clone-extra-opts"):
             hg_cmd_opts += (" %s" % self.repo.module_specific_options["sync-mercurial-clone-extra-opts"])
-        hg_cmd = "{} clone{} {} .".format(
-            self.bin_command,
-            hg_cmd_opts,
-            portage._shell_quote(sync_uri),
-        )
+        hg_cmd = "{} clone{} {} .".format(self.bin_command, hg_cmd_opts, portage._shell_quote(sync_uri), )
         writemsg_level(hg_cmd + "\n")
 
-        exitcode = portage.process.spawn(
-            shlex_split(hg_cmd),
-            cwd=portage._unicode_encode(self.repo.location),
-            **self.spawn_kwargs,
-        )
+        exitcode = portage.process.spawn(shlex_split(hg_cmd),
+                                         cwd=portage._unicode_encode(self.repo.location),
+                                         **self.spawn_kwargs,
+                                         )
         if exitcode != os.EX_OK:
             msg = f"!!! hg clone error in {self.repo.location}"
             self.logger(self.xterm_titles, msg)
@@ -104,11 +99,10 @@ class MercurialSync(NewBase):
         rev_cmd = [self.bin_command, "id", "--id", "--rev", "tip"]
         previous_rev = subprocess.check_output(rev_cmd, cwd=portage._unicode_encode(self.repo.location))
 
-        exitcode = portage.process.spawn(
-            shlex_split(hg_cmd),
-            cwd=portage._unicode_encode(self.repo.location),
-            **self.spawn_kwargs,
-        )
+        exitcode = portage.process.spawn(shlex_split(hg_cmd),
+                                         cwd=portage._unicode_encode(self.repo.location),
+                                         **self.spawn_kwargs,
+                                         )
         if exitcode != os.EX_OK:
             msg = f"!!! hg pull error in {self.repo.location}"
             self.logger(self.xterm_titles, msg)
@@ -125,11 +119,10 @@ class MercurialSync(NewBase):
             self._kwargs(kwargs)
         rev_cmd = [self.bin_command, "id", "--id", "--rev", "tip"]
         try:
-            ret = (
-                os.EX_OK,
-                portage._unicode_decode(
-                    subprocess.check_output(rev_cmd, cwd=portage._unicode_encode(self.repo.location))),
-            )
+            ret = (os.EX_OK,
+                   portage._unicode_decode(
+                       subprocess.check_output(rev_cmd, cwd=portage._unicode_encode(self.repo.location))),
+                   )
         except subprocess.CalledProcessError:
             ret = (1, False)
         return ret

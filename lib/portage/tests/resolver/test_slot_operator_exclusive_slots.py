@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotOperatorExclusiveSlotsTestCase(TestCase):
@@ -67,26 +64,21 @@ class SlotOperatorExclusiveSlotsTestCase(TestCase):
             # properly triggered (for things like mesa) during a
             # llvm:0 to llvm:4 upgrade with clang, resulting in
             # unsolved blockers.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                ambiguous_merge_order=True,
-                mergelist=[
-                    "sys-devel/llvm-4.0.0",
-                    "media-libs/mesa-17.0.1",
-                    (
-                        "sys-devel/clang-4.0.0",
-                        "[uninstall]sys-devel/llvm-3.9.1",
-                        "!sys-devel/llvm:0",
-                        "[uninstall]sys-devel/clang-3.9.1-r100",
-                        "!sys-devel/clang:0",
-                    ),
-                ],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       ambiguous_merge_order=True,
+                                       mergelist=[
+                                           "sys-devel/llvm-4.0.0", "media-libs/mesa-17.0.1",
+                                           ("sys-devel/clang-4.0.0", "[uninstall]sys-devel/llvm-3.9.1",
+                                            "!sys-devel/llvm:0", "[uninstall]sys-devel/clang-3.9.1-r100",
+                                            "!sys-devel/clang:0",
+                                            ),
+                                       ],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:
@@ -106,23 +98,20 @@ class SlotOperatorExclusiveSlotsTestCase(TestCase):
             # to llvm:4 makes the installed sys-devel/clang-3.9.1-r100
             # instance eligible for removal by emerge --depclean, which
             # explains why clang does not appear in the mergelist.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                ambiguous_merge_order=True,
-                mergelist=[
-                    "sys-devel/llvm-4.0.0",
-                    (
-                        "media-libs/mesa-17.0.1",
-                        "[uninstall]sys-devel/llvm-3.9.1",
-                        "!sys-devel/llvm:0",
-                    ),
-                ],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       ambiguous_merge_order=True,
+                                       mergelist=[
+                                           "sys-devel/llvm-4.0.0",
+                                           ("media-libs/mesa-17.0.1", "[uninstall]sys-devel/llvm-3.9.1",
+                                            "!sys-devel/llvm:0",
+                                            ),
+                                       ],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:

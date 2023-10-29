@@ -178,23 +178,14 @@ class Socks5ServerTestCase(TestCase):
 
         try:
             with AsyncHTTPServer(host, {path: content}, loop) as server:
-                settings = {
-                    "PORTAGE_TMPDIR": tempdir,
-                    "PORTAGE_BIN_PATH": PORTAGE_BIN_PATH,
-                }
+                settings = {"PORTAGE_TMPDIR": tempdir, "PORTAGE_BIN_PATH": PORTAGE_BIN_PATH, }
 
                 proxy = socks5.get_socks5_proxy(settings)
                 loop.run_until_complete(socks5.proxy.ready())
 
                 result = loop.run_until_complete(
-                    loop.run_in_executor(
-                        None,
-                        self._fetch_via_proxy,
-                        proxy,
-                        host,
-                        server.server_port,
-                        path,
-                    ))
+                    loop.run_in_executor(None, self._fetch_via_proxy, proxy, host, server.server_port, path,
+                                         ))
 
                 self.assertEqual(result, content)
         finally:

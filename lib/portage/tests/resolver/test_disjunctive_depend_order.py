@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -41,53 +38,42 @@ class DisjunctiveDependOrderTestCase(TestCase):
             },
         }
 
-        binpkgs = {
-            "dev-db/hsqldb-1.8": {
-                "DEPEND": "virtual/jdk",
-                "RDEPEND": "virtual/jre",
-            },
-        }
+        binpkgs = {"dev-db/hsqldb-1.8": {"DEPEND": "virtual/jdk", "RDEPEND": "virtual/jre", }, }
 
         test_cases = (
             # Test bug 639346, where a redundant jre implementation
             # was pulled in because DEPEND was evaluated after
             # RDEPEND.
-            ResolverPlaygroundTestCase(
-                ["dev-db/hsqldb"],
-                success=True,
-                mergelist=[
-                    "dev-java/icedtea-3.6",
-                    "virtual/jdk-1.8",
-                    "virtual/jre-1.8",
-                    "dev-db/hsqldb-1.8",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["dev-db/hsqldb"],
+                                       success=True,
+                                       mergelist=[
+                                           "dev-java/icedtea-3.6", "virtual/jdk-1.8", "virtual/jre-1.8",
+                                           "dev-db/hsqldb-1.8",
+                                       ],
+                                       ),
             # The jdk is not needed with --usepkg, so the jre should
             # be preferred in this case.
-            ResolverPlaygroundTestCase(
-                ["dev-db/hsqldb"],
-                options={"--usepkg": True},
-                success=True,
-                mergelist=[
-                    "dev-java/oracle-jre-bin-1.8",
-                    "virtual/jre-1.8",
-                    "[binary]dev-db/hsqldb-1.8",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["dev-db/hsqldb"],
+                                       options={"--usepkg": True},
+                                       success=True,
+                                       mergelist=[
+                                           "dev-java/oracle-jre-bin-1.8", "virtual/jre-1.8",
+                                           "[binary]dev-db/hsqldb-1.8",
+                                       ],
+                                       ),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    debug=False,
-                    binpkgs=binpkgs,
-                    ebuilds=ebuilds,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(debug=False,
+                                                binpkgs=binpkgs,
+                                                ebuilds=ebuilds,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:

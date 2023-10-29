@@ -43,11 +43,7 @@ def linux_ro_checker(dir_list):
     invalids = []
 
     try:
-        with open(
-                "/proc/self/mountinfo",
-                encoding=_encodings["content"],
-                errors="replace",
-        ) as f:
+        with open("/proc/self/mountinfo", encoding=_encodings["content"], errors="replace", ) as f:
             for line in f:
                 # we're interested in dir and both attr fileds which always
                 # start with either 'ro' or 'rw'
@@ -84,19 +80,14 @@ def linux_ro_checker(dir_list):
     # If /proc/self/mountinfo can't be read, assume that there are no RO
     # filesystems and return.
     except OSError:
-        writemsg_level(
-            _("!!! /proc/self/mountinfo cannot be read"),
-            level=logging.WARNING,
-            noiselevel=-1,
-        )
+        writemsg_level(_("!!! /proc/self/mountinfo cannot be read"), level=logging.WARNING, noiselevel=-1, )
         return []
 
     for line in invalids:
-        writemsg_level(
-            _("!!! /proc/self/mountinfo contains unrecognized line: %s\n") % line.rstrip(),
-            level=logging.WARNING,
-            noiselevel=-1,
-        )
+        writemsg_level(_("!!! /proc/self/mountinfo contains unrecognized line: %s\n") % line.rstrip(),
+                       level=logging.WARNING,
+                       noiselevel=-1,
+                       )
 
     ro_devs = {}
     for x in ro_filesystems:
@@ -130,6 +121,4 @@ def empty_ro_checker(dir_list):
 
 # _CHECKERS is a map from ostype output to the appropriate function to return
 # in get_ro_checker.
-_CHECKERS = {
-    "Linux": linux_ro_checker,
-}
+_CHECKERS = {"Linux": linux_ro_checker, }

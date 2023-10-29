@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class CircularJsoncppCmakeBootstrapTestCase(TestCase):
@@ -33,22 +30,19 @@ class CircularJsoncppCmakeBootstrapTestCase(TestCase):
             # (dev-libs/jsoncpp-1.9.2:0/0::test_repo, ebuild scheduled for merge) depends on
             #  (dev-util/cmake-3.16.2:0/0::test_repo, ebuild scheduled for merge) (buildtime)
             #    (dev-libs/jsoncpp-1.9.2:0/0::test_repo, ebuild scheduled for merge) (buildtime_slot_op)
-            ResolverPlaygroundTestCase(
-                ["dev-util/cmake"],
-                options={"--backtrack": 0},
-                circular_dependency_solutions={},
-                success=False,
-            ),
+            ResolverPlaygroundTestCase(["dev-util/cmake"],
+                                       options={"--backtrack": 0},
+                                       circular_dependency_solutions={},
+                                       success=False,
+                                       ),
             # Demonstrate that backtracking adjusts || preferences in order to solve bug 703440.
-            ResolverPlaygroundTestCase(
-                ["dev-util/cmake"],
-                mergelist=[
-                    "dev-util/cmake-bootstrap-3.16.2",
-                    "dev-libs/jsoncpp-1.9.2",
-                    "dev-util/cmake-3.16.2",
-                ],
-                success=True,
-            ),
+            ResolverPlaygroundTestCase(["dev-util/cmake"],
+                                       mergelist=[
+                                           "dev-util/cmake-bootstrap-3.16.2", "dev-libs/jsoncpp-1.9.2",
+                                           "dev-util/cmake-3.16.2",
+                                       ],
+                                       success=True,
+                                       ),
         )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
@@ -61,12 +55,11 @@ class CircularJsoncppCmakeBootstrapTestCase(TestCase):
 
         test_cases = (
             # Demonstrate elimination of cmake-bootstrap via --depclean.
-            ResolverPlaygroundTestCase(
-                [],
-                options={"--depclean": True},
-                success=True,
-                cleanlist=["dev-util/cmake-bootstrap-3.16.2"],
-            ), )
+            ResolverPlaygroundTestCase([],
+                                       options={"--depclean": True},
+                                       success=True,
+                                       cleanlist=["dev-util/cmake-bootstrap-3.16.2"],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=ebuilds, world=["dev-util/cmake"])
         try:
@@ -98,16 +91,13 @@ class CircularJsoncppCmakeBootstrapTestCase(TestCase):
 
         test_cases = (
             # Solve bug 703440 with a dependency conditional on the bootstrap USE flag.
-            ResolverPlaygroundTestCase(
-                ["dev-util/cmake"],
-                mergelist=[
-                    "dev-util/cmake-bootstrap-3.16.2",
-                    "virtual/cmake-0",
-                    "dev-libs/jsoncpp-1.9.2",
-                    "dev-util/cmake-3.16.2",
-                ],
-                success=True,
-            ), )
+            ResolverPlaygroundTestCase(["dev-util/cmake"],
+                                       mergelist=[
+                                           "dev-util/cmake-bootstrap-3.16.2", "virtual/cmake-0",
+                                           "dev-libs/jsoncpp-1.9.2", "dev-util/cmake-3.16.2",
+                                       ],
+                                       success=True,
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:
@@ -130,14 +120,10 @@ class CircularChoicesTestCase(TestCase):
 
         test_cases = (
             # Automatically pull in gwydion-dylan-bin to solve a circular dep
-            ResolverPlaygroundTestCase(
-                ["dev-lang/gwydion-dylan"],
-                mergelist=[
-                    "dev-lang/gwydion-dylan-bin-2.4.0",
-                    "dev-lang/gwydion-dylan-2.4.0",
-                ],
-                success=True,
-            ), )
+            ResolverPlaygroundTestCase(["dev-lang/gwydion-dylan"],
+                                       mergelist=["dev-lang/gwydion-dylan-bin-2.4.0", "dev-lang/gwydion-dylan-2.4.0", ],
+                                       success=True,
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:
@@ -165,15 +151,13 @@ class VirtualCircularChoicesTestCase(TestCase):
 
         test_cases = (
             # Automatically pull in icedtea6-bin to solve a circular dep
-            ResolverPlaygroundTestCase(
-                ["dev-java/icedtea"],
-                mergelist=[
-                    "dev-java/icedtea6-bin-1.10.3",
-                    "virtual/jdk-1.6.0",
-                    "dev-java/icedtea-6.1.10.3",
-                ],
-                success=True,
-            ), )
+            ResolverPlaygroundTestCase(["dev-java/icedtea"],
+                                       mergelist=[
+                                           "dev-java/icedtea6-bin-1.10.3", "virtual/jdk-1.6.0",
+                                           "dev-java/icedtea-6.1.10.3",
+                                       ],
+                                       success=True,
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:
@@ -209,11 +193,10 @@ class CircularPypyExeTestCase(TestCase):
             # Demonstrate bug 705986, where a USE change suggestion was given
             # even though an || preference adjustment would solve the problem
             # by pulling in pypy-exe-bin instead of pypy-exe.
-            ResolverPlaygroundTestCase(
-                ["dev-python/pypy"],
-                mergelist=["dev-python/pypy-exe-bin-7.3.0", "dev-python/pypy-7.3.0"],
-                success=True,
-            ), )
+            ResolverPlaygroundTestCase(["dev-python/pypy"],
+                                       mergelist=["dev-python/pypy-exe-bin-7.3.0", "dev-python/pypy-7.3.0"],
+                                       success=True,
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)
         try:

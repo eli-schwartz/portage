@@ -17,10 +17,7 @@ def bin_entry_point():
     """
     script_path = os.path.join(PORTAGE_BIN_PATH, os.path.basename(sys.argv[0]))
     if os.access(script_path, os.X_OK):
-        sys.argv = [
-            sys.executable,
-            script_path,
-        ] + sys.argv[1:]
+        sys.argv = [sys.executable, script_path, ] + sys.argv[1:]
         os.execvp(sys.argv[0], sys.argv)
     else:
         print("File not found:", script_path, file=sys.stderr)

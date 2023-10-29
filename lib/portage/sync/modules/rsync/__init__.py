@@ -29,13 +29,9 @@ module_spec = {
             },
             "validate_config":
             CheckSyncConfig,
-            "module_specific_options": (
-                "sync-rsync-extra-opts",
-                "sync-rsync-vcs-ignore",
-                "sync-rsync-verify-jobs",
-                "sync-rsync-verify-max-age",
-                "sync-rsync-verify-metamanifest",
-            ),
+            "module_specific_options": ("sync-rsync-extra-opts", "sync-rsync-vcs-ignore", "sync-rsync-verify-jobs",
+                                        "sync-rsync-verify-max-age", "sync-rsync-verify-metamanifest",
+                                        ),
         }
     },
 }

@@ -108,14 +108,9 @@ _generate_hash_function("MD5", hashlib.md5, origin="hashlib")
 _generate_hash_function("SHA1", hashlib.sha1, origin="hashlib")
 _generate_hash_function("SHA256", hashlib.sha256, origin="hashlib")
 _generate_hash_function("SHA512", hashlib.sha512, origin="hashlib")
-for local_name, hash_name in (
-    ("RMD160", "ripemd160"),
-    ("WHIRLPOOL", "whirlpool"),
-    ("BLAKE2B", "blake2b"),
-    ("BLAKE2S", "blake2s"),
-    ("SHA3_256", "sha3_256"),
-    ("SHA3_512", "sha3_512"),
-):
+for local_name, hash_name in (("RMD160", "ripemd160"), ("WHIRLPOOL", "whirlpool"), ("BLAKE2B", "blake2b"),
+                              ("BLAKE2S", "blake2s"), ("SHA3_256", "sha3_256"), ("SHA3_512", "sha3_512"),
+                              ):
     try:
         hashlib.new(hash_name)
     except ValueError:
@@ -143,11 +138,10 @@ if "RMD160" not in hashfunc_map:
 
             for local_name, hash_name in (("RMD160", "RIPEMD160"), ):
                 if local_name not in hashfunc_map and hasattr(mhash, f"MHASH_{hash_name}"):
-                    _generate_hash_function(
-                        local_name,
-                        functools.partial(mhash.MHASH, getattr(mhash, f"MHASH_{hash_name}")),
-                        origin="mhash",
-                    )
+                    _generate_hash_function(local_name,
+                                            functools.partial(mhash.MHASH, getattr(mhash, f"MHASH_{hash_name}")),
+                                            origin="mhash",
+                                            )
         except ImportError:
             pass
 
@@ -244,10 +238,7 @@ class _hash_filter:
     Implements filtering for PORTAGE_CHECKSUM_FILTER.
     """
 
-    __slots__ = (
-        "transparent",
-        "_tokens",
-    )
+    __slots__ = ("transparent", "_tokens", )
 
     def __init__(self, filter_str):
         tokens = filter_str.upper().split()
@@ -324,11 +315,7 @@ def verify_all(filename, mydict, calc_prelink=0, strict=0):
     try:
         mysize = os.stat(filename)[stat.ST_SIZE]
         if mydict.get("size") is not None and mydict["size"] != mysize:
-            return False, (
-                _("Filesize does not match recorded size"),
-                mysize,
-                mydict["size"],
-            )
+            return False, (_("Filesize does not match recorded size"), mysize, mydict["size"], )
     except OSError as e:
         if e.errno == errno.ENOENT:
             raise portage.exception.FileNotFound(filename)

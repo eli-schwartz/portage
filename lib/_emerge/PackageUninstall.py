@@ -25,14 +25,7 @@ class PackageUninstall(CompositeTask):
     such as pkg_setup, pkg_prerm, and pkg_postrm.
     """
 
-    __slots__ = (
-        "world_atom",
-        "ldpath_mtimes",
-        "opts",
-        "pkg",
-        "settings",
-        "_builddir_lock",
-    )
+    __slots__ = ("world_atom", "ldpath_mtimes", "opts", "pkg", "settings", "_builddir_lock", )
 
     def _start(self):
         vardb = self.pkg.root_config.trees["vartree"].dbapi
@@ -59,10 +52,7 @@ class PackageUninstall(CompositeTask):
             pass
 
         self._builddir_lock = EbuildBuildDir(scheduler=self.scheduler, settings=self.settings)
-        self._start_task(
-            AsyncTaskFuture(future=self._builddir_lock.async_lock()),
-            self._start_unmerge,
-        )
+        self._start_task(AsyncTaskFuture(future=self._builddir_lock.async_lock()), self._start_unmerge, )
 
     def _start_unmerge(self, lock_task):
         self._assert_current(lock_task)
@@ -75,14 +65,12 @@ class PackageUninstall(CompositeTask):
 
         # Output only gets logged if it comes after prepare_build_dirs()
         # which initializes PORTAGE_LOG_FILE.
-        retval, _ = _unmerge_display(
-            self.pkg.root_config,
-            self.opts,
-            "unmerge",
-            [self.pkg.cpv],
-            clean_delay=0,
-            writemsg_level=self._writemsg_level,
-        )
+        retval, _ = _unmerge_display(self.pkg.root_config,
+                                     self.opts,
+                                     "unmerge", [self.pkg.cpv],
+                                     clean_delay=0,
+                                     writemsg_level=self._writemsg_level,
+                                     )
 
         if retval != os.EX_OK:
             self._async_unlock_builddir(returncode=retval)
@@ -92,19 +80,18 @@ class PackageUninstall(CompositeTask):
         self._emergelog(f"=== Unmerging... ({self.pkg.cpv})")
 
         cat, pf = portage.catsplit(self.pkg.cpv)
-        unmerge_task = MergeProcess(
-            mycat=cat,
-            mypkg=pf,
-            settings=self.settings,
-            treetype="vartree",
-            vartree=self.pkg.root_config.trees["vartree"],
-            scheduler=self.scheduler,
-            background=self.background,
-            mydbapi=self.pkg.root_config.trees["vartree"].dbapi,
-            prev_mtimes=self.ldpath_mtimes,
-            logfile=self.settings.get("PORTAGE_LOG_FILE"),
-            unmerge=True,
-        )
+        unmerge_task = MergeProcess(mycat=cat,
+                                    mypkg=pf,
+                                    settings=self.settings,
+                                    treetype="vartree",
+                                    vartree=self.pkg.root_config.trees["vartree"],
+                                    scheduler=self.scheduler,
+                                    background=self.background,
+                                    mydbapi=self.pkg.root_config.trees["vartree"].dbapi,
+                                    prev_mtimes=self.ldpath_mtimes,
+                                    logfile=self.settings.get("PORTAGE_LOG_FILE"),
+                                    unmerge=True,
+                                    )
 
         self._start_task(unmerge_task, self._unmerge_exit)
 
@@ -124,10 +111,9 @@ class PackageUninstall(CompositeTask):
         if returncode is not None:
             # The returncode will be set after unlock is complete.
             self.returncode = None
-        self._start_task(
-            AsyncTaskFuture(future=self._builddir_lock.async_unlock()),
-            functools.partial(self._unlock_builddir_exit, returncode=returncode),
-        )
+        self._start_task(AsyncTaskFuture(future=self._builddir_lock.async_unlock()),
+                         functools.partial(self._unlock_builddir_exit, returncode=returncode),
+                         )
 
     def _unlock_builddir_exit(self, unlock_task, returncode=None):
         self._assert_current(unlock_task)

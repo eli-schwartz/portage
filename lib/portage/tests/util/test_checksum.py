@@ -19,14 +19,12 @@ class ChecksumTestCase(TestCase):
         self.assertEqual(checksum_str(self.text, "SHA1"), "5c572017d4e4d49e4aa03a2eda12dbb54a1e2e4f")
 
     def test_sha256(self):
-        self.assertEqual(
-            checksum_str(b"", "SHA256"),
-            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        )
-        self.assertEqual(
-            checksum_str(self.text, "SHA256"),
-            "e3d4a1135181fe156d61455615bb6296198e8ca5b2f20ddeb85cb4cd27f62320",
-        )
+        self.assertEqual(checksum_str(b"", "SHA256"),
+                         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                         )
+        self.assertEqual(checksum_str(self.text, "SHA256"),
+                         "e3d4a1135181fe156d61455615bb6296198e8ca5b2f20ddeb85cb4cd27f62320",
+                         )
 
     def test_sha512(self):
         self.assertEqual(
@@ -41,10 +39,7 @@ class ChecksumTestCase(TestCase):
     def test_rmd160(self):
         try:
             self.assertEqual(checksum_str(b"", "RMD160"), "9c1185a5c5e9fc54612808977ee8f548b2258d31")
-            self.assertEqual(
-                checksum_str(self.text, "RMD160"),
-                "fc453174f63fc011d6f64abd2c45fb6a53c8239b",
-            )
+            self.assertEqual(checksum_str(self.text, "RMD160"), "fc453174f63fc011d6f64abd2c45fb6a53c8239b", )
         except DigestException:
             self.skipTest("RMD160 implementation not available")
 
@@ -76,27 +71,23 @@ class ChecksumTestCase(TestCase):
 
     def test_blake2s(self):
         try:
-            self.assertEqual(
-                checksum_str(b"", "BLAKE2S"),
-                "69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9",
-            )
-            self.assertEqual(
-                checksum_str(self.text, "BLAKE2S"),
-                "823ab2429f27690450efe888b0404d092fe2ee72a9bd63d5342c251b4dbb373d",
-            )
+            self.assertEqual(checksum_str(b"", "BLAKE2S"),
+                             "69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9",
+                             )
+            self.assertEqual(checksum_str(self.text, "BLAKE2S"),
+                             "823ab2429f27690450efe888b0404d092fe2ee72a9bd63d5342c251b4dbb373d",
+                             )
         except DigestException:
             self.skipTest("BLAKE2S implementation not available")
 
     def test_sha3_256(self):
         try:
-            self.assertEqual(
-                checksum_str(b"", "SHA3_256"),
-                "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a",
-            )
-            self.assertEqual(
-                checksum_str(self.text, "SHA3_256"),
-                "932fc0498ebb865406f9b6606280939283aa8a148562e39fd095a5d22bdec5c6",
-            )
+            self.assertEqual(checksum_str(b"", "SHA3_256"),
+                             "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a",
+                             )
+            self.assertEqual(checksum_str(self.text, "SHA3_256"),
+                             "932fc0498ebb865406f9b6606280939283aa8a148562e39fd095a5d22bdec5c6",
+                             )
         except DigestException:
             self.skipTest("SHA3_256 implementation not available")
 
@@ -119,18 +110,9 @@ class ApplyHashFilterTestCase(TestCase):
     def test_apply_hash_filter(self):
         indict = {"MD5": "", "SHA1": "", "SHA256": "", "size": ""}
 
-        self.assertEqual(
-            sorted(_apply_hash_filter(indict, lambda x: True)),
-            ["MD5", "SHA1", "SHA256", "size"],
-        )
+        self.assertEqual(sorted(_apply_hash_filter(indict, lambda x: True)), ["MD5", "SHA1", "SHA256", "size"], )
         self.assertEqual(sorted(_apply_hash_filter(indict, lambda x: x == "MD5")), ["MD5", "size"])
-        self.assertEqual(
-            sorted(_apply_hash_filter(indict, lambda x: x != "MD5")),
-            ["SHA1", "SHA256", "size"],
-        )
-        self.assertEqual(
-            sorted(_apply_hash_filter(indict, lambda x: x == "SHA256")),
-            ["SHA256", "size"],
-        )
+        self.assertEqual(sorted(_apply_hash_filter(indict, lambda x: x != "MD5")), ["SHA1", "SHA256", "size"], )
+        self.assertEqual(sorted(_apply_hash_filter(indict, lambda x: x == "SHA256")), ["SHA256", "size"], )
         # this should return size + one of the hashes
         self.assertEqual(len(list(_apply_hash_filter(indict, lambda x: False))), 2)

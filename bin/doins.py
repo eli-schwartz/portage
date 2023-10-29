@@ -111,11 +111,9 @@ def _parse_install_options(options, is_strict, helper, inprocess_runner_class, s
         _warn(helper, f"Unknown install options: {options}, {remaining!r}")
         if is_strict:
             sys.exit(1)
-        _warn(
-            helper,
-            "Continue with falling back to `install` "
-            "command execution, which can be slower.",
-        )
+        _warn(helper, "Continue with falling back to `install` "
+              "command execution, which can be slower.",
+              )
         return subprocess_runner_class(split_options)
     return inprocess_runner_class(namespace)
 
@@ -198,13 +196,9 @@ class _InsInProcessInstallRunner:
             if self._parsed_options.preserve_timestamps:
                 _set_timestamps(sstat, dest)
         except Exception:
-            logger.exception(
-                "Failed to copy file: "
-                "_parsed_options=%r, source=%r, dest_dir=%r",
-                self._parsed_options,
-                source,
-                dest_dir,
-            )
+            logger.exception("Failed to copy file: "
+                             "_parsed_options=%r, source=%r, dest_dir=%r", self._parsed_options, source, dest_dir,
+                             )
             return False
         return True
 
@@ -342,20 +336,13 @@ class _InstallRunner:
                 opts: namespace object containing the parsed
                         arguments for this program.
         """
-        self._ins_runner = _parse_install_options(
-            opts.insoptions,
-            opts.strict_option,
-            opts.helper,
-            lambda options: _InsInProcessInstallRunner(opts, options),
-            _InsSubprocessInstallRunner,
-        )
-        self._dir_runner = _parse_install_options(
-            opts.diroptions,
-            opts.strict_option,
-            opts.helper,
-            _DirInProcessInstallRunner,
-            _DirSubprocessInstallRunner,
-        )
+        self._ins_runner = _parse_install_options(opts.insoptions, opts.strict_option, opts.helper,
+                                                  lambda options: _InsInProcessInstallRunner(opts, options),
+                                                  _InsSubprocessInstallRunner,
+                                                  )
+        self._dir_runner = _parse_install_options(opts.diroptions, opts.strict_option, opts.helper,
+                                                  _DirInProcessInstallRunner, _DirSubprocessInstallRunner,
+                                                  )
         self._helpers_can_die = opts.helpers_can_die
 
     def install_file(self, source, dest_dir):
@@ -424,13 +411,9 @@ def _doins(opts, install_runner, relpath, source_root):
                 os.symlink(linkto, dest)
                 return True
         except Exception:
-            logger.exception(
-                "Failed to create symlink: "
-                "opts=%r, relpath=%r, source_root=%r",
-                opts,
-                relpath,
-                source_root,
-            )
+            logger.exception("Failed to create symlink: "
+                             "opts=%r, relpath=%r, source_root=%r", opts, relpath, source_root,
+                             )
             return False
 
     return install_runner.install_file(source, os.path.dirname(dest))
@@ -439,51 +422,44 @@ def _doins(opts, install_runner, relpath, source_root):
 def _create_arg_parser():
     """Returns the parser for the command line arguments."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--recursive",
-        action="store_true",
-        help="If set, installs files recursively. Otherwise, "
-        "just skips directories.",
-    )
-    parser.add_argument(
-        "--preserve_symlinks",
-        action="store_true",
-        help="If set, a symlink will be installed as symlink.",
-    )
-    parser.add_argument(
-        "--helpers_can_die",
-        action="store_true",
-        help="If set, die in isolated-functions.sh is enabled. "
-        "Specifically this is used to keep compatible dodir's "
-        "behavior.",
-    )
+    parser.add_argument("--recursive",
+                        action="store_true",
+                        help="If set, installs files recursively. Otherwise, "
+                        "just skips directories.",
+                        )
+    parser.add_argument("--preserve_symlinks",
+                        action="store_true",
+                        help="If set, a symlink will be installed as symlink.",
+                        )
+    parser.add_argument("--helpers_can_die",
+                        action="store_true",
+                        help="If set, die in isolated-functions.sh is enabled. "
+                        "Specifically this is used to keep compatible dodir's "
+                        "behavior.",
+                        )
     parser.add_argument("--distdir", default="", help="Path to the actual distdir.")
-    parser.add_argument(
-        "--insoptions",
-        default="",
-        help="Options passed to `install` command for installing a "
-        "file.",
-    )
-    parser.add_argument(
-        "--diroptions",
-        default="",
-        help="Options passed to `install` command for installing a "
-        "dir.",
-    )
-    parser.add_argument(
-        "--strict_option",
-        action="store_true",
-        help="If set True, abort if insoptions/diroptions contains an "
-        "option which cannot be interpreted by this script, instead of "
-        "fallback to execute `install` command.",
-    )
+    parser.add_argument("--insoptions",
+                        default="",
+                        help="Options passed to `install` command for installing a "
+                        "file.",
+                        )
+    parser.add_argument("--diroptions",
+                        default="",
+                        help="Options passed to `install` command for installing a "
+                        "dir.",
+                        )
+    parser.add_argument("--strict_option",
+                        action="store_true",
+                        help="If set True, abort if insoptions/diroptions contains an "
+                        "option which cannot be interpreted by this script, instead of "
+                        "fallback to execute `install` command.",
+                        )
     parser.add_argument("--enable_copy_xattr", action="store_true", help="Copies xattrs, if set True")
-    parser.add_argument(
-        "--xattr_exclude",
-        default="",
-        help="White space delimited glob pattern to exclude xattr copy."
-        "Used only if --enable_xattr_copy is set.",
-    )
+    parser.add_argument("--xattr_exclude",
+                        default="",
+                        help="White space delimited glob pattern to exclude xattr copy."
+                        "Used only if --enable_xattr_copy is set.",
+                        )
 
     # If helper is dodoc, it changes the behavior for the directory
     # install without --recursive.

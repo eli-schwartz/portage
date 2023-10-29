@@ -4,10 +4,7 @@
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.util:writemsg",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.util:writemsg", )
 
 from portage.const import EBUILD_PHASES
 from portage.exception import AlarmSignal, PortageException

@@ -24,26 +24,10 @@ magic_line_count = 22
 
 class database(flat_hash.database):
     complete_eclass_entries = False
-    auxdbkey_order = (
-        "DEPEND",
-        "RDEPEND",
-        "SLOT",
-        "SRC_URI",
-        "RESTRICT",
-        "HOMEPAGE",
-        "LICENSE",
-        "DESCRIPTION",
-        "KEYWORDS",
-        "IDEPEND",
-        "INHERITED",
-        "IUSE",
-        "REQUIRED_USE",
-        "PDEPEND",
-        "BDEPEND",
-        "EAPI",
-        "PROPERTIES",
-        "DEFINED_PHASES",
-    )
+    auxdbkey_order = ("DEPEND", "RDEPEND", "SLOT", "SRC_URI", "RESTRICT", "HOMEPAGE", "LICENSE", "DESCRIPTION",
+                      "KEYWORDS", "IDEPEND", "INHERITED", "IUSE", "REQUIRED_USE", "PDEPEND", "BDEPEND", "EAPI",
+                      "PROPERTIES", "DEFINED_PHASES",
+                      )
 
     autocommits = True
     serialize_eclasses = False
@@ -111,10 +95,7 @@ class database(flat_hash.database):
 
         new_fp = os.path.join(self.location, cpv)
         try:
-            f = open(
-                _unicode_encode(new_fp, encoding=_encodings["fs"], errors="strict"),
-                "rb",
-            )
+            f = open(_unicode_encode(new_fp, encoding=_encodings["fs"], errors="strict"), "rb", )
         except OSError:
             pass
         else:
@@ -143,10 +124,7 @@ class database(flat_hash.database):
             if errno.ENOENT == e.errno:
                 try:
                     self._ensure_dirs(cpv)
-                    myf = open(
-                        _unicode_encode(fp, encoding=_encodings["fs"], errors="strict"),
-                        "wb",
-                    )
+                    myf = open(_unicode_encode(fp, encoding=_encodings["fs"], errors="strict"), "wb", )
                 except OSError as e:
                     raise cache_errors.CacheCorruption(cpv, e)
             else:

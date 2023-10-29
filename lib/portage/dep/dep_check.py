@@ -10,10 +10,7 @@ import operator
 
 import portage
 from portage.dep import Atom, match_from_list, use_reduce
-from portage.dep._dnf import (
-    dnf_convert as _dnf_convert,
-    contains_disjunction as _contains_disjunction,
-)
+from portage.dep._dnf import (dnf_convert as _dnf_convert, contains_disjunction as _contains_disjunction, )
 from portage.exception import InvalidDependString, ParseError
 from portage.localization import _
 from portage.util import writemsg, writemsg_level
@@ -22,17 +19,16 @@ from portage.util.SlotObject import SlotObject
 from portage.versions import vercmp
 
 
-def _expand_new_virtuals(
-    mysplit,
-    edebug,
-    mydbapi,
-    mysettings,
-    myroot="/",
-    trees=None,
-    use_mask=None,
-    use_force=None,
-    **kwargs,
-):
+def _expand_new_virtuals(mysplit,
+                         edebug,
+                         mydbapi,
+                         mysettings,
+                         myroot="/",
+                         trees=None,
+                         use_mask=None,
+                         use_force=None,
+                         **kwargs,
+                         ):
     """
     In order to solve bug #141118, recursively expand new-style virtuals so
     as to collapse one or more levels of indirection, generating an expanded
@@ -83,17 +79,16 @@ def _expand_new_virtuals(
                 assert (x[0] != "||"), f"Normalization error, nested disjunction found in {mysplit}"
             else:
                 assert (x[0] == "||"), f"Normalization error, nested conjunction found in {mysplit}"
-            x_exp = _expand_new_virtuals(
-                x,
-                edebug,
-                mydbapi,
-                mysettings,
-                myroot=myroot,
-                trees=trees,
-                use_mask=use_mask,
-                use_force=use_force,
-                **kwargs,
-            )
+            x_exp = _expand_new_virtuals(x,
+                                         edebug,
+                                         mydbapi,
+                                         mysettings,
+                                         myroot=myroot,
+                                         trees=trees,
+                                         use_mask=use_mask,
+                                         use_force=use_force,
+                                         **kwargs,
+                                         )
             if is_disjunction:
                 if len(x_exp) == 1:
                     x = x_exp[0]
@@ -212,29 +207,14 @@ def _expand_new_virtuals(
             pkg_kwargs = kwargs.copy()
             pkg_kwargs["myuse"] = pkg_use_enabled(pkg)
             if edebug:
-                writemsg_level(
-                    _("Virtual Parent:      %s\n") % (pkg, ),
-                    noiselevel=-1,
-                    level=logging.DEBUG,
-                )
-                writemsg_level(
-                    _("Virtual Depstring:   %s\n") % (depstring, ),
-                    noiselevel=-1,
-                    level=logging.DEBUG,
-                )
+                writemsg_level(_("Virtual Parent:      %s\n") % (pkg, ), noiselevel=-1, level=logging.DEBUG, )
+                writemsg_level(_("Virtual Depstring:   %s\n") % (depstring, ), noiselevel=-1, level=logging.DEBUG, )
 
             # Set EAPI used for validation in dep_check() recursion.
             mytrees["virt_parent"] = pkg
 
             try:
-                mycheck = dep_check(
-                    depstring,
-                    mydbapi,
-                    mysettings,
-                    myroot=myroot,
-                    trees=trees,
-                    **pkg_kwargs,
-                )
+                mycheck = dep_check(depstring, mydbapi, mysettings, myroot=myroot, trees=trees, **pkg_kwargs, )
             finally:
                 # Restore previous EAPI after recursion.
                 if virt_parent is not None:
@@ -315,16 +295,9 @@ def dep_eval(deplist):
 
 
 class _dep_choice(SlotObject):
-    __slots__ = (
-        "atoms",
-        "slot_map",
-        "cp_map",
-        "all_available",
-        "all_installed_slots",
-        "new_slot_count",
-        "want_update",
-        "all_in_graph",
-    )
+    __slots__ = ("atoms", "slot_map", "cp_map", "all_available", "all_installed_slots", "new_slot_count", "want_update",
+                 "all_in_graph",
+                 )
 
 
 def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize_slots=False):
@@ -342,14 +315,13 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
         unresolved = []
         for x, satisfied in zip(unreduced, reduced):
             if isinstance(x, list):
-                unresolved += dep_zapdeps(
-                    x,
-                    satisfied,
-                    myroot,
-                    use_binaries=use_binaries,
-                    trees=trees,
-                    minimize_slots=minimize_slots,
-                )
+                unresolved += dep_zapdeps(x,
+                                          satisfied,
+                                          myroot,
+                                          use_binaries=use_binaries,
+                                          trees=trees,
+                                          minimize_slots=minimize_slots,
+                                          )
             elif not satisfied:
                 unresolved.append(x)
         return unresolved
@@ -378,17 +350,9 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
 
     # unsat_use_* must come after preferred_non_installed
     # for correct ordering in cases like || ( foo[a] foo[b] ).
-    choice_bins = (
-        preferred_in_graph,
-        preferred_non_installed,
-        unsat_use_in_graph,
-        unsat_use_installed,
-        unsat_use_non_installed,
-        other_installed,
-        other_installed_some,
-        other_installed_any_slot,
-        other,
-    )
+    choice_bins = (preferred_in_graph, preferred_non_installed, unsat_use_in_graph, unsat_use_installed,
+                   unsat_use_non_installed, other_installed, other_installed_some, other_installed_any_slot, other,
+                   )
 
     # Alias the trees we'll be checking availability against
     parent = trees[myroot].get("parent")
@@ -420,14 +384,13 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
     # and other, with values of [[required_atom], availablility]
     for x, satisfied in zip(deps, satisfieds):
         if isinstance(x, list):
-            atoms = dep_zapdeps(
-                x,
-                satisfied,
-                myroot,
-                use_binaries=use_binaries,
-                trees=trees,
-                minimize_slots=minimize_slots,
-            )
+            atoms = dep_zapdeps(x,
+                                satisfied,
+                                myroot,
+                                use_binaries=use_binaries,
+                                trees=trees,
+                                minimize_slots=minimize_slots,
+                                )
         else:
             atoms = [x]
         if vardb is None:
@@ -547,16 +510,15 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
                 if not slot_atom.cp.startswith("virtual/") and not graph_db.match_pkgs(slot_atom):
                     new_slot_count += 1
 
-        this_choice = _dep_choice(
-            atoms=atoms,
-            slot_map=slot_map,
-            cp_map=cp_map,
-            all_available=all_available,
-            all_installed_slots=False,
-            new_slot_count=new_slot_count,
-            all_in_graph=False,
-            want_update=want_update,
-        )
+        this_choice = _dep_choice(atoms=atoms,
+                                  slot_map=slot_map,
+                                  cp_map=cp_map,
+                                  all_available=all_available,
+                                  all_installed_slots=False,
+                                  new_slot_count=new_slot_count,
+                                  all_in_graph=False,
+                                  want_update=want_update,
+                                  )
         if all_available:
             # The "all installed" criterion is not version or slot specific.
             # If any version of a package is already in the graph then we
@@ -632,10 +594,9 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
                             circular_atom = atom
                             break
                 if circular_atom is None and circular_dependency is not None:
-                    for circular_child in itertools.chain(
-                            circular_dependency.get(parent, []),
-                            circular_dependency.get(virt_parent, []),
-                    ):
+                    for circular_child in itertools.chain(circular_dependency.get(parent, []),
+                                                          circular_dependency.get(virt_parent, []),
+                                                          ):
                         for atom in atoms:
                             if not atom.blocker and atom.match(circular_child):
                                 circular_atom = atom
@@ -765,18 +726,17 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
     assert False  # This point should not be reachable
 
 
-def dep_check(
-    depstring,
-    mydbapi,
-    mysettings,
-    use="yes",
-    mode=None,
-    myuse=None,
-    use_cache=1,
-    use_binaries=0,
-    myroot=None,
-    trees=None,
-):
+def dep_check(depstring,
+              mydbapi,
+              mysettings,
+              use="yes",
+              mode=None,
+              myuse=None,
+              use_cache=1,
+              use_binaries=0,
+              myroot=None,
+              trees=None,
+              ):
     """
     Takes a depend string, parses it, and selects atoms.
     The myroot parameter is unused (use mysettings['EROOT'] instead).
@@ -845,16 +805,15 @@ def dep_check(
         mysplit = depstring
     else:
         try:
-            mysplit = use_reduce(
-                depstring,
-                uselist=myusesplit,
-                masklist=mymasks,
-                matchall=(use == "all"),
-                excludeall=useforce,
-                opconvert=True,
-                token_class=Atom,
-                eapi=eapi,
-            )
+            mysplit = use_reduce(depstring,
+                                 uselist=myusesplit,
+                                 masklist=mymasks,
+                                 matchall=(use == "all"),
+                                 excludeall=useforce,
+                                 opconvert=True,
+                                 token_class=Atom,
+                                 eapi=eapi,
+                                 )
         except InvalidDependString as e:
             return [0, f"{e}"]
 
@@ -865,21 +824,20 @@ def dep_check(
     # Recursively expand new-style virtuals so as to
     # collapse one or more levels of indirection.
     try:
-        mysplit = _expand_new_virtuals(
-            mysplit,
-            edebug,
-            mydbapi,
-            mysettings,
-            use=use,
-            mode=mode,
-            myuse=myuse,
-            use_force=useforce,
-            use_mask=mymasks,
-            use_cache=use_cache,
-            use_binaries=use_binaries,
-            myroot=myroot,
-            trees=trees,
-        )
+        mysplit = _expand_new_virtuals(mysplit,
+                                       edebug,
+                                       mydbapi,
+                                       mysettings,
+                                       use=use,
+                                       mode=mode,
+                                       myuse=myuse,
+                                       use_force=useforce,
+                                       use_mask=mymasks,
+                                       use_cache=use_cache,
+                                       use_binaries=use_binaries,
+                                       myroot=myroot,
+                                       trees=trees,
+                                       )
     except ParseError as e:
         return [0, f"{e}"]
 
@@ -897,14 +855,13 @@ def dep_check(
     writemsg(f"mysplit:  {mysplit}\n", 1)
     writemsg(f"mysplit2: {mysplit2}\n", 1)
 
-    selected_atoms = dep_zapdeps(
-        mysplit,
-        mysplit2,
-        myroot,
-        use_binaries=use_binaries,
-        trees=trees,
-        minimize_slots=dnf,
-    )
+    selected_atoms = dep_zapdeps(mysplit,
+                                 mysplit2,
+                                 myroot,
+                                 use_binaries=use_binaries,
+                                 trees=trees,
+                                 minimize_slots=dnf,
+                                 )
 
     return [1, selected_atoms]
 

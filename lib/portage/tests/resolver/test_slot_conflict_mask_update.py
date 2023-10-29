@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotConflictMaskUpdateTestCase(TestCase):
@@ -30,15 +27,10 @@ class SlotConflictMaskUpdateTestCase(TestCase):
             "dev-libs/C-2": {},
         }
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["dev-libs/A"],
-            mergelist=[
-                "dev-libs/C-1",
-                "dev-libs/B-1",
-                "dev-libs/A-1",
-            ],
-            success=True,
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A"],
+                                                 mergelist=["dev-libs/C-1", "dev-libs/B-1", "dev-libs/A-1", ],
+                                                 success=True,
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
 

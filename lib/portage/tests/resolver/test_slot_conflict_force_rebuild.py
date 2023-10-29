@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotConflictForceRebuildTestCase(TestCase):
@@ -53,14 +50,13 @@ class SlotConflictForceRebuildTestCase(TestCase):
             # ebuilds, even though the corresponding installed
             # instances had really forced rebuilds due to being built
             # with slot-operators in their deps.
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"],
-                options={},
-                success=True,
-                ambiguous_merge_order=True,
-                mergelist=["app-misc/A-2", ("app-misc/B-0", "app-misc/C-0")],
-                forced_rebuilds={"app-misc/A-2": ["app-misc/B-0", "app-misc/C-0"]},
-            ), )
+            ResolverPlaygroundTestCase(["app-misc/A"],
+                                       options={},
+                                       success=True,
+                                       ambiguous_merge_order=True,
+                                       mergelist=["app-misc/A-2", ("app-misc/B-0", "app-misc/C-0")],
+                                       forced_rebuilds={"app-misc/A-2": ["app-misc/B-0", "app-misc/C-0"]},
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:

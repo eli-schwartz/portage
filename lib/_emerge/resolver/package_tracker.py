@@ -6,12 +6,9 @@ import collections
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.dep:Atom,match_from_list",
-    "portage.util:cmp_sort_key",
-    "portage.versions:vercmp",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.dep:Atom,match_from_list", "portage.util:cmp_sort_key",
+                                    "portage.versions:vercmp",
+                                    )
 
 _PackageConflict = collections.namedtuple("_PackageConflict", ["root", "pkgs", "atom", "description"])
 
@@ -277,12 +274,11 @@ class PackageTracker:
                     slot_pkgs = slot_map[slot_key]
                     if len(slot_pkgs) > 1:
                         self._conflicts_cache.append(
-                            PackageConflict(
-                                description="slot conflict",
-                                root=slot_key[0],
-                                atom=slot_key[1],
-                                pkgs=tuple(slot_pkgs),
-                            ))
+                            PackageConflict(description="slot conflict",
+                                            root=slot_key[0],
+                                            atom=slot_key[1],
+                                            pkgs=tuple(slot_pkgs),
+                                            ))
 
                 # CPV conflicts.
                 for cpv_key in cpv_map:
@@ -293,12 +289,11 @@ class PackageTracker:
                         slots = {pkg.slot for pkg in cpv_pkgs}
                         if len(slots) > 1:
                             self._conflicts_cache.append(
-                                PackageConflict(
-                                    description="cpv conflict",
-                                    root=cpv_key[0],
-                                    atom=cpv_key[1],
-                                    pkgs=tuple(cpv_pkgs),
-                                ))
+                                PackageConflict(description="cpv conflict",
+                                                root=cpv_key[0],
+                                                atom=cpv_key[1],
+                                                pkgs=tuple(cpv_pkgs),
+                                                ))
 
         return iter(self._conflicts_cache)
 
@@ -368,10 +363,9 @@ class PackageTrackerDbapiWrapper:
         self._package_tracker.add_pkg(pkg)
 
     def match_pkgs(self, atom):
-        ret = sorted(
-            self._package_tracker.match(self._root, atom),
-            key=cmp_sort_key(lambda x, y: vercmp(x.version, y.version)),
-        )
+        ret = sorted(self._package_tracker.match(self._root, atom),
+                     key=cmp_sort_key(lambda x, y: vercmp(x.version, y.version)),
+                     )
         return ret
 
     def __iter__(self):

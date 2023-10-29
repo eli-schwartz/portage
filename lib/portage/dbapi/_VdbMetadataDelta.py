@@ -17,20 +17,12 @@ class VdbMetadataDelta:
         self._vardb = vardb
 
     def initialize(self, timestamp):
-        with atomic_ofstream(
-                self._vardb._cache_delta_filename,
-                "w",
-                encoding=_encodings["repo.content"],
-                errors="strict",
-        ) as f:
-            json.dump(
-                {
-                    "version": self._format_version,
-                    "timestamp": timestamp
-                },
-                f,
-                ensure_ascii=False,
-            )
+        with atomic_ofstream(self._vardb._cache_delta_filename,
+                             "w",
+                             encoding=_encodings["repo.content"],
+                             errors="strict",
+                             ) as f:
+            json.dump({"version": self._format_version, "timestamp": timestamp}, f, ensure_ascii=False, )
 
     def load(self):
         if not os.path.exists(self._vardb._aux_cache_filename):
@@ -39,11 +31,7 @@ class VdbMetadataDelta:
             return None
 
         try:
-            with open(
-                    self._vardb._cache_delta_filename,
-                    encoding=_encodings["repo.content"],
-                    errors="strict",
-            ) as f:
+            with open(self._vardb._cache_delta_filename, encoding=_encodings["repo.content"], errors="strict", ) as f:
                 cache_obj = json.load(f)
         except OSError as e:
             if e.errno not in (errno.ENOENT, errno.ESTALE):
@@ -131,11 +119,7 @@ class VdbMetadataDelta:
             filtered_list.reverse()
             deltas_obj["deltas"] = filtered_list
 
-            f = atomic_ofstream(
-                self._vardb._cache_delta_filename,
-                mode="w",
-                encoding=_encodings["repo.content"],
-            )
+            f = atomic_ofstream(self._vardb._cache_delta_filename, mode="w", encoding=_encodings["repo.content"], )
             json.dump(deltas_obj, f, ensure_ascii=False)
             f.close()
 

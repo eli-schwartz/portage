@@ -1,22 +1,10 @@
 # Copyright 2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-from portage.util.endian.decode import (
-    decode_uint16_le,
-    decode_uint32_le,
-    decode_uint16_be,
-    decode_uint32_be,
-)
-from portage.util.elf.constants import (
-    E_ENTRY,
-    E_MACHINE,
-    E_TYPE,
-    EI_CLASS,
-    ELFCLASS32,
-    ELFCLASS64,
-    ELFDATA2LSB,
-    ELFDATA2MSB,
-)
+from portage.util.endian.decode import (decode_uint16_le, decode_uint32_le, decode_uint16_be, decode_uint32_be, )
+from portage.util.elf.constants import (E_ENTRY, E_MACHINE, E_TYPE, EI_CLASS, ELFCLASS32, ELFCLASS64, ELFDATA2LSB,
+                                        ELFDATA2MSB,
+                                        )
 
 
 class ELFHeader:

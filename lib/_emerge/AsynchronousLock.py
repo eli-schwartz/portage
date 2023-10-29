@@ -27,13 +27,7 @@ class AsynchronousLock(AsynchronousTask):
     signals to the main thread).
     """
 
-    __slots__ = ("path", ) + (
-        "_imp",
-        "_force_async",
-        "_force_process",
-        "_force_thread",
-        "_unlock_future",
-    )
+    __slots__ = ("path", ) + ("_imp", "_force_async", "_force_process", "_force_thread", "_unlock_future", )
 
     _use_process_by_default = True
 
@@ -162,13 +156,7 @@ class _LockProcess(AbstractPollTask):
     lock and exit.
     """
 
-    __slots__ = ("path", ) + (
-        "_acquired",
-        "_kill_test",
-        "_proc",
-        "_files",
-        "_unlock_future",
-    )
+    __slots__ = ("path", ) + ("_acquired", "_kill_test", "_proc", "_files", "_unlock_future", )
 
     def _start(self):
         in_pr, in_pw = os.pipe()
@@ -181,20 +169,18 @@ class _LockProcess(AbstractPollTask):
 
         self.scheduler.add_reader(in_pr, self._output_handler)
         self._registered = True
-        self._proc = SpawnProcess(
-            args=[
-                portage._python_interpreter,
-                os.path.join(portage._bin_path, "lock-helper.py"),
-                self.path,
-            ],
-            env=dict(os.environ, PORTAGE_PYM_PATH=portage._pym_path),
-            fd_pipes={
-                0: out_pr,
-                1: in_pw,
-                2: sys.__stderr__.fileno()
-            },
-            scheduler=self.scheduler,
-        )
+        self._proc = SpawnProcess(args=[
+            portage._python_interpreter,
+            os.path.join(portage._bin_path, "lock-helper.py"), self.path,
+        ],
+                                  env=dict(os.environ, PORTAGE_PYM_PATH=portage._pym_path),
+                                  fd_pipes={
+                                      0: out_pr,
+                                      1: in_pw,
+                                      2: sys.__stderr__.fileno()
+                                  },
+                                  scheduler=self.scheduler,
+                                  )
         self._proc.addExitListener(self._proc_exit)
         self._proc.start()
         os.close(out_pr)
@@ -221,11 +207,10 @@ class _LockProcess(AbstractPollTask):
                 # caller can check the returncode and handle
                 # this failure appropriately.
                 if not (self.cancelled or self._kill_test):
-                    writemsg_level(
-                        "_LockProcess: failed to acquire lock on '{self.path}'\n",
-                        level=logging.ERROR,
-                        noiselevel=-1,
-                    )
+                    writemsg_level("_LockProcess: failed to acquire lock on '{self.path}'\n",
+                                   level=logging.ERROR,
+                                   noiselevel=-1,
+                                   )
                 self._unregister()
                 self.returncode = proc.returncode
                 self._async_wait()

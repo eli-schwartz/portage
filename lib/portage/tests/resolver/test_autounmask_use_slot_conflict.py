@@ -4,10 +4,7 @@
 import pytest
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class AutounmaskUseSlotConflictTestCase(TestCase):
@@ -37,25 +34,20 @@ class AutounmaskUseSlotConflictTestCase(TestCase):
             # a conflict which is not reported. In order to install L,
             # foo must be disabled for both K and M, but autounmask
             # disables foo for K and leaves it enabled for M.
-            ResolverPlaygroundTestCase(
-                ["sci-libs/L", "sci-libs/M"],
-                options={"--backtrack": 0},
-                success=False,
-                mergelist=[
-                    "sci-libs/L-1",
-                    "sci-libs/M-1",
-                    "sci-libs/K-1",
-                ],
-                ignore_mergelist_order=True,
-                slot_collision_solutions=[{
-                    "sci-libs/K-1": {
-                        "foo": False
-                    },
-                    "sci-libs/M-1": {
-                        "foo": False
-                    }
-                }],
-            ), )
+            ResolverPlaygroundTestCase(["sci-libs/L", "sci-libs/M"],
+                                       options={"--backtrack": 0},
+                                       success=False,
+                                       mergelist=["sci-libs/L-1", "sci-libs/M-1", "sci-libs/K-1", ],
+                                       ignore_mergelist_order=True,
+                                       slot_collision_solutions=[{
+                                           "sci-libs/K-1": {
+                                               "foo": False
+                                           },
+                                           "sci-libs/M-1": {
+                                               "foo": False
+                                           }
+                                       }],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed)
         try:

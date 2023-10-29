@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SonameDepcleanTestCase(TestCase):
@@ -27,26 +24,23 @@ class SonameDepcleanTestCase(TestCase):
 
         world = ("app-misc/A", )
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                [],
-                options={
-                    "--depclean": True,
-                    "--ignore-soname-deps": "n",
-                },
-                success=True,
-                cleanlist=[],
-            ),
-            ResolverPlaygroundTestCase(
-                [],
-                options={
-                    "--depclean": True,
-                    "--ignore-soname-deps": "y",
-                },
-                success=True,
-                cleanlist=["sys-libs/glibc-2.19-r1"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase([],
+                                                 options={
+                                                     "--depclean": True,
+                                                     "--ignore-soname-deps": "n",
+                                                 },
+                                                 success=True,
+                                                 cleanlist=[],
+                                                 ),
+                      ResolverPlaygroundTestCase([],
+                                                 options={
+                                                     "--depclean": True,
+                                                     "--ignore-soname-deps": "y",
+                                                 },
+                                                 success=True,
+                                                 cleanlist=["sys-libs/glibc-2.19-r1"],
+                                                 ),
+                      )
 
         playground = ResolverPlayground(debug=False, installed=installed, world=world)
         try:

@@ -38,12 +38,11 @@ def process(mysettings, key, logentries, fulltext):
     # TODO: Locking
     elogfilename = elogdir + "/summary.log"
     try:
-        elogfile = open(
-            _unicode_encode(elogfilename, encoding=_encodings["fs"], errors="strict"),
-            mode="a",
-            encoding=_encodings["content"],
-            errors="backslashreplace",
-        )
+        elogfile = open(_unicode_encode(elogfilename, encoding=_encodings["fs"], errors="strict"),
+                        mode="a",
+                        encoding=_encodings["content"],
+                        errors="backslashreplace",
+                        )
     except OSError as e:
         func_call = f"open('{elogfilename}', 'a')"
         if e.errno == errno.EACCES:

@@ -14,8 +14,7 @@ from portage import _unicode_encode
 import portage
 
 portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.dep:Atom,dep_getkey,isvalidatom,match_from_list",
+    globals(), "portage.dep:Atom,dep_getkey,isvalidatom,match_from_list",
     "portage.util:ConfigProtect,new_protect_filename," + "normalize_path,write_atomic,writemsg",
     "portage.versions:_get_slot_re",
 )
@@ -122,11 +121,10 @@ def update_dbentries(update_iter, mydata, eapi=None, parent=None):
                 mycontent = update_dbentry(update_cmd, mycontent, eapi=eapi, parent=parent)
             if mycontent != orig_content:
                 if is_encoded:
-                    mycontent = _unicode_encode(
-                        mycontent,
-                        encoding=_encodings["repo.content"],
-                        errors="backslashreplace",
-                    )
+                    mycontent = _unicode_encode(mycontent,
+                                                encoding=_encodings["repo.content"],
+                                                errors="backslashreplace",
+                                                )
                 updated_items[k] = mycontent
     return updated_items
 
@@ -141,11 +139,10 @@ def fixdbentries(update_iter, dbdir, eapi=None, parent=None):
     mydata = {}
     for myfile in [f for f in os.listdir(dbdir) if f not in ignored_dbentries]:
         file_path = os.path.join(dbdir, myfile)
-        with open(
-                _unicode_encode(file_path, encoding=_encodings["fs"], errors="strict"),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-        ) as f:
+        with open(_unicode_encode(file_path, encoding=_encodings["fs"], errors="strict"),
+                  encoding=_encodings["repo.content"],
+                  errors="replace",
+                  ) as f:
             mydata[myfile] = f.read()
     updated_items = update_dbentries(update_iter, mydata, eapi=eapi, parent=parent)
     for myfile, mycontent in updated_items.items():
@@ -183,11 +180,10 @@ def grab_updates(updpath, prev_mtimes=None):
         if not stat.S_ISREG(mystat.st_mode):
             continue
         if int(prev_mtimes.get(file_path, -1)) != mystat[stat.ST_MTIME]:
-            f = open(
-                _unicode_encode(file_path, encoding=_encodings["fs"], errors="strict"),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-            )
+            f = open(_unicode_encode(file_path, encoding=_encodings["fs"], errors="strict"),
+                     encoding=_encodings["repo.content"],
+                     errors="replace",
+                     )
             content = f.read()
             f.close()
             update_data.append((file_path, mystat, content))
@@ -268,14 +264,7 @@ def parse_updates(mycontent):
     return myupd, errors
 
 
-def update_config_files(
-    config_root,
-    protect,
-    protect_mask,
-    update_iter,
-    match_callback=None,
-    case_insensitive=False,
-):
+def update_config_files(config_root, protect, protect_mask, update_iter, match_callback=None, case_insensitive=False, ):
     """Perform global updates on /etc/portage/package.*, /etc/portage/profile/package.*,
     /etc/portage/profile/packages and /etc/portage/sets.
     config_root - location of files to update
@@ -299,29 +288,14 @@ def update_config_files(
     update_files = {}
     file_contents = {}
     myxfiles = [
-        "package.accept_keywords",
-        "package.env",
-        "package.keywords",
-        "package.license",
-        "package.mask",
-        "package.properties",
-        "package.unmask",
-        "package.use",
-        "sets",
+        "package.accept_keywords", "package.env", "package.keywords", "package.license", "package.mask",
+        "package.properties", "package.unmask", "package.use", "sets",
     ]
     myxfiles += [
-        os.path.join("profile", x) for x in (
-            "packages",
-            "package.accept_keywords",
-            "package.keywords",
-            "package.mask",
-            "package.unmask",
-            "package.use",
-            "package.use.force",
-            "package.use.mask",
-            "package.use.stable.force",
-            "package.use.stable.mask",
-        )
+        os.path.join("profile", x) for x in ("packages", "package.accept_keywords", "package.keywords", "package.mask",
+                                             "package.unmask", "package.use", "package.use.force", "package.use.mask",
+                                             "package.use.stable.force", "package.use.stable.mask",
+                                             )
     ]
     abs_user_config = os.path.join(config_root, USER_CONFIG_PATH)
     recursivefiles = []
@@ -355,15 +329,11 @@ def update_config_files(
     for x in myxfiles:
         f = None
         try:
-            f = open(
-                _unicode_encode(
-                    os.path.join(abs_user_config, x),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                encoding=_encodings["content"],
-                errors="replace",
-            )
+            f = open(_unicode_encode(os.path.join(abs_user_config, x), encoding=_encodings["fs"], errors="strict",
+                                     ),
+                     encoding=_encodings["content"],
+                     errors="replace",
+                     )
             file_contents[x] = f.readlines()
         except OSError:
             continue
@@ -401,10 +371,7 @@ def update_config_files(
                             # add a comment with the update command, so
                             # the user can clearly see what happened
                             contents[pos] = "# {}\n".format(" ".join(f"{x}" for x in update_cmd))
-                            contents.insert(
-                                pos + 1,
-                                line.replace(f"{atom}", f"{new_atom}", 1),
-                            )
+                            contents.insert(pos + 1, line.replace(f"{atom}", f"{new_atom}", 1), )
                             # we've inserted an additional line, so we need to
                             # skip it when it's reached in the next iteration
                             skip_next = True
@@ -421,10 +388,9 @@ def update_config_files(
             write_atomic(updating_file, "".join(file_contents[x]))
         except PortageException as e:
             writemsg(f"\n!!! {str(e)}\n", noiselevel=-1)
-            writemsg(
-                _("!!! An error occurred while updating a config file:") + f" '{updating_file}'\n",
-                noiselevel=-1,
-            )
+            writemsg(_("!!! An error occurred while updating a config file:") + f" '{updating_file}'\n",
+                     noiselevel=-1,
+                     )
             continue
 
 

@@ -22,12 +22,7 @@ class BlockerDB:
 
         self._dep_check_trees = None
         self._fake_vartree = fake_vartree
-        self._dep_check_trees = {
-            self._vartree.settings["EROOT"]: {
-                "porttree": fake_vartree,
-                "vartree": fake_vartree,
-            }
-        }
+        self._dep_check_trees = {self._vartree.settings["EROOT"]: {"porttree": fake_vartree, "vartree": fake_vartree, }}
 
     def findInstalledBlockers(self, new_pkg):
         """
@@ -55,20 +50,16 @@ class BlockerDB:
                 # Use aux_get() to trigger FakeVartree global
                 # updates on *DEPEND when appropriate.
                 depstr = " ".join(vardb.aux_get(inst_pkg.cpv, dep_keys))
-                success, atoms = portage.dep_check(
-                    depstr,
-                    vardb,
-                    settings,
-                    myuse=inst_pkg.use.enabled,
-                    trees=dep_check_trees,
-                    myroot=inst_pkg.root,
-                )
+                success, atoms = portage.dep_check(depstr,
+                                                   vardb,
+                                                   settings,
+                                                   myuse=inst_pkg.use.enabled,
+                                                   trees=dep_check_trees,
+                                                   myroot=inst_pkg.root,
+                                                   )
                 if not success:
                     pkg_location = os.path.join(inst_pkg.root, portage.VDB_PATH, inst_pkg.category, inst_pkg.pf)
-                    portage.writemsg(
-                        f"!!! {pkg_location}/*DEPEND: {atoms}\n",
-                        noiselevel=-1,
-                    )
+                    portage.writemsg(f"!!! {pkg_location}/*DEPEND: {atoms}\n", noiselevel=-1, )
                     continue
 
                 blocker_atoms = [atom for atom in atoms if atom.startswith("!")]
@@ -93,14 +84,13 @@ class BlockerDB:
 
         # Check for blockers in the other direction.
         depstr = " ".join(new_pkg._metadata[k] for k in dep_keys)
-        success, atoms = portage.dep_check(
-            depstr,
-            vardb,
-            settings,
-            myuse=new_pkg.use.enabled,
-            trees=dep_check_trees,
-            myroot=new_pkg.root,
-        )
+        success, atoms = portage.dep_check(depstr,
+                                           vardb,
+                                           settings,
+                                           myuse=new_pkg.use.enabled,
+                                           trees=dep_check_trees,
+                                           myroot=new_pkg.root,
+                                           )
         if not success:
             # We should never get this far with invalid deps.
             show_invalid_depstring_notice(new_pkg, atoms)

@@ -22,17 +22,9 @@ class JobStatusDisplay:
     # time has passed, in units of seconds.
     _min_display_latency = 2
 
-    _default_term_codes = {
-        "cr": "\r",
-        "el": "\x1b[K",
-        "nel": "\n",
-    }
+    _default_term_codes = {"cr": "\r", "el": "\x1b[K", "nel": "\n", }
 
-    _termcap_name_map = {
-        "carriage_return": "cr",
-        "clr_eol": "el",
-        "newline": "nel",
-    }
+    _termcap_name_map = {"carriage_return": "cr", "clr_eol": "el", "newline": "nel", }
 
     def __init__(self, quiet=False, xterm_titles=True):
         object.__setattr__(self, "quiet", quiet)

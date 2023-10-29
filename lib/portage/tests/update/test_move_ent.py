@@ -17,12 +17,7 @@ from portage.output import colorize
 class MoveEntTestCase(TestCase):
 
     def testMoveEnt(self):
-        ebuilds = {
-            "dev-libs/A-2::dont_apply_updates": {
-                "EAPI": "4",
-                "SLOT": "2",
-            },
-        }
+        ebuilds = {"dev-libs/A-2::dont_apply_updates": {"EAPI": "4", "SLOT": "2", }, }
 
         installed = {
             "dev-libs/A-1::test_repo": {
@@ -52,17 +47,15 @@ class MoveEntTestCase(TestCase):
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    binpkgs=binpkgs,
-                    ebuilds=ebuilds,
-                    installed=installed,
-                    user_config={
-                        "make.conf": (
-                            f'BINPKG_FORMAT="{binpkg_format}"',
-                            'FEATURES="-binpkg-signing"',
-                        ),
-                    },
-                )
+                playground = ResolverPlayground(binpkgs=binpkgs,
+                                                ebuilds=ebuilds,
+                                                installed=installed,
+                                                user_config={
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', 'FEATURES="-binpkg-signing"',
+                                                     ),
+                                                },
+                                                )
 
                 settings = playground.settings
                 trees = playground.trees
@@ -81,11 +74,7 @@ class MoveEntTestCase(TestCase):
 
                     # Create an empty updates directory, so that this
                     # repo doesn't inherit updates from the main repo.
-                    ensure_dirs(os.path.join(
-                        portdb.getRepositoryPath("dont_apply_updates"),
-                        "profiles",
-                        "updates",
-                    ))
+                    ensure_dirs(os.path.join(portdb.getRepositoryPath("dont_apply_updates"), "profiles", "updates", ))
 
                     global_noiselimit = portage.util.noiselimit
                     portage.util.noiselimit = -2

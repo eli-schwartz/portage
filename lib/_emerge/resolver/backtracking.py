@@ -5,19 +5,10 @@ import copy
 
 
 class BacktrackParameter:
-    __slots__ = (
-        "circular_dependency",
-        "needed_unstable_keywords",
-        "runtime_pkg_mask",
-        "needed_use_config_changes",
-        "needed_license_changes",
-        "prune_rebuilds",
-        "rebuild_list",
-        "reinstall_list",
-        "needed_p_mask_changes",
-        "slot_operator_mask_built",
-        "slot_operator_replace_installed",
-    )
+    __slots__ = ("circular_dependency", "needed_unstable_keywords", "runtime_pkg_mask", "needed_use_config_changes",
+                 "needed_license_changes", "prune_rebuilds", "rebuild_list", "reinstall_list", "needed_p_mask_changes",
+                 "slot_operator_mask_built", "slot_operator_replace_installed",
+                 )
 
     def __init__(self):
         self.circular_dependency = {}
@@ -72,12 +63,7 @@ class BacktrackParameter:
 
 
 class _BacktrackNode:
-    __slots__ = (
-        "parameter",
-        "depth",
-        "mask_steps",
-        "terminal",
-    )
+    __slots__ = ("parameter", "depth", "mask_steps", "terminal", )
 
     def __init__(self, parameter=BacktrackParameter(), depth=0, mask_steps=0, terminal=True):
         self.parameter = parameter
@@ -90,13 +76,7 @@ class _BacktrackNode:
 
 
 class Backtracker:
-    __slots__ = (
-        "_max_depth",
-        "_unexplored_nodes",
-        "_current_node",
-        "_nodes",
-        "_root",
-    )
+    __slots__ = ("_max_depth", "_unexplored_nodes", "_current_node", "_nodes", "_root", )
 
     def __init__(self, max_depth):
         self._max_depth = max_depth

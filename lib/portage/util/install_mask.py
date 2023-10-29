@@ -9,13 +9,8 @@ import fnmatch
 import operator
 
 from portage import os, _unicode_decode
-from portage.exception import (
-    FileNotFound,
-    IsADirectory,
-    OperationNotPermitted,
-    PermissionDenied,
-    ReadOnlyFileSystem,
-)
+from portage.exception import (FileNotFound, IsADirectory, OperationNotPermitted, PermissionDenied, ReadOnlyFileSystem,
+                               )
 from portage.util import normalize_path
 
 
@@ -23,15 +18,7 @@ def _defaultdict_tree():
     return collections.defaultdict(_defaultdict_tree)
 
 
-_pattern = collections.namedtuple(
-    "_pattern",
-    (
-        "orig_index",
-        "is_inclusive",
-        "pattern",
-        "leading_slash",
-    ),
-)
+_pattern = collections.namedtuple("_pattern", ("orig_index", "is_inclusive", "pattern", "leading_slash", ), )
 
 
 class InstallMask:

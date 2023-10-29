@@ -28,12 +28,11 @@ class MirrorDistTask(CompositeTask):
 
     def _start(self):
         self._fetch_iterator = FetchIterator(self._config)
-        fetch = TaskScheduler(
-            iter(self._fetch_iterator),
-            max_jobs=self._config.options.jobs,
-            max_load=self._config.options.load_average,
-            event_loop=self._config.event_loop,
-        )
+        fetch = TaskScheduler(iter(self._fetch_iterator),
+                              max_jobs=self._config.options.jobs,
+                              max_load=self._config.options.load_average,
+                              event_loop=self._config.event_loop,
+                              )
         self._start_task(fetch, self._fetch_exit)
 
     def _fetch_exit(self, fetch):
@@ -43,12 +42,11 @@ class MirrorDistTask(CompositeTask):
             return
 
         if self._config.options.delete:
-            deletion = TaskScheduler(
-                iter(DeletionIterator(self._config)),
-                max_jobs=self._config.options.jobs,
-                max_load=self._config.options.load_average,
-                event_loop=self._config.event_loop,
-            )
+            deletion = TaskScheduler(iter(DeletionIterator(self._config)),
+                                     max_jobs=self._config.options.jobs,
+                                     max_load=self._config.options.load_average,
+                                     event_loop=self._config.event_loop,
+                                     )
             self._start_task(deletion, self._deletion_exit)
             return
 

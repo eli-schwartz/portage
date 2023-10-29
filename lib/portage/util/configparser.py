@@ -2,12 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 __all__ = [
-    "ConfigParserError",
-    "NoOptionError",
-    "ParsingError",
-    "RawConfigParser",
-    "SafeConfigParser",
-    "read_configs",
+    "ConfigParserError", "NoOptionError", "ParsingError", "RawConfigParser", "SafeConfigParser", "read_configs",
 ]
 
 # the following scary compatibility thing provides two classes:
@@ -16,12 +11,7 @@ __all__ = [
 
 import io
 
-from configparser import (
-    Error as ConfigParserError,
-    NoOptionError,
-    ParsingError,
-    RawConfigParser,
-)
+from configparser import (Error as ConfigParserError, NoOptionError, ParsingError, RawConfigParser, )
 from configparser import ConfigParser as SafeConfigParser
 
 from portage import _encodings
@@ -50,11 +40,10 @@ def read_configs(parser, paths):
         if isinstance(p, str):
             f = None
             try:
-                f = open(
-                    _unicode_encode(p, encoding=_encodings["fs"], errors="strict"),
-                    encoding=_encodings["repo.content"],
-                    errors="replace",
-                )
+                f = open(_unicode_encode(p, encoding=_encodings["fs"], errors="strict"),
+                         encoding=_encodings["repo.content"],
+                         errors="replace",
+                         )
             except OSError:
                 pass
             else:

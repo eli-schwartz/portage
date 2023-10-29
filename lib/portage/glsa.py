@@ -637,14 +637,11 @@ class Glsa:
         outstream = getattr(outstream, "buffer", outstream)
         outstream = codecs.getwriter(encoding)(outstream)
         width = 76
-        buffer = "\n".join((
-            f"GLSA {self.nr}: ",
-            f"{self.title}".center(width),
-            "=" * width,
-            wrap(self.synopsis, width, caption=_("Synopsis:         ")),
-            _(f"Announced on:      {self.announced}"),
-            _(f"Last revised on:   {self.revised} : %{self.count}\n"),
-        ))
+        buffer = "\n".join((f"GLSA {self.nr}: ", f"{self.title}".center(width), "=" * width,
+                            wrap(self.synopsis, width,
+                                 caption=_("Synopsis:         ")), _(f"Announced on:      {self.announced}"),
+                            _(f"Last revised on:   {self.revised} : %{self.count}\n"),
+                            ))
         outstream.write(buffer)
         if self.glsatype == "ebuild":
             for k in self.packages:
@@ -668,13 +665,13 @@ class Glsa:
             bg = wrap(self.background, width, caption=_("Background:       "))
             outstream.write(f"\n{bg}")
         myreferences = " ".join(r.replace(" ", SPACE_ESCAPE) + NEWLINE_ESCAPE for r in self.references)
-        buffer = "\n".join((
-            wrap(self.description, width, caption=_("Description:      ")),
-            wrap(self.impact_text, width, caption=_("Impact:           ")),
-            wrap(self.workaround, width, caption=_("Workaround:       ")),
-            wrap(self.resolution, width, caption=_("Resolution:       ")),
-            wrap(myreferences, width, caption=_("References:       ")),
-        ))
+        buffer = "\n".join(
+            (wrap(self.description, width,
+                  caption=_("Description:      ")), wrap(self.impact_text, width, caption=_("Impact:           ")),
+             wrap(self.workaround, width,
+                  caption=_("Workaround:       ")), wrap(self.resolution, width, caption=_("Resolution:       ")),
+             wrap(myreferences, width, caption=_("References:       ")),
+             ))
         outstream.write(f"\n{buffer}\n")
 
     def isVulnerable(self):
@@ -697,10 +694,7 @@ class Glsa:
                 if path["arch"] == "*" or self.config["ARCH"] in arches:
                     for v in path["vul_atoms"]:
                         rValue = rValue or (len(match(v, self.vardbapi)) > 0 and None != getMinUpgrade(
-                            path["vul_atoms"],
-                            path["unaff_atoms"],
-                            self.portdbapi,
-                            self.vardbapi,
+                            path["vul_atoms"], path["unaff_atoms"], self.portdbapi, self.vardbapi,
                         ))
         return rValue
 
@@ -726,16 +720,14 @@ class Glsa:
         @return:	None
         """
         if not self.isInjected():
-            checkfile = open(
-                _unicode_encode(
-                    os.path.join(self.config["EROOT"], PRIVATE_PATH, "glsa_injected"),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                mode="a+",
-                encoding=_encodings["content"],
-                errors="strict",
-            )
+            checkfile = open(_unicode_encode(os.path.join(self.config["EROOT"], PRIVATE_PATH, "glsa_injected"),
+                                             encoding=_encodings["fs"],
+                                             errors="strict",
+                                             ),
+                             mode="a+",
+                             encoding=_encodings["content"],
+                             errors="strict",
+                             )
             checkfile.write(_unicode_decode(self.nr + "\n"))
             checkfile.close()
 
@@ -762,13 +754,12 @@ class Glsa:
         systemAffection = []
         for pkg in self.packages.keys():
             for path in self.packages[pkg]:
-                update = getMinUpgrade(
-                    path["vul_atoms"],
-                    path["unaff_atoms"],
-                    self.portdbapi,
-                    self.vardbapi,
-                    minimize=least_change,
-                )
+                update = getMinUpgrade(path["vul_atoms"],
+                                       path["unaff_atoms"],
+                                       self.portdbapi,
+                                       self.vardbapi,
+                                       minimize=least_change,
+                                       )
                 if update:
                     systemAffection.extend(update)
         return systemAffection

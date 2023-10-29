@@ -24,11 +24,10 @@ def ExtractKernelVersion(base_dir):
     lines = []
     pathname = os.path.join(base_dir, "Makefile")
     try:
-        f = open(
-            _unicode_encode(pathname, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["content"],
-            errors="replace",
-        )
+        f = open(_unicode_encode(pathname, encoding=_encodings["fs"], errors="strict"),
+                 encoding=_encodings["content"],
+                 errors="replace",
+                 )
     except OSError as details:
         return (None, str(details))
 
@@ -74,11 +73,7 @@ def ExtractKernelVersion(base_dir):
     if loader_errors:
         for file_path, file_errors in loader_errors.items():
             for error_str in file_errors:
-                writemsg_level(
-                    f"{file_path}: {error_str}\n",
-                    level=logging.ERROR,
-                    noiselevel=-1,
-                )
+                writemsg_level(f"{file_path}: {error_str}\n", level=logging.ERROR, noiselevel=-1, )
 
     if kernelconfig and "CONFIG_LOCALVERSION" in kernelconfig:
         version += "".join(shlex_split(kernelconfig["CONFIG_LOCALVERSION"]))

@@ -21,23 +21,10 @@ class DbapiProvidesIndex:
     value of Package.cp.
     """
 
-    _copy_attrs = (
-        "aux_get",
-        "aux_update",
-        "categories",
-        "cpv_all",
-        "cpv_exists",
-        "cp_all",
-        "cp_list",
-        "getfetchsizes",
-        "settings",
-        "_aux_cache_keys",
-        "_clear_cache",
-        "_cpv_sort_ascending",
-        "_iuse_implicit_cnstr",
-        "_pkg_str",
-        "_pkg_str_aux_keys",
-    )
+    _copy_attrs = ("aux_get", "aux_update", "categories", "cpv_all", "cpv_exists", "cp_all", "cp_list", "getfetchsizes",
+                   "settings", "_aux_cache_keys", "_clear_cache", "_cpv_sort_ascending", "_iuse_implicit_cnstr",
+                   "_pkg_str", "_pkg_str_aux_keys",
+                   )
 
     def __init__(self, db):
         self._db = db

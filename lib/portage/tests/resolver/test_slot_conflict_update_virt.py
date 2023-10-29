@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotConflictUpdateVirtTestCase(TestCase):
@@ -57,19 +54,17 @@ class SlotConflictUpdateVirtTestCase(TestCase):
         test_cases = (
             # In order to avoid missed updates for bug 692746, consider
             # masking a package matched by all parent atoms.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=[
-                    "dev-db/mysql-connector-c-8.0.17-r3",
-                    "virtual/libmysqlclient-21",
-                    "dev-perl/DBD-mysql-4.44.0",
-                ],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       mergelist=[
+                                           "dev-db/mysql-connector-c-8.0.17-r3", "virtual/libmysqlclient-21",
+                                           "dev-perl/DBD-mysql-4.44.0",
+                                       ],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:

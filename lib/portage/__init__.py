@@ -46,106 +46,51 @@ try:
     import portage.proxy as proxy
 
     proxy.lazyimport.lazyimport(
-        globals(),
-        "portage.cache.cache_errors:CacheError",
-        "portage.checksum",
-        "portage.checksum:perform_checksum,perform_md5,prelink_capable",
-        "portage.cvstree",
-        "portage.data",
+        globals(), "portage.cache.cache_errors:CacheError", "portage.checksum",
+        "portage.checksum:perform_checksum,perform_md5,prelink_capable", "portage.cvstree", "portage.data",
         "portage.data:lchown,ostype,portage_gid,portage_uid,secpass," + "uid,userland,userpriv_groups,wheelgid",
-        "portage.dbapi",
-        "portage.dbapi.bintree:bindbapi,binarytree",
-        "portage.dbapi.cpv_expand:cpv_expand",
+        "portage.dbapi", "portage.dbapi.bintree:bindbapi,binarytree", "portage.dbapi.cpv_expand:cpv_expand",
         "portage.dbapi.dep_expand:dep_expand",
         "portage.dbapi.porttree:close_portdbapi_caches,FetchlistDict," + "portagetree,portdbapi",
-        "portage.dbapi.vartree:dblink,merge,unmerge,vardbapi,vartree",
-        "portage.dbapi.virtual:fakedbapi",
-        "portage.debug",
-        "portage.dep",
-        "portage.dep:best_match_to_list,dep_getcpv,dep_getkey," +
+        "portage.dbapi.vartree:dblink,merge,unmerge,vardbapi,vartree", "portage.dbapi.virtual:fakedbapi",
+        "portage.debug", "portage.dep", "portage.dep:best_match_to_list,dep_getcpv,dep_getkey," +
         "flatten,get_operator,isjustname,isspecific,isvalidatom," + "match_from_list,match_to_list",
-        "portage.dep.dep_check:dep_check,dep_eval,dep_wordreduce,dep_zapdeps",
-        "portage.eclass_cache",
-        "portage.elog",
-        "portage.exception",
-        "portage.getbinpkg",
-        "portage.locks",
-        "portage.locks:lockdir,lockfile,unlockdir,unlockfile",
-        "portage.mail",
-        "portage.manifest:Manifest",
-        "portage.output",
-        "portage.output:bold,colorize",
-        "portage.package.ebuild.doebuild:doebuild," + "doebuild_environment,spawn,spawnebuild",
-        "portage.package.ebuild.config:autouse,best_from_dict," + "check_config_instance,config",
-        "portage.package.ebuild.deprecated_profile_check:deprecated_profile_check",
-        "portage.package.ebuild.digestcheck:digestcheck",
-        "portage.package.ebuild.digestgen:digestgen",
-        "portage.package.ebuild.fetch:fetch",
-        "portage.package.ebuild.getmaskingreason:getmaskingreason",
+        "portage.dep.dep_check:dep_check,dep_eval,dep_wordreduce,dep_zapdeps", "portage.eclass_cache", "portage.elog",
+        "portage.exception", "portage.getbinpkg", "portage.locks",
+        "portage.locks:lockdir,lockfile,unlockdir,unlockfile", "portage.mail", "portage.manifest:Manifest",
+        "portage.output", "portage.output:bold,colorize", "portage.package.ebuild.doebuild:doebuild," +
+        "doebuild_environment,spawn,spawnebuild", "portage.package.ebuild.config:autouse,best_from_dict," +
+        "check_config_instance,config", "portage.package.ebuild.deprecated_profile_check:deprecated_profile_check",
+        "portage.package.ebuild.digestcheck:digestcheck", "portage.package.ebuild.digestgen:digestgen",
+        "portage.package.ebuild.fetch:fetch", "portage.package.ebuild.getmaskingreason:getmaskingreason",
         "portage.package.ebuild.getmaskingstatus:getmaskingstatus",
-        "portage.package.ebuild.prepare_build_dirs:prepare_build_dirs",
-        "portage.process",
-        "portage.process:atexit_register,run_exitfuncs",
-        "portage.update:dep_transform,fixdbentries,grab_updates," +
-        "parse_updates,update_config_files,update_dbentries," + "update_dbentry",
-        "portage.util",
+        "portage.package.ebuild.prepare_build_dirs:prepare_build_dirs", "portage.process",
+        "portage.process:atexit_register,run_exitfuncs", "portage.update:dep_transform,fixdbentries,grab_updates," +
+        "parse_updates,update_config_files,update_dbentries," + "update_dbentry", "portage.util",
         "portage.util:atomic_ofstream,apply_secpass_permissions," +
         "apply_recursive_permissions,dump_traceback,getconfig," +
         "grabdict,grabdict_package,grabfile,grabfile_package," +
         "map_dictlist_vals,new_protect_filename,normalize_path," +
         "pickle_read,pickle_write,stack_dictlist,stack_dicts," +
         "stack_lists,unique_array,varexpand,writedict,writemsg," + "writemsg_stdout,write_atomic",
-        "portage.util.digraph:digraph",
-        "portage.util.env_update:env_update",
-        "portage.util.ExtractKernelVersion:ExtractKernelVersion",
-        "portage.util.listdir:cacheddir,listdir",
-        "portage.util.movefile:movefile",
-        "portage.util.mtimedb:MtimeDB",
-        "portage.versions",
+        "portage.util.digraph:digraph", "portage.util.env_update:env_update",
+        "portage.util.ExtractKernelVersion:ExtractKernelVersion", "portage.util.listdir:cacheddir,listdir",
+        "portage.util.movefile:movefile", "portage.util.mtimedb:MtimeDB", "portage.versions",
         "portage.versions:best,catpkgsplit,catsplit,cpv_getkey," + "cpv_getkey@getCPFromCPV,endversion_keys," +
-        "suffix_value@endversion,pkgcmp,pkgsplit,vercmp,ververify",
-        "portage.xpak",
-        "portage.gpkg",
-        "subprocess",
+        "suffix_value@endversion,pkgcmp,pkgsplit,vercmp,ververify", "portage.xpak", "portage.gpkg", "subprocess",
         "time",
     )
 
     from collections import OrderedDict
 
     import portage.const
-    from portage.const import (
-        VDB_PATH,
-        PRIVATE_PATH,
-        CACHE_PATH,
-        DEPCACHE_PATH,
-        USER_CONFIG_PATH,
-        MODULES_FILE_PATH,
-        CUSTOM_PROFILE_PATH,
-        PORTAGE_BASE_PATH,
-        PORTAGE_BIN_PATH,
-        PORTAGE_PYM_PATH,
-        PROFILE_PATH,
-        LOCALE_DATA_PATH,
-        EBUILD_SH_BINARY,
-        SANDBOX_BINARY,
-        BASH_BINARY,
-        MOVE_BINARY,
-        PRELINK_BINARY,
-        WORLD_FILE,
-        MAKE_CONF_FILE,
-        MAKE_DEFAULTS_FILE,
-        DEPRECATED_PROFILE_FILE,
-        USER_VIRTUALS_FILE,
-        EBUILD_SH_ENV_FILE,
-        INVALID_ENV_FILE,
-        CUSTOM_MIRRORS_FILE,
-        CONFIG_MEMORY_FILE,
-        INCREMENTALS,
-        EAPI,
-        MISC_SH_BINARY,
-        REPO_NAME_LOC,
-        REPO_NAME_FILE,
-    )
+    from portage.const import (VDB_PATH, PRIVATE_PATH, CACHE_PATH, DEPCACHE_PATH, USER_CONFIG_PATH, MODULES_FILE_PATH,
+                               CUSTOM_PROFILE_PATH, PORTAGE_BASE_PATH, PORTAGE_BIN_PATH, PORTAGE_PYM_PATH, PROFILE_PATH,
+                               LOCALE_DATA_PATH, EBUILD_SH_BINARY, SANDBOX_BINARY, BASH_BINARY, MOVE_BINARY,
+                               PRELINK_BINARY, WORLD_FILE, MAKE_CONF_FILE, MAKE_DEFAULTS_FILE, DEPRECATED_PROFILE_FILE,
+                               USER_VIRTUALS_FILE, EBUILD_SH_ENV_FILE, INVALID_ENV_FILE, CUSTOM_MIRRORS_FILE,
+                               CONFIG_MEMORY_FILE, INCREMENTALS, EAPI, MISC_SH_BINARY, REPO_NAME_LOC, REPO_NAME_FILE,
+                               )
 
 except ImportError as e:
     sys.stderr.write("\n\n")
@@ -181,13 +126,7 @@ utf8_mode = sys.getfilesystemencoding() == "utf-8"
 # So, instead of relying on sys.getfilesystemencoding(), we avoid the above
 # problems by using a constant utf_8 'merge' encoding for all locales, as
 # discussed in bug #382199 and bug #381509.
-_encodings = {
-    "content": "utf_8",
-    "fs": "utf_8",
-    "merge": "utf_8",
-    "repo.content": "utf_8",
-    "stdio": "utf_8",
-}
+_encodings = {"content": "utf_8", "fs": "utf_8", "merge": "utf_8", "repo.content": "utf_8", "stdio": "utf_8", }
 
 
 def _decode_argv(argv):
@@ -472,24 +411,12 @@ def abssymlink(symlink, target=None):
 _doebuild_manifest_exempt_depend = 0
 
 _testing_eapis = frozenset([])
-_deprecated_eapis = frozenset([
-    "3_pre1",
-    "3_pre2",
-    "4_pre1",
-    "4-slot-abi",
-    "5_pre1",
-    "5_pre2",
-    "6_pre1",
-    "7_pre1",
-])
+_deprecated_eapis = frozenset(["3_pre1", "3_pre2", "4_pre1", "4-slot-abi", "5_pre1", "5_pre2", "6_pre1", "7_pre1", ])
 
 from itertools import chain
 
-_supported_eapis = frozenset(chain(
-    (str(x) for x in range(portage.const.EAPI + 1)),
-    _testing_eapis,
-    _deprecated_eapis,
-))
+_supported_eapis = frozenset(chain((str(x) for x in range(portage.const.EAPI + 1)), _testing_eapis, _deprecated_eapis,
+                                   ))
 
 
 def _eapi_is_deprecated(eapi):
@@ -529,27 +456,10 @@ def _movefile(src, dest, **kwargs):
         raise portage.exception.PortageException(f"mv '{src}' '{dest}'")
 
 
-auxdbkeys = (
-    "DEPEND",
-    "RDEPEND",
-    "SLOT",
-    "SRC_URI",
-    "RESTRICT",
-    "HOMEPAGE",
-    "LICENSE",
-    "DESCRIPTION",
-    "KEYWORDS",
-    "INHERITED",
-    "IUSE",
-    "REQUIRED_USE",
-    "PDEPEND",
-    "BDEPEND",
-    "EAPI",
-    "PROPERTIES",
-    "DEFINED_PHASES",
-    "IDEPEND",
-    "INHERIT",
-)
+auxdbkeys = ("DEPEND", "RDEPEND", "SLOT", "SRC_URI", "RESTRICT", "HOMEPAGE", "LICENSE", "DESCRIPTION", "KEYWORDS",
+             "INHERITED", "IUSE", "REQUIRED_USE", "PDEPEND", "BDEPEND", "EAPI", "PROPERTIES", "DEFINED_PHASES",
+             "IDEPEND", "INHERIT",
+             )
 
 
 def portageexit():
@@ -557,10 +467,7 @@ def portageexit():
 
 
 class _trees_dict(dict):
-    __slots__ = (
-        "_running_eroot",
-        "_target_eroot",
-    )
+    __slots__ = ("_running_eroot", "_target_eroot", )
 
     def __init__(self, *pargs, **kargs):
         dict.__init__(self, *pargs, **kargs)
@@ -585,13 +492,7 @@ def create_trees(config_root=None, target_root=None, trees=None, env=None, sysro
     if env is None:
         env = os.environ
 
-    settings = config(
-        config_root=config_root,
-        target_root=target_root,
-        env=env,
-        sysroot=sysroot,
-        eprefix=eprefix,
-    )
+    settings = config(config_root=config_root, target_root=target_root, env=env, sysroot=sysroot, eprefix=eprefix, )
     settings.lock()
 
     depcachedir = settings.get("PORTAGE_DEPCACHEDIR")
@@ -603,21 +504,10 @@ def create_trees(config_root=None, target_root=None, trees=None, env=None, sysro
         # When ROOT != "/" we only want overrides from the calling
         # environment to apply to the config that's associated
         # with ROOT != "/", so pass a nearly empty dict for the env parameter.
-        env_sequence = (
-            "PATH",
-            "PORTAGE_GRPNAME",
-            "PORTAGE_REPOSITORIES",
-            "PORTAGE_USERNAME",
-            "PYTHONPATH",
-            "SSH_AGENT_PID",
-            "SSH_AUTH_SOCK",
-            "TERM",
-            "ftp_proxy",
-            "http_proxy",
-            "https_proxy",
-            "no_proxy",
-            "__PORTAGE_TEST_HARDLINK_LOCKS",
-        )
+        env_sequence = ("PATH", "PORTAGE_GRPNAME", "PORTAGE_REPOSITORIES", "PORTAGE_USERNAME", "PYTHONPATH",
+                        "SSH_AGENT_PID", "SSH_AUTH_SOCK", "TERM", "ftp_proxy", "http_proxy", "https_proxy", "no_proxy",
+                        "__PORTAGE_TEST_HARDLINK_LOCKS",
+                        )
         env = ((k, settings.get(k)) for k in env_sequence)
         clean_env = {k: v for k, v in env if v is not None}
 
@@ -629,13 +519,12 @@ def create_trees(config_root=None, target_root=None, trees=None, env=None, sysro
         myroots.append((mysettings["EROOT"], mysettings))
 
         if settings["SYSROOT"] != "/" and settings["SYSROOT"] != settings["ROOT"]:
-            mysettings = config(
-                config_root=settings["SYSROOT"],
-                target_root=settings["SYSROOT"],
-                env=clean_env,
-                sysroot=settings["SYSROOT"],
-                eprefix="",
-            )
+            mysettings = config(config_root=settings["SYSROOT"],
+                                target_root=settings["SYSROOT"],
+                                env=clean_env,
+                                sysroot=settings["SYSROOT"],
+                                eprefix="",
+                                )
             mysettings.lock()
             myroots.append((mysettings["EROOT"], mysettings))
 
@@ -659,8 +548,7 @@ if installation.TYPE == installation.TYPES.SOURCE:
             if os.path.isdir(os.path.join(PORTAGE_BASE_PATH, ".git")):
                 encoding = _encodings["fs"]
                 cmd = [
-                    BASH_BINARY,
-                    "-c",
+                    BASH_BINARY, "-c",
                     (f"cd {_shell_quote(PORTAGE_BASE_PATH)} ; git describe --match 'portage-*' || exit $? ; "
                      'if [ -n "`git diff-index --name-only --diff-filter=M HEAD`" ] ; '
                      "then echo modified ; git rev-list --format=%%ct -n 1 HEAD ; fi ; "
@@ -702,21 +590,9 @@ if installation.TYPE == installation.TYPES.SOURCE:
 else:
     VERSION = "@VERSION@"
 
-_legacy_global_var_names = (
-    "archlist",
-    "db",
-    "features",
-    "groups",
-    "mtimedb",
-    "mtimedbfile",
-    "pkglines",
-    "portdb",
-    "profiledir",
-    "root",
-    "selinux_enabled",
-    "settings",
-    "thirdpartymirrors",
-)
+_legacy_global_var_names = ("archlist", "db", "features", "groups", "mtimedb", "mtimedbfile", "pkglines", "portdb",
+                            "profiledir", "root", "selinux_enabled", "settings", "thirdpartymirrors",
+                            )
 
 
 def _reset_legacy_globals():

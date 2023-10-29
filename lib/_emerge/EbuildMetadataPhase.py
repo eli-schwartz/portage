@@ -6,10 +6,7 @@ import sys
 from portage.cache.mappings import slot_dict_class
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.package.ebuild._metadata_invalid:eapi_invalid",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.package.ebuild._metadata_invalid:eapi_invalid", )
 from portage import os
 from portage import _encodings
 from portage import _unicode_decode
@@ -24,21 +21,10 @@ class EbuildMetadataPhase(SubProcess):
     used to extract metadata from the ebuild.
     """
 
-    __slots__ = (
-        "cpv",
-        "eapi_supported",
-        "ebuild_hash",
-        "fd_pipes",
-        "metadata",
-        "portdb",
-        "repo_path",
-        "settings",
-        "write_auxdb",
-    ) + (
-        "_eapi",
-        "_eapi_lineno",
-        "_raw_metadata",
-    )
+    __slots__ = ("cpv", "eapi_supported", "ebuild_hash", "fd_pipes", "metadata", "portdb", "repo_path", "settings",
+                 "write_auxdb",
+                 ) + ("_eapi", "_eapi_lineno", "_raw_metadata",
+                      )
 
     _file_names = ("ebuild", )
     _files_dict = slot_dict_class(_file_names, prefix="")
@@ -46,11 +32,10 @@ class EbuildMetadataPhase(SubProcess):
     def _start(self):
         ebuild_path = self.ebuild_hash.location
 
-        with open(
-                _unicode_encode(ebuild_path, encoding=_encodings["fs"], errors="strict"),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-        ) as f:
+        with open(_unicode_encode(ebuild_path, encoding=_encodings["fs"], errors="strict"),
+                  encoding=_encodings["repo.content"],
+                  errors="replace",
+                  ) as f:
             self._eapi, self._eapi_lineno = portage._parse_eapi_ebuild_head(f)
 
         parsed_eapi = self._eapi
@@ -102,11 +87,7 @@ class EbuildMetadataPhase(SubProcess):
 
         master_fd, slave_fd = os.pipe()
 
-        fcntl.fcntl(
-            master_fd,
-            fcntl.F_SETFL,
-            fcntl.fcntl(master_fd, fcntl.F_GETFL) | os.O_NONBLOCK,
-        )
+        fcntl.fcntl(master_fd, fcntl.F_SETFL, fcntl.fcntl(master_fd, fcntl.F_GETFL) | os.O_NONBLOCK, )
 
         fd_pipes[slave_fd] = slave_fd
         settings["PORTAGE_PIPE_FD"] = str(slave_fd)
@@ -116,16 +97,15 @@ class EbuildMetadataPhase(SubProcess):
         self.scheduler.add_reader(files.ebuild, self._output_handler)
         self._registered = True
 
-        retval = portage.doebuild(
-            ebuild_path,
-            "depend",
-            settings=settings,
-            debug=debug,
-            mydbapi=self.portdb,
-            tree="porttree",
-            fd_pipes=fd_pipes,
-            returnpid=True,
-        )
+        retval = portage.doebuild(ebuild_path,
+                                  "depend",
+                                  settings=settings,
+                                  debug=debug,
+                                  mydbapi=self.portdb,
+                                  tree="porttree",
+                                  fd_pipes=fd_pipes,
+                                  returnpid=True,
+                                  )
         settings.pop("PORTAGE_PIPE_FD", None)
 
         os.close(slave_fd)
@@ -168,11 +148,10 @@ class EbuildMetadataPhase(SubProcess):
         # self._raw_metadata is None when _start returns
         # early due to an unsupported EAPI
         if self.returncode == os.EX_OK and self._raw_metadata is not None:
-            metadata_lines = _unicode_decode(
-                b"".join(self._raw_metadata),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-            ).splitlines()
+            metadata_lines = _unicode_decode(b"".join(self._raw_metadata),
+                                             encoding=_encodings["repo.content"],
+                                             errors="replace",
+                                             ).splitlines()
             metadata = {}
             metadata_valid = True
             for l in metadata_lines:
@@ -219,12 +198,4 @@ class EbuildMetadataPhase(SubProcess):
             eapi_var = metadata["EAPI"]
         else:
             eapi_var = None
-        eapi_invalid(
-            self,
-            self.cpv,
-            repo_name,
-            self.settings,
-            eapi_var,
-            self._eapi,
-            self._eapi_lineno,
-        )
+        eapi_invalid(self, self.cpv, repo_name, self.settings, eapi_var, self._eapi, self._eapi_lineno, )

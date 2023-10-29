@@ -4,11 +4,7 @@
 # This module provides an extended subset of the asyncio.futures.Futures
 # interface.
 
-__all__ = (
-    "CancelledError",
-    "ExtendedFuture",
-    "InvalidStateError",
-)
+__all__ = ("CancelledError", "ExtendedFuture", "InvalidStateError", )
 
 import concurrent.futures
 from concurrent.futures import Future, CancelledError

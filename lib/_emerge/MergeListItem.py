@@ -18,23 +18,10 @@ class MergeListItem(CompositeTask):
     execution support (start, poll, and wait methods).
     """
 
-    __slots__ = (
-        "args_set",
-        "binpkg_opts",
-        "build_opts",
-        "config_pool",
-        "emerge_opts",
-        "find_blockers",
-        "logger",
-        "mtimedb",
-        "pkg",
-        "pkg_count",
-        "pkg_to_replace",
-        "prefetcher",
-        "settings",
-        "statusMessage",
-        "world_atom",
-    ) + ("_install_task", )
+    __slots__ = ("args_set", "binpkg_opts", "build_opts", "config_pool", "emerge_opts", "find_blockers", "logger",
+                 "mtimedb", "pkg", "pkg_count", "pkg_to_replace", "prefetcher", "settings", "statusMessage",
+                 "world_atom",
+                 ) + ("_install_task", )
 
     def _start(self):
         pkg = self.pkg
@@ -66,12 +53,10 @@ class MergeListItem(CompositeTask):
         if build_opts.fetchonly:
             action_desc = "Fetching"
 
-        msg = "{} ({} of {}) {}".format(
-            action_desc,
-            colorize("MERGE_LIST_PROGRESS", str(pkg_count.curval)),
-            colorize("MERGE_LIST_PROGRESS", str(pkg_count.maxval)),
-            colorize(pkg_color, pkg.cpv + _repo_separator + pkg.repo),
-        )
+        msg = "{} ({} of {}) {}".format(action_desc, colorize("MERGE_LIST_PROGRESS", str(pkg_count.curval)),
+                                        colorize("MERGE_LIST_PROGRESS", str(pkg_count.maxval)),
+                                        colorize(pkg_color, pkg.cpv + _repo_separator + pkg.repo),
+                                        )
 
         if pkg.root_config.settings["ROOT"] != "/":
             msg += f" {preposition} {pkg.root}"
@@ -82,40 +67,38 @@ class MergeListItem(CompositeTask):
                        f"{pkg.cpv} to {pkg.root}")
 
         if pkg.type_name == "ebuild":
-            build = EbuildBuild(
-                args_set=args_set,
-                background=self.background,
-                config_pool=self.config_pool,
-                find_blockers=find_blockers,
-                ldpath_mtimes=ldpath_mtimes,
-                logger=logger,
-                opts=build_opts,
-                pkg=pkg,
-                pkg_count=pkg_count,
-                prefetcher=self.prefetcher,
-                scheduler=scheduler,
-                settings=settings,
-                world_atom=world_atom,
-            )
+            build = EbuildBuild(args_set=args_set,
+                                background=self.background,
+                                config_pool=self.config_pool,
+                                find_blockers=find_blockers,
+                                ldpath_mtimes=ldpath_mtimes,
+                                logger=logger,
+                                opts=build_opts,
+                                pkg=pkg,
+                                pkg_count=pkg_count,
+                                prefetcher=self.prefetcher,
+                                scheduler=scheduler,
+                                settings=settings,
+                                world_atom=world_atom,
+                                )
 
             self._install_task = build
             self._start_task(build, self._default_final_exit)
             return
 
         if pkg.type_name == "binary":
-            binpkg = Binpkg(
-                background=self.background,
-                find_blockers=find_blockers,
-                ldpath_mtimes=ldpath_mtimes,
-                logger=logger,
-                opts=self.binpkg_opts,
-                pkg=pkg,
-                pkg_count=pkg_count,
-                prefetcher=self.prefetcher,
-                settings=settings,
-                scheduler=scheduler,
-                world_atom=world_atom,
-            )
+            binpkg = Binpkg(background=self.background,
+                            find_blockers=find_blockers,
+                            ldpath_mtimes=ldpath_mtimes,
+                            logger=logger,
+                            opts=self.binpkg_opts,
+                            pkg=pkg,
+                            pkg_count=pkg_count,
+                            prefetcher=self.prefetcher,
+                            settings=settings,
+                            scheduler=scheduler,
+                            world_atom=world_atom,
+                            )
 
             self._install_task = binpkg
             self._start_task(binpkg, self._default_final_exit)
@@ -132,15 +115,14 @@ class MergeListItem(CompositeTask):
 
         if pkg.installed:
             if not (build_opts.buildpkgonly or build_opts.fetchonly or build_opts.pretend):
-                task = PackageUninstall(
-                    background=self.background,
-                    ldpath_mtimes=ldpath_mtimes,
-                    opts=self.emerge_opts,
-                    pkg=pkg,
-                    scheduler=scheduler,
-                    settings=settings,
-                    world_atom=world_atom,
-                )
+                task = PackageUninstall(background=self.background,
+                                        ldpath_mtimes=ldpath_mtimes,
+                                        opts=self.emerge_opts,
+                                        pkg=pkg,
+                                        scheduler=scheduler,
+                                        settings=settings,
+                                        world_atom=world_atom,
+                                        )
 
             else:
                 task = AsynchronousTask()

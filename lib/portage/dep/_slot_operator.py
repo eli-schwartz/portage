@@ -25,12 +25,8 @@ def find_built_slot_operator_atoms(pkg):
     for k in Package._dep_keys:
         atom_list = list(
             _find_built_slot_operator(
-                use_reduce(
-                    pkg._metadata[k],
-                    uselist=pkg.use.enabled,
-                    eapi=pkg.eapi,
-                    token_class=Atom,
-                )))
+                use_reduce(pkg._metadata[k], uselist=pkg.use.enabled, eapi=pkg.eapi, token_class=Atom,
+                           )))
         if atom_list:
             atoms[k] = atom_list
     return atoms

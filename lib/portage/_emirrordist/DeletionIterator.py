@@ -78,12 +78,7 @@ class DeletionIterator:
                 self._config.scheduled_deletion_count += 1
 
                 if deletion_db is None or deletion_delay is None:
-                    yield DeletionTask(
-                        background=True,
-                        distfile=filename,
-                        distfile_path=path,
-                        config=self._config,
-                    )
+                    yield DeletionTask(background=True, distfile=filename, distfile_path=path, config=self._config, )
 
                 else:
                     deletion_entry = deletion_db.get(filename)
@@ -93,12 +88,11 @@ class DeletionIterator:
                         deletion_db[filename] = start_time
 
                     elif deletion_entry + deletion_delay <= start_time:
-                        yield DeletionTask(
-                            background=True,
-                            distfile=filename,
-                            distfile_path=path,
-                            config=self._config,
-                        )
+                        yield DeletionTask(background=True,
+                                           distfile=filename,
+                                           distfile_path=path,
+                                           config=self._config,
+                                           )
 
         if deletion_db is not None:
             for filename in list(deletion_db):

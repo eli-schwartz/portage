@@ -5,17 +5,7 @@
 # asyncio module (Python 3.3 and earlier), this module provides a
 # subset of the asyncio.futures.Futures interface.
 
-__all__ = (
-    "CancelledError",
-    "Future",
-    "InvalidStateError",
-    "TimeoutError",
-)
+__all__ = ("CancelledError", "Future", "InvalidStateError", "TimeoutError", )
 
 # pylint: disable=redefined-builtin
-from asyncio import (
-    CancelledError,
-    Future,
-    InvalidStateError,
-    TimeoutError,
-)
+from asyncio import (CancelledError, Future, InvalidStateError, TimeoutError, )

@@ -51,46 +51,25 @@ src_install() {
         user_config_dir = os.path.join(eprefix, USER_CONFIG_PATH)
 
         portage_python = portage._python_interpreter
-        emerge_cmd = (
-            portage_python,
-            "-b",
-            "-Wd",
-            os.path.join(str(self.bindir), "emerge"),
-        )
+        emerge_cmd = (portage_python, "-b", "-Wd", os.path.join(str(self.bindir), "emerge"), )
 
         file_collision = os.path.join(eroot, "usr/lib/file-collision")
 
-        test_commands = (
-            emerge_cmd + (
-                "--oneshot",
-                "dev-libs/A",
-            ),
-            (lambda: portage.util.grablines(file_collision) == ["A\n"], ),
-            emerge_cmd + (
-                "--oneshot",
-                "dev-libs/B",
-            ),
-            (lambda: portage.util.grablines(file_collision) == ["B\n"], ),
-            emerge_cmd + (
-                "--oneshot",
-                "dev-libs/A",
-            ),
-            (lambda: portage.util.grablines(file_collision) == ["A\n"], ),
-            ({
-                "FEATURES": "parallel-install"
-            }, ) + emerge_cmd + (
-                "--oneshot",
-                "dev-libs/B",
-            ),
-            (lambda: portage.util.grablines(file_collision) == ["B\n"], ),
-            ({
-                "FEATURES": "parallel-install"
-            }, ) + emerge_cmd + (
-                "-Cq",
-                "dev-libs/B",
-            ),
-            (lambda: not os.path.exists(file_collision), ),
-        )
+        test_commands = (emerge_cmd + ("--oneshot", "dev-libs/A",
+                                       ), (lambda: portage.util.grablines(file_collision) == ["A\n"], ),
+                         emerge_cmd + ("--oneshot", "dev-libs/B",
+                                       ), (lambda: portage.util.grablines(file_collision) == ["B\n"], ),
+                         emerge_cmd + ("--oneshot", "dev-libs/A",
+                                       ), (lambda: portage.util.grablines(file_collision) == ["A\n"], ),
+                         ({
+                             "FEATURES": "parallel-install"
+                         }, ) + emerge_cmd + ("--oneshot", "dev-libs/B",
+                                              ), (lambda: portage.util.grablines(file_collision) == ["B\n"], ),
+                         ({
+                             "FEATURES": "parallel-install"
+                         }, ) + emerge_cmd + ("-Cq", "dev-libs/B",
+                                              ), (lambda: not os.path.exists(file_collision), ),
+                         )
 
         fake_bin = os.path.join(eprefix, "bin")
         portage_tmpdir = os.path.join(eprefix, "var", "tmp", "portage")
@@ -131,13 +110,7 @@ src_install() {
         if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
             env["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
 
-        dirs = [
-            playground.distdir,
-            fake_bin,
-            portage_tmpdir,
-            user_config_dir,
-            var_cache_edb,
-        ]
+        dirs = [playground.distdir, fake_bin, portage_tmpdir, user_config_dir, var_cache_edb, ]
         true_symlinks = ["chown", "chgrp"]
         true_binary = find_binary("true")
         self.assertEqual(true_binary is None, False, "true command not found")

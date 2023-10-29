@@ -14,10 +14,7 @@ class StringFormatTestCase(TestCase):
     which may be either python2 or python3.
     """
 
-    unicode_strings = (
-        "\u2018",
-        "\u2019",
-    )
+    unicode_strings = ("\u2018", "\u2019", )
 
     def testDependencyArg(self):
         self.assertEqual(_encodings["content"], "utf_8")

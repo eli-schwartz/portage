@@ -45,23 +45,14 @@ else:
 
 
 def make_metadata_dict(data):
-    warnings.warn(
-        "portage.getbinpkg.make_metadata_dict() is deprecated",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn("portage.getbinpkg.make_metadata_dict() is deprecated", DeprecationWarning, stacklevel=2, )
 
     myid, _myglob = data
-    metadata = ((
-        k_bytes,
-        _unicode_decode(k_bytes, encoding=_encodings["repo.content"], errors="replace"),
-    ) for k_bytes in portage.xpak.getindex_mem(myid))
+    metadata = ((k_bytes, _unicode_decode(k_bytes, encoding=_encodings["repo.content"], errors="replace"),
+                 ) for k_bytes in portage.xpak.getindex_mem(myid))
     mydict = {
-        k: _unicode_decode(
-            portage.xpak.getitem(data, k_bytes),
-            encoding=_encodings["repo.content"],
-            errors="replace",
-        )
+        k: _unicode_decode(portage.xpak.getitem(data, k_bytes), encoding=_encodings["repo.content"], errors="replace",
+                           )
         for k_bytes, k in metadata if k in _all_metadata_keys or k == "CATEGORY"
     }
 
@@ -73,11 +64,7 @@ class ParseLinks(html_parser_HTMLParser):
     page and provide suffix and prefix limitors"""
 
     def __init__(self):
-        warnings.warn(
-            "portage.getbinpkg.ParseLinks is deprecated",
-            DeprecationWarning,
-            stacklevel=2,
-        )
+        warnings.warn("portage.getbinpkg.ParseLinks is deprecated", DeprecationWarning, stacklevel=2, )
 
         self.PL_anchors = []
         html_parser_HTMLParser.__init__(self)
@@ -107,11 +94,7 @@ def create_conn(baseurl, conn=None):
     optional connection. If connection is already active, it is passed on.
     baseurl is reduced to address and is returned in tuple (conn,address)"""
 
-    warnings.warn(
-        "portage.getbinpkg.create_conn() is deprecated",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn("portage.getbinpkg.create_conn() is deprecated", DeprecationWarning, stacklevel=2, )
 
     parts = baseurl.split("://", 1)
     if len(parts) != 2:
@@ -178,10 +161,7 @@ def create_conn(baseurl, conn=None):
             if password:
                 conn.login(username, password)
             else:
-                sys.stderr.write(colorize(
-                    "WARN",
-                    _(f" * No password provided for username '{username}'\n\n"),
-                ))
+                sys.stderr.write(colorize("WARN", _(f" * No password provided for username '{username}'\n\n"), ))
                 conn.login(username)
             conn.set_pasv(passive)
             conn.set_debuglevel(0)
@@ -203,11 +183,7 @@ def make_ftp_request(conn, address, rest=None, dest=None):
     """Uses the |conn| object to request the data
     from address and issuing a rest if it is passed."""
 
-    warnings.warn(
-        "portage.getbinpkg.make_ftp_request() is deprecated",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn("portage.getbinpkg.make_ftp_request() is deprecated", DeprecationWarning, stacklevel=2, )
 
     try:
         if dest:
@@ -253,11 +229,7 @@ def make_http_request(conn, address, _params={}, headers={}, dest=None):
     the data from address, performing Location forwarding and using the
     optional params and headers."""
 
-    warnings.warn(
-        "portage.getbinpkg.make_http_request() is deprecated",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn("portage.getbinpkg.make_http_request() is deprecated", DeprecationWarning, stacklevel=2, )
 
     rc = 0
     response = None
@@ -288,11 +260,7 @@ def make_http_request(conn, address, _params={}, headers={}, dest=None):
                     break
 
     if rc not in (200, 206):
-        return (
-            None,
-            rc,
-            f"Server did not respond successfully ({response.status}: {response.reason})",
-        )
+        return (None, rc, f"Server did not respond successfully ({response.status}: {response.reason})", )
 
     if dest:
         dest.write(response.read())
@@ -302,11 +270,7 @@ def make_http_request(conn, address, _params={}, headers={}, dest=None):
 
 
 def match_in_array(array, prefix="", suffix="", match_both=1, allow_overlap=0):
-    warnings.warn(
-        "portage.getbinpkg.match_in_array() is deprecated",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn("portage.getbinpkg.match_in_array() is deprecated", DeprecationWarning, stacklevel=2, )
 
     myarray = []
 
@@ -349,11 +313,7 @@ def dir_get_list(baseurl, conn=None):
     URI should be in the form <proto>://<site>[:port]<path>
     Connection is used for persistent connection instances."""
 
-    warnings.warn(
-        "portage.getbinpkg.dir_get_list() is deprecated",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn("portage.getbinpkg.dir_get_list() is deprecated", DeprecationWarning, stacklevel=2, )
 
     keepconnection = 0
     if conn:
@@ -403,11 +363,7 @@ def file_get_metadata(baseurl, conn=None, chunk_size=3000):
     URI should be in the form <proto>://<site>[:port]<path>
     Connection is used for persistent connection instances."""
 
-    warnings.warn(
-        "portage.getbinpkg.file_get_metadata() is deprecated",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn("portage.getbinpkg.file_get_metadata() is deprecated", DeprecationWarning, stacklevel=2, )
 
     keepconnection = 1
     if conn:
@@ -458,12 +414,11 @@ def file_get(baseurl=None, dest=None, conn=None, fcmd=None, filename=None, fcmd_
     URI should be in the form <proto>://[user[:pass]@]<site>[:port]<path>"""
 
     if not fcmd:
-        warnings.warn(
-            "Use of portage.getbinpkg.file_get() without the fcmd "
-            "parameter is deprecated",
-            DeprecationWarning,
-            stacklevel=2,
-        )
+        warnings.warn("Use of portage.getbinpkg.file_get() without the fcmd "
+                      "parameter is deprecated",
+                      DeprecationWarning,
+                      stacklevel=2,
+                      )
 
         return file_get_lib(baseurl, dest, conn)
 
@@ -491,11 +446,7 @@ def file_get(baseurl=None, dest=None, conn=None, fcmd=None, filename=None, fcmd_
     from portage.process import spawn
 
     myfetch = [varexpand(x, mydict=variables) for x in portage.util.shlex_split(fcmd)]
-    fd_pipes = {
-        0: portage._get_stdin().fileno(),
-        1: sys.__stdout__.fileno(),
-        2: sys.__stdout__.fileno(),
-    }
+    fd_pipes = {0: portage._get_stdin().fileno(), 1: sys.__stdout__.fileno(), 2: sys.__stdout__.fileno(), }
     sys.__stdout__.flush()
     sys.__stderr__.flush()
     retval = spawn(myfetch, env=os.environ.copy(), fd_pipes=fd_pipes)
@@ -510,11 +461,7 @@ def file_get_lib(baseurl, dest, conn=None):
     URI should be in the form <proto>://<site>[:port]<path>
     Connection is used for persistent connection instances."""
 
-    warnings.warn(
-        "portage.getbinpkg.file_get_lib() is deprecated",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn("portage.getbinpkg.file_get_lib() is deprecated", DeprecationWarning, stacklevel=2, )
 
     keepconnection = 0
     if conn:
@@ -556,11 +503,7 @@ def file_get_lib(baseurl, dest, conn=None):
 
 
 def dir_get_metadata(baseurl, conn=None, chunk_size=3000, verbose=1, usingcache=1, makepickle=None):
-    warnings.warn(
-        "portage.getbinpkg.dir_get_metadata() is deprecated",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn("portage.getbinpkg.dir_get_metadata() is deprecated", DeprecationWarning, stacklevel=2, )
 
     keepconnection = 1
     if conn:
@@ -582,10 +525,7 @@ def dir_get_metadata(baseurl, conn=None, chunk_size=3000, verbose=1, usingcache=
 
     out = sys.stdout
     try:
-        metadatafile = open(
-            _unicode_encode(metadatafilename, encoding=_encodings["fs"], errors="strict"),
-            "rb",
-        )
+        metadatafile = open(_unicode_encode(metadatafilename, encoding=_encodings["fs"], errors="strict"), "rb", )
         mypickle = pickle.Unpickler(metadatafile)
         try:
             mypickle.find_global = None
@@ -683,10 +623,8 @@ def dir_get_metadata(baseurl, conn=None, chunk_size=3000, verbose=1, usingcache=
                     sys.stderr.write(f"!!! {e}")
                     sys.stderr.flush()
             try:
-                metadatafile = open(
-                    _unicode_encode(metadatafilename, encoding=_encodings["fs"], errors="strict"),
-                    "wb",
-                )
+                metadatafile = open(_unicode_encode(metadatafilename, encoding=_encodings["fs"], errors="strict"), "wb",
+                                    )
                 pickle.dump(metadata, metadatafile, protocol=2)
                 metadatafile.close()
             except SystemExit as e:
@@ -715,12 +653,9 @@ def dir_get_metadata(baseurl, conn=None, chunk_size=3000, verbose=1, usingcache=
                 self.display()
 
         def display(self):
-            self.out.write("".join((
-                "\r",
-                colorize("WARN", _(f"cache miss: '{self.misses}'")),
-                " --- ",
-                colorize("GOOD", _(f"cache hit: '{self.hits}'")),
-            )))
+            self.out.write("".join(("\r", colorize("WARN", _(f"cache miss: '{self.misses}'")), " --- ",
+                                    colorize("GOOD", _(f"cache hit: '{self.hits}'")),
+                                    )))
             self.out.flush()
 
     cache_stats = CacheStats(out)
@@ -779,17 +714,11 @@ def dir_get_metadata(baseurl, conn=None, chunk_size=3000, verbose=1, usingcache=
     try:
         if "modified" in metadata[baseurl] and metadata[baseurl]["modified"]:
             metadata[baseurl]["timestamp"] = int(time.time())
-            metadatafile = open(
-                _unicode_encode(metadatafilename, encoding=_encodings["fs"], errors="strict"),
-                "wb",
-            )
+            metadatafile = open(_unicode_encode(metadatafilename, encoding=_encodings["fs"], errors="strict"), "wb", )
             pickle.dump(metadata, metadatafile, protocol=2)
             metadatafile.close()
         if makepickle:
-            metadatafile = open(
-                _unicode_encode(makepickle, encoding=_encodings["fs"], errors="strict"),
-                "wb",
-            )
+            metadatafile = open(_unicode_encode(makepickle, encoding=_encodings["fs"], errors="strict"), "wb", )
             pickle.dump(metadata[baseurl]["data"], metadatafile, protocol=2)
             metadatafile.close()
     except SystemExit as e:
@@ -817,14 +746,13 @@ def _cmp_cpv(d1, d2):
 
 class PackageIndex:
 
-    def __init__(
-        self,
-        allowed_pkg_keys=None,
-        default_header_data=None,
-        default_pkg_data=None,
-        inherited_keys=None,
-        translated_keys=None,
-    ):
+    def __init__(self,
+                 allowed_pkg_keys=None,
+                 default_header_data=None,
+                 default_pkg_data=None,
+                 inherited_keys=None,
+                 translated_keys=None,
+                 ):
         self._pkg_slot_dict = None
         if allowed_pkg_keys:
             self._pkg_slot_dict = slot_dict_class(allowed_pkg_keys)

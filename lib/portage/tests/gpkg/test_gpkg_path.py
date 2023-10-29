@@ -17,9 +17,7 @@ from portage.gpkg import gpkg
 class test_gpkg_path_case(TestCase):
 
     def test_gpkg_short_path(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('BINPKG_COMPRESS="none"', ),
-        })
+        playground = ResolverPlayground(user_config={"make.conf": ('BINPKG_COMPRESS="none"', ), })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -52,20 +50,17 @@ class test_gpkg_path_case(TestCase):
                 image.close()
 
             test_gpkg.decompress(os.path.join(tmpdir, "test"))
-            r = compare_files(
-                os.path.join(tmpdir, "orig/" + path_name + "test"),
-                os.path.join(tmpdir, "test/" + path_name + "test"),
-                skipped_types=("atime", "mtime", "ctime"),
-            )
+            r = compare_files(os.path.join(tmpdir, "orig/" + path_name + "test"),
+                              os.path.join(tmpdir, "test/" + path_name + "test"),
+                              skipped_types=("atime", "mtime", "ctime"),
+                              )
             self.assertEqual(r, ())
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_long_path(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('BINPKG_COMPRESS="none"', ),
-        })
+        playground = ResolverPlayground(user_config={"make.conf": ('BINPKG_COMPRESS="none"', ), })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -103,20 +98,17 @@ class test_gpkg_path_case(TestCase):
                 image.close()
 
             test_gpkg.decompress(os.path.join(tmpdir, "test"))
-            r = compare_files(
-                os.path.join(tmpdir, "orig/" + path_name + "test"),
-                os.path.join(tmpdir, "test/" + path_name + "test"),
-                skipped_types=("atime", "mtime", "ctime"),
-            )
+            r = compare_files(os.path.join(tmpdir, "orig/" + path_name + "test"),
+                              os.path.join(tmpdir, "test/" + path_name + "test"),
+                              skipped_types=("atime", "mtime", "ctime"),
+                              )
             self.assertEqual(r, ())
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_non_ascii_path(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('BINPKG_COMPRESS="none"', ),
-        })
+        playground = ResolverPlayground(user_config={"make.conf": ('BINPKG_COMPRESS="none"', ), })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -149,20 +141,17 @@ class test_gpkg_path_case(TestCase):
                 image.close()
 
             test_gpkg.decompress(os.path.join(tmpdir, "test"))
-            r = compare_files(
-                os.path.join(tmpdir, "orig/" + path_name + "test"),
-                os.path.join(tmpdir, "test/" + path_name + "test"),
-                skipped_types=("atime", "mtime", "ctime"),
-            )
+            r = compare_files(os.path.join(tmpdir, "orig/" + path_name + "test"),
+                              os.path.join(tmpdir, "test/" + path_name + "test"),
+                              skipped_types=("atime", "mtime", "ctime"),
+                              )
             self.assertEqual(r, ())
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_symlink_path(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('BINPKG_COMPRESS="none"', ),
-        })
+        playground = ResolverPlayground(user_config={"make.conf": ('BINPKG_COMPRESS="none"', ), })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -198,20 +187,17 @@ class test_gpkg_path_case(TestCase):
                 image.close()
 
             test_gpkg.decompress(os.path.join(tmpdir, "test"))
-            r = compare_files(
-                os.path.join(tmpdir, "orig/", "a_long_symlink"),
-                os.path.join(tmpdir, "test/", "a_long_symlink"),
-                skipped_types=("atime", "mtime", "ctime"),
-            )
+            r = compare_files(os.path.join(tmpdir, "orig/", "a_long_symlink"),
+                              os.path.join(tmpdir, "test/", "a_long_symlink"),
+                              skipped_types=("atime", "mtime", "ctime"),
+                              )
             self.assertEqual(r, ())
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_long_hardlink_path(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('BINPKG_COMPRESS="none"', ),
-        })
+        playground = ResolverPlayground(user_config={"make.conf": ('BINPKG_COMPRESS="none"', ), })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -227,10 +213,7 @@ class test_gpkg_path_case(TestCase):
             with open(os.path.join(orig_full_path, "test"), "wb") as test_file:
                 test_file.write(urandom(1048576))
 
-            os.link(
-                os.path.join(orig_full_path, "test"),
-                os.path.join(orig_full_path, file_name),
-            )
+            os.link(os.path.join(orig_full_path, "test"), os.path.join(orig_full_path, file_name), )
 
             gpkg_file_loc = os.path.join(tmpdir, "test.gpkg.tar")
             test_gpkg = gpkg(settings, "test", gpkg_file_loc)
@@ -253,19 +236,16 @@ class test_gpkg_path_case(TestCase):
                 image.close()
 
             test_gpkg.decompress(os.path.join(tmpdir, "test"))
-            r = compare_files(
-                os.path.join(tmpdir, "orig", path_name, file_name),
-                os.path.join(tmpdir, "test", path_name, file_name),
-                skipped_types=("atime", "mtime", "ctime"),
-            )
+            r = compare_files(os.path.join(tmpdir, "orig", path_name, file_name),
+                              os.path.join(tmpdir, "test", path_name, file_name),
+                              skipped_types=("atime", "mtime", "ctime"),
+                              )
             self.assertEqual(r, ())
         finally:
             shutil.rmtree(tmpdir)
 
     def test_gpkg_long_filename(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('BINPKG_COMPRESS="none"', ),
-        })
+        playground = ResolverPlayground(user_config={"make.conf": ('BINPKG_COMPRESS="none"', ), })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -302,11 +282,10 @@ class test_gpkg_path_case(TestCase):
                 image.close()
 
             test_gpkg.decompress(os.path.join(tmpdir, "test"))
-            r = compare_files(
-                os.path.join(tmpdir, "orig", path_name, file_name),
-                os.path.join(tmpdir, "test", path_name, file_name),
-                skipped_types=("atime", "mtime", "ctime"),
-            )
+            r = compare_files(os.path.join(tmpdir, "orig", path_name, file_name),
+                              os.path.join(tmpdir, "test", path_name, file_name),
+                              skipped_types=("atime", "mtime", "ctime"),
+                              )
             self.assertEqual(r, ())
         finally:
             shutil.rmtree(tmpdir)

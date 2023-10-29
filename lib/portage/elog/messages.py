@@ -4,11 +4,7 @@
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.output:colorize",
-    "portage.util:writemsg",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.output:colorize", "portage.util:writemsg", )
 
 from portage.const import EBUILD_PHASES
 from portage.localization import _
@@ -19,13 +15,7 @@ from portage import _unicode_decode
 
 import sys
 
-_log_levels = frozenset([
-    "ERROR",
-    "INFO",
-    "LOG",
-    "QA",
-    "WARN",
-])
+_log_levels = frozenset(["ERROR", "INFO", "LOG", "QA", "WARN", ])
 
 
 def collect_ebuild_messages(path):
@@ -52,11 +42,10 @@ def collect_ebuild_messages(path):
             logentries[msgfunction] = []
         lastmsgtype = None
         msgcontent = []
-        f = open(
-            _unicode_encode(filename, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["repo.content"],
-            errors="replace",
-        )
+        f = open(_unicode_encode(filename, encoding=_encodings["fs"], errors="strict"),
+                 encoding=_encodings["repo.content"],
+                 errors="replace",
+                 )
         # Use split('\n') since normal line iteration or readlines() will
         # split on \r characters as shown in bug #390833.
         for l in f.read().split("\n"):
@@ -67,11 +56,9 @@ def collect_ebuild_messages(path):
                 if msgtype not in _log_levels:
                     raise ValueError(msgtype)
             except ValueError:
-                writemsg(
-                    _("!!! malformed entry in "
-                      "log file: '%s': %s\n") % (filename, l),
-                    noiselevel=-1,
-                )
+                writemsg(_("!!! malformed entry in "
+                           "log file: '%s': %s\n") % (filename, l), noiselevel=-1,
+                         )
                 continue
 
             if lastmsgtype is None:

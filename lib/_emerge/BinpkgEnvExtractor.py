@@ -37,13 +37,12 @@ class BinpkgEnvExtractor(CompositeTask):
         if self.settings.get("PORTAGE_BACKGROUND") != "subprocess":
             logfile = self.settings.get("PORTAGE_LOG_FILE")
 
-        extractor_proc = SpawnProcess(
-            args=[BASH_BINARY, "-c", shell_cmd],
-            background=self.background,
-            env=self.settings.environ(),
-            scheduler=self.scheduler,
-            logfile=logfile,
-        )
+        extractor_proc = SpawnProcess(args=[BASH_BINARY, "-c", shell_cmd],
+                                      background=self.background,
+                                      env=self.settings.environ(),
+                                      scheduler=self.scheduler,
+                                      logfile=logfile,
+                                      )
 
         self._start_task(extractor_proc, self._extractor_exit)
 

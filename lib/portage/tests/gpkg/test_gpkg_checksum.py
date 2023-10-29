@@ -11,11 +11,7 @@ from portage import shutil
 from portage.tests import TestCase
 from portage.tests.resolver.ResolverPlayground import ResolverPlayground
 from portage.gpkg import gpkg
-from portage.exception import (
-    InvalidBinaryPackageFormat,
-    DigestException,
-    MissingSignature,
-)
+from portage.exception import (InvalidBinaryPackageFormat, DigestException, MissingSignature, )
 
 
 class test_gpkg_checksum_case(TestCase):
@@ -47,11 +43,7 @@ class test_gpkg_checksum_case(TestCase):
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(
-                InvalidBinaryPackageFormat,
-                binpkg_2.decompress,
-                os.path.join(tmpdir, "test"),
-            )
+            self.assertRaises(InvalidBinaryPackageFormat, binpkg_2.decompress, os.path.join(tmpdir, "test"), )
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
@@ -226,11 +218,7 @@ class test_gpkg_checksum_case(TestCase):
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(
-                InvalidBinaryPackageFormat,
-                binpkg_2.decompress,
-                os.path.join(tmpdir, "test"),
-            )
+            self.assertRaises(InvalidBinaryPackageFormat, binpkg_2.decompress, os.path.join(tmpdir, "test"), )
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
@@ -309,11 +297,7 @@ class test_gpkg_checksum_case(TestCase):
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(
-                DigestException,
-                binpkg_2.decompress,
-                os.path.join(tmpdir, "test"),
-            )
+            self.assertRaises(DigestException, binpkg_2.decompress, os.path.join(tmpdir, "test"), )
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()

@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class KeywordsTestCase(TestCase):
@@ -13,9 +10,7 @@ class KeywordsTestCase(TestCase):
     def testStableConfig(self):
         # Only accept stable keywords for a particular ARCH.
 
-        user_config = {
-            "package.accept_keywords": ("*/* -* x86", ),
-        }
+        user_config = {"package.accept_keywords": ("*/* -* x86", ), }
 
         ebuilds = {
             "app-misc/A-1": {
@@ -41,45 +36,39 @@ class KeywordsTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-1"]),
-            ResolverPlaygroundTestCase(
-                ["app-misc/B"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/B-1", ),
-                mergelist=["app-misc/B-1"],
-            ),
-            ResolverPlaygroundTestCase(["app-misc/C"], success=True, mergelist=["app-misc/C-1"]),
-            ResolverPlaygroundTestCase(
-                ["app-misc/D"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/D-1", ),
-                mergelist=["app-misc/D-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["app-misc/E"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/E-1", ),
-                mergelist=["app-misc/E-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["app-misc/F"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/F-1", ),
-                mergelist=["app-misc/F-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["app-misc/G"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/G-1", ),
-                mergelist=["app-misc/G-1"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/B"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/B-1", ),
+                                                 mergelist=["app-misc/B-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["app-misc/C"], success=True, mergelist=["app-misc/C-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/D"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/D-1", ),
+                                                 mergelist=["app-misc/D-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["app-misc/E"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/E-1", ),
+                                                 mergelist=["app-misc/E-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["app-misc/F"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/F-1", ),
+                                                 mergelist=["app-misc/F-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["app-misc/G"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/G-1", ),
+                                                 mergelist=["app-misc/G-1"],
+                                                 ),
+                      )
 
         playground = ResolverPlayground(ebuilds=ebuilds, user_config=user_config)
         try:
@@ -92,9 +81,7 @@ class KeywordsTestCase(TestCase):
     def testAnyStableConfig(self):
         # Accept stable keywords for any ARCH.
 
-        user_config = {
-            "package.accept_keywords": ("*/* -* *", ),
-        }
+        user_config = {"package.accept_keywords": ("*/* -* *", ), }
 
         ebuilds = {
             "app-misc/A-1": {
@@ -120,39 +107,34 @@ class KeywordsTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-1"]),
-            ResolverPlaygroundTestCase(
-                ["app-misc/B"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/B-1", ),
-                mergelist=["app-misc/B-1"],
-            ),
-            ResolverPlaygroundTestCase(["app-misc/C"], success=True, mergelist=["app-misc/C-1"]),
-            ResolverPlaygroundTestCase(
-                ["app-misc/D"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/D-1", ),
-                mergelist=["app-misc/D-1"],
-            ),
-            ResolverPlaygroundTestCase(["app-misc/E"], success=True, mergelist=["app-misc/E-1"]),
-            ResolverPlaygroundTestCase(
-                ["app-misc/F"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/F-1", ),
-                mergelist=["app-misc/F-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["app-misc/G"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/G-1", ),
-                mergelist=["app-misc/G-1"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/B"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/B-1", ),
+                                                 mergelist=["app-misc/B-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["app-misc/C"], success=True, mergelist=["app-misc/C-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/D"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/D-1", ),
+                                                 mergelist=["app-misc/D-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["app-misc/E"], success=True, mergelist=["app-misc/E-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/F"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/F-1", ),
+                                                 mergelist=["app-misc/F-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["app-misc/G"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/G-1", ),
+                                                 mergelist=["app-misc/G-1"],
+                                                 ),
+                      )
 
         playground = ResolverPlayground(ebuilds=ebuilds, user_config=user_config)
         try:
@@ -165,9 +147,7 @@ class KeywordsTestCase(TestCase):
     def testUnstableConfig(self):
         # Accept stable and unstable keywords for a particular ARCH.
 
-        user_config = {
-            "package.accept_keywords": ("*/* -* x86 ~x86", ),
-        }
+        user_config = {"package.accept_keywords": ("*/* -* x86 ~x86", ), }
 
         ebuilds = {
             "app-misc/A-1": {
@@ -193,33 +173,29 @@ class KeywordsTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-1"]),
-            ResolverPlaygroundTestCase(["app-misc/B"], success=True, mergelist=["app-misc/B-1"]),
-            ResolverPlaygroundTestCase(["app-misc/C"], success=True, mergelist=["app-misc/C-1"]),
-            ResolverPlaygroundTestCase(["app-misc/D"], success=True, mergelist=["app-misc/D-1"]),
-            ResolverPlaygroundTestCase(
-                ["app-misc/E"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/E-1", ),
-                mergelist=["app-misc/E-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["app-misc/F"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/F-1", ),
-                mergelist=["app-misc/F-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["app-misc/G"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/G-1", ),
-                mergelist=["app-misc/G-1"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/B"], success=True, mergelist=["app-misc/B-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/C"], success=True, mergelist=["app-misc/C-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/D"], success=True, mergelist=["app-misc/D-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/E"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/E-1", ),
+                                                 mergelist=["app-misc/E-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["app-misc/F"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/F-1", ),
+                                                 mergelist=["app-misc/F-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["app-misc/G"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/G-1", ),
+                                                 mergelist=["app-misc/G-1"],
+                                                 ),
+                      )
 
         playground = ResolverPlayground(ebuilds=ebuilds, user_config=user_config)
         try:
@@ -232,9 +208,7 @@ class KeywordsTestCase(TestCase):
     def testAnyUnstableConfig(self):
         # Accept unstable keywords for any ARCH.
 
-        user_config = {
-            "package.accept_keywords": ("*/* -* * ~*", ),
-        }
+        user_config = {"package.accept_keywords": ("*/* -* * ~*", ), }
 
         ebuilds = {
             "app-misc/A-1": {
@@ -260,21 +234,19 @@ class KeywordsTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-1"]),
-            ResolverPlaygroundTestCase(["app-misc/B"], success=True, mergelist=["app-misc/B-1"]),
-            ResolverPlaygroundTestCase(["app-misc/C"], success=True, mergelist=["app-misc/C-1"]),
-            ResolverPlaygroundTestCase(["app-misc/D"], success=True, mergelist=["app-misc/D-1"]),
-            ResolverPlaygroundTestCase(["app-misc/E"], success=True, mergelist=["app-misc/E-1"]),
-            ResolverPlaygroundTestCase(["app-misc/F"], success=True, mergelist=["app-misc/F-1"]),
-            ResolverPlaygroundTestCase(
-                ["app-misc/G"],
-                success=False,
-                options={"--autounmask": True},
-                unstable_keywords=("app-misc/G-1", ),
-                mergelist=["app-misc/G-1"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/B"], success=True, mergelist=["app-misc/B-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/C"], success=True, mergelist=["app-misc/C-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/D"], success=True, mergelist=["app-misc/D-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/E"], success=True, mergelist=["app-misc/E-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/F"], success=True, mergelist=["app-misc/F-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/G"],
+                                                 success=False,
+                                                 options={"--autounmask": True},
+                                                 unstable_keywords=("app-misc/G-1", ),
+                                                 mergelist=["app-misc/G-1"],
+                                                 ),
+                      )
 
         playground = ResolverPlayground(ebuilds=ebuilds, user_config=user_config)
         try:
@@ -287,9 +259,7 @@ class KeywordsTestCase(TestCase):
     def testIgnoreKeywordsConfig(self):
         # Ignore keywords entirely (accept **)
 
-        user_config = {
-            "package.accept_keywords": ("*/* -* **", ),
-        }
+        user_config = {"package.accept_keywords": ("*/* -* **", ), }
 
         ebuilds = {
             "app-misc/A-1": {
@@ -315,15 +285,14 @@ class KeywordsTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-1"]),
-            ResolverPlaygroundTestCase(["app-misc/B"], success=True, mergelist=["app-misc/B-1"]),
-            ResolverPlaygroundTestCase(["app-misc/C"], success=True, mergelist=["app-misc/C-1"]),
-            ResolverPlaygroundTestCase(["app-misc/D"], success=True, mergelist=["app-misc/D-1"]),
-            ResolverPlaygroundTestCase(["app-misc/E"], success=True, mergelist=["app-misc/E-1"]),
-            ResolverPlaygroundTestCase(["app-misc/F"], success=True, mergelist=["app-misc/F-1"]),
-            ResolverPlaygroundTestCase(["app-misc/G"], success=True, mergelist=["app-misc/G-1"]),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["app-misc/A"], success=True, mergelist=["app-misc/A-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/B"], success=True, mergelist=["app-misc/B-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/C"], success=True, mergelist=["app-misc/C-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/D"], success=True, mergelist=["app-misc/D-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/E"], success=True, mergelist=["app-misc/E-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/F"], success=True, mergelist=["app-misc/F-1"]),
+                      ResolverPlaygroundTestCase(["app-misc/G"], success=True, mergelist=["app-misc/G-1"]),
+                      )
 
         playground = ResolverPlayground(ebuilds=ebuilds, user_config=user_config)
         try:

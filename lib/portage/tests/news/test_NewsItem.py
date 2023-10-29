@@ -50,14 +50,13 @@ class FakeNewsItem(NewsItem):
     # TODO: Migrate __str__ to NewsItem? NewsItem doesn't actually parse
     # all fields right now though.
     def __str__(self) -> str:
-        item = self.item_template_header.substitute(
-            title=self.title,
-            author=self.author,
-            content_type=self.content_type,
-            posted=self.posted,
-            revision=self.revision,
-            news_item_format=self.news_item_format,
-        )
+        item = self.item_template_header.substitute(title=self.title,
+                                                    author=self.author,
+                                                    content_type=self.content_type,
+                                                    posted=self.posted,
+                                                    revision=self.revision,
+                                                    news_item_format=self.news_item_format,
+                                                    )
 
         for package in self.display_if_installed:
             item += f"Display-If-Installed: {package}\n"
@@ -140,15 +139,13 @@ class NewsItemTestCase(TestCase):
         self.assertTrue(item.isValid())
 
         if relevant:
-            self.assertTrue(
-                item.isRelevant(self.vardb, self.settings, self.profile),
-                msg=f"Expected {item} to be relevant, but it was not!",
-            )
+            self.assertTrue(item.isRelevant(self.vardb, self.settings, self.profile),
+                            msg=f"Expected {item} to be relevant, but it was not!",
+                            )
         else:
-            self.assertFalse(
-                item.isRelevant(self.vardb, self.settings, self.profile),
-                msg=f"Expected {item} to be irrelevant, but it was relevant!",
-            )
+            self.assertFalse(item.isRelevant(self.vardb, self.settings, self.profile),
+                             msg=f"Expected {item} to be irrelevant, but it was relevant!",
+                             )
 
     def testNewsManager(self):
         vardb = MagicMock()
@@ -179,32 +176,27 @@ class NewsItemTestCase(TestCase):
             # First, just check the simple case of one profile matching ours.
             item = self._createNewsItem({"display_if_profile": [profile_prefix + self.profile]})
             self.assertTrue(item.isValid())
-            self.assertTrue(
-                item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
-                msg=f"Expected {item} to be relevant, but it was not!",
-            )
+            self.assertTrue(item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
+                            msg=f"Expected {item} to be relevant, but it was not!",
+                            )
 
             # Test the negative case: what if the only profile listed
             # does *not* match ours?
             item = self._createNewsItem({"display_if_profile": [profile_prefix + "profiles/i-do-not-exist"]})
             self.assertTrue(item.isValid())
-            self.assertFalse(
-                item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
-                msg=f"Expected {item} to be irrelevant, but it was relevant!",
-            )
+            self.assertFalse(item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
+                             msg=f"Expected {item} to be irrelevant, but it was relevant!",
+                             )
 
             # What if several profiles are listed and we match one of them?
             item = self._createNewsItem({
-                "display_if_profile": [
-                    profile_prefix + self.profile,
-                    profile_prefix + f"{self.profile_base}/amd64/2023.0",
-                ]
+                "display_if_profile":
+                [profile_prefix + self.profile, profile_prefix + f"{self.profile_base}/amd64/2023.0", ]
             })
             self.assertTrue(item.isValid())
-            self.assertTrue(
-                item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
-                msg=f"Expected {item} to be relevant, but it was not!",
-            )
+            self.assertTrue(item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
+                            msg=f"Expected {item} to be relevant, but it was not!",
+                            )
 
             # What if several profiles are listed and we match none of them?
             item = self._createNewsItem({
@@ -214,10 +206,9 @@ class NewsItemTestCase(TestCase):
                 ]
             })
             self.assertTrue(item.isValid())
-            self.assertFalse(
-                item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
-                msg=f"Expected {item} to be irrelevant, but it was relevant!",
-            )
+            self.assertFalse(item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
+                             msg=f"Expected {item} to be irrelevant, but it was relevant!",
+                             )
 
     def testDisplayIfInstalled(self):
         self.vardb.cpv_inject("sys-apps/portage-2.0", {"SLOT": "0"})
@@ -230,53 +221,32 @@ class NewsItemTestCase(TestCase):
 
         # What about several packages and we have none of them installed?
         self._checkAndCreateNewsItem(
-            {"display_if_installed": [
-                "dev-util/pkgcheck",
-                "dev-util/pkgdev",
-                "sys-apps/pkgcore",
-            ]},
-            False,
+            {"display_if_installed": ["dev-util/pkgcheck", "dev-util/pkgdev", "sys-apps/pkgcore", ]}, False,
         )
 
         # What about several packages and we have one of them installed?
         self.vardb.cpv_inject("net-misc/openssh-9.2_p1", {"SLOT": "0"})
-        self._checkAndCreateNewsItem({"display_if_installed": [
-            "net-misc/openssh",
-            "net-misc/dropbear",
-        ]})
+        self._checkAndCreateNewsItem({"display_if_installed": ["net-misc/openssh", "net-misc/dropbear", ]})
 
         # What about several packages and we have all of them installed?
         # Note: we already have openssh added from the above test
         self.vardb.cpv_inject("net-misc/dropbear-2022.83", {"SLOT": "0"})
-        self._checkAndCreateNewsItem({"display_if_installed": [
-            "net-misc/openssh",
-            "net-misc/dropbear",
-        ]})
+        self._checkAndCreateNewsItem({"display_if_installed": ["net-misc/openssh", "net-misc/dropbear", ]})
 
         # What if we have a newer version of the listed package which
         # shouldn't match the constraint?
-        self._checkAndCreateNewsItem(
-            {"display_if_installed": [
-                "<net-misc/openssh-9.2_p1",
-            ]},
-            False,
-        )
+        self._checkAndCreateNewsItem({"display_if_installed": ["<net-misc/openssh-9.2_p1", ]}, False, )
 
         # What if we have a newer version of the listed package which
         # should match the constraint?
-        self._checkAndCreateNewsItem({"display_if_installed": [
-            ">=net-misc/openssh-9.2_p1",
-        ]})
+        self._checkAndCreateNewsItem({"display_if_installed": [">=net-misc/openssh-9.2_p1", ]})
 
         # What if the item lists multiple packages and we have one of
         # them installed, but not all?
         # (Note that openssh is already "installed" by this point because
         # of a previous test.)
         self._checkAndCreateNewsItem(
-            {"display_if_installed": [
-                ">=net-misc/openssh-9.2_p1",
-                "<net-misc/openssh-9.2_p1",
-            ]})
+            {"display_if_installed": [">=net-misc/openssh-9.2_p1", "<net-misc/openssh-9.2_p1", ]})
 
     def testDisplayIfKeyword(self):
         self._checkAndCreateNewsItem({"display_if_keyword": [self.keywords]})
@@ -291,17 +261,10 @@ class NewsItemTestCase(TestCase):
         self._checkAndCreateNewsItem({"display_if_keyword": ["amd64", "~hppa"]}, False)
 
         # What if the ~keyword (testing) keyword is listed but we're keyword (stable)?
-        self._checkAndCreateNewsItem(
-            {"display_if_keyword": [
-                f"~{self.keywords}",
-            ]},
-            False,
-        )
+        self._checkAndCreateNewsItem({"display_if_keyword": [f"~{self.keywords}", ]}, False, )
 
         # What if the stable keyword is listed but we're ~keyword (testing)?
-        self._checkAndCreateNewsItem({"display_if_keyword": [
-            f"{self.keywords}",
-        ]})
+        self._checkAndCreateNewsItem({"display_if_keyword": [f"{self.keywords}", ]})
 
     def testMultipleRestrictions(self):
         # GLEP 42 specifies an algorithm for how combining restrictions
@@ -322,8 +285,7 @@ class NewsItemTestCase(TestCase):
             {
                 "display_if_keyword": [self.keywords],
                 "display_if_installed": ["sys-apps/i-do-not-exist"],
-            },
-            False,
+            }, False,
         )
 
         # What if there's a Display-If-{Installed,Keyword,Profile} and
@@ -345,6 +307,5 @@ class NewsItemTestCase(TestCase):
                 "display_if_keyword": ["i-do-not-exist"],
                 "display_if_installed": ["sys-apps/i-do-not-exist"],
                 "display_if_profile": [self.profile_base + "/i-do-not-exist"],
-            },
-            False,
+            }, False,
         )

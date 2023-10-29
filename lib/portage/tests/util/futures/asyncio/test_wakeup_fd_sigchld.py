@@ -56,21 +56,19 @@ sys.exit(os.EX_OK)
             pythonpath = [PORTAGE_PYM_PATH] + pythonpath
         pythonpath = ":".join(filter(None, pythonpath))
 
-        proc = subprocess.Popen(
-            [portage._python_interpreter, "-c", script],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            env=dict(os.environ, PYTHONPATH=pythonpath),
-        )
+        proc = subprocess.Popen([portage._python_interpreter, "-c", script],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
+                                env=dict(os.environ, PYTHONPATH=pythonpath),
+                                )
 
         out, err = proc.communicate()
         try:
             self.assertEqual(out[:100], b"success")
         except Exception:
-            portage.writemsg(
-                "".join(f"{line}\n" for line in out.decode(errors="replace").splitlines()[:50]),
-                noiselevel=-1,
-            )
+            portage.writemsg("".join(f"{line}\n" for line in out.decode(errors="replace").splitlines()[:50]),
+                             noiselevel=-1,
+                             )
             raise
 
         self.assertEqual(proc.wait(), os.EX_OK)

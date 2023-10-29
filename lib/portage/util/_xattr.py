@@ -199,9 +199,7 @@ def preserve_xattrs(path, nofollow=False, namespace=None):
             ... rewrite the file ...
     # Now the extended attributes are restored as needed.
     """
-    kwargs = {
-        "nofollow": nofollow,
-    }
+    kwargs = {"nofollow": nofollow, }
     if namespace:
         # Compiled xattr python module does not like it when namespace=None.
         kwargs["namespace"] = namespace

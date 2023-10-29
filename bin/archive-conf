@@ -42,11 +42,7 @@ def archive_conf():
 
     # Find all the CONTENTS files in VDB_PATH.
     eroot_vdb_path = os.path.join(portage.settings["EROOT"], portage.VDB_PATH)
-    find = subprocess.run(
-        ["find", eroot_vdb_path, "-type", "f", "-name", "CONTENTS"],
-        capture_output=True,
-        text=True,
-    )
+    find = subprocess.run(["find", eroot_vdb_path, "-type", "f", "-name", "CONTENTS"], capture_output=True, text=True, )
     content_files += find.stdout.splitlines()
 
     # Search for the saved md5 checksum of all the specified config files
@@ -58,10 +54,7 @@ def archive_conf():
             try:
                 contents = open(filename)
             except OSError as e:
-                print(
-                    f"archive-conf: Unable to open {filename}: {e}",
-                    file=sys.stderr,
-                )
+                print(f"archive-conf: Unable to open {filename}: {e}", file=sys.stderr, )
                 sys.exit(1)
             lines = contents.readlines()
             for line in lines:

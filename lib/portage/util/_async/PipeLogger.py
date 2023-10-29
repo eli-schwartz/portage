@@ -22,12 +22,9 @@ class PipeLogger(AbstractPollTask):
     '.gz' then the log file is written with compression.
     """
 
-    __slots__ = ("input_fd", "log_file_path", "stdout_fd") + (
-        "_io_loop_task",
-        "_log_file",
-        "_log_file_nb",
-        "_log_file_real",
-    )
+    __slots__ = ("input_fd", "log_file_path", "stdout_fd") + ("_io_loop_task", "_log_file", "_log_file_nb",
+                                                              "_log_file_real",
+                                                              )
 
     def _start(self):
         log_file_path = self.log_file_path
@@ -37,21 +34,19 @@ class PipeLogger(AbstractPollTask):
             _set_nonblocking(self._log_file.fileno())
         elif log_file_path is not None:
             try:
-                self._log_file = open(
-                    _unicode_encode(log_file_path, encoding=_encodings["fs"], errors="strict"),
-                    mode="ab",
-                )
+                self._log_file = open(_unicode_encode(log_file_path, encoding=_encodings["fs"], errors="strict"),
+                                      mode="ab",
+                                      )
 
                 if log_file_path.endswith(".gz"):
                     self._log_file_real = self._log_file
                     self._log_file = gzip.GzipFile(filename="", mode="ab", fileobj=self._log_file)
 
-                portage.util.apply_secpass_permissions(
-                    log_file_path,
-                    uid=portage.portage_uid,
-                    gid=portage.portage_gid,
-                    mode=0o660,
-                )
+                portage.util.apply_secpass_permissions(log_file_path,
+                                                       uid=portage.portage_uid,
+                                                       gid=portage.portage_gid,
+                                                       mode=0o660,
+                                                       )
             except FileNotFoundError:
                 if self._was_cancelled():
                     self._async_wait()
@@ -132,11 +127,7 @@ class PipeLogger(AbstractPollTask):
                         # inherit stdio file descriptors from portage
                         # (maybe it can't be avoided with
                         # PROPERTIES=interactive).
-                        fcntl.fcntl(
-                            stdout_fd,
-                            fcntl.F_SETFL,
-                            fcntl.fcntl(stdout_fd, fcntl.F_GETFL) ^ os.O_NONBLOCK,
-                        )
+                        fcntl.fcntl(stdout_fd, fcntl.F_SETFL, fcntl.fcntl(stdout_fd, fcntl.F_GETFL) ^ os.O_NONBLOCK, )
 
             if log_file is not None:
                 if self._log_file_nb:

@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -45,35 +42,30 @@ class AutounmaskBinpkgUseTestCase(TestCase):
             # to rejection of binary packages that would
             # be acceptable after appplication of autounmask
             # USE changes.
-            ResolverPlaygroundTestCase(
-                ["dev-libs/A"],
-                all_permutations=True,
-                success=True,
-                options={
-                    "--usepkg": True,
-                },
-                mergelist=[
-                    "[binary]dev-libs/B-1",
-                    "[binary]dev-libs/A-1",
-                ],
-                use_changes={"dev-libs/B-1": {
-                    "foo": True
-                }},
-            ), )
+            ResolverPlaygroundTestCase(["dev-libs/A"],
+                                       all_permutations=True,
+                                       success=True,
+                                       options={
+                                           "--usepkg": True,
+                                       },
+                                       mergelist=["[binary]dev-libs/B-1", "[binary]dev-libs/A-1", ],
+                                       use_changes={"dev-libs/B-1": {
+                                           "foo": True
+                                       }},
+                                       ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    ebuilds=ebuilds,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(ebuilds=ebuilds,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:

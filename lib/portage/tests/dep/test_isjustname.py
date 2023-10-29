@@ -17,12 +17,6 @@ class IsJustName(TestCase):
             for cat in cats:
                 for ver in vers:
                     if len(ver):
-                        self.assertFalse(
-                            isjustname(cat + pkg + ver),
-                            msg=f"isjustname({cat + pkg + ver}) is True!",
-                        )
+                        self.assertFalse(isjustname(cat + pkg + ver), msg=f"isjustname({cat + pkg + ver}) is True!", )
                     else:
-                        self.assertTrue(
-                            isjustname(cat + pkg + ver),
-                            msg=f"isjustname({cat + pkg + ver}) is False!",
-                        )
+                        self.assertTrue(isjustname(cat + pkg + ver), msg=f"isjustname({cat + pkg + ver}) is False!", )

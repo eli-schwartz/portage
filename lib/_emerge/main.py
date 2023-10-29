@@ -8,52 +8,22 @@ import sys
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "logging",
-    "portage.dep:Atom",
-    "portage.util:writemsg_level",
-    "textwrap",
-    "_emerge.actions:load_emerge_config,run_action," + "validate_ebuild_environment",
-    "_emerge.help:emerge_help",
-    "_emerge.is_valid_package_atom:insert_category_into_atom",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "logging", "portage.dep:Atom", "portage.util:writemsg_level", "textwrap",
+                                    "_emerge.actions:load_emerge_config,run_action," + "validate_ebuild_environment",
+                                    "_emerge.help:emerge_help",
+                                    "_emerge.is_valid_package_atom:insert_category_into_atom",
+                                    )
 from portage import os
 from portage.sync import _SUBMODULE_PATH_MAP
 
 from typing import Optional
 
 options = [
-    "--alphabetical",
-    "--ask-enter-invalid",
-    "--buildpkgonly",
-    "--changed-use",
-    "--columns",
-    "--debug",
-    "--digest",
-    "--emptytree",
-    "--verbose-conflicts",
-    "--fetchonly",
-    "--fetch-all-uri",
-    "--ignore-default-opts",
-    "--noconfmem",
-    "--newrepo",
-    "--newuse",
-    "--nodeps",
-    "--noreplace",
-    "--nospinner",
-    "--oneshot",
-    "--onlydeps",
-    "--pretend",
-    "--quiet-repo-display",
-    "--quiet-unmerge-warn",
-    "--resume",
-    "--searchdesc",
-    "--skipfirst",
-    "--tree",
-    "--unordered-display",
-    "--update",
-    "--update-if-installed",
+    "--alphabetical", "--ask-enter-invalid", "--buildpkgonly", "--changed-use", "--columns", "--debug", "--digest",
+    "--emptytree", "--verbose-conflicts", "--fetchonly", "--fetch-all-uri", "--ignore-default-opts", "--noconfmem",
+    "--newrepo", "--newuse", "--nodeps", "--noreplace", "--nospinner", "--oneshot", "--onlydeps", "--pretend",
+    "--quiet-repo-display", "--quiet-unmerge-warn", "--resume", "--searchdesc", "--skipfirst", "--tree",
+    "--unordered-display", "--update", "--update-if-installed",
 ]
 
 shortmapping = {
@@ -131,10 +101,7 @@ def insert_optional_args(args):
 
     valid_floats = valid_floats()
 
-    y_or_n = (
-        "y",
-        "n",
-    )
+    y_or_n = ("y", "n", )
 
     new_args = []
 
@@ -190,11 +157,7 @@ def insert_optional_args(args):
         "--with-test-deps": y_or_n,
     }
 
-    short_arg_opts = {
-        "D": valid_integers,
-        "j": valid_integers,
-        "l": valid_floats,
-    }
+    short_arg_opts = {"D": valid_integers, "j": valid_integers, "l": valid_floats, }
 
     # Don't make things like "-kn" expand to "-k n"
     # since existence of -n makes it too ambiguous.
@@ -320,22 +283,8 @@ def parse_opts(tmpcmdline, silent=False):
     myopts = {}
 
     actions = frozenset([
-        "clean",
-        "check-news",
-        "config",
-        "depclean",
-        "help",
-        "info",
-        "list-sets",
-        "metadata",
-        "moo",
-        "prune",
-        "rage-clean",
-        "regen",
-        "search",
-        "sync",
-        "unmerge",
-        "version",
+        "clean", "check-news", "config", "depclean", "help", "info", "list-sets", "metadata", "moo", "prune",
+        "rage-clean", "regen", "search", "sync", "unmerge", "version",
     ])
 
     longopt_aliases = {"--cols": "--columns", "--skip-first": "--skipfirst"}
@@ -768,33 +717,17 @@ def parse_opts(tmpcmdline, silent=False):
     parser = argparse.ArgumentParser(add_help=False)
 
     for action_opt in actions:
-        parser.add_argument(
-            f"--{action_opt}",
-            action="store_true",
-            dest=action_opt.replace("-", "_"),
-            default=False,
-        )
+        parser.add_argument(f"--{action_opt}", action="store_true", dest=action_opt.replace("-", "_"), default=False, )
     for myopt in options:
-        parser.add_argument(
-            myopt,
-            action="store_true",
-            dest=myopt.lstrip("--").replace("-", "_"),
-            default=False,
-        )
+        parser.add_argument(myopt, action="store_true", dest=myopt.lstrip("--").replace("-", "_"), default=False, )
     for shortopt, longopt in shortmapping.items():
-        parser.add_argument(
-            f"-{shortopt}",
-            action="store_true",
-            dest=longopt.lstrip("--").replace("-", "_"),
-            default=False,
-        )
+        parser.add_argument(f"-{shortopt}",
+                            action="store_true",
+                            dest=longopt.lstrip("--").replace("-", "_"),
+                            default=False,
+                            )
     for myalias, myopt in longopt_aliases.items():
-        parser.add_argument(
-            myalias,
-            action="store_true",
-            dest=myopt.lstrip("--").replace("-", "_"),
-            default=False,
-        )
+        parser.add_argument(myalias, action="store_true", dest=myopt.lstrip("--").replace("-", "_"), default=False, )
 
     for myopt, kwargs in argument_options.items():
         shortopt = kwargs.pop("shortopt", None)
@@ -896,14 +829,11 @@ def parse_opts(tmpcmdline, silent=False):
     if myoptions.depclean_lib_check in true_y:
         myoptions.depclean_lib_check = True
 
-    candidate_bad_options = (
-        (myoptions.exclude, "exclude"),
-        (myoptions.reinstall_atoms, "reinstall-atoms"),
-        (myoptions.rebuild_exclude, "rebuild-exclude"),
-        (myoptions.rebuild_ignore, "rebuild-ignore"),
-        (myoptions.usepkg_exclude, "usepkg-exclude"),
-        (myoptions.useoldpkg_atoms, "useoldpkg-atoms"),
-    )
+    candidate_bad_options = ((myoptions.exclude, "exclude"), (myoptions.reinstall_atoms, "reinstall-atoms"),
+                             (myoptions.rebuild_exclude, "rebuild-exclude"),
+                             (myoptions.rebuild_ignore, "rebuild-ignore"), (myoptions.usepkg_exclude, "usepkg-exclude"),
+                             (myoptions.useoldpkg_atoms, "useoldpkg-atoms"),
+                             )
     bad_options = ((_find_bad_atoms(atoms), flag) for atoms, flag in candidate_bad_options if atoms)
 
     for bad_atoms, flag in bad_options:
@@ -1151,11 +1081,7 @@ def profile_check(trees, myaction):
                "your profile configuration, you should revert back to the "
                "previous configuration. Allowed actions are limited to "
                "--help, --info, --search, --sync, and --version.")
-        writemsg_level(
-            "".join(f"!!! {l}\n" for l in textwrap.wrap(msg, 70)),
-            level=logging.ERROR,
-            noiselevel=-1,
-        )
+        writemsg_level("".join(f"!!! {l}\n" for l in textwrap.wrap(msg, 70)), level=logging.ERROR, noiselevel=-1, )
         return 1
     return os.EX_OK
 
@@ -1222,30 +1148,24 @@ def emerge_main(args: Optional[list[str]] = None):
     # filter for obviously broken /dev/s.
     try:
         if os.stat(os.devnull).st_rdev == 0:
-            writemsg_level(
-                "Failed to validate a sane '/dev'.\n"
-                "'/dev/null' is not a device file.\n",
-                level=logging.ERROR,
-                noiselevel=-1,
-            )
+            writemsg_level("Failed to validate a sane '/dev'.\n"
+                           "'/dev/null' is not a device file.\n",
+                           level=logging.ERROR,
+                           noiselevel=-1,
+                           )
             return 1
     except OSError:
-        writemsg_level(
-            "Failed to validate a sane '/dev'.\n"
-            "'/dev/null' does not exist.\n",
-            level=logging.ERROR,
-            noiselevel=-1,
-        )
+        writemsg_level("Failed to validate a sane '/dev'.\n"
+                       "'/dev/null' does not exist.\n",
+                       level=logging.ERROR,
+                       noiselevel=-1,
+                       )
         return 1
 
     # Verify that BASH process substitution works as another cheap early
     # filter. Process substitution uses '/dev/fd'.
     with open(os.devnull, "r+b") as dev_null:
-        fd_pipes = {
-            0: dev_null.fileno(),
-            1: dev_null.fileno(),
-            2: dev_null.fileno(),
-        }
+        fd_pipes = {0: dev_null.fileno(), 1: dev_null.fileno(), 2: dev_null.fileno(), }
         exit_code = portage.process.spawn_bash("[[ $(< <(echo foo) ) == foo ]]", fd_pipes=fd_pipes)
         if exit_code != 0:
             writemsg_level(
@@ -1262,23 +1182,10 @@ def emerge_main(args: Optional[list[str]] = None):
     emerge_config = load_emerge_config(action=myaction, args=myfiles, opts=myopts)
 
     # Make locale variables from configuration files (make.defaults, make.conf) affect locale of emerge process.
-    for locale_var_name in (
-            "LANGUAGE",
-            "LC_ALL",
-            "LC_ADDRESS",
-            "LC_COLLATE",
-            "LC_CTYPE",
-            "LC_IDENTIFICATION",
-            "LC_MEASUREMENT",
-            "LC_MESSAGES",
-            "LC_MONETARY",
-            "LC_NAME",
-            "LC_NUMERIC",
-            "LC_PAPER",
-            "LC_TELEPHONE",
-            "LC_TIME",
-            "LANG",
-    ):
+    for locale_var_name in ("LANGUAGE", "LC_ALL", "LC_ADDRESS", "LC_COLLATE", "LC_CTYPE", "LC_IDENTIFICATION",
+                            "LC_MEASUREMENT", "LC_MESSAGES", "LC_MONETARY", "LC_NAME", "LC_NUMERIC", "LC_PAPER",
+                            "LC_TELEPHONE", "LC_TIME", "LANG",
+                            ):
         locale_var_value = emerge_config.running_config.settings.get(locale_var_name)
         if locale_var_value is not None:
             os.environ.setdefault(locale_var_name, locale_var_value)

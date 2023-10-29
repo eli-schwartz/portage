@@ -14,16 +14,9 @@ import termios
 
 from pathlib import Path
 
-KILL_SIGNALS = (
-    signal.SIGINT,
-    signal.SIGTERM,
-    signal.SIGHUP,
-)
+KILL_SIGNALS = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP, )
 
-SIGTSTP_SIGCONT = (
-    signal.SIGTSTP,
-    signal.SIGCONT,
-)
+SIGTSTP_SIGCONT = (signal.SIGTSTP, signal.SIGCONT, )
 
 
 def forward_kill_signal(pid, signum, frame):
@@ -58,13 +51,7 @@ def preexec_fn(uid, gid, groups, umask):
 
     # CPython >= 3 subprocess.Popen handles this internally.
     if platform.python_implementation() != "CPython":
-        for signum in (
-                signal.SIGHUP,
-                signal.SIGINT,
-                signal.SIGPIPE,
-                signal.SIGQUIT,
-                signal.SIGTERM,
-        ):
+        for signum in (signal.SIGHUP, signal.SIGINT, signal.SIGPIPE, signal.SIGQUIT, signal.SIGTERM, ):
             signal.signal(signum, signal.SIG_DFL)
 
 
@@ -83,24 +70,16 @@ def main(argv):
         proc = None
     else:
         # The current process is init (pid 1) in a child pid namespace.
-        uid, gid, groups, umask, pass_fds, binary, args = (
-            argv[1],
-            argv[2],
-            argv[3],
-            argv[4],
-            tuple(int(fd) for fd in argv[5].split(",")),
-            argv[6],
-            argv[7:],
-        )
+        uid, gid, groups, umask, pass_fds, binary, args = (argv[1], argv[2], argv[3], argv[4],
+                                                           tuple(int(fd)
+                                                                 for fd in argv[5].split(",")), argv[6], argv[7:],
+                                                           )
         uid = int(uid) if uid else None
         gid = int(gid) if gid else None
         groups = tuple(int(group) for group in groups.split(",")) if groups else None
         umask = int(umask) if umask else None
 
-        popen_kwargs = {
-            "preexec_fn": functools.partial(preexec_fn, uid, gid, groups, umask),
-            "pass_fds": pass_fds,
-        }
+        popen_kwargs = {"preexec_fn": functools.partial(preexec_fn, uid, gid, groups, umask), "pass_fds": pass_fds, }
 
         # Obtain the current nice value, which will be potentially be
         # used as the newly created session's autogroup nice value.

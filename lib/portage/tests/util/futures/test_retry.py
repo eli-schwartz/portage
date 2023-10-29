@@ -73,10 +73,7 @@ class RetryTestCase(TestCase):
     def testSucceedLater(self):
         loop = global_event_loop()
         with self._wrap_coroutine_func(SucceedLater(1)) as func_coroutine:
-            decorator = retry(
-                try_max=9999,
-                delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
-            )
+            decorator = retry(try_max=9999, delay_func=RandomExponentialBackoff(multiplier=0.1, base=2), )
             decorated_func = decorator(func_coroutine, loop=loop)
             result = loop.run_until_complete(decorated_func())
             self.assertEqual(result, "success")
@@ -84,11 +81,10 @@ class RetryTestCase(TestCase):
     def testSucceedNever(self):
         loop = global_event_loop()
         with self._wrap_coroutine_func(SucceedNever()) as func_coroutine:
-            decorator = retry(
-                try_max=4,
-                try_timeout=None,
-                delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
-            )
+            decorator = retry(try_max=4,
+                              try_timeout=None,
+                              delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
+                              )
             decorated_func = decorator(func_coroutine, loop=loop)
             done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
@@ -97,12 +93,11 @@ class RetryTestCase(TestCase):
     def testSucceedNeverReraise(self):
         loop = global_event_loop()
         with self._wrap_coroutine_func(SucceedNever()) as func_coroutine:
-            decorator = retry(
-                reraise=True,
-                try_max=4,
-                try_timeout=None,
-                delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
-            )
+            decorator = retry(reraise=True,
+                              try_max=4,
+                              try_timeout=None,
+                              delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
+                              )
             decorated_func = decorator(func_coroutine, loop=loop)
             done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
@@ -111,11 +106,7 @@ class RetryTestCase(TestCase):
     def testHangForever(self):
         loop = global_event_loop()
         with self._wrap_coroutine_func(HangForever()) as func_coroutine:
-            decorator = retry(
-                try_max=2,
-                try_timeout=0.1,
-                delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
-            )
+            decorator = retry(try_max=2, try_timeout=0.1, delay_func=RandomExponentialBackoff(multiplier=0.1, base=2), )
             decorated_func = decorator(func_coroutine, loop=loop)
             done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
@@ -124,12 +115,11 @@ class RetryTestCase(TestCase):
     def testHangForeverReraise(self):
         loop = global_event_loop()
         with self._wrap_coroutine_func(HangForever()) as func_coroutine:
-            decorator = retry(
-                reraise=True,
-                try_max=2,
-                try_timeout=0.1,
-                delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
-            )
+            decorator = retry(reraise=True,
+                              try_max=2,
+                              try_timeout=0.1,
+                              delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
+                              )
             decorated_func = decorator(func_coroutine, loop=loop)
             done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
@@ -138,10 +128,7 @@ class RetryTestCase(TestCase):
     def testCancelRetry(self):
         loop = global_event_loop()
         with self._wrap_coroutine_func(SucceedNever()) as func_coroutine:
-            decorator = retry(
-                try_timeout=0.1,
-                delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
-            )
+            decorator = retry(try_timeout=0.1, delay_func=RandomExponentialBackoff(multiplier=0.1, base=2), )
             decorated_func = decorator(func_coroutine, loop=loop)
             future = decorated_func()
             loop.call_later(0.3, future.cancel)
@@ -152,32 +139,27 @@ class RetryTestCase(TestCase):
     def testOverallTimeoutWithException(self):
         loop = global_event_loop()
         with self._wrap_coroutine_func(SucceedNever()) as func_coroutine:
-            decorator = retry(
-                try_timeout=0.1,
-                overall_timeout=0.3,
-                delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
-            )
+            decorator = retry(try_timeout=0.1,
+                              overall_timeout=0.3,
+                              delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
+                              )
             decorated_func = decorator(func_coroutine, loop=loop)
             done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
             cause = done.pop().exception().__cause__
-            self.assertTrue(
-                isinstance(
-                    cause,
-                    (asyncio.TimeoutError, SucceedNeverException),
-                ),
-                msg=f"Cause was {cause.__class__.__name__}",
-            )
+            self.assertTrue(isinstance(cause, (asyncio.TimeoutError, SucceedNeverException),
+                                       ),
+                            msg=f"Cause was {cause.__class__.__name__}",
+                            )
 
     def testOverallTimeoutWithTimeoutError(self):
         loop = global_event_loop()
         # results in TimeoutError because it hangs forever
         with self._wrap_coroutine_func(HangForever()) as func_coroutine:
-            decorator = retry(
-                try_timeout=0.1,
-                overall_timeout=0.3,
-                delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
-            )
+            decorator = retry(try_timeout=0.1,
+                              overall_timeout=0.3,
+                              delay_func=RandomExponentialBackoff(multiplier=0.1, base=2),
+                              )
             decorated_func = decorator(func_coroutine, loop=loop)
             done, pending = loop.run_until_complete(asyncio.wait([decorated_func()], loop=loop))
             self.assertEqual(len(done), 1)
@@ -254,10 +236,9 @@ class RetryForkExecutorTestCase(RetryTestCase):
 
         def execute_wrapper():
             kill_switch = threading.Event()
-            parent_future = asyncio.ensure_future(
-                parent_loop.run_in_executor(self._executor, wrapper, kill_switch),
-                loop=parent_loop,
-            )
+            parent_future = asyncio.ensure_future(parent_loop.run_in_executor(self._executor, wrapper, kill_switch),
+                                                  loop=parent_loop,
+                                                  )
 
             def kill_callback(parent_future):
                 if not kill_switch.is_set():

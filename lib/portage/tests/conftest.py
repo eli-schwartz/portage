@@ -67,11 +67,10 @@ def prepare_environment():
         # Copy GPG test keys to temporary directory
         gpg_path = tempfile.mkdtemp(prefix="gpg_")
 
-        shutil.copytree(
-            os.path.join(os.path.dirname(os.path.realpath(__file__)), ".gnupg"),
-            gpg_path,
-            dirs_exist_ok=True,
-        )
+        shutil.copytree(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".gnupg"),
+                        gpg_path,
+                        dirs_exist_ok=True,
+                        )
 
         os.chmod(gpg_path, 0o700)
         os.environ["PORTAGE_GNUPGHOME"] = gpg_path

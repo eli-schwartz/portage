@@ -31,13 +31,12 @@ class LicenseManager:
             self._read_user_config(abs_user_config)
 
     def _read_user_config(self, abs_user_config):
-        licdict = grabdict_package(
-            os.path.join(abs_user_config, "package.license"),
-            recursive=1,
-            allow_wildcard=True,
-            allow_repo=True,
-            verify_eapi=False,
-        )
+        licdict = grabdict_package(os.path.join(abs_user_config, "package.license"),
+                                   recursive=1,
+                                   allow_wildcard=True,
+                                   allow_repo=True,
+                                   verify_eapi=False,
+                                   )
         for k, v in licdict.items():
             self._plicensedict.setdefault(k.cp, {})[k] = self.expandLicenseTokens(v)
 
@@ -88,21 +87,18 @@ class LicenseManager:
             traversed_groups = set()
         license_group = self._license_groups.get(group_name)
         if group_name in traversed_groups:
-            writemsg(
-                _("Circular license group reference"
-                  " detected in '%s'\n") % group_name,
-                noiselevel=-1,
-            )
+            writemsg(_("Circular license group reference"
+                       " detected in '%s'\n") % group_name, noiselevel=-1,
+                     )
             rValue.append("@" + group_name)
         elif license_group:
             traversed_groups.add(group_name)
             for l in license_group:
                 if l.startswith("-"):
-                    writemsg(
-                        _("Skipping invalid element %s"
-                          " in license group '%s'\n") % (l, group_name),
-                        noiselevel=-1,
-                    )
+                    writemsg(_("Skipping invalid element %s"
+                               " in license group '%s'\n") % (l, group_name),
+                             noiselevel=-1,
+                             )
                 else:
                     rValue.extend(self._expandLicenseToken(l, traversed_groups))
         else:

@@ -47,12 +47,7 @@ class SyncLocalTestCase(TestCase):
 
         profile = {"eapi": ("5", ), "package.use.stable.mask": ("dev-libs/A flag", )}
 
-        ebuilds = {
-            "dev-libs/A-0": {},
-            "sys-apps/portage-3.0": {
-                "IUSE": "+python_targets_python3_8"
-            },
-        }
+        ebuilds = {"dev-libs/A-0": {}, "sys-apps/portage-3.0": {"IUSE": "+python_targets_python3_8"}, }
 
         installed = {
             "sys-apps/portage-2.3.99": {
@@ -64,13 +59,12 @@ class SyncLocalTestCase(TestCase):
 
         user_config = {"make.conf": ('FEATURES="metadata-transfer"', )}
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds,
-            installed=installed,
-            profile=profile,
-            user_config=user_config,
-            debug=debug,
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        profile=profile,
+                                        user_config=user_config,
+                                        debug=debug,
+                                        )
         settings = playground.settings
         eprefix = settings["EPREFIX"]
         eroot = settings["EROOT"]
@@ -99,14 +93,13 @@ class SyncLocalTestCase(TestCase):
         committer_name = "Gentoo Dev"
         committer_email = "gentoo-dev@gentoo.org"
 
-        def repos_set_conf(
-            sync_type,
-            dflt_keys=None,
-            xtra_keys=None,
-            auto_sync="yes",
-            sync_rcu=False,
-            sync_depth=None,
-        ):
+        def repos_set_conf(sync_type,
+                           dflt_keys=None,
+                           xtra_keys=None,
+                           auto_sync="yes",
+                           sync_rcu=False,
+                           sync_depth=None,
+                           ):
             env["PORTAGE_REPOSITORIES"] = repos_conf % {
                 "EPREFIX": eprefix,
                 "sync-type": sync_type,
@@ -118,10 +111,7 @@ class SyncLocalTestCase(TestCase):
             }
 
         def alter_ebuild():
-            with open(
-                    os.path.join(repo.location + "_sync", "dev-libs", "A", "A-0.ebuild"),
-                    "a",
-            ) as f:
+            with open(os.path.join(repo.location + "_sync", "dev-libs", "A", "A-0.ebuild"), "a", ) as f:
                 f.write("\n")
             bump_timestamp()
 
@@ -134,154 +124,89 @@ class SyncLocalTestCase(TestCase):
 
         bump_timestamp_cmds = ((homedir, bump_timestamp), )
 
-        sync_cmds = (
-            (homedir, cmds["emerge"] + ("--sync", )),
-            (
-                homedir,
-                lambda: self.assertTrue(
-                    os.path.exists(os.path.join(repo.location, "dev-libs", "A")),
-                    "dev-libs/A expected, but missing",
-                ),
-            ),
-            (homedir, cmds["emaint"] + ("sync", "-A")),
-        )
+        sync_cmds = ((homedir, cmds["emerge"] + ("--sync", )), (homedir, lambda: self.assertTrue(
+            os.path.exists(os.path.join(repo.location, "dev-libs", "A")), "dev-libs/A expected, but missing",
+        ),
+                                                                ), (homedir, cmds["emaint"] + ("sync", "-A")),
+                     )
 
-        sync_cmds_auto_sync = (
-            (homedir, lambda: repos_set_conf("rsync", auto_sync="no")),
-            (homedir, cmds["emerge"] + ("--sync", )),
-            (
-                homedir,
-                lambda: self.assertFalse(
-                    os.path.exists(os.path.join(repo.location, "dev-libs", "A")),
-                    "dev-libs/A found, expected missing",
-                ),
-            ),
-            (homedir, lambda: repos_set_conf("rsync", auto_sync="yes")),
-        )
+        sync_cmds_auto_sync = ((homedir, lambda: repos_set_conf("rsync", auto_sync="no")),
+                               (homedir, cmds["emerge"] + ("--sync", )),
+                               (homedir,
+                                lambda: self.assertFalse(os.path.exists(os.path.join(repo.location, "dev-libs", "A")),
+                                                         "dev-libs/A found, expected missing",
+                                                         ),
+                                ), (homedir, lambda: repos_set_conf("rsync", auto_sync="yes")),
+                               )
 
         rename_repo = ((homedir, lambda: os.rename(repo.location, repo.location + "_sync")), )
 
-        rsync_opts_repos = (
-            (homedir, alter_ebuild),
-            (
-                homedir,
-                lambda: repos_set_conf(
-                    "rsync",
-                    None,
-                    "sync-rsync-extra-opts = --backup --backup-dir=%s" % _shell_quote(repo.location + "_back"),
-                ),
-            ),
-            (homedir, cmds["emerge"] + ("--sync", )),
-            (homedir, lambda: self.assertTrue(os.path.exists(repo.location + "_back"))),
-            (homedir, lambda: shutil.rmtree(repo.location + "_back")),
-            (homedir, lambda: repos_set_conf("rsync")),
-        )
+        rsync_opts_repos = ((homedir, alter_ebuild), (homedir, lambda: repos_set_conf(
+            "rsync", None, "sync-rsync-extra-opts = --backup --backup-dir=%s" % _shell_quote(repo.location + "_back"),
+        ),
+                                                      ), (homedir, cmds["emerge"] + ("--sync", )),
+                            (homedir, lambda: self.assertTrue(os.path.exists(repo.location + "_back"))),
+                            (homedir, lambda: shutil.rmtree(repo.location + "_back")),
+                            (homedir, lambda: repos_set_conf("rsync")),
+                            )
 
-        rsync_opts_repos_default = (
-            (homedir, alter_ebuild),
-            (
-                homedir,
-                lambda: repos_set_conf(
-                    "rsync",
-                    "sync-rsync-extra-opts = --backup --backup-dir=%s" % _shell_quote(repo.location + "_back"),
-                ),
-            ),
-            (homedir, cmds["emerge"] + ("--sync", )),
-            (homedir, lambda: self.assertTrue(os.path.exists(repo.location + "_back"))),
-            (homedir, lambda: shutil.rmtree(repo.location + "_back")),
-            (homedir, lambda: repos_set_conf("rsync")),
-        )
+        rsync_opts_repos_default = ((homedir, alter_ebuild), (homedir, lambda: repos_set_conf(
+            "rsync", "sync-rsync-extra-opts = --backup --backup-dir=%s" % _shell_quote(repo.location + "_back"),
+        ),
+                                                              ), (homedir, cmds["emerge"] + ("--sync", )),
+                                    (homedir, lambda: self.assertTrue(os.path.exists(repo.location + "_back"))),
+                                    (homedir, lambda: shutil.rmtree(repo.location + "_back")),
+                                    (homedir, lambda: repos_set_conf("rsync")),
+                                    )
 
-        rsync_opts_repos_default_ovr = (
-            (homedir, alter_ebuild),
-            (
-                homedir,
-                lambda: repos_set_conf(
-                    "rsync",
-                    "sync-rsync-extra-opts = --backup --backup-dir=%s" % _shell_quote(repo.location + "_back_nowhere"),
-                    "sync-rsync-extra-opts = --backup --backup-dir=%s" % _shell_quote(repo.location + "_back"),
-                ),
-            ),
-            (homedir, cmds["emerge"] + ("--sync", )),
-            (homedir, lambda: self.assertTrue(os.path.exists(repo.location + "_back"))),
-            (homedir, lambda: shutil.rmtree(repo.location + "_back")),
-            (homedir, lambda: repos_set_conf("rsync")),
-        )
+        rsync_opts_repos_default_ovr = ((homedir, alter_ebuild), (homedir, lambda: repos_set_conf(
+            "rsync", "sync-rsync-extra-opts = --backup --backup-dir=%s" % _shell_quote(repo.location + "_back_nowhere"),
+            "sync-rsync-extra-opts = --backup --backup-dir=%s" % _shell_quote(repo.location + "_back"),
+        ),
+                                                                  ), (homedir, cmds["emerge"] + ("--sync", )),
+                                        (homedir, lambda: self.assertTrue(os.path.exists(repo.location + "_back"))),
+                                        (homedir, lambda: shutil.rmtree(repo.location + "_back")),
+                                        (homedir, lambda: repos_set_conf("rsync")),
+                                        )
 
-        rsync_opts_repos_default_cancel = (
-            (homedir, alter_ebuild),
-            (
-                homedir,
-                lambda: repos_set_conf(
-                    "rsync",
-                    "sync-rsync-extra-opts = --backup --backup-dir=%s" % _shell_quote(repo.location + "_back_nowhere"),
-                    "sync-rsync-extra-opts = ",
-                ),
-            ),
-            (homedir, cmds["emerge"] + ("--sync", )),
-            (
-                homedir,
-                lambda: self.assertFalse(os.path.exists(repo.location + "_back")),
-            ),
-            (homedir, lambda: repos_set_conf("rsync")),
-        )
+        rsync_opts_repos_default_cancel = ((homedir, alter_ebuild), (homedir, lambda: repos_set_conf(
+            "rsync", "sync-rsync-extra-opts = --backup --backup-dir=%s" % _shell_quote(repo.location + "_back_nowhere"),
+            "sync-rsync-extra-opts = ",
+        ),
+                                                                     ), (homedir, cmds["emerge"] + ("--sync", )),
+                                           (homedir, lambda: self.assertFalse(os.path.exists(repo.location + "_back")),
+                                            ), (homedir, lambda: repos_set_conf("rsync")),
+                                           )
 
-        delete_repo_location = (
-            (homedir, lambda: shutil.rmtree(repo.user_location)),
-            (homedir, lambda: os.mkdir(repo.user_location)),
-        )
+        delete_repo_location = ((homedir, lambda: shutil.rmtree(repo.user_location)),
+                                (homedir, lambda: os.mkdir(repo.user_location)),
+                                )
 
         delete_rcu_store_dir = ((homedir, lambda: shutil.rmtree(rcu_store_dir)), )
 
-        revert_rcu_layout = (
-            (
-                homedir,
-                lambda: os.rename(repo.user_location, repo.user_location + ".bak"),
-            ),
-            (
-                homedir,
-                lambda: os.rename(os.path.realpath(repo.user_location + ".bak"), repo.user_location),
-            ),
-            (homedir, lambda: os.unlink(repo.user_location + ".bak")),
-            (homedir, lambda: shutil.rmtree(repo.user_location + "_rcu_storedir")),
-        )
+        revert_rcu_layout = ((homedir, lambda: os.rename(repo.user_location, repo.user_location + ".bak"),
+                              ), (homedir,
+                                  lambda: os.rename(os.path.realpath(repo.user_location + ".bak"), repo.user_location),
+                                  ), (homedir, lambda: os.unlink(repo.user_location + ".bak")),
+                             (homedir, lambda: shutil.rmtree(repo.user_location + "_rcu_storedir")),
+                             )
 
-        upstream_git_commit = (
-            (
-                repo.location + "_sync",
-                git_cmd + ("commit", "--allow-empty", "-m", "test empty commit"),
-            ),
-            (
-                repo.location + "_sync",
-                git_cmd + ("commit", "--allow-empty", "-m", "test empty commit 2"),
-            ),
-        )
+        upstream_git_commit = ((repo.location + "_sync",
+                                git_cmd + ("commit", "--allow-empty", "-m", "test empty commit"),
+                                ), (repo.location + "_sync",
+                                    git_cmd + ("commit", "--allow-empty", "-m", "test empty commit 2"),
+                                    ),
+                               )
 
         delete_sync_repo = ((homedir, lambda: shutil.rmtree(repo.location + "_sync")), )
 
-        git_repo_create = (
-            (
-                repo.location,
-                git_cmd + (
-                    "config",
-                    "--global",
-                    "user.name",
-                    committer_name,
-                ),
-            ),
-            (
-                repo.location,
-                git_cmd + (
-                    "config",
-                    "--global",
-                    "user.email",
-                    committer_email,
-                ),
-            ),
-            (repo.location, git_cmd + ("init-db", )),
-            (repo.location, git_cmd + ("add", ".")),
-            (repo.location, git_cmd + ("commit", "-a", "-m", "add whole repo")),
-        )
+        git_repo_create = ((repo.location, git_cmd + ("config", "--global", "user.name", committer_name,
+                                                      ),
+                            ), (repo.location, git_cmd + ("config", "--global", "user.email", committer_email,
+                                                          ),
+                                ), (repo.location, git_cmd + ("init-db", )), (repo.location, git_cmd + ("add", ".")),
+                           (repo.location, git_cmd + ("commit", "-a", "-m", "add whole repo")),
+                           )
 
         sync_type_git = ((homedir, lambda: repos_set_conf("git")), )
 
@@ -295,12 +220,10 @@ class SyncLocalTestCase(TestCase):
             with open(os.path.join(homedir, ".hgrc"), "w") as f:
                 f.write(f"[ui]\nusername = {committer_name} <{committer_email}>\n")
 
-        hg_repo_create = (
-            (repo.location, hg_init_global_config),
-            (repo.location, hg_cmd + ("init", )),
-            (repo.location, hg_cmd + ("add", ".")),
-            (repo.location, hg_cmd + ("commit", "-A", "-m", "add whole repo")),
-        )
+        hg_repo_create = ((repo.location, hg_init_global_config), (repo.location, hg_cmd + ("init", )),
+                          (repo.location, hg_cmd + ("add", ".")), (repo.location,
+                                                                   hg_cmd + ("commit", "-A", "-m", "add whole repo")),
+                          )
 
         sync_type_mercurial = ((homedir, lambda: repos_set_conf("mercurial")), )
 
@@ -308,24 +231,17 @@ class SyncLocalTestCase(TestCase):
             with open(path, "a") as f:
                 f.write("\n")
 
-        upstream_hg_commit = (
-            (
-                repo.location + "_sync",
-                lambda: append_newline(os.path.join(repo.location + "_sync", "metadata/layout.conf")),
-            ),
-            (
-                repo.location + "_sync",
-                hg_cmd + ("commit", "metadata/layout.conf", "-m", "test empty commit"),
-            ),
-            (
-                repo.location + "_sync",
-                lambda: append_newline(os.path.join(repo.location + "_sync", "metadata/layout.conf")),
-            ),
-            (
-                repo.location + "_sync",
-                hg_cmd + ("commit", "metadata/layout.conf", "-m", "test empty commit 2"),
-            ),
-        )
+        upstream_hg_commit = ((repo.location + "_sync",
+                               lambda: append_newline(os.path.join(repo.location + "_sync", "metadata/layout.conf")),
+                               ), (repo.location + "_sync",
+                                   hg_cmd + ("commit", "metadata/layout.conf", "-m", "test empty commit"),
+                                   ),
+                              (repo.location + "_sync",
+                               lambda: append_newline(os.path.join(repo.location + "_sync", "metadata/layout.conf")),
+                               ), (repo.location + "_sync",
+                                   hg_cmd + ("commit", "metadata/layout.conf", "-m", "test empty commit 2"),
+                                   ),
+                              )
 
         if hg_binary is None:
             mercurial_tests = ()
@@ -405,11 +321,7 @@ class SyncLocalTestCase(TestCase):
                         for line in output:
                             sys.stderr.write(_unicode_decode(line))
 
-                self.assertEqual(
-                    os.EX_OK,
-                    proc.returncode,
-                    f"{cmd} failed in {cwd}",
-                )
+                self.assertEqual(os.EX_OK, proc.returncode, f"{cmd} failed in {cwd}", )
 
         finally:
             playground.cleanup()

@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
@@ -27,79 +24,51 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
             },
         }
 
-        installed = {
-            "dev-libs/broken-1": {
-                "RDEPEND": "dev-libs/A dev-libs/initially-unsatisfied"
-            },
-        }
+        installed = {"dev-libs/broken-1": {"RDEPEND": "dev-libs/A dev-libs/initially-unsatisfied"}, }
 
-        world = (
-            "dev-libs/A",
-            "dev-libs/B",
-            "dev-libs/C",
-            "dev-libs/D",
-            "dev-libs/broken",
-        )
+        world = ("dev-libs/A", "dev-libs/B", "dev-libs/C", "dev-libs/D", "dev-libs/broken", )
 
         test_cases = (
             # Test bug #520950, where unsatisfied deps of installed
             # packages are supposed to be ignored when they are beyond
             # the depth requested by the user.
-            ResolverPlaygroundTestCase(
-                ["dev-libs/B", "dev-libs/C", "dev-libs/D"],
-                all_permutations=True,
-                options={
-                    "--autounmask": "y",
-                    "--complete-graph": True
-                },
-                mergelist=[
-                    "dev-libs/A-2",
-                    "dev-libs/B-1",
-                    "dev-libs/C-1",
-                    "dev-libs/D-1",
-                ],
-                ignore_mergelist_order=True,
-                unstable_keywords=["dev-libs/A-2"],
-                unsatisfied_deps=[],
-                success=False,
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--autounmask": "y",
-                    "--complete-graph": True
-                },
-                mergelist=[
-                    "dev-libs/A-2",
-                    "dev-libs/B-1",
-                    "dev-libs/C-1",
-                    "dev-libs/D-1",
-                ],
-                ignore_mergelist_order=True,
-                unstable_keywords=["dev-libs/A-2"],
-                unsatisfied_deps=["dev-libs/broken"],
-                success=False,
-            ),
+            ResolverPlaygroundTestCase(["dev-libs/B", "dev-libs/C", "dev-libs/D"],
+                                       all_permutations=True,
+                                       options={
+                                           "--autounmask": "y",
+                                           "--complete-graph": True
+                                       },
+                                       mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
+                                       ignore_mergelist_order=True,
+                                       unstable_keywords=["dev-libs/A-2"],
+                                       unsatisfied_deps=[],
+                                       success=False,
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--autounmask": "y",
+                                           "--complete-graph": True
+                                       },
+                                       mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
+                                       ignore_mergelist_order=True,
+                                       unstable_keywords=["dev-libs/A-2"],
+                                       unsatisfied_deps=["dev-libs/broken"],
+                                       success=False,
+                                       ),
             # Test --selective with --deep = 0
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--autounmask": "y",
-                    "--complete-graph": True,
-                    "--selective": True,
-                    "--deep": 0,
-                },
-                mergelist=[
-                    "dev-libs/A-2",
-                    "dev-libs/B-1",
-                    "dev-libs/C-1",
-                    "dev-libs/D-1",
-                ],
-                ignore_mergelist_order=True,
-                unstable_keywords=["dev-libs/A-2"],
-                unsatisfied_deps=[],
-                success=False,
-            ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--autounmask": "y",
+                                           "--complete-graph": True,
+                                           "--selective": True,
+                                           "--deep": 0,
+                                       },
+                                       mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
+                                       ignore_mergelist_order=True,
+                                       unstable_keywords=["dev-libs/A-2"],
+                                       unsatisfied_deps=[],
+                                       success=False,
+                                       ),
             # Test --deep = 1
             ResolverPlaygroundTestCase(
                 ["@world"],
@@ -110,12 +79,7 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
                     "--selective": True,
                     "--deep": 1,
                 },
-                mergelist=[
-                    "dev-libs/A-2",
-                    "dev-libs/B-1",
-                    "dev-libs/C-1",
-                    "dev-libs/D-1",
-                ],
+                mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
                 ignore_mergelist_order=True,
                 unstable_keywords=["dev-libs/A-2"],
                 unsatisfied_deps=["dev-libs/initially-unsatisfied"],
@@ -180,12 +144,7 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
                     "--selective": True,
                     "--deep": True,
                 },
-                mergelist=[
-                    "dev-libs/A-2",
-                    "dev-libs/B-1",
-                    "dev-libs/C-1",
-                    "dev-libs/D-1",
-                ],
+                mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
                 ignore_mergelist_order=True,
                 unstable_keywords=["dev-libs/A-2"],
                 unsatisfied_deps=["dev-libs/initially-unsatisfied"],

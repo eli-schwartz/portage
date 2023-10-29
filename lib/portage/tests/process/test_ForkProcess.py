@@ -29,11 +29,10 @@ class ForkProcessTestCase(TestCase):
         test_string = "hello world"
         with tempfile.NamedTemporaryFile() as logfile:
             loop = asyncio._wrap_loop()
-            proc = ForkProcess(
-                scheduler=loop,
-                target=self._test_spawn_logfile,
-                args=(logfile.name, functools.partial(print, test_string, end="")),
-            )
+            proc = ForkProcess(scheduler=loop,
+                               target=self._test_spawn_logfile,
+                               args=(logfile.name, functools.partial(print, test_string, end="")),
+                               )
             proc.start()
             self.assertEqual(proc.wait(), os.EX_OK)
 

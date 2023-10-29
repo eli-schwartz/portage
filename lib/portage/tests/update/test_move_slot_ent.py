@@ -80,14 +80,13 @@ class MoveSlotEntTestCase(TestCase):
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    binpkgs=binpkgs,
-                    ebuilds=ebuilds,
-                    installed=installed,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(binpkgs=binpkgs,
+                                                ebuilds=ebuilds,
+                                                installed=installed,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 settings = playground.settings
                 trees = playground.trees
@@ -106,11 +105,7 @@ class MoveSlotEntTestCase(TestCase):
 
                     # Create an empty updates directory, so that this
                     # repo doesn't inherit updates from the main repo.
-                    ensure_dirs(os.path.join(
-                        portdb.getRepositoryPath("dont_apply_updates"),
-                        "profiles",
-                        "updates",
-                    ))
+                    ensure_dirs(os.path.join(portdb.getRepositoryPath("dont_apply_updates"), "profiles", "updates", ))
 
                     global_noiselimit = portage.util.noiselimit
                     portage.util.noiselimit = -2

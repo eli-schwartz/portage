@@ -10,16 +10,9 @@ import stat
 import textwrap
 
 import portage
-from portage import (
-    bsd_chflags,
-    _encodings,
-    _os_overrides,
-    _selinux,
-    _unicode_decode,
-    _unicode_encode,
-    _unicode_func_wrapper,
-    _unicode_module_wrapper,
-)
+from portage import (bsd_chflags, _encodings, _os_overrides, _selinux, _unicode_decode, _unicode_encode,
+                     _unicode_func_wrapper, _unicode_module_wrapper,
+                     )
 from portage.const import MOVE_BINARY
 from portage.exception import OperationNotSupported
 from portage.localization import _
@@ -131,15 +124,14 @@ def _cmpxattr(src: bytes, dest: bytes, exclude=None) -> bool:
     return True
 
 
-def movefile(
-    src,
-    dest,
-    newmtime=None,
-    sstat=None,
-    mysettings=None,
-    hardlink_candidates=None,
-    encoding=_encodings["fs"],
-):
+def movefile(src,
+             dest,
+             newmtime=None,
+             sstat=None,
+             mysettings=None,
+             hardlink_candidates=None,
+             encoding=_encodings["fs"],
+             ):
     """moves a file from src to dest, preserving all permissions and attributes; mtime will
     be preserved even when moving across filesystems.  Returns mtime as integer on success
     and None on failure.  mtime is expressed in seconds in Python <3.3 and nanoseconds in
@@ -237,11 +229,7 @@ def movefile(
                 pass
 
             try:
-                os.utime(
-                    dest,
-                    ns=(sstat.st_mtime_ns, sstat.st_mtime_ns),
-                    follow_symlinks=False,
-                )
+                os.utime(dest, ns=(sstat.st_mtime_ns, sstat.st_mtime_ns), follow_symlinks=False, )
             except NotImplementedError:
                 # utimensat() and lutimes() missing in libc.
                 return os.stat(dest, follow_symlinks=False).st_mtime_ns
@@ -267,10 +255,7 @@ def movefile(
             os.unlink(hardlink_tmp)
         except OSError as e:
             if e.errno != errno.ENOENT:
-                writemsg(
-                    _("!!! Failed to remove hardlink temp file: %s\n") % (hardlink_tmp, ),
-                    noiselevel=-1,
-                )
+                writemsg(_("!!! Failed to remove hardlink temp file: %s\n") % (hardlink_tmp, ), noiselevel=-1, )
                 writemsg(f"!!! {e}\n", noiselevel=-1)
                 return None
             del e
@@ -283,10 +268,7 @@ def movefile(
                 try:
                     os.rename(hardlink_tmp, dest)
                 except OSError as e:
-                    writemsg(
-                        _("!!! Failed to rename %s to %s\n") % (hardlink_tmp, dest),
-                        noiselevel=-1,
-                    )
+                    writemsg(_("!!! Failed to rename %s to %s\n") % (hardlink_tmp, dest), noiselevel=-1, )
                     writemsg(f"!!! {e}\n", noiselevel=-1)
                     return None
                 hardlinked = True
@@ -309,13 +291,12 @@ def movefile(
         except OSError as e:
             if e.errno != errno.EXDEV:
                 # Some random error.
-                writemsg(
-                    f"!!! {_('Failed to move %(src)s to %(dest)s')}\n" % {
-                        "src": src,
-                        "dest": dest
-                    },
-                    noiselevel=-1,
-                )
+                writemsg(f"!!! {_('Failed to move %(src)s to %(dest)s')}\n" % {
+                    "src": src,
+                    "dest": dest
+                },
+                         noiselevel=-1,
+                         )
                 writemsg(f"!!! {e}\n", noiselevel=-1)
                 return None
             # Invalid cross-device-link 'bind' mounted or actually Cross-Device
@@ -329,11 +310,7 @@ def movefile(
                 _apply_stat(sstat, dest_tmp_bytes)
                 if xattr_enabled:
                     try:
-                        _copyxattr(
-                            src_bytes,
-                            dest_tmp_bytes,
-                            exclude=mysettings.get("PORTAGE_XATTR_EXCLUDE", ""),
-                        )
+                        _copyxattr(src_bytes, dest_tmp_bytes, exclude=mysettings.get("PORTAGE_XATTR_EXCLUDE", ""), )
                     except SystemExit:
                         raise
                     except:
@@ -348,13 +325,7 @@ def movefile(
                 _os.unlink(src_bytes)
                 success = True
             except Exception as e:
-                writemsg(
-                    f"!!! {_('copy %(src)s -> %(dest)s failed.')}\n" % {
-                        "src": src,
-                        "dest": dest
-                    },
-                    noiselevel=-1,
-                )
+                writemsg(f"!!! {_('copy %(src)s -> %(dest)s failed.')}\n" % {"src": src, "dest": dest}, noiselevel=-1, )
                 writemsg(f"!!! {e}\n", noiselevel=-1)
                 return None
             finally:
@@ -368,13 +339,12 @@ def movefile(
             a = spawn([MOVE_BINARY, "-f", src, dest], env=os.environ)
             if a != os.EX_OK:
                 writemsg(_("!!! Failed to move special file:\n"), noiselevel=-1)
-                writemsg(
-                    _("!!! '%(src)s' to '%(dest)s'\n") % {
-                        "src": _unicode_decode(src, encoding=encoding),
-                        "dest": _unicode_decode(dest, encoding=encoding),
-                    },
-                    noiselevel=-1,
-                )
+                writemsg(_("!!! '%(src)s' to '%(dest)s'\n") % {
+                    "src": _unicode_decode(src, encoding=encoding),
+                    "dest": _unicode_decode(dest, encoding=encoding),
+                },
+                         noiselevel=-1,
+                         )
                 writemsg(f"!!! {a}\n", noiselevel=-1)
                 return None  # failure
 

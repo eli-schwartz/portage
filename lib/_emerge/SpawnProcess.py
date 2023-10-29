@@ -22,29 +22,12 @@ class SpawnProcess(SubProcess):
     spawn() argument.
     """
 
-    _spawn_kwarg_names = (
-        "env",
-        "opt_name",
-        "fd_pipes",
-        "uid",
-        "gid",
-        "groups",
-        "umask",
-        "logfile",
-        "path_lookup",
-        "pre_exec",
-        "close_fds",
-        "unshare_ipc",
-        "unshare_mount",
-        "unshare_pid",
-        "unshare_net",
-    )
+    _spawn_kwarg_names = ("env", "opt_name", "fd_pipes", "uid", "gid", "groups", "umask", "logfile", "path_lookup",
+                          "pre_exec", "close_fds", "unshare_ipc", "unshare_mount", "unshare_pid", "unshare_net",
+                          )
 
-    __slots__ = (("args", "log_filter_file") + _spawn_kwarg_names + (
-        "_main_task",
-        "_main_task_cancel",
-        "_selinux_type",
-    ))
+    __slots__ = (("args", "log_filter_file") + _spawn_kwarg_names + ("_main_task", "_main_task_cancel", "_selinux_type",
+                                                                     ))
 
     # Max number of attempts to kill the processes listed in cgroup.procs,
     # given that processes may fork before they can be killed.
@@ -150,29 +133,26 @@ class SpawnProcess(SubProcess):
         self._registered = True
 
     def _start_main_task(self, pr, log_file_path=None, stdout_fd=None):
-        build_logger = BuildLogger(
-            env=self.env,
-            log_path=log_file_path,
-            log_filter_file=self.log_filter_file,
-            scheduler=self.scheduler,
-        )
+        build_logger = BuildLogger(env=self.env,
+                                   log_path=log_file_path,
+                                   log_filter_file=self.log_filter_file,
+                                   scheduler=self.scheduler,
+                                   )
         build_logger.start()
 
-        pipe_logger = PipeLogger(
-            background=self.background,
-            scheduler=self.scheduler,
-            input_fd=pr,
-            log_file_path=build_logger.stdin,
-            stdout_fd=stdout_fd,
-        )
+        pipe_logger = PipeLogger(background=self.background,
+                                 scheduler=self.scheduler,
+                                 input_fd=pr,
+                                 log_file_path=build_logger.stdin,
+                                 stdout_fd=stdout_fd,
+                                 )
 
         pipe_logger.start()
 
         self._main_task_cancel = functools.partial(self._main_cancel, build_logger, pipe_logger)
-        self._main_task = asyncio.ensure_future(
-            self._main(build_logger, pipe_logger, loop=self.scheduler),
-            loop=self.scheduler,
-        )
+        self._main_task = asyncio.ensure_future(self._main(build_logger, pipe_logger, loop=self.scheduler),
+                                                loop=self.scheduler,
+                                                )
         self._main_task.add_done_callback(self._main_exit)
 
     async def _main(self, build_logger, pipe_logger, loop=None):

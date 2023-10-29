@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -62,116 +59,105 @@ class SlotAbiTestCase(TestCase):
 
         world = ["dev-libs/libxml2"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["dev-libs/icu"],
-                options={"--oneshot": True},
-                success=True,
-                mergelist=["dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/icu"],
-                options={
-                    "--oneshot": True,
-                    "--ignore-built-slot-operator-deps": "y"
-                },
-                success=True,
-                mergelist=["dev-libs/icu-49"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/icu"],
-                options={
-                    "--oneshot": True,
-                    "--usepkg": True
-                },
-                success=True,
-                mergelist=["[binary]dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/icu"],
-                options={
-                    "--oneshot": True,
-                    "--usepkgonly": True
-                },
-                success=True,
-                mergelist=["[binary]dev-libs/icu-4.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/icu"],
-                options={
-                    "--oneshot": True,
-                    "--usepkgonly": True,
-                    "--ignore-built-slot-operator-deps": "y",
-                },
-                success=True,
-                mergelist=["[binary]dev-libs/icu-49"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=["dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--ignore-built-slot-operator-deps": "y",
-                },
-                success=True,
-                mergelist=["dev-libs/icu-49"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--usepkg": True
-                },
-                success=True,
-                mergelist=["[binary]dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--usepkgonly": True
-                },
-                success=True,
-                mergelist=[],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--usepkgonly": True,
-                    "--ignore-built-slot-operator-deps": "y",
-                },
-                success=True,
-                mergelist=["[binary]dev-libs/icu-49"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/icu"],
+                                                 options={"--oneshot": True},
+                                                 success=True,
+                                                 mergelist=["dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/icu"],
+                                                 options={
+                                                     "--oneshot": True,
+                                                     "--ignore-built-slot-operator-deps": "y"
+                                                 },
+                                                 success=True,
+                                                 mergelist=["dev-libs/icu-49"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/icu"],
+                                                 options={
+                                                     "--oneshot": True,
+                                                     "--usepkg": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=["[binary]dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/icu"],
+                                                 options={
+                                                     "--oneshot": True,
+                                                     "--usepkgonly": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=["[binary]dev-libs/icu-4.8"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/icu"],
+                                                 options={
+                                                     "--oneshot": True,
+                                                     "--usepkgonly": True,
+                                                     "--ignore-built-slot-operator-deps": "y",
+                                                 },
+                                                 success=True,
+                                                 mergelist=["[binary]dev-libs/icu-49"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=["dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True,
+                                                     "--ignore-built-slot-operator-deps": "y",
+                                                 },
+                                                 success=True,
+                                                 mergelist=["dev-libs/icu-49"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True,
+                                                     "--usepkg": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=["[binary]dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True,
+                                                     "--usepkgonly": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=[],
+                                                 ),
+                      ResolverPlaygroundTestCase(
+                          ["@world"],
+                          options={
+                              "--update": True,
+                              "--deep": True,
+                              "--usepkgonly": True,
+                              "--ignore-built-slot-operator-deps": "y",
+                          },
+                          success=True,
+                          mergelist=["[binary]dev-libs/icu-49"],
+                      ),
+                      )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    ebuilds=ebuilds,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(ebuilds=ebuilds,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:
@@ -225,116 +211,105 @@ class SlotAbiTestCase(TestCase):
             # because sys-libs/db is the only package requested, and a
             # rebuild is not necessary because the sys-libs/db:4.7 slot
             # remains installed.
-            ResolverPlaygroundTestCase(
-                ["sys-libs/db"],
-                options={"--oneshot": True},
-                success=True,
-                mergelist=["sys-libs/db-4.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["sys-libs/db"],
-                options={
-                    "--oneshot": True,
-                    "--usepkg": True
-                },
-                success=True,
-                mergelist=["[binary]sys-libs/db-4.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["sys-libs/db"],
-                options={
-                    "--oneshot": True,
-                    "--usepkgonly": True
-                },
-                success=True,
-                mergelist=["[binary]sys-libs/db-4.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["sys-libs/db"],
-                options={
-                    "--oneshot": True,
-                    "--rebuild-if-new-slot": "n"
-                },
-                success=True,
-                mergelist=["sys-libs/db-4.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=["sys-libs/db-4.8", "app-office/libreoffice-3.5.4.2"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--usepkg": True
-                },
-                success=True,
-                mergelist=["[binary]sys-libs/db-4.8", "app-office/libreoffice-3.5.4.2"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--usepkg": True,
-                    "--ignore-built-slot-operator-deps": "y",
-                },
-                success=True,
-                mergelist=["[binary]sys-libs/db-4.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--usepkgonly": True
-                },
-                success=True,
-                mergelist=[],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--usepkgonly": True,
-                    "--ignore-built-slot-operator-deps": "y",
-                },
-                success=True,
-                mergelist=["[binary]sys-libs/db-4.8"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--rebuild-if-new-slot": "n",
-                },
-                success=True,
-                mergelist=[],
-            ),
+            ResolverPlaygroundTestCase(["sys-libs/db"],
+                                       options={"--oneshot": True},
+                                       success=True,
+                                       mergelist=["sys-libs/db-4.8"],
+                                       ),
+            ResolverPlaygroundTestCase(["sys-libs/db"],
+                                       options={
+                                           "--oneshot": True,
+                                           "--usepkg": True
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]sys-libs/db-4.8"],
+                                       ),
+            ResolverPlaygroundTestCase(["sys-libs/db"],
+                                       options={
+                                           "--oneshot": True,
+                                           "--usepkgonly": True
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]sys-libs/db-4.8"],
+                                       ),
+            ResolverPlaygroundTestCase(["sys-libs/db"],
+                                       options={
+                                           "--oneshot": True,
+                                           "--rebuild-if-new-slot": "n"
+                                       },
+                                       success=True,
+                                       mergelist=["sys-libs/db-4.8"],
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       mergelist=["sys-libs/db-4.8", "app-office/libreoffice-3.5.4.2"],
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True,
+                                           "--usepkg": True
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]sys-libs/db-4.8", "app-office/libreoffice-3.5.4.2"],
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True,
+                                           "--usepkg": True,
+                                           "--ignore-built-slot-operator-deps": "y",
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]sys-libs/db-4.8"],
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True,
+                                           "--usepkgonly": True
+                                       },
+                                       success=True,
+                                       mergelist=[],
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True,
+                                           "--usepkgonly": True,
+                                           "--ignore-built-slot-operator-deps": "y",
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]sys-libs/db-4.8"],
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True,
+                                           "--rebuild-if-new-slot": "n",
+                                       },
+                                       success=True,
+                                       mergelist=[],
+                                       ),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    ebuilds=ebuilds,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(ebuilds=ebuilds,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:
@@ -378,23 +353,21 @@ class SlotAbiTestCase(TestCase):
         test_cases = (
             # Demonstrate bug #460304, where _slot_operator_update_probe needs
             # to account for USE conditional deps.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=[],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       mergelist=[],
+                                       ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds,
-            installed=installed,
-            user_config=user_config,
-            world=world,
-            debug=False,
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        user_config=user_config,
+                                        world=world,
+                                        debug=False,
+                                        )
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -407,26 +380,21 @@ class SlotAbiTestCase(TestCase):
         test_cases = (
             # Demonstrate bug #460304 again, but with inverted USE
             # settings this time.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=[
-                    "dev-libs/libnl-3.2.14",
-                    "net-misc/networkmanager-0.9.6.4-r1",
-                ],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       mergelist=["dev-libs/libnl-3.2.14", "net-misc/networkmanager-0.9.6.4-r1", ],
+                                       ), )
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds,
-            installed=installed,
-            user_config=user_config,
-            world=world,
-            debug=False,
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        user_config=user_config,
+                                        world=world,
+                                        debug=False,
+                                        )
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -489,116 +457,105 @@ class SlotAbiTestCase(TestCase):
 
         world = ["dev-libs/glib:1", "dev-libs/dbus-glib"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["dev-libs/glib"],
-                options={"--oneshot": True},
-                success=True,
-                mergelist=["dev-libs/glib-2.32.3", "dev-libs/dbus-glib-0.98"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/glib"],
-                options={
-                    "--oneshot": True,
-                    "--ignore-built-slot-operator-deps": "y"
-                },
-                success=True,
-                mergelist=["dev-libs/glib-2.32.3"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/glib"],
-                options={
-                    "--oneshot": True,
-                    "--usepkg": True
-                },
-                success=True,
-                mergelist=["[binary]dev-libs/glib-2.32.3", "dev-libs/dbus-glib-0.98"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/glib"],
-                options={
-                    "--oneshot": True,
-                    "--usepkgonly": True
-                },
-                success=True,
-                mergelist=["[binary]dev-libs/glib-2.30.2"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/glib"],
-                options={
-                    "--oneshot": True,
-                    "--usepkgonly": True,
-                    "--ignore-built-slot-operator-deps": "y",
-                },
-                success=True,
-                mergelist=["[binary]dev-libs/glib-2.32.3"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=["dev-libs/glib-2.32.3", "dev-libs/dbus-glib-0.98"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--ignore-built-slot-operator-deps": "y",
-                },
-                success=True,
-                mergelist=["dev-libs/glib-2.32.3"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--usepkg": True
-                },
-                success=True,
-                mergelist=["[binary]dev-libs/glib-2.32.3", "dev-libs/dbus-glib-0.98"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--usepkgonly": True
-                },
-                success=True,
-                mergelist=[],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--usepkgonly": True,
-                    "--ignore-built-slot-operator-deps": "y",
-                },
-                success=True,
-                mergelist=["[binary]dev-libs/glib-2.32.3"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/glib"],
+                                                 options={"--oneshot": True},
+                                                 success=True,
+                                                 mergelist=["dev-libs/glib-2.32.3", "dev-libs/dbus-glib-0.98"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/glib"],
+                                                 options={
+                                                     "--oneshot": True,
+                                                     "--ignore-built-slot-operator-deps": "y"
+                                                 },
+                                                 success=True,
+                                                 mergelist=["dev-libs/glib-2.32.3"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/glib"],
+                                                 options={
+                                                     "--oneshot": True,
+                                                     "--usepkg": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=["[binary]dev-libs/glib-2.32.3", "dev-libs/dbus-glib-0.98"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/glib"],
+                                                 options={
+                                                     "--oneshot": True,
+                                                     "--usepkgonly": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=["[binary]dev-libs/glib-2.30.2"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/glib"],
+                                                 options={
+                                                     "--oneshot": True,
+                                                     "--usepkgonly": True,
+                                                     "--ignore-built-slot-operator-deps": "y",
+                                                 },
+                                                 success=True,
+                                                 mergelist=["[binary]dev-libs/glib-2.32.3"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=["dev-libs/glib-2.32.3", "dev-libs/dbus-glib-0.98"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True,
+                                                     "--ignore-built-slot-operator-deps": "y",
+                                                 },
+                                                 success=True,
+                                                 mergelist=["dev-libs/glib-2.32.3"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True,
+                                                     "--usepkg": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=["[binary]dev-libs/glib-2.32.3", "dev-libs/dbus-glib-0.98"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True,
+                                                     "--usepkgonly": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=[],
+                                                 ),
+                      ResolverPlaygroundTestCase(
+                          ["@world"],
+                          options={
+                              "--update": True,
+                              "--deep": True,
+                              "--usepkgonly": True,
+                              "--ignore-built-slot-operator-deps": "y",
+                          },
+                          success=True,
+                          mergelist=["[binary]dev-libs/glib-2.32.3"],
+                      ),
+                      )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    ebuilds=ebuilds,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(ebuilds=ebuilds,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:

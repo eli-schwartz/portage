@@ -1,13 +1,7 @@
 # Copyright 2007-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = [
-    "SETPREFIX",
-    "get_boolean",
-    "SetConfigError",
-    "SetConfig",
-    "load_default_config",
-]
+__all__ = ["SETPREFIX", "get_boolean", "SetConfigError", "SetConfig", "load_default_config", ]
 
 import portage
 from portage import os
@@ -21,12 +15,7 @@ from portage.const import _ENABLE_SET_CONFIG
 from portage.exception import PackageSetNotFound
 from portage.localization import _
 from portage.util import writemsg_level
-from portage.util.configparser import (
-    SafeConfigParser,
-    NoOptionError,
-    ParsingError,
-    read_configs,
-)
+from portage.util.configparser import (SafeConfigParser, NoOptionError, ParsingError, read_configs, )
 
 SETPREFIX = "@"
 
@@ -139,11 +128,7 @@ class SetConfig:
         parser.add_section("deprecated-live-rebuild")
         parser.set("deprecated-live-rebuild", "class", "portage.sets.dbapi.VariableSet")
         parser.set("deprecated-live-rebuild", "variable", "INHERITED")
-        parser.set(
-            "deprecated-live-rebuild",
-            "includes",
-            " ".join(sorted(portage.const.LIVE_ECLASSES)),
-        )
+        parser.set("deprecated-live-rebuild", "includes", " ".join(sorted(portage.const.LIVE_ECLASSES)), )
 
         parser.remove_section("module-rebuild")
         parser.add_section("module-rebuild")
@@ -152,11 +137,7 @@ class SetConfig:
 
         parser.remove_section("preserved-rebuild")
         parser.add_section("preserved-rebuild")
-        parser.set(
-            "preserved-rebuild",
-            "class",
-            "portage.sets.libs.PreservedLibraryConsumerSet",
-        )
+        parser.set("preserved-rebuild", "class", "portage.sets.libs.PreservedLibraryConsumerSet", )
 
         parser.remove_section("x11-module-rebuild")
         parser.add_section("x11-module-rebuild")

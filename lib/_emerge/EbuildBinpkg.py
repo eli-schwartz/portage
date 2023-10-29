@@ -13,11 +13,7 @@ class EbuildBinpkg(CompositeTask):
     This assumes that src_install() has successfully completed.
     """
 
-    __slots__ = ("pkg", "settings") + (
-        "_binpkg_tmpfile",
-        "_binpkg_info",
-        "pkg_allocated_path",
-    )
+    __slots__ = ("pkg", "settings") + ("_binpkg_tmpfile", "_binpkg_info", "pkg_allocated_path", )
 
     def _start(self):
         pkg = self.pkg
@@ -32,12 +28,11 @@ class EbuildBinpkg(CompositeTask):
         if "binpkg-multi-instance" in self.settings.features:
             self.settings["BUILD_ID"] = str(build_id)
 
-        package_phase = EbuildPhase(
-            background=self.background,
-            phase="package",
-            scheduler=self.scheduler,
-            settings=self.settings,
-        )
+        package_phase = EbuildPhase(background=self.background,
+                                    phase="package",
+                                    scheduler=self.scheduler,
+                                    settings=self.settings,
+                                    )
 
         self._start_task(package_phase, self._package_phase_exit)
 
@@ -53,11 +48,10 @@ class EbuildBinpkg(CompositeTask):
 
         pkg = self.pkg
         bintree = pkg.root_config.trees["bintree"]
-        self._binpkg_info = bintree.inject(
-            pkg.cpv,
-            current_pkg_path=self._binpkg_tmpfile,
-            allocated_pkg_path=self.pkg_allocated_path,
-        )
+        self._binpkg_info = bintree.inject(pkg.cpv,
+                                           current_pkg_path=self._binpkg_tmpfile,
+                                           allocated_pkg_path=self.pkg_allocated_path,
+                                           )
 
         self._current_task = None
         self.returncode = os.EX_OK

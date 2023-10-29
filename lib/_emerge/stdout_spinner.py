@@ -10,22 +10,13 @@ from portage.output import darkgreen, green
 
 class stdout_spinner:
     scroll_msgs = [
-        "Gentoo Rocks (" + platform.system() + ")",
-        "Thank you for using Gentoo. :)",
-        "Are you actually trying to read this?",
-        "How many times have you stared at this?",
-        "We are generating the cache right now",
-        "You are paying too much attention.",
-        "A theory is better than its explanation.",
-        "Phasers locked on target, Captain.",
-        "Thrashing is just virtual crashing.",
-        "To be is to program.",
-        "Real Users hate Real Programmers.",
-        "When all else fails, read the instructions.",
-        "Functionality breeds Contempt.",
-        "The future lies ahead.",
-        "3.1415926535897932384626433832795028841971694",
-        "Sometimes insanity is the only alternative.",
+        "Gentoo Rocks (" + platform.system() + ")", "Thank you for using Gentoo. :)",
+        "Are you actually trying to read this?", "How many times have you stared at this?",
+        "We are generating the cache right now", "You are paying too much attention.",
+        "A theory is better than its explanation.", "Phasers locked on target, Captain.",
+        "Thrashing is just virtual crashing.", "To be is to program.", "Real Users hate Real Programmers.",
+        "When all else fails, read the instructions.", "Functionality breeds Contempt.", "The future lies ahead.",
+        "3.1415926535897932384626433832795028841971694", "Sometimes insanity is the only alternative.",
         "Inaccuracy saves a world of explanation.",
     ]
 

@@ -24,14 +24,7 @@ class BuildLogger(AsynchronousTask):
     subprocess stdout and stderr streams).
     """
 
-    __slots__ = (
-        "env",
-        "log_path",
-        "log_filter_file",
-        "_main_task",
-        "_main_task_cancel",
-        "_stdin",
-    )
+    __slots__ = ("env", "log_path", "log_filter_file", "_main_task", "_main_task_cancel", "_stdin", )
 
     @property
     def stdin(self):
@@ -49,16 +42,14 @@ class BuildLogger(AsynchronousTask):
                 filter_input, stdin = os.pipe()
                 log_input, filter_output = os.pipe()
                 try:
-                    filter_proc = PopenProcess(
-                        proc=subprocess.Popen(
-                            log_filter_file,
-                            env=self.env,
-                            stdin=filter_input,
-                            stdout=filter_output,
-                            stderr=filter_output,
-                        ),
-                        scheduler=self.scheduler,
-                    )
+                    filter_proc = PopenProcess(proc=subprocess.Popen(log_filter_file,
+                                                                     env=self.env,
+                                                                     stdin=filter_input,
+                                                                     stdout=filter_output,
+                                                                     stderr=filter_output,
+                                                                     ),
+                                               scheduler=self.scheduler,
+                                               )
                     filter_proc.start()
                 except OSError:
                     # Maybe the command is missing or broken somehow...
@@ -79,12 +70,11 @@ class BuildLogger(AsynchronousTask):
             self._stdin = os.fdopen(stdin, "wb", 0)
 
         # Set background=True so that pipe_logger does not log to stdout.
-        pipe_logger = PipeLogger(
-            background=True,
-            scheduler=self.scheduler,
-            input_fd=log_input,
-            log_file_path=self.log_path,
-        )
+        pipe_logger = PipeLogger(background=True,
+                                 scheduler=self.scheduler,
+                                 input_fd=log_input,
+                                 log_file_path=self.log_path,
+                                 )
         pipe_logger.start()
 
         self._main_task_cancel = functools.partial(self._main_cancel, filter_proc, pipe_logger)

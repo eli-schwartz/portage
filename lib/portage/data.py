@@ -10,13 +10,9 @@ import pwd
 import portage
 from portage.localization import _
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.output:colorize",
-    "portage.util:writemsg",
-    "portage.util.path:first_existing",
-    "subprocess",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.output:colorize", "portage.util:writemsg",
+                                    "portage.util.path:first_existing", "subprocess",
+                                    )
 
 ostype = platform.system()
 userland = "GNU"
@@ -34,11 +30,10 @@ if not lchown:
     else:
 
         def lchown(*_args, **_kwargs):
-            writemsg(
-                colorize("BAD", "!!!") + _(" It seems that os.lchown does not"
-                                           " exist.  Please rebuild python.\n"),
-                noiselevel=-1,
-            )
+            writemsg(colorize("BAD", "!!!") + _(" It seems that os.lchown does not"
+                                                " exist.  Please rebuild python.\n"),
+                     noiselevel=-1,
+                     )
 
         lchown()
 
@@ -78,12 +73,10 @@ def _target_root():
 
 def portage_group_warning():
     warn_prefix = colorize("BAD", "*** WARNING ***  ")
-    mylines = (
-        "For security reasons, only system administrators should be",
-        "allowed in the portage group.  Untrusted users or processes",
-        "can potentially exploit the portage group for attacks such as",
-        "local privilege escalation.",
-    )
+    mylines = ("For security reasons, only system administrators should be",
+               "allowed in the portage group.  Untrusted users or processes",
+               "can potentially exploit the portage group for attacks such as", "local privilege escalation.",
+               )
     for x in mylines:
         writemsg(warn_prefix, noiselevel=-1)
         writemsg(x, noiselevel=-1)
@@ -172,22 +165,14 @@ def _get_global(k):
         # PORTAGE_USERNAME are set to "root", for things like
         # Android (see bug #454060).
         if keyerror and not (_get_global("_portage_username") == "root" and _get_global("_portage_grpname") == "root"):
-            writemsg(
-                colorize("BAD", _("portage: 'portage' user or group missing.")) + "\n",
-                noiselevel=-1,
-            )
-            writemsg(
-                _("         For the defaults, line 1 goes into passwd, "
-                  "and 2 into group.\n"),
-                noiselevel=-1,
-            )
-            writemsg(
-                colorize(
-                    "GOOD",
-                    "         portage:x:250:250:portage:/var/tmp/portage:/bin/false",
-                ) + "\n",
-                noiselevel=-1,
-            )
+            writemsg(colorize("BAD", _("portage: 'portage' user or group missing.")) + "\n", noiselevel=-1, )
+            writemsg(_("         For the defaults, line 1 goes into passwd, "
+                       "and 2 into group.\n"), noiselevel=-1,
+                     )
+            writemsg(colorize("GOOD", "         portage:x:250:250:portage:/var/tmp/portage:/bin/false",
+                              ) + "\n",
+                     noiselevel=-1,
+                     )
             writemsg(colorize("GOOD", "         portage::250:portage") + "\n", noiselevel=-1)
             portage_group_warning()
 
@@ -282,14 +267,7 @@ class _GlobalProxy(portage.proxy.objectproxy.ObjectProxy):
         return _get_global(object.__getattribute__(self, "_name"))
 
 
-for k in (
-        "portage_gid",
-        "portage_uid",
-        "secpass",
-        "userpriv_groups",
-        "_portage_grpname",
-        "_portage_username",
-):
+for k in ("portage_gid", "portage_uid", "secpass", "userpriv_groups", "_portage_grpname", "_portage_username", ):
     globals()[k] = _GlobalProxy(k)
 del k
 

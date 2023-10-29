@@ -20,17 +20,16 @@ class EbuildFetchonly(SlotObject):
         settings.setcpv(pkg)
         debug = settings.get("PORTAGE_DEBUG") == "1"
 
-        rval = portage.doebuild(
-            ebuild_path,
-            "fetch",
-            settings=settings,
-            debug=debug,
-            listonly=self.pretend,
-            fetchonly=1,
-            fetchall=self.fetch_all,
-            mydbapi=portdb,
-            tree="porttree",
-        )
+        rval = portage.doebuild(ebuild_path,
+                                "fetch",
+                                settings=settings,
+                                debug=debug,
+                                listonly=self.pretend,
+                                fetchonly=1,
+                                fetchall=self.fetch_all,
+                                mydbapi=portdb,
+                                tree="porttree",
+                                )
 
         # For pretend mode, this error message is suppressed,
         # and the unsuccessful return value is used to trigger

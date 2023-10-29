@@ -43,7 +43,4 @@ class ArrayFromfileEofTestCase(TestCase):
 
         f.close()
 
-        self.assertEqual(
-            input_data,
-            _unicode_decode(b"".join(data), encoding="utf_8", errors="strict"),
-        )
+        self.assertEqual(input_data, _unicode_decode(b"".join(data), encoding="utf_8", errors="strict"), )

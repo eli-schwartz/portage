@@ -93,12 +93,9 @@ class SQLDatabase(template.database):
     def _getitem(self, cpv):
         try:
             self.con.execute("SELECT key, value FROM %s NATURAL JOIN %s "
-                             "WHERE label=%s AND cpv=%s" % (
-                                 self.SCHEMA_PACKAGE_NAME,
-                                 self.SCHEMA_VALUES_NAME,
-                                 self.label,
-                                 self._sfilter(cpv),
-                             ))
+                             "WHERE label=%s AND cpv=%s" %
+                             (self.SCHEMA_PACKAGE_NAME, self.SCHEMA_VALUES_NAME, self.label, self._sfilter(cpv),
+                              ))
         except self._BaseError as e:
             raise cache_errors.CacheCorruption(self, cpv, e)
 
@@ -158,8 +155,7 @@ class SQLDatabase(template.database):
                 try:
                     self.con.executemany(
                         'INSERT INTO %s (pkgid, key, value) VALUES("%s", %%(key)s, %%(value)s)' %
-                        (self.SCHEMA_VALUES_NAME, str(pkgid)),
-                        db_values,
+                        (self.SCHEMA_VALUES_NAME, str(pkgid)), db_values,
                     )
                 except self._BaseError as e:
                     raise cache_errors.CacheCorruption(cpv, e)
@@ -201,8 +197,7 @@ class SQLDatabase(template.database):
 
         if self.con.rowcount != 1:
             raise cache_error.CacheCorruption(
-                cpv,
-                "Tried to insert the cpv, but found "
+                cpv, "Tried to insert the cpv, but found "
                 " %i matches upon the following select!" % len(rows),
             )
         return self.con.fetchone()[0]

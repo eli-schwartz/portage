@@ -5,10 +5,7 @@ import datetime
 
 import portage
 from portage import os
-from portage.repository.storage.interface import (
-    RepoStorageException,
-    RepoStorageInterface,
-)
+from portage.repository.storage.interface import (RepoStorageException, RepoStorageInterface, )
 from portage.util.futures import asyncio
 
 from _emerge.SpawnProcess import SpawnProcess
@@ -132,11 +129,7 @@ class HardlinkRcuRepoStorage(RepoStorageInterface):
             # Use  rsync --link-dest to hardlink a files into update_location,
             # since cp -l is not portable.
             await self._check_call([
-                "rsync",
-                "-a",
-                "--link-dest",
-                self._latest_canonical,
-                self._latest_canonical + "/",
+                "rsync", "-a", "--link-dest", self._latest_canonical, self._latest_canonical + "/",
                 update_location + "/",
             ])
 

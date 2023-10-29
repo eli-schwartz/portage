@@ -23,18 +23,10 @@ from portage import _encodings
 from portage import _unicode_decode
 from portage import _unicode_encode
 from portage.binpkg import get_binpkg_format
-from portage.exception import (
-    FileNotFound,
-    InvalidBinaryPackageFormat,
-    InvalidCompressionMethod,
-    CompressorNotFound,
-    CompressorOperationFailed,
-    CommandNotFound,
-    GPGException,
-    DigestException,
-    MissingSignature,
-    InvalidSignature,
-)
+from portage.exception import (FileNotFound, InvalidBinaryPackageFormat, InvalidCompressionMethod, CompressorNotFound,
+                               CompressorOperationFailed, CommandNotFound, GPGException, DigestException,
+                               MissingSignature, InvalidSignature,
+                               )
 from portage.output import colorize, EOutput
 from portage.util._urlopen import urlopen
 from portage.util import writemsg
@@ -73,16 +65,7 @@ class tar_stream_writer:
     writer.close()
     """
 
-    def __init__(
-        self,
-        tarinfo,
-        container,
-        tar_format,
-        cmd=None,
-        checksum_helper=None,
-        uid=None,
-        gid=None,
-    ):
+    def __init__(self, tarinfo, container, tar_format, cmd=None, checksum_helper=None, uid=None, gid=None, ):
         """
         tarinfo          # the file tarinfo that need to be added
         container        # the outer container tarfile object
@@ -119,13 +102,12 @@ class tar_stream_writer:
         if cmd is None:
             self.proc = None
         else:
-            self.proc = subprocess.Popen(
-                cmd,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                user=self.uid,
-                group=self.gid,
-            )
+            self.proc = subprocess.Popen(cmd,
+                                         stdin=subprocess.PIPE,
+                                         stdout=subprocess.PIPE,
+                                         user=self.uid,
+                                         group=self.gid,
+                                         )
 
             self.read_thread = threading.Thread(target=self._cmd_read_thread, name="tar_stream_cmd_read", daemon=True)
             self.read_thread.start()
@@ -282,13 +264,12 @@ class tar_stream_reader:
             self.proc = None
         else:
             # Start external decompressor
-            self.proc = subprocess.Popen(
-                cmd,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                user=self.uid,
-                group=self.gid,
-            )
+            self.proc = subprocess.Popen(cmd,
+                                         stdin=subprocess.PIPE,
+                                         stdout=subprocess.PIPE,
+                                         user=self.uid,
+                                         group=self.gid,
+                                         )
             self.read_io = self.proc.stdout
             # Start stdin block writing thread
             self.thread = threading.Thread(target=self._write_thread, name="tar_stream_stdin_writer", daemon=True)
@@ -438,8 +419,7 @@ class checksum_helper:
 
             if gpg_signing_base_command:
                 gpg_signing_command = gpg_signing_base_command.replace(
-                    "[PORTAGE_CONFIG]",
-                    f"--homedir {gpg_home} "
+                    "[PORTAGE_CONFIG]", f"--homedir {gpg_home} "
                     f"--digest-algo {digest_algo} "
                     f"--local-user {gpg_key} "
                     f"{gpg_detached} "
@@ -455,13 +435,12 @@ class checksum_helper:
             else:
                 raise CommandNotFound("GPG signing command is not set")
 
-            self.gpg_proc = subprocess.Popen(
-                gpg_signing_command,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                env=env,
-            )
+            self.gpg_proc = subprocess.Popen(gpg_signing_command,
+                                             stdin=subprocess.PIPE,
+                                             stdout=subprocess.PIPE,
+                                             stderr=subprocess.PIPE,
+                                             env=env,
+                                             )
 
         elif self.gpg_operation == checksum_helper.VERIFY:
             if (signature is None) and (detached == True):
@@ -490,15 +469,14 @@ class checksum_helper:
             gpg_verify_command = shlex_split(varexpand(gpg_verify_command, mydict=self.settings))
             gpg_verify_command = [x for x in gpg_verify_command if x != ""]
 
-            self.gpg_proc = subprocess.Popen(
-                gpg_verify_command,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                env=env,
-                user=self.uid,
-                group=self.gid,
-            )
+            self.gpg_proc = subprocess.Popen(gpg_verify_command,
+                                             stdin=subprocess.PIPE,
+                                             stdout=subprocess.PIPE,
+                                             stderr=subprocess.PIPE,
+                                             env=env,
+                                             user=self.uid,
+                                             group=self.gid,
+                                             )
 
     def __del__(self):
         self.finish()
@@ -701,10 +679,8 @@ class gpkg:
         with tarfile.open(self.gpkg_file, "r") as container:
             metadata_tarinfo, metadata_comp = self._get_inner_tarinfo(container, "metadata")
 
-            with tar_stream_reader(
-                    container.extractfile(metadata_tarinfo),
-                    self._get_decompression_cmd(metadata_comp),
-            ) as metadata_reader:
+            with tar_stream_reader(container.extractfile(metadata_tarinfo), self._get_decompression_cmd(metadata_comp),
+                                   ) as metadata_reader:
                 metadata_tar = io.BytesIO(metadata_reader.read())
 
             with tarfile.open(mode="r:", fileobj=metadata_tar) as metadata:
@@ -771,12 +747,7 @@ class gpkg:
                 raise InvalidBinaryPackageFormat("metadata too large " + str(end_size))
             if end_size > init_size:
                 container_file.seek(0, io.SEEK_END)
-                container_file.write(urlopen(
-                    url,
-                    headers={
-                        "Range": f"bytes={init_size + 1}-{end_size}"
-                    },
-                ).read())
+                container_file.write(urlopen(url, headers={"Range": f"bytes={init_size + 1}-{end_size}"}, ).read())
 
         container_file.seek(0)
 
@@ -790,19 +761,16 @@ class gpkg:
             if signature_filename in container.getnames():
                 if self.request_signature and self.verify_signature:
                     metadata_signature = container.extractfile(signature_filename).read()
-                    checksum_info = checksum_helper(
-                        self.settings,
-                        gpg_operation=checksum_helper.VERIFY,
-                        signature=metadata_signature,
-                    )
+                    checksum_info = checksum_helper(self.settings,
+                                                    gpg_operation=checksum_helper.VERIFY,
+                                                    signature=metadata_signature,
+                                                    )
                     checksum_info.update(container.extractfile(metadata_tarinfo).read())
                     checksum_info.finish()
 
             # Load metadata
-            with tar_stream_reader(
-                    container.extractfile(metadata_tarinfo),
-                    self._get_decompression_cmd(metadata_comp),
-            ) as metadata_reader:
+            with tar_stream_reader(container.extractfile(metadata_tarinfo), self._get_decompression_cmd(metadata_comp),
+                                   ) as metadata_reader:
                 metadata_file = io.BytesIO(metadata_reader.read())
 
             with tarfile.open(mode="r:", fileobj=metadata_file) as metadata:
@@ -893,10 +861,8 @@ class gpkg:
         with tarfile.open(self.gpkg_file, "r") as container:
             image_tarinfo, image_comp = self._get_inner_tarinfo(container, "image")
 
-            with tar_stream_reader(
-                    container.extractfile(image_tarinfo),
-                    self._get_decompression_cmd(image_comp),
-            ) as image_tar:
+            with tar_stream_reader(container.extractfile(image_tarinfo), self._get_decompression_cmd(image_comp),
+                                   ) as image_tar:
                 with tarfile.open(mode="r|", fileobj=image_tar) as image:
                     try:
                         image_safe = tar_safe_extract(image, "image")
@@ -1016,10 +982,7 @@ class gpkg:
                     if keep_current_signature and (file_name_old + ".sig" in file_list_old):
                         old_data_sign_tarinfo = container_old.getmember(file_name_old + ".sig")
                         new_data_sign_tarinfo = copy(old_data_sign_tarinfo)
-                        container.addfile(
-                            new_data_sign_tarinfo,
-                            container_old.extractfile(old_data_sign_tarinfo),
-                        )
+                        container.addfile(new_data_sign_tarinfo, container_old.extractfile(old_data_sign_tarinfo), )
                         for manifest_sign in manifest_old:
                             if manifest_sign[1] == file_name_old + ".sig":
                                 self.checksums.append(manifest_sign)
@@ -1053,13 +1016,8 @@ class gpkg:
         else:
             checksum_info = checksum_helper(self.settings)
 
-        with tar_stream_writer(
-                metadata_tarinfo,
-                container,
-                tarfile.USTAR_FORMAT,
-                compression_cmd,
-                checksum_info,
-        ) as metadata_writer:
+        with tar_stream_writer(metadata_tarinfo, container, tarfile.USTAR_FORMAT, compression_cmd, checksum_info,
+                               ) as metadata_writer:
             with tarfile.open(mode="w|", fileobj=metadata_writer, format=tarfile.USTAR_FORMAT) as metadata_tar:
                 for m in metadata:
                     m_info = tarfile.TarInfo(os.path.join("metadata", m))
@@ -1465,11 +1423,10 @@ class gpkg:
                         signature_file = container.extractfile(f_signature)
                         signature = signature_file.read()
                         signature_file.close()
-                        checksum_info = checksum_helper(
-                            self.settings,
-                            gpg_operation=checksum_helper.VERIFY,
-                            signature=signature,
-                        )
+                        checksum_info = checksum_helper(self.settings,
+                                                        gpg_operation=checksum_helper.VERIFY,
+                                                        signature=signature,
+                                                        )
                     elif f == gpkg_version_file:
                         # gpkg version file is not signed
                         checksum_info = checksum_helper(self.settings)
@@ -1551,8 +1508,7 @@ class gpkg:
 
         if mode == "compress" and (self.settings.get(f"BINPKG_COMPRESS_FLAGS_{compression.upper()}", None) is not None):
             compressor["compress"] = compressor["compress"].replace(
-                "${BINPKG_COMPRESS_FLAGS}",
-                f"${{BINPKG_COMPRESS_FLAGS_{compression.upper()}}}",
+                "${BINPKG_COMPRESS_FLAGS}", f"${{BINPKG_COMPRESS_FLAGS_{compression.upper()}}}",
             )
 
         cmd = compressor[mode].replace("{JOBS}", str(makeopts_to_job_count(self.settings.get("MAKEOPTS", "1"))))
@@ -1615,14 +1571,9 @@ class gpkg:
 
         return None
 
-    def _get_tar_format_from_stats(
-        self,
-        image_max_prefix_length,
-        image_max_name_length,
-        image_max_linkname_length,
-        image_max_file_size,
-        image_total_size,
-    ):
+    def _get_tar_format_from_stats(self, image_max_prefix_length, image_max_name_length, image_max_linkname_length,
+                                   image_max_file_size, image_total_size,
+                                   ):
         """
         Choose the corresponding tar format according to
         the image information
@@ -1661,10 +1612,9 @@ class gpkg:
         path length, largest single file size, and total files size.
         """
         image_prefix_length = len(image_prefix) + 1
-        root_dir = os.path.join(
-            normalize_path(_unicode_decode(root_dir, encoding=_encodings["fs"], errors="strict")),
-            "",
-        )
+        root_dir = os.path.join(normalize_path(_unicode_decode(root_dir, encoding=_encodings["fs"], errors="strict")),
+                                "",
+                                )
         root_dir_length = len(_unicode_encode(root_dir, encoding=_encodings["fs"], errors="strict"))
 
         image_max_prefix_length = 0
@@ -1738,13 +1688,9 @@ class gpkg:
                 image_total_size += file_size
                 image_max_file_size = max(image_max_file_size, file_size)
 
-        return (
-            image_max_prefix_length,
-            image_max_name_length,
-            image_max_link_length,
-            image_max_file_size,
-            image_total_size,
-        )
+        return (image_max_prefix_length, image_max_name_length, image_max_link_length, image_max_file_size,
+                image_total_size,
+                )
 
     def _check_pre_quickpkg_files(self, contents, root, image_prefix="image", ignore_missing=False):
         """
@@ -1752,10 +1698,7 @@ class gpkg:
         path length, largest single file size, and total files size.
         """
         image_prefix_length = len(image_prefix) + 1
-        root_dir = os.path.join(
-            normalize_path(_unicode_decode(root, encoding=_encodings["fs"], errors="strict")),
-            "",
-        )
+        root_dir = os.path.join(normalize_path(_unicode_decode(root, encoding=_encodings["fs"], errors="strict")), "", )
         root_dir_length = len(_unicode_encode(root_dir, encoding=_encodings["fs"], errors="strict"))
 
         image_max_prefix_length = 0
@@ -1816,13 +1759,9 @@ class gpkg:
                 if file_size > image_max_file_size:
                     image_max_file_size = file_size
 
-        return (
-            image_max_prefix_length,
-            image_max_name_length,
-            image_max_link_length,
-            image_max_file_size,
-            image_total_size,
-        )
+        return (image_max_prefix_length, image_max_name_length, image_max_link_length, image_max_file_size,
+                image_total_size,
+                )
 
     def _create_tarinfo(self, file_name):
         """
@@ -1854,10 +1793,7 @@ class gpkg:
 
         for compression in self.ext_list:
             if file_name.endswith(".tar" + self.ext_list[compression]):
-                return (
-                    file_name[:-len(".tar" + self.ext_list[compression])],
-                    compression,
-                )
+                return (file_name[:-len(".tar" + self.ext_list[compression])], compression, )
 
         raise InvalidCompressionMethod(file_name)
 

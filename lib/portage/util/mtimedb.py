@@ -22,15 +22,7 @@ from portage.data import portage_gid, uid
 from portage.localization import _
 from portage.util import apply_secpass_permissions, atomic_ofstream, writemsg
 
-_MTIMEDBKEYS = {
-    "info",
-    "ldpath",
-    "resume",
-    "resume_backup",
-    "starttime",
-    "updates",
-    "version",
-}
+_MTIMEDBKEYS = {"info", "ldpath", "resume", "resume_backup", "starttime", "updates", "version", }
 
 
 class MtimeDB(dict):
@@ -131,11 +123,10 @@ class MtimeDB(dict):
         else:
             if self._json_write:
                 f.write(
-                    _unicode_encode(
-                        json.dumps(d, **self._json_write_opts),
-                        encoding=_encodings["repo.content"],
-                        errors="strict",
-                    ))
+                    _unicode_encode(json.dumps(d, **self._json_write_opts),
+                                    encoding=_encodings["repo.content"],
+                                    errors="strict",
+                                    ))
             else:
                 pickle.dump(d, f, protocol=2)
             f.close()

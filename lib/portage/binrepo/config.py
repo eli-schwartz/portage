@@ -11,14 +11,7 @@ from portage.util.configparser import SafeConfigParser, ConfigParserError, read_
 
 
 class BinRepoConfig:
-    __slots__ = (
-        "name",
-        "name_fallback",
-        "fetchcommand",
-        "priority",
-        "resumecommand",
-        "sync_uri",
-    )
+    __slots__ = ("name", "name_fallback", "fetchcommand", "priority", "resumecommand", "sync_uri", )
 
     def __init__(self, opts):
         """
@@ -58,10 +51,7 @@ class BinRepoConfigLoader(Mapping):
         try:
             parser = self._parse(paths, parser_defaults)
         except ConfigParserError as e:
-            writemsg(
-                _("!!! Error while reading binrepo config file: %s\n") % e,
-                noiselevel=-1,
-            )
+            writemsg(_("!!! Error while reading binrepo config file: %s\n") % e, noiselevel=-1, )
             parser = SafeConfigParser(defaults=parser_defaults)
 
         repos = []
@@ -71,10 +61,7 @@ class BinRepoConfigLoader(Mapping):
             repo_data["name"] = section_name
             repo = BinRepoConfig(repo_data)
             if repo.sync_uri is None:
-                writemsg(
-                    _("!!! Missing sync-uri setting for binrepo %s\n") % (repo.name, ),
-                    noiselevel=-1,
-                )
+                writemsg(_("!!! Missing sync-uri setting for binrepo %s\n") % (repo.name, ), noiselevel=-1, )
                 continue
 
             sync_uri = self._normalize_uri(repo.sync_uri)
@@ -102,10 +89,10 @@ class BinRepoConfigLoader(Mapping):
                         "sync-uri": sync_uri,
                     }))
 
-        self._data = OrderedDict((repo.name or repo.name_fallback, repo) for repo in sorted(
-            repos,
-            key=lambda repo: (repo.priority or 0, repo.name or repo.name_fallback),
-        ))
+        self._data = OrderedDict(
+            (repo.name or repo.name_fallback, repo)
+            for repo in sorted(repos, key=lambda repo: (repo.priority or 0, repo.name or repo.name_fallback),
+                               ))
 
     @staticmethod
     def _digest_uri(uri):

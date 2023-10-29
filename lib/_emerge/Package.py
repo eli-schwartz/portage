@@ -7,14 +7,7 @@ import warnings
 import portage
 from portage.cache.mappings import slot_dict_class
 from portage.const import EBUILD_PHASES
-from portage.dep import (
-    Atom,
-    check_required_use,
-    use_reduce,
-    paren_enclose,
-    _slot_separator,
-    _repo_separator,
-)
+from portage.dep import (Atom, check_required_use, use_reduce, paren_enclose, _slot_separator, _repo_separator, )
 from portage.dep.soname.parse import parse_soname_deps
 from portage.versions import _pkg_str, _unknown_repo
 from portage.eapi import _get_eapi_attrs
@@ -24,68 +17,17 @@ from _emerge.Task import Task
 
 class Package(Task):
     __hash__ = Task.__hash__
-    __slots__ = (
-        "built",
-        "cpv",
-        "depth",
-        "installed",
-        "onlydeps",
-        "operation",
-        "root_config",
-        "type_name",
-        "category",
-        "counter",
-        "cp",
-        "cpv_split",
-        "inherited",
-        "iuse",
-        "mtime",
-        "pf",
-        "root",
-        "slot",
-        "sub_slot",
-        "slot_atom",
-        "version",
-    ) + (
-        "_invalid",
-        "_masks",
-        "_metadata",
-        "_provided_cps",
-        "_raw_metadata",
-        "_provides",
-        "_requires",
-        "_use",
-        "_validated_atoms",
-        "_visible",
-    )
+    __slots__ = ("built", "cpv", "depth", "installed", "onlydeps", "operation", "root_config", "type_name", "category",
+                 "counter", "cp", "cpv_split", "inherited", "iuse", "mtime", "pf", "root", "slot", "sub_slot",
+                 "slot_atom", "version",
+                 ) + ("_invalid", "_masks", "_metadata", "_provided_cps", "_raw_metadata", "_provides", "_requires",
+                      "_use", "_validated_atoms", "_visible",
+                      )
 
     metadata_keys = [
-        "BDEPEND",
-        "BUILD_ID",
-        "BUILD_TIME",
-        "CHOST",
-        "COUNTER",
-        "DEFINED_PHASES",
-        "DEPEND",
-        "EAPI",
-        "IDEPEND",
-        "INHERITED",
-        "IUSE",
-        "KEYWORDS",
-        "LICENSE",
-        "MD5",
-        "PDEPEND",
-        "PROVIDES",
-        "RDEPEND",
-        "repository",
-        "REQUIRED_USE",
-        "PROPERTIES",
-        "REQUIRES",
-        "RESTRICT",
-        "SIZE",
-        "SLOT",
-        "USE",
-        "_mtime_",
+        "BDEPEND", "BUILD_ID", "BUILD_TIME", "CHOST", "COUNTER", "DEFINED_PHASES", "DEPEND", "EAPI", "IDEPEND",
+        "INHERITED", "IUSE", "KEYWORDS", "LICENSE", "MD5", "PDEPEND", "PROVIDES", "RDEPEND", "repository",
+        "REQUIRED_USE", "PROPERTIES", "REQUIRES", "RESTRICT", "SIZE", "SLOT", "USE", "_mtime_",
     ]
 
     _dep_keys = ("BDEPEND", "DEPEND", "IDEPEND", "PDEPEND", "RDEPEND")
@@ -134,10 +76,7 @@ class Package(Task):
 
         if (self.iuse.enabled or self.iuse.disabled) and not eapi_attrs.iuse_defaults:
             if not self.installed:
-                self._invalid_metadata(
-                    "EAPI.incompatible",
-                    "IUSE contains defaults, but EAPI doesn't allow them",
-                )
+                self._invalid_metadata("EAPI.incompatible", "IUSE contains defaults, but EAPI doesn't allow them", )
         if self.inherited is None:
             self.inherited = frozenset()
 
@@ -147,15 +86,14 @@ class Package(Task):
             else:
                 self.operation = "merge"
 
-        self._hash_key = Package._gen_hash_key(
-            cpv=self.cpv,
-            installed=self.installed,
-            onlydeps=self.onlydeps,
-            operation=self.operation,
-            repo_name=self.cpv.repo,
-            root_config=self.root_config,
-            type_name=self.type_name,
-        )
+        self._hash_key = Package._gen_hash_key(cpv=self.cpv,
+                                               installed=self.installed,
+                                               onlydeps=self.onlydeps,
+                                               operation=self.operation,
+                                               repo_name=self.cpv.repo,
+                                               root_config=self.root_config,
+                                               type_name=self.type_name,
+                                               )
         self._hash_value = hash(self._hash_key)
 
     @property
@@ -190,11 +128,7 @@ class Package(Task):
 
     @property
     def metadata(self):
-        warnings.warn(
-            "_emerge.Package.Package.metadata is deprecated",
-            DeprecationWarning,
-            stacklevel=3,
-        )
+        warnings.warn("_emerge.Package.Package.metadata is deprecated", DeprecationWarning, stacklevel=3, )
         return self._metadata
 
     # These are calculated on-demand, so that they are calculated
@@ -245,17 +179,16 @@ class Package(Task):
         return self._requires
 
     @classmethod
-    def _gen_hash_key(
-        cls,
-        cpv=None,
-        installed=None,
-        onlydeps=None,
-        operation=None,
-        repo_name=None,
-        root_config=None,
-        type_name=None,
-        **kwargs,
-    ):
+    def _gen_hash_key(cls,
+                      cpv=None,
+                      installed=None,
+                      onlydeps=None,
+                      operation=None,
+                      repo_name=None,
+                      root_config=None,
+                      type_name=None,
+                      **kwargs,
+                      ):
         if operation is None:
             if installed or onlydeps:
                 operation = "nomerge"
@@ -317,14 +250,13 @@ class Package(Task):
             if not v:
                 continue
             try:
-                atoms = use_reduce(
-                    v,
-                    eapi=dep_eapi,
-                    matchall=True,
-                    is_valid_flag=dep_valid_flag,
-                    token_class=Atom,
-                    flat=True,
-                )
+                atoms = use_reduce(v,
+                                   eapi=dep_eapi,
+                                   matchall=True,
+                                   is_valid_flag=dep_valid_flag,
+                                   token_class=Atom,
+                                   flat=True,
+                                   )
             except InvalidDependString as e:
                 self._metadata_exception(k, e)
             else:
@@ -353,10 +285,7 @@ class Package(Task):
         v = self._metadata.get(k)
         if v and not self.built:
             if not _get_eapi_attrs(eapi).required_use:
-                self._invalid_metadata(
-                    "EAPI.incompatible",
-                    f"REQUIRED_USE set, but EAPI='{eapi}' doesn't allow it",
-                )
+                self._invalid_metadata("EAPI.incompatible", f"REQUIRED_USE set, but EAPI='{eapi}' doesn't allow it", )
             else:
                 try:
                     check_required_use(v, (), self.iuse.is_valid_flag, eapi=eapi)
@@ -367,13 +296,7 @@ class Package(Task):
         v = self._metadata.get(k)
         if v:
             try:
-                use_reduce(
-                    v,
-                    is_src_uri=True,
-                    eapi=eapi,
-                    matchall=True,
-                    is_valid_flag=self.iuse.is_valid_flag,
-                )
+                use_reduce(v, is_src_uri=True, eapi=eapi, matchall=True, is_valid_flag=self.iuse.is_valid_flag, )
             except InvalidDependString as e:
                 if not self.installed:
                     self._metadata_exception(k, e)
@@ -392,17 +315,16 @@ class Package(Task):
                 self._invalid_metadata(k + ".syntax", f"{k}: {e}")
 
     def copy(self):
-        return Package(
-            built=self.built,
-            cpv=self.cpv,
-            depth=self.depth,
-            installed=self.installed,
-            metadata=self._raw_metadata,
-            onlydeps=self.onlydeps,
-            operation=self.operation,
-            root_config=self.root_config,
-            type_name=self.type_name,
-        )
+        return Package(built=self.built,
+                       cpv=self.cpv,
+                       depth=self.depth,
+                       installed=self.installed,
+                       metadata=self._raw_metadata,
+                       onlydeps=self.onlydeps,
+                       operation=self.operation,
+                       root_config=self.root_config,
+                       type_name=self.type_name,
+                       )
 
     def _eval_masks(self):
         masks = {}
@@ -550,11 +472,9 @@ class Package(Task):
 
         s = "({}, {}".format(
             portage.output.colorize(
-                cpv_color,
-                self.cpv + build_id_str + _slot_separator + self.slot + "/" + self.sub_slot + _repo_separator +
-                self.repo,
-            ),
-            self.type_name,
+                cpv_color, self.cpv + build_id_str + _slot_separator + self.slot + "/" + self.sub_slot +
+                _repo_separator + self.repo,
+            ), self.type_name,
         )
 
         if self.type_name == "installed":
@@ -684,15 +604,7 @@ class Package(Task):
         return use_str
 
     class _iuse:
-        __slots__ = (
-            "__weakref__",
-            "_iuse_implicit_match",
-            "_pkg",
-            "all",
-            "enabled",
-            "disabled",
-            "tokens",
-        )
+        __slots__ = ("__weakref__", "_iuse_implicit_match", "_pkg", "all", "enabled", "disabled", "tokens", )
 
         def __init__(self, pkg, tokens, iuse_implicit_match, eapi):
             self._pkg = pkg
@@ -830,11 +742,7 @@ class _PackageMetadataWrapper(_PackageMetadataWrapperBase):
 
     __slots__ = ("_pkg", )
     _wrapped_keys = frozenset(["COUNTER", "INHERITED", "USE", "_mtime_"])
-    _use_conditional_keys = frozenset([
-        "LICENSE",
-        "PROPERTIES",
-        "RESTRICT",
-    ])
+    _use_conditional_keys = frozenset(["LICENSE", "PROPERTIES", "RESTRICT", ])
 
     def __init__(self, pkg, metadata):
         _PackageMetadataWrapperBase.__init__(self)
@@ -851,11 +759,8 @@ class _PackageMetadataWrapper(_PackageMetadataWrapperBase):
             if self._pkg.root_config.settings.local_config and "?" in v:
                 try:
                     v = paren_enclose(
-                        use_reduce(
-                            v,
-                            uselist=self._pkg.use.enabled,
-                            is_valid_flag=self._pkg.iuse.is_valid_flag,
-                        ))
+                        use_reduce(v, uselist=self._pkg.use.enabled, is_valid_flag=self._pkg.iuse.is_valid_flag,
+                                   ))
                 except InvalidDependString:
                     # This error should already have been registered via
                     # self._pkg._invalid_metadata().

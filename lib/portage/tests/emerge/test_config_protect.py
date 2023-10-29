@@ -109,23 +109,10 @@ src_install() {
         var_cache_edb = os.path.join(eprefix, "var", "cache", "edb")
 
         portage_python = portage._python_interpreter
-        dispatch_conf_cmd = (
-            portage_python,
-            "-b",
-            "-Wd",
-            os.path.join(str(self.sbindir), "dispatch-conf"),
-        )
-        emerge_cmd = (
-            portage_python,
-            "-b",
-            "-Wd",
-            os.path.join(str(self.bindir), "emerge"),
-        )
+        dispatch_conf_cmd = (portage_python, "-b", "-Wd", os.path.join(str(self.sbindir), "dispatch-conf"), )
+        emerge_cmd = (portage_python, "-b", "-Wd", os.path.join(str(self.bindir), "emerge"), )
         etc_update_cmd = (BASH_BINARY, os.path.join(str(self.sbindir), "etc-update"))
-        etc_update_auto = etc_update_cmd + (
-            "--automode",
-            "-5",
-        )
+        etc_update_auto = etc_update_cmd + ("--automode", "-5", )
 
         config_protect = "/etc"
 
@@ -142,45 +129,28 @@ src_install() {
                     os.symlink(old_dest + " modified at %d" % time.time(), path)
 
         def updated_config_files(count):
-            self.assertEqual(
-                count,
-                sum(len(x[1]) for x in find_updated_config_files(eroot, shlex_split(config_protect))),
-            )
+            self.assertEqual(count,
+                             sum(len(x[1]) for x in find_updated_config_files(eroot, shlex_split(config_protect))),
+                             )
 
         test_commands = (
-            etc_update_cmd,
-            dispatch_conf_cmd,
-            emerge_cmd + ("-1", "=dev-libs/A-1"),
-            partial(updated_config_files, 0),
-            emerge_cmd + ("-1", "=dev-libs/A-2"),
-            partial(updated_config_files, 2),
-            etc_update_auto,
-            partial(updated_config_files, 0),
-            emerge_cmd + ("-1", "=dev-libs/A-2"),
-            partial(updated_config_files, 0),
+            etc_update_cmd, dispatch_conf_cmd, emerge_cmd + ("-1", "=dev-libs/A-1"), partial(updated_config_files, 0),
+            emerge_cmd + ("-1", "=dev-libs/A-2"), partial(updated_config_files, 2), etc_update_auto,
+            partial(updated_config_files, 0), emerge_cmd + ("-1", "=dev-libs/A-2"), partial(updated_config_files, 0),
             # Test bug #523684, where a file renamed or removed by the
             # admin forces replacement files to be merged with config
             # protection.
-            partial(shutil.rmtree, os.path.join(eprefix, "etc", "A")),
-            emerge_cmd + ("-1", "=dev-libs/A-2"),
-            partial(updated_config_files, 8),
-            etc_update_auto,
-            partial(updated_config_files, 0),
+            partial(shutil.rmtree, os.path.join(eprefix, "etc", "A")), emerge_cmd + ("-1", "=dev-libs/A-2"),
+            partial(updated_config_files, 8), etc_update_auto, partial(updated_config_files, 0),
             # Modify some config files, and verify that it triggers
             # config protection.
-            partial(modify_files, os.path.join(eroot, "etc", "A")),
-            emerge_cmd + ("-1", "=dev-libs/A-2"),
-            partial(updated_config_files, 6),
-            etc_update_auto,
-            partial(updated_config_files, 0),
+            partial(modify_files, os.path.join(eroot, "etc", "A")), emerge_cmd + ("-1", "=dev-libs/A-2"),
+            partial(updated_config_files, 6), etc_update_auto, partial(updated_config_files, 0),
             # Modify some config files, downgrade to A-1, and verify
             # that config protection works properly when the file
             # types are changing.
-            partial(modify_files, os.path.join(eroot, "etc", "A")),
-            emerge_cmd + ("-1", "--noconfmem", "=dev-libs/A-1"),
-            partial(updated_config_files, 6),
-            etc_update_auto,
-            partial(updated_config_files, 0),
+            partial(modify_files, os.path.join(eroot, "etc", "A")), emerge_cmd + ("-1", "--noconfmem", "=dev-libs/A-1"),
+            partial(updated_config_files, 6), etc_update_auto, partial(updated_config_files, 0),
         )
 
         distdir = playground.distdir
@@ -245,10 +215,7 @@ src_install() {
             for x in true_symlinks:
                 os.symlink(true_binary, os.path.join(fake_bin, x))
             for x in etc_symlinks:
-                os.symlink(
-                    os.path.join(str(self.cnf_etc_path), x),
-                    os.path.join(eprefix, "etc", x),
-                )
+                os.symlink(os.path.join(str(self.cnf_etc_path), x), os.path.join(eprefix, "etc", x), )
             with open(os.path.join(var_cache_edb, "counter"), "wb") as f:
                 f.write(b"100")
 

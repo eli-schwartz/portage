@@ -70,18 +70,12 @@ def compare_files(file1, file2, skipped_types=()):
                 file1_stream = io.BytesIO(
                     os.readlink(_unicode_encode(file1, encoding=_encodings["fs"], errors="strict")))
             else:
-                file1_stream = open(
-                    _unicode_encode(file1, encoding=_encodings["fs"], errors="strict"),
-                    "rb",
-                )
+                file1_stream = open(_unicode_encode(file1, encoding=_encodings["fs"], errors="strict"), "rb", )
             if stat.S_ISLNK(file2_stat.st_mode):
                 file2_stream = io.BytesIO(
                     os.readlink(_unicode_encode(file2, encoding=_encodings["fs"], errors="strict")))
             else:
-                file2_stream = open(
-                    _unicode_encode(file2, encoding=_encodings["fs"], errors="strict"),
-                    "rb",
-                )
+                file2_stream = open(_unicode_encode(file2, encoding=_encodings["fs"], errors="strict"), "rb", )
             while True:
                 file1_content = file1_stream.read(4096)
                 file2_content = file2_stream.read(4096)

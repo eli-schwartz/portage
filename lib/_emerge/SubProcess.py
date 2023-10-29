@@ -29,11 +29,10 @@ class SubProcess(AbstractPollTask):
             except OSError as e:
                 if e.errno == errno.EPERM:
                     # Reported with hardened kernel (bug #358211).
-                    writemsg_level(
-                        f"!!! kill: ({self.pid}) - Operation not permitted\n",
-                        level=logging.ERROR,
-                        noiselevel=-1,
-                    )
+                    writemsg_level(f"!!! kill: ({self.pid}) - Operation not permitted\n",
+                                   level=logging.ERROR,
+                                   noiselevel=-1,
+                                   )
                 elif e.errno != errno.ESRCH:
                     raise
 

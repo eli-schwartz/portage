@@ -65,10 +65,9 @@ def rename(src, dest):
 
     setfscreate(ctx)
     try:
-        os.rename(
-            _unicode_encode(src, encoding=_encodings["fs"], errors="strict"),
-            _unicode_encode(dest, encoding=_encodings["fs"], errors="strict"),
-        )
+        os.rename(_unicode_encode(src, encoding=_encodings["fs"], errors="strict"),
+                  _unicode_encode(dest, encoding=_encodings["fs"], errors="strict"),
+                  )
     finally:
         setfscreate()
 
@@ -146,9 +145,8 @@ def symlink(target, link, reflnk):
 
     setfscreate(ctx)
     try:
-        os.symlink(
-            _unicode_encode(target, encoding=_encodings["fs"], errors="strict"),
-            _unicode_encode(link, encoding=_encodings["fs"], errors="strict"),
-        )
+        os.symlink(_unicode_encode(target, encoding=_encodings["fs"], errors="strict"),
+                   _unicode_encode(link, encoding=_encodings["fs"], errors="strict"),
+                   )
     finally:
         setfscreate()

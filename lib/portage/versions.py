@@ -3,16 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 __all__ = [
-    "best",
-    "catpkgsplit",
-    "catsplit",
-    "cpv_getkey",
-    "cpv_getversion",
-    "cpv_sort_key",
-    "pkgcmp",
-    "pkgsplit",
-    "ververify",
-    "vercmp",
+    "best", "catpkgsplit", "catsplit", "cpv_getkey", "cpv_getversion", "cpv_sort_key", "pkgcmp", "pkgsplit",
+    "ververify", "vercmp",
 ]
 
 import re
@@ -24,11 +16,8 @@ from collections.abc import Sequence
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.repository.config:_gen_valid_repo",
-    "portage.util:cmp_sort_key",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.repository.config:_gen_valid_repo", "portage.util:cmp_sort_key",
+                                    )
 from portage import _unicode_decode
 from portage.eapi import _eapi_attrs, _get_eapi_attrs
 from portage.exception import InvalidData
@@ -308,11 +297,7 @@ _missing_cat = "null"
 
 
 @lru_cache(10240)
-def catpkgsplit(
-    mydata: Union[str, "_pkg_str"],
-    silent: int = 1,
-    eapi: Any = None,
-) -> Optional[tuple[str, ...]]:
+def catpkgsplit(mydata: Union[str, "_pkg_str"], silent: int = 1, eapi: Any = None, ) -> Optional[tuple[str, ...]]:
     """
     Takes a Category/Package-Version-Rev and returns a list of each.
 
@@ -361,36 +346,34 @@ class _pkg_str(str):
     is missing from the metadata dictionary.
     """
 
-    def __new__(
-        cls,
-        cpv: str,
-        metadata: Optional[dict[str, Any]] = None,
-        settings: Any = None,
-        eapi: Any = None,
-        repo: Optional[str] = None,
-        slot: Optional[str] = None,
-        build_time: Optional[int] = None,
-        build_id: Optional[str] = None,
-        file_size: Optional[int] = None,
-        mtime: Optional[int] = None,
-        db: Any = None,
-    ):
+    def __new__(cls,
+                cpv: str,
+                metadata: Optional[dict[str, Any]] = None,
+                settings: Any = None,
+                eapi: Any = None,
+                repo: Optional[str] = None,
+                slot: Optional[str] = None,
+                build_time: Optional[int] = None,
+                build_id: Optional[str] = None,
+                file_size: Optional[int] = None,
+                mtime: Optional[int] = None,
+                db: Any = None,
+                ):
         return str.__new__(cls, cpv)
 
-    def __init__(
-        self,
-        cpv: str,
-        metadata: Optional[dict[str, Any]] = None,
-        settings: Any = None,
-        eapi: Any = None,
-        repo: Optional[str] = None,
-        slot: Optional[str] = None,
-        build_time: Optional[int] = None,
-        build_id: Optional[str] = None,
-        file_size: Optional[int] = None,
-        mtime: Optional[int] = None,
-        db: Any = None,
-    ):
+    def __init__(self,
+                 cpv: str,
+                 metadata: Optional[dict[str, Any]] = None,
+                 settings: Any = None,
+                 eapi: Any = None,
+                 repo: Optional[str] = None,
+                 slot: Optional[str] = None,
+                 build_time: Optional[int] = None,
+                 build_id: Optional[str] = None,
+                 file_size: Optional[int] = None,
+                 mtime: Optional[int] = None,
+                 db: Any = None,
+                 ):
         if not isinstance(cpv, str):
             # Avoid TypeError from str.__init__ with PyPy.
             cpv = _unicode_decode(cpv)
@@ -512,11 +495,10 @@ def cpv_getkey(mycpv: Union[_pkg_str, str], eapi: Any = None) -> Optional[str]:
     if mysplit is not None:
         return mysplit[0] + "/" + mysplit[1]
 
-    warnings.warn(
-        "portage.versions.cpv_getkey() " + f"called with invalid cpv: '{mycpv}'",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn("portage.versions.cpv_getkey() " + f"called with invalid cpv: '{mycpv}'",
+                  DeprecationWarning,
+                  stacklevel=2,
+                  )
 
     myslash = mycpv.split("/", 1)
     mysplit = _pkgsplit(myslash[-1], eapi=eapi)

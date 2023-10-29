@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class AutounmaskParentTestCase(TestCase):
@@ -22,15 +19,14 @@ class AutounmaskParentTestCase(TestCase):
 
         test_cases = (
             # Test bug 566704
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/B-1"],
-                options={"--autounmask": True},
-                success=False,
-                use_changes={"dev-libs/B-1": {
-                    "foo": False,
-                    "bar": False,
-                }},
-            ), )
+            ResolverPlaygroundTestCase(["=dev-libs/B-1"],
+                                       options={"--autounmask": True},
+                                       success=False,
+                                       use_changes={"dev-libs/B-1": {
+                                           "foo": False,
+                                           "bar": False,
+                                       }},
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)
         try:

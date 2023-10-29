@@ -83,10 +83,7 @@ def compression_probe(f):
     open_file = isinstance(f, str)
     if open_file:
         try:
-            f = open(
-                _unicode_encode(f, encoding=_encodings["fs"], errors="strict"),
-                mode="rb",
-            )
+            f = open(_unicode_encode(f, encoding=_encodings["fs"], errors="strict"), mode="rb", )
         except OSError as e:
             if e.errno == PermissionDenied.errno:
                 raise PermissionDenied(f)

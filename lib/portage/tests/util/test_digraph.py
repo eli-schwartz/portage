@@ -116,15 +116,9 @@ class DigraphTest(TestCase):
             self.assertEqual(x.shortest_path("A", "D", ignore_priority=2), None)
             self.assertEqual(x.shortest_path("D", "A", ignore_priority=-2), ["D", "C", "B", "A"])
             cycles = {tuple(y) for y in x.get_cycles()}
-            self.assertEqual(
-                cycles,
-                {
-                    ("D", "C", "B", "A"),
-                    ("C", "B", "A", "D"),
-                    ("B", "A", "D", "C"),
-                    ("A", "D", "C", "B"),
-                },
-            )
+            self.assertEqual(cycles,
+                             {("D", "C", "B", "A"), ("C", "B", "A", "D"), ("B", "A", "D", "C"), ("A", "D", "C", "B"), },
+                             )
             x.remove_edge("A", "B")
             self.assertEqual(x.get_cycles(), [])
             x.difference_update(["D"])
@@ -163,10 +157,7 @@ class DigraphTest(TestCase):
             self.assertEqual(x.parent_nodes("B", ignore_priority=-2), ["A"])
             self.assertEqual(x.parent_nodes("B", ignore_priority=-1), [])
             self.assertEqual(x.hasallzeros(), False)
-            self._assertBFSEqual(
-                x.bfs("A"),
-                [(None, "A"), [("A", "C"), ("A", "B")], [("C", "E"), ("C", "D")]],
-            )
+            self._assertBFSEqual(x.bfs("A"), [(None, "A"), [("A", "C"), ("A", "B")], [("C", "E"), ("C", "D")]], )
             self.assertEqual(x.shortest_path("A", "D"), ["A", "C", "D"])
             self.assertEqual(x.shortest_path("D", "A"), None)
             self.assertEqual(x.shortest_path("A", "D", ignore_priority=2), None)
@@ -215,14 +206,7 @@ class DigraphTest(TestCase):
             self.assertEqual(x.shortest_path("A", "C", ignore_priority=0), ["A", "B", "C"])
             self.assertEqual(x.shortest_path("C", "A", ignore_priority=0), ["C", "A"])
             cycles = {frozenset(y) for y in x.get_cycles()}
-            self.assertEqual(
-                cycles,
-                {
-                    frozenset(["A", "B"]),
-                    frozenset(["A", "C"]),
-                    frozenset(["B", "C"]),
-                },
-            )
+            self.assertEqual(cycles, {frozenset(["A", "B"]), frozenset(["A", "C"]), frozenset(["B", "C"]), }, )
             x.remove_edge("A", "B")
             cycles = {frozenset(y) for y in x.get_cycles()}
             self.assertEqual(cycles, {frozenset(["A", "C"]), frozenset(["C", "B"])})

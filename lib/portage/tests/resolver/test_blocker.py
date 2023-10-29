@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotConflictWithBlockerTestCase(TestCase):
@@ -44,31 +41,18 @@ class SlotConflictWithBlockerTestCase(TestCase):
             },
         }
 
-        installed = {
-            "dev-libs/Y-1": {
-                "SLOT": "1"
-            },
-            "dev-libs/Y-2": {
-                "SLOT": "2"
-            },
-            "dev-libs/Y-3": {
-                "SLOT": "3"
-            },
-        }
+        installed = {"dev-libs/Y-1": {"SLOT": "1"}, "dev-libs/Y-2": {"SLOT": "2"}, "dev-libs/Y-3": {"SLOT": "3"}, }
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["dev-libs/A", "dev-libs/B", "dev-libs/C"],
-            options={"--backtrack": 0},
-            all_permutations=True,
-            success=True,
-            ambiguous_merge_order=True,
-            mergelist=[
-                "dev-libs/X-1",
-                "[uninstall]dev-libs/Y-1",
-                "!=dev-libs/Y-1",
-                ("dev-libs/A-1", "dev-libs/B-1", "dev-libs/C-1"),
-            ],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A", "dev-libs/B", "dev-libs/C"],
+                                                 options={"--backtrack": 0},
+                                                 all_permutations=True,
+                                                 success=True,
+                                                 ambiguous_merge_order=True,
+                                                 mergelist=[
+                                                     "dev-libs/X-1", "[uninstall]dev-libs/Y-1", "!=dev-libs/Y-1",
+                                                     ("dev-libs/A-1", "dev-libs/B-1", "dev-libs/C-1"),
+                                                 ],
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, debug=False)
         try:
@@ -106,48 +90,39 @@ class SlotConflictWithBlockerTestCase(TestCase):
             },
         }
 
-        installed = {
-            "dev-libs/X-1": {},
-        }
+        installed = {"dev-libs/X-1": {}, }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["dev-libs/A"],
-                success=False,
-                options={"--buildpkgonly": True},
-                mergelist=["dev-libs/A-1", "!!dev-libs/X"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/B"],
-                success=False,
-                options={"--buildpkgonly": True},
-                mergelist=["dev-libs/B-1", "!!dev-libs/X"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/C"],
-                success=True,
-                options={"--buildpkgonly": True},
-                mergelist=["dev-libs/C-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/D"],
-                success=True,
-                options={"--buildpkgonly": True},
-                mergelist=["dev-libs/D-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/E"],
-                success=True,
-                options={"--buildpkgonly": True},
-                mergelist=["dev-libs/E-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/F"],
-                success=True,
-                options={"--buildpkgonly": True},
-                mergelist=["dev-libs/F-1"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A"],
+                                                 success=False,
+                                                 options={"--buildpkgonly": True},
+                                                 mergelist=["dev-libs/A-1", "!!dev-libs/X"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/B"],
+                                                 success=False,
+                                                 options={"--buildpkgonly": True},
+                                                 mergelist=["dev-libs/B-1", "!!dev-libs/X"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/C"],
+                                                 success=True,
+                                                 options={"--buildpkgonly": True},
+                                                 mergelist=["dev-libs/C-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/D"],
+                                                 success=True,
+                                                 options={"--buildpkgonly": True},
+                                                 mergelist=["dev-libs/D-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/E"],
+                                                 success=True,
+                                                 options={"--buildpkgonly": True},
+                                                 mergelist=["dev-libs/E-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/F"],
+                                                 success=True,
+                                                 options={"--buildpkgonly": True},
+                                                 mergelist=["dev-libs/F-1"],
+                                                 ),
+                      )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, debug=False)
         try:

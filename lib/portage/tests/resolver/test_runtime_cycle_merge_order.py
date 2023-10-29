@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class RuntimeCycleMergeOrderTestCase(TestCase):
@@ -52,15 +49,10 @@ class RuntimeCycleMergeOrderTestCase(TestCase):
             ["app-misc/plugin-b"],
             success=True,
             ambiguous_merge_order=True,
-            mergelist=[
-                ("app-misc/leaf-b-1", "app-misc/leaf-d-1", "app-misc/leaf-e-1"),
-                ("app-misc/branch-d-1", "app-misc/branch-e-1"),
-                "app-misc/runtime-c-1",
-                ("app-misc/runtime-cycle-c-1", "app-misc/branch-c-1"),
-                "app-misc/branch-b-1",
-                ("app-misc/runtime-cycle-b-1", "app-misc/plugin-b-1"),
-                "app-misc/plugins-consumer-1",
-            ],
+            mergelist=[("app-misc/leaf-b-1", "app-misc/leaf-d-1", "app-misc/leaf-e-1"),
+                       ("app-misc/branch-d-1", "app-misc/branch-e-1"), "app-misc/runtime-c-1",
+                       ("app-misc/runtime-cycle-c-1", "app-misc/branch-c-1"), "app-misc/branch-b-1",
+                       ("app-misc/runtime-cycle-b-1", "app-misc/plugin-b-1"), "app-misc/plugins-consumer-1", ],
         ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds)

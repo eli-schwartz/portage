@@ -11,10 +11,7 @@ from portage import _encodings
 from portage.dep import Atom
 from portage.exception import FileNotFound
 from portage.cache.index.IndexStreamIterator import IndexStreamIterator
-from portage.cache.index.pkg_desc_index import (
-    pkg_desc_index_line_read,
-    pkg_desc_index_node,
-)
+from portage.cache.index.pkg_desc_index import (pkg_desc_index_line_read, pkg_desc_index_node, )
 from portage.util.iterators.MultiIterGroupBy import MultiIterGroupBy
 
 
@@ -33,14 +30,9 @@ class IndexedPortdb:
     # Match returns unordered results.
     match_unordered = True
 
-    _copy_attrs = (
-        "cpv_exists",
-        "findname",
-        "getFetchMap",
-        "_aux_cache_keys",
-        "_cpv_sort_ascending",
-        "_have_root_eclass_dir",
-    )
+    _copy_attrs = ("cpv_exists", "findname", "getFetchMap", "_aux_cache_keys", "_cpv_sort_ascending",
+                   "_have_root_eclass_dir",
+                   )
 
     def __init__(self, portdb):
         self._portdb = portdb
@@ -83,10 +75,8 @@ class IndexedPortdb:
                     raise FileNotFound(filename)
 
                 streams.append(
-                    iter(IndexStreamIterator(
-                        f,
-                        functools.partial(pkg_desc_index_line_read, repo=repo_name),
-                    )))
+                    iter(IndexStreamIterator(f, functools.partial(pkg_desc_index_line_read, repo=repo_name),
+                                             )))
             except FileNotFound:
                 index_missing.append(repo_path)
 

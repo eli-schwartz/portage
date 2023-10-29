@@ -50,18 +50,14 @@ class AuxdbTestCase(TestCase):
 
         eclasses = {
             "foo": ("inherit bar", ),
-            "bar": (
-                "EXPORT_FUNCTIONS src_prepare",
-                f'DEPEND="{eclass_depend}"',
-                "bar_src_prepare() { default; }",
-            ),
+            "bar": ("EXPORT_FUNCTIONS src_prepare", f'DEPEND="{eclass_depend}"', "bar_src_prepare() { default; }",
+                    ),
         }
 
-        playground = ResolverPlayground(
-            ebuilds=ebuilds,
-            eclasses=eclasses,
-            user_config={"modules": (f"portdbapi.auxdbmodule = {auxdbmodule}", )},
-        )
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        eclasses=eclasses,
+                                        user_config={"modules": (f"portdbapi.auxdbmodule = {auxdbmodule}", )},
+                                        )
 
         portdb = playground.trees[playground.eroot]["porttree"].dbapi
         metadata_keys = ["DEFINED_PHASES", "DEPEND", "EAPI", "INHERITED"]
@@ -101,11 +97,7 @@ class AuxdbTestCase(TestCase):
     @staticmethod
     def _run_test_mod_async(ebuilds, metadata_keys, portdb):
         loop = asyncio._wrap_loop()
-        return loop.run_until_complete(AuxdbTestCase._test_mod_async(
-            ebuilds,
-            metadata_keys,
-            portdb,
-        ))
+        return loop.run_until_complete(AuxdbTestCase._test_mod_async(ebuilds, metadata_keys, portdb, ))
 
     @staticmethod
     async def _test_mod_async(ebuilds, metadata_keys, portdb):

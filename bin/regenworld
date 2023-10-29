@@ -121,11 +121,10 @@ else:
         existing_set.replace(worldlist)
     else:
         old_world = existing_set._filename
-        fd, tmp_filename = tempfile.mkstemp(
-            suffix=".tmp",
-            prefix=os.path.basename(old_world) + ".",
-            dir=os.path.dirname(old_world),
-        )
+        fd, tmp_filename = tempfile.mkstemp(suffix=".tmp",
+                                            prefix=os.path.basename(old_world) + ".",
+                                            dir=os.path.dirname(old_world),
+                                            )
         os.close(fd)
 
         new_set = StaticFileSet(tmp_filename)

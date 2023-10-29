@@ -7,21 +7,13 @@ import errno
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.package.ebuild._spawn_nofetch:spawn_nofetch",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.package.ebuild._spawn_nofetch:spawn_nofetch", )
 
 from portage import os
 from portage.const import MANIFEST2_HASH_DEFAULTS
 from portage.dbapi.porttree import FetchlistDict
 from portage.dep import use_reduce
-from portage.exception import (
-    InvalidDependString,
-    FileNotFound,
-    PermissionDenied,
-    PortagePackageException,
-)
+from portage.exception import (InvalidDependString, FileNotFound, PermissionDenied, PortagePackageException, )
 from portage.localization import _
 from portage.output import colorize
 from portage.package.ebuild.fetch import fetch
@@ -153,36 +145,25 @@ def digestgen(myarchives=None, mysettings=None, myportdb=None):
             if not fetch({myfile: uris}, mysettings):
                 myebuild = os.path.join(mysettings["O"], catsplit(cpv)[1] + ".ebuild")
                 spawn_nofetch(myportdb, myebuild)
-                writemsg(
-                    _("!!! Fetch failed for %s, can't update Manifest\n") % myfile,
-                    noiselevel=-1,
-                )
+                writemsg(_("!!! Fetch failed for %s, can't update Manifest\n") % myfile, noiselevel=-1, )
                 if myfile in dist_hashes and st is not None and st.st_size > 0:
                     # stat result is obtained before calling fetch(),
                     # since fetch may rename the existing file if the
                     # digest does not match.
-                    cmd = colorize(
-                        "INFORM",
-                        f"ebuild --force {os.path.basename(myebuild)} manifest",
-                    )
-                    writemsg(
-                        (_("!!! If you would like to forcefully replace the existing Manifest entry\n"
-                           "!!! for %s, use the following command:\n") % myfile) + f"!!!    {cmd}\n",
-                        noiselevel=-1,
-                    )
+                    cmd = colorize("INFORM", f"ebuild --force {os.path.basename(myebuild)} manifest", )
+                    writemsg((_("!!! If you would like to forcefully replace the existing Manifest entry\n"
+                                "!!! for %s, use the following command:\n") % myfile) + f"!!!    {cmd}\n",
+                             noiselevel=-1,
+                             )
                 return 0
 
         writemsg_stdout(_(">>> Creating Manifest for %s\n") % mysettings["O"])
         try:
-            mf.create(
-                assumeDistHashesSometimes=True,
-                assumeDistHashesAlways=("assume-digests" in mysettings.features),
-            )
+            mf.create(assumeDistHashesSometimes=True,
+                      assumeDistHashesAlways=("assume-digests" in mysettings.features),
+                      )
         except FileNotFound as e:
-            writemsg(
-                _("!!! File %s doesn't exist, can't update Manifest\n") % e,
-                noiselevel=-1,
-            )
+            writemsg(_("!!! File %s doesn't exist, can't update Manifest\n") % e, noiselevel=-1, )
             return 0
         except PortagePackageException as e:
             writemsg(f"!!! {e}\n", noiselevel=-1)

@@ -67,43 +67,22 @@ class SlotAbiEmergeTestCase(TestCase):
         package_mask_path = os.path.join(user_config_dir, "package.mask")
 
         portage_python = portage._python_interpreter
-        ebuild_cmd = (
-            portage_python,
-            "-b",
-            "-Wd",
-            os.path.join(str(self.bindir), "ebuild"),
-        )
-        emerge_cmd = (
-            portage_python,
-            "-b",
-            "-Wd",
-            os.path.join(str(self.bindir), "emerge"),
-        )
+        ebuild_cmd = (portage_python, "-b", "-Wd", os.path.join(str(self.bindir), "ebuild"), )
+        emerge_cmd = (portage_python, "-b", "-Wd", os.path.join(str(self.bindir), "emerge"), )
 
         test_ebuild = portdb.findname("dev-libs/dbus-glib-0.98")
         self.assertFalse(test_ebuild is None)
 
         test_commands = (
-            emerge_cmd + (
-                "--oneshot",
-                "dev-libs/glib",
-            ),
+            emerge_cmd + ("--oneshot", "dev-libs/glib",
+                          ),
             (lambda: "dev-libs/glib:2/2.32=" in vardb.aux_get("dev-libs/dbus-glib-0.98", ["RDEPEND"])[0], ),
-            (
-                BASH_BINARY,
-                "-c",
-                "echo %s >> %s" % tuple(map(
-                    portage._shell_quote,
-                    (
-                        ">=dev-libs/glib-2.32",
-                        package_mask_path,
-                    ),
-                )),
-            ),
-            emerge_cmd + (
-                "--oneshot",
-                "dev-libs/glib",
-            ),
+            (BASH_BINARY, "-c",
+             "echo %s >> %s" % tuple(map(portage._shell_quote, (">=dev-libs/glib-2.32", package_mask_path,
+                                                                ),
+                                         )),
+             ), emerge_cmd + ("--oneshot", "dev-libs/glib",
+                              ),
             (lambda: "dev-libs/glib:2/2.30=" in vardb.aux_get("dev-libs/dbus-glib-0.98", ["RDEPEND"])[0], ),
         )
 

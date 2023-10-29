@@ -3,29 +3,10 @@
 """deps.py -- Portage dependency resolution functions"""
 
 __all__ = [
-    "Atom",
-    "best_match_to_list",
-    "cpvequal",
-    "dep_getcpv",
-    "dep_getkey",
-    "dep_getslot",
-    "dep_getusedeps",
-    "dep_opconvert",
-    "flatten",
-    "get_operator",
-    "isjustname",
-    "isspecific",
-    "isvalidatom",
-    "match_from_list",
-    "match_to_list",
-    "paren_enclose",
-    "paren_normalize",
-    "paren_reduce",
-    "remove_slot",
-    "strip_empty",
-    "use_reduce",
-    "_repo_separator",
-    "_slot_separator",
+    "Atom", "best_match_to_list", "cpvequal", "dep_getcpv", "dep_getkey", "dep_getslot", "dep_getusedeps",
+    "dep_opconvert", "flatten", "get_operator", "isjustname", "isspecific", "isvalidatom", "match_from_list",
+    "match_to_list", "paren_enclose", "paren_normalize", "paren_reduce", "remove_slot", "strip_empty", "use_reduce",
+    "_repo_separator", "_slot_separator",
 ]
 
 import re
@@ -35,26 +16,13 @@ from functools import lru_cache
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.util:cmp_sort_key,writemsg",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.util:cmp_sort_key,writemsg", )
 
 from portage import _encodings, _unicode_decode, _unicode_encode
 from portage.eapi import _get_eapi_attrs
 from portage.exception import InvalidAtom, InvalidData, InvalidDependString
 from portage.localization import _
-from portage.versions import (
-    _cp,
-    _cpv,
-    _pkg_str,
-    _slot,
-    _unknown_repo,
-    _vr,
-    catpkgsplit,
-    vercmp,
-    ververify,
-)
+from portage.versions import (_cp, _cpv, _pkg_str, _slot, _unknown_repo, _vr, catpkgsplit, vercmp, ververify, )
 import portage.cache.mappings
 
 # \w is [a-zA-Z0-9_]
@@ -140,8 +108,7 @@ def _get_atom_wildcard_re(eapi_attrs):
     _atom_wildcard_re = re.compile(
         r"((?P<simple>(" + _extended_cat + r")/(" + pkg_re + r"(-" + _vr + ")?))" + "|(?P<star>=((" + _extended_cat +
         r")/(" + pkg_re + r"))-(?P<version>\*\w+\*)))" + "(:(?P<slot>" + _slot_loose + r"))?(" + _repo_separator +
-        r"(?P<repo>" + _repo_name + r"))?$",
-        re.UNICODE,
+        r"(?P<repo>" + _repo_name + r"))?$", re.UNICODE,
     )
     return _atom_wildcard_re
 
@@ -236,11 +203,10 @@ def strip_empty(myarr):
     @rtype: Array
     @return: The array with empty elements removed
     """
-    warnings.warn(
-        _("%s is deprecated and will be removed without replacement.") % ("portage.dep.strip_empty", ),
-        DeprecationWarning,
-        stacklevel=2,
-    )
+    warnings.warn(_("%s is deprecated and will be removed without replacement.") % ("portage.dep.strip_empty", ),
+                  DeprecationWarning,
+                  stacklevel=2,
+                  )
     return [x for x in myarr if x]
 
 
@@ -259,11 +225,10 @@ def paren_reduce(mystr, _deprecation_warn=True):
     @return: The reduced string in an array
     """
     if portage._internal_caller and _deprecation_warn:
-        warnings.warn(
-            _("%s is deprecated and will be removed without replacement.") % ("portage.dep.paren_reduce", ),
-            DeprecationWarning,
-            stacklevel=2,
-        )
+        warnings.warn(_("%s is deprecated and will be removed without replacement.") % ("portage.dep.paren_reduce", ),
+                      DeprecationWarning,
+                      stacklevel=2,
+                      )
     mysplit = mystr.split()
     level = 0
     stack = [[]]
@@ -351,11 +316,11 @@ class paren_normalize(list):
 
     def __init__(self, src):
         if portage._internal_caller:
-            warnings.warn(
-                _("%s is deprecated and will be removed without replacement.") % ("portage.dep.paren_normalize", ),
-                DeprecationWarning,
-                stacklevel=2,
-            )
+            warnings.warn(_("%s is deprecated and will be removed without replacement.") %
+                          ("portage.dep.paren_normalize", ),
+                          DeprecationWarning,
+                          stacklevel=2,
+                          )
         list.__init__(self)
         self._zap_parens(src, self)
 
@@ -418,21 +383,9 @@ def paren_enclose(mylist, unevaluated_atom=False, opconvert=False):
 
 
 @lru_cache(1024)
-def _use_reduce_cached(
-    depstr,
-    uselist,
-    masklist,
-    matchall,
-    excludeall,
-    is_src_uri,
-    eapi,
-    opconvert,
-    flat,
-    is_valid_flag,
-    token_class,
-    matchnone,
-    subset,
-):
+def _use_reduce_cached(depstr, uselist, masklist, matchall, excludeall, is_src_uri, eapi, opconvert, flat,
+                       is_valid_flag, token_class, matchnone, subset,
+                       ):
     if opconvert and flat:
         raise ValueError("portage.dep.use_reduce: 'opconvert' and 'flat' are mutually exclusive")
 
@@ -502,11 +455,7 @@ def _use_reduce_cached(
                                 if children:
                                     result.append(children)
                             else:
-                                result.extend(select_subset(
-                                    children,
-                                    False,
-                                    selected or token[:-1] in subset,
-                                ))
+                                result.extend(select_subset(children, False, selected or token[:-1] in subset, ))
                     elif token == "||":
                         children = select_subset(stack.pop(), True, selected)
                         if children:
@@ -738,21 +687,20 @@ def _use_reduce_cached(
     return stack[0]
 
 
-def use_reduce(
-    depstr,
-    uselist=(),
-    masklist=(),
-    matchall=False,
-    excludeall=(),
-    is_src_uri=False,
-    eapi=None,
-    opconvert=False,
-    flat=False,
-    is_valid_flag=None,
-    token_class=None,
-    matchnone=False,
-    subset=None,
-):
+def use_reduce(depstr,
+               uselist=(),
+               masklist=(),
+               matchall=False,
+               excludeall=(),
+               is_src_uri=False,
+               eapi=None,
+               opconvert=False,
+               flat=False,
+               is_valid_flag=None,
+               token_class=None,
+               matchnone=False,
+               subset=None,
+               ):
     """
     Takes a dep string and reduces the use? conditionals out, leaving an array
     with subarrays. All redundant brackets are removed.
@@ -805,21 +753,9 @@ def use_reduce(
     if subset is not None:
         subset = frozenset(subset)
 
-    result = _use_reduce_cached(
-        depstr,
-        uselist,
-        masklist,
-        matchall,
-        excludeall,
-        is_src_uri,
-        eapi,
-        opconvert,
-        flat,
-        is_valid_flag,
-        token_class,
-        matchnone,
-        subset,
-    )
+    result = _use_reduce_cached(depstr, uselist, masklist, matchall, excludeall, is_src_uri, eapi, opconvert, flat,
+                                is_valid_flag, token_class, matchnone, subset,
+                                )
 
     # The list returned by this function may be modified, so return a copy.
     return result[:]
@@ -843,12 +779,11 @@ def dep_opconvert(deplist):
             The new list with the new ordering
     """
     if portage._internal_caller:
-        warnings.warn(
-            _("%s is deprecated. Use %s with the opconvert parameter set to True instead.") %
-            ("portage.dep.dep_opconvert", "portage.dep.use_reduce"),
-            DeprecationWarning,
-            stacklevel=2,
-        )
+        warnings.warn(_("%s is deprecated. Use %s with the opconvert parameter set to True instead.") %
+                      ("portage.dep.dep_opconvert", "portage.dep.use_reduce"),
+                      DeprecationWarning,
+                      stacklevel=2,
+                      )
 
     retlist = []
     x = 0
@@ -879,11 +814,10 @@ def flatten(mylist):
             [1, 2, 3, 4]
     """
     if portage._internal_caller:
-        warnings.warn(
-            _("%s is deprecated and will be removed without replacement.") % ("portage.dep.flatten", ),
-            DeprecationWarning,
-            stacklevel=2,
-        )
+        warnings.warn(_("%s is deprecated and will be removed without replacement.") % ("portage.dep.flatten", ),
+                      DeprecationWarning,
+                      stacklevel=2,
+                      )
 
     newlist = []
     for x in mylist:
@@ -895,16 +829,9 @@ def flatten(mylist):
 
 
 class _use_dep:
-    __slots__ = (
-        "_eapi_attrs",
-        "conditional",
-        "missing_enabled",
-        "missing_disabled",
-        "disabled",
-        "enabled",
-        "tokens",
-        "required",
-    )
+    __slots__ = ("_eapi_attrs", "conditional", "missing_enabled", "missing_disabled", "disabled", "enabled", "tokens",
+                 "required",
+                 )
 
     class _conditionals_class:
         __slots__ = ("enabled", "disabled", "equal", "not_equal")
@@ -922,24 +849,18 @@ class _use_dep:
                     yield v
 
     # used in InvalidAtom messages
-    _conditional_strings = {
-        "enabled": "%s?",
-        "disabled": "!%s?",
-        "equal": "%s=",
-        "not_equal": "!%s=",
-    }
+    _conditional_strings = {"enabled": "%s?", "disabled": "!%s?", "equal": "%s=", "not_equal": "!%s=", }
 
-    def __init__(
-        self,
-        use,
-        eapi_attrs,
-        enabled_flags=None,
-        disabled_flags=None,
-        missing_enabled=None,
-        missing_disabled=None,
-        conditional=None,
-        required=None,
-    ):
+    def __init__(self,
+                 use,
+                 eapi_attrs,
+                 enabled_flags=None,
+                 disabled_flags=None,
+                 missing_enabled=None,
+                 missing_disabled=None,
+                 conditional=None,
+                 required=None,
+                 ):
         self._eapi_attrs = eapi_attrs
 
         if enabled_flags is not None:
@@ -1105,15 +1026,14 @@ class _use_dep:
             else:
                 tokens.append(x)
 
-        return _use_dep(
-            tokens,
-            self._eapi_attrs,
-            enabled_flags=enabled_flags,
-            disabled_flags=disabled_flags,
-            missing_enabled=self.missing_enabled,
-            missing_disabled=self.missing_disabled,
-            required=self.required,
-        )
+        return _use_dep(tokens,
+                        self._eapi_attrs,
+                        enabled_flags=enabled_flags,
+                        disabled_flags=disabled_flags,
+                        missing_enabled=self.missing_enabled,
+                        missing_disabled=self.missing_disabled,
+                        required=self.required,
+                        )
 
     def violated_conditionals(self, other_use, is_valid_flag, parent_use=None):
         """
@@ -1225,16 +1145,15 @@ class _use_dep:
                         tokens.append(x)
                         conditional.setdefault("disabled", set()).add(flag)
 
-        return _use_dep(
-            tokens,
-            self._eapi_attrs,
-            enabled_flags=enabled_flags,
-            disabled_flags=disabled_flags,
-            missing_enabled=self.missing_enabled,
-            missing_disabled=self.missing_disabled,
-            conditional=conditional,
-            required=self.required,
-        )
+        return _use_dep(tokens,
+                        self._eapi_attrs,
+                        enabled_flags=enabled_flags,
+                        disabled_flags=disabled_flags,
+                        missing_enabled=self.missing_enabled,
+                        missing_disabled=self.missing_disabled,
+                        conditional=conditional,
+                        required=self.required,
+                        )
 
     def _eval_qa_conditionals(self, use_mask, use_force):
         """
@@ -1288,15 +1207,14 @@ class _use_dep:
             else:
                 tokens.append(x)
 
-        return _use_dep(
-            tokens,
-            self._eapi_attrs,
-            enabled_flags=enabled_flags,
-            disabled_flags=disabled_flags,
-            missing_enabled=missing_enabled,
-            missing_disabled=missing_disabled,
-            required=self.required,
-        )
+        return _use_dep(tokens,
+                        self._eapi_attrs,
+                        enabled_flags=enabled_flags,
+                        disabled_flags=disabled_flags,
+                        missing_enabled=missing_enabled,
+                        missing_disabled=missing_disabled,
+                        required=self.required,
+                        )
 
 
 class Atom(str):
@@ -1326,17 +1244,16 @@ class Atom(str):
     def __new__(cls, s, *args, **kwargs):
         return str.__new__(cls, s)
 
-    def __init__(
-        self,
-        s,
-        unevaluated_atom=None,
-        allow_wildcard=False,
-        allow_repo=None,
-        _use=None,
-        eapi=None,
-        is_valid_flag=None,
-        allow_build_id=None,
-    ):
+    def __init__(self,
+                 s,
+                 unevaluated_atom=None,
+                 allow_wildcard=False,
+                 allow_repo=None,
+                 _use=None,
+                 eapi=None,
+                 is_valid_flag=None,
+                 allow_build_id=None,
+                 ):
         if isinstance(s, Atom):
             # This is an efficiency assertion, to ensure that the Atom
             # constructor is not called redundantly.
@@ -1512,12 +1429,7 @@ class Atom(str):
             if unevaluated_atom is not None and unevaluated_atom.use is not None:
                 # unevaluated_atom.use is used for IUSE checks when matching
                 # packages, so it must not propagate to without_use
-                without_use = Atom(
-                    str(self),
-                    allow_wildcard=allow_wildcard,
-                    allow_repo=allow_repo,
-                    eapi=eapi,
-                )
+                without_use = Atom(str(self), allow_wildcard=allow_wildcard, allow_repo=allow_repo, eapi=eapi, )
             else:
                 without_use = self
 
@@ -1533,21 +1445,18 @@ class Atom(str):
             if not isinstance(eapi, str):
                 raise TypeError("expected eapi argument of " + f"{str}, got {type(eapi)}: {eapi}")
             if self.slot and not eapi_attrs.slot_deps:
-                raise InvalidAtom(
-                    _("Slot deps are not allowed in EAPI %s: '%s'") % (eapi, self),
-                    category="EAPI.incompatible",
-                )
+                raise InvalidAtom(_("Slot deps are not allowed in EAPI %s: '%s'") % (eapi, self),
+                                  category="EAPI.incompatible",
+                                  )
             if self.use:
                 if not eapi_attrs.use_deps:
-                    raise InvalidAtom(
-                        _("Use deps are not allowed in EAPI %s: '%s'") % (eapi, self),
-                        category="EAPI.incompatible",
-                    )
+                    raise InvalidAtom(_("Use deps are not allowed in EAPI %s: '%s'") % (eapi, self),
+                                      category="EAPI.incompatible",
+                                      )
                 elif not eapi_attrs.use_dep_defaults and (self.use.missing_enabled or self.use.missing_disabled):
-                    raise InvalidAtom(
-                        _("Use dep defaults are not allowed in EAPI %s: '%s'") % (eapi, self),
-                        category="EAPI.incompatible",
-                    )
+                    raise InvalidAtom(_("Use dep defaults are not allowed in EAPI %s: '%s'") % (eapi, self),
+                                      category="EAPI.incompatible",
+                                      )
                 if is_valid_flag is not None and self.use.conditional:
                     invalid_flag = None
                     try:
@@ -1565,10 +1474,9 @@ class Atom(str):
                                 "conditional '%s' in atom '%s' is not in IUSE") % (flag, conditional_str % flag, self)
                         raise InvalidAtom(msg, category="IUSE.missing")
             if (self.blocker and self.blocker.overlap.forbid and not eapi_attrs.strong_blocks):
-                raise InvalidAtom(
-                    _("Strong blocks are not allowed in EAPI %s: '%s'") % (eapi, self),
-                    category="EAPI.incompatible",
-                )
+                raise InvalidAtom(_("Strong blocks are not allowed in EAPI %s: '%s'") % (eapi, self),
+                                  category="EAPI.incompatible",
+                                  )
 
     @property
     def slot_operator_built(self):
@@ -1668,12 +1576,7 @@ class Atom(str):
                 atom += self.slot_operator
         use_dep = self.use.evaluate_conditionals(use)
         atom += str(use_dep)
-        return Atom(
-            atom,
-            unevaluated_atom=self,
-            allow_repo=(self.repo is not None),
-            _use=use_dep,
-        )
+        return Atom(atom, unevaluated_atom=self, allow_repo=(self.repo is not None), _use=use_dep, )
 
     def violated_conditionals(self, other_use, is_valid_flag, parent_use=None):
         """
@@ -1701,12 +1604,7 @@ class Atom(str):
                 atom += self.slot_operator
         use_dep = self.use.violated_conditionals(other_use, is_valid_flag, parent_use)
         atom += str(use_dep)
-        return Atom(
-            atom,
-            unevaluated_atom=self,
-            allow_repo=(self.repo is not None),
-            _use=use_dep,
-        )
+        return Atom(atom, unevaluated_atom=self, allow_repo=(self.repo is not None), _use=use_dep, )
 
     def _eval_qa_conditionals(self, use_mask, use_force):
         if not (self.use and self.use.conditional):
@@ -1722,12 +1620,7 @@ class Atom(str):
                 atom += self.slot_operator
         use_dep = self.use._eval_qa_conditionals(use_mask, use_force)
         atom += str(use_dep)
-        return Atom(
-            atom,
-            unevaluated_atom=self,
-            allow_repo=(self.repo is not None),
-            _use=use_dep,
-        )
+        return Atom(atom, unevaluated_atom=self, allow_repo=(self.repo is not None), _use=use_dep, )
 
     def __copy__(self):
         """Immutable, so returns self."""
@@ -2040,14 +1933,7 @@ def dep_getusedeps(depend):
     return tuple(use_list)
 
 
-def isvalidatom(
-    atom,
-    allow_blockers=False,
-    allow_wildcard=False,
-    allow_repo=False,
-    eapi=None,
-    allow_build_id=False,
-):
+def isvalidatom(atom, allow_blockers=False, allow_wildcard=False, allow_repo=False, eapi=None, allow_build_id=False, ):
     """
     Check to see if a depend atom is valid
 
@@ -2071,13 +1957,12 @@ def isvalidatom(
 
     try:
         if not isinstance(atom, Atom):
-            atom = Atom(
-                atom,
-                allow_wildcard=allow_wildcard,
-                allow_repo=allow_repo,
-                eapi=eapi,
-                allow_build_id=allow_build_id,
-            )
+            atom = Atom(atom,
+                        allow_wildcard=allow_wildcard,
+                        allow_repo=allow_repo,
+                        eapi=eapi,
+                        allow_build_id=allow_build_id,
+                        )
         if not allow_blockers and atom.blocker:
             return False
         return True
@@ -2203,16 +2088,7 @@ def best_match_to_list(mypkg, mylist):
             - cp:slot with extended syntax	0
             - cp with extended syntax	-1
     """
-    operator_values = {
-        "=": 6,
-        "~": 5,
-        "=*": 4,
-        ">": 2,
-        "<": 2,
-        ">=": 2,
-        "<=": 2,
-        None: 1,
-    }
+    operator_values = {"=": 6, "~": 5, "=*": 4, ">": 2, "<": 2, ">=": 2, "<=": 2, None: 1, }
     maxvalue = -99
     bestm = None
     mypkg_cpv = None
@@ -2418,10 +2294,8 @@ def match_from_list(mydep, candidate_list):
                 xs = catpkgsplit(remove_slot(x))
             if xs is None:
                 raise InvalidData(x)
-            if not cpvequal(
-                    xs[0] + "/" + xs[1] + "-" + xs[2],
-                    mycpv_cps[0] + "/" + mycpv_cps[1] + "-" + mycpv_cps[2],
-            ):
+            if not cpvequal(xs[0] + "/" + xs[1] + "-" + xs[2], mycpv_cps[0] + "/" + mycpv_cps[1] + "-" + mycpv_cps[2],
+                            ):
                 continue
             if xs[2] != ver:
                 continue

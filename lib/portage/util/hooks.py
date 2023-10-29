@@ -25,15 +25,12 @@ def get_hooks_from_dir(rel_directory, prefix="/"):
         if portage.os.access(filepath, portage.os.X_OK):
             hooks[filepath] = name
         else:
-            writemsg_level(
-                " %s %s hook: '%s' is not executable\n" % (
-                    warn("*"),
-                    directory,
-                    portage._unicode_decode(name),
-                ),
-                level=logging.WARN,
-                noiselevel=2,
-            )
+            writemsg_level(" %s %s hook: '%s' is not executable\n" %
+                           (warn("*"), directory, portage._unicode_decode(name),
+                            ),
+                           level=logging.WARN,
+                           noiselevel=2,
+                           )
 
     return hooks
 
@@ -44,8 +41,4 @@ def perform_hooks(rel_directory, *argv, prefix="/"):
         retval = portage.process.spawn(hook_command)
 
         if retval != portage.os.EX_OK:
-            writemsg_level(
-                f" {bad('*')} Spawn failed for: {name}, {filepath}\n",
-                level=logging.ERROR,
-                noiselevel=-1,
-            )
+            writemsg_level(f" {bad('*')} Spawn failed for: {name}, {filepath}\n", level=logging.ERROR, noiselevel=-1, )

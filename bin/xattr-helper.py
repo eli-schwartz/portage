@@ -129,20 +129,18 @@ def main(argv):
     parser.add_argument("paths", nargs="*", default=[])
 
     actions = parser.add_argument_group("Actions")
-    actions.add_argument(
-        "--dump",
-        action="store_true",
-        help="Dump the values of all extended "
-        "attributes associated with paths "
-        "passed as arguments or null-separated "
-        "paths read from stdin.",
-    )
-    actions.add_argument(
-        "--restore",
-        action="store_true",
-        help="Restore extended attributes using "
-        "a dump read from stdin.",
-    )
+    actions.add_argument("--dump",
+                         action="store_true",
+                         help="Dump the values of all extended "
+                         "attributes associated with paths "
+                         "passed as arguments or null-separated "
+                         "paths read from stdin.",
+                         )
+    actions.add_argument("--restore",
+                         action="store_true",
+                         help="Restore extended attributes using "
+                         "a dump read from stdin.",
+                         )
 
     options = parser.parse_args(argv)
 

@@ -23,10 +23,7 @@ from portage import _encodings
 from portage import _unicode_encode
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.util:dump_traceback,writemsg,writemsg_level",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.util:dump_traceback,writemsg,writemsg_level", )
 
 from portage.const import BASH_BINARY, SANDBOX_BINARY, FAKEROOT_BINARY
 from portage.exception import CommandNotFound
@@ -111,11 +108,7 @@ def sanitize_fds():
     not be inherited by child processes.
     """
     if _set_inheritable is not None:
-        whitelist = frozenset([
-            portage._get_stdin().fileno(),
-            sys.__stdout__.fileno(),
-            sys.__stderr__.fileno(),
-        ])
+        whitelist = frozenset([portage._get_stdin().fileno(), sys.__stdout__.fileno(), sys.__stderr__.fileno(), ])
 
         for fd in get_open_fds():
             if fd not in whitelist:
@@ -270,27 +263,26 @@ def calc_env_stats(env) -> EnvStats:
 env_too_large_warnings = 0
 
 
-def spawn(
-    mycommand,
-    env=None,
-    opt_name=None,
-    fd_pipes=None,
-    returnpid=False,
-    uid=None,
-    gid=None,
-    groups=None,
-    umask=None,
-    cwd=None,
-    logfile=None,
-    path_lookup=True,
-    pre_exec=None,
-    close_fds=False,
-    unshare_net=False,
-    unshare_ipc=False,
-    unshare_mount=False,
-    unshare_pid=False,
-    warn_on_large_env=False,
-):
+def spawn(mycommand,
+          env=None,
+          opt_name=None,
+          fd_pipes=None,
+          returnpid=False,
+          uid=None,
+          gid=None,
+          groups=None,
+          umask=None,
+          cwd=None,
+          logfile=None,
+          path_lookup=True,
+          pre_exec=None,
+          close_fds=False,
+          unshare_net=False,
+          unshare_ipc=False,
+          unshare_mount=False,
+          unshare_pid=False,
+          warn_on_large_env=False,
+          ):
     """
     Spawns a given command.
 
@@ -374,11 +366,7 @@ def spawn(
     # If we haven't been told what file descriptors to use
     # default to propagating our stdin, stdout and stderr.
     if fd_pipes is None:
-        fd_pipes = {
-            0: portage._get_stdin().fileno(),
-            1: sys.__stdout__.fileno(),
-            2: sys.__stderr__.fileno(),
-        }
+        fd_pipes = {0: portage._get_stdin().fileno(), 1: sys.__stdout__.fileno(), 2: sys.__stderr__.fileno(), }
 
     # mypids will hold the pids of all processes created.
     mypids = []
@@ -395,15 +383,12 @@ def spawn(
         # Create a tee process, giving it our stdout and stderr
         # as well as the read end of the pipe.
         mypids.extend(
-            spawn(
-                ("tee", "-i", "-a", logfile),
-                returnpid=True,
-                fd_pipes={
-                    0: pr,
-                    1: fd_pipes[1],
-                    2: fd_pipes[2]
-                },
-            ))
+            spawn(("tee", "-i", "-a", logfile), returnpid=True, fd_pipes={
+                0: pr,
+                1: fd_pipes[1],
+                2: fd_pipes[2]
+            },
+                  ))
 
         # We don't need the read end of the pipe, so close it.
         os.close(pr)
@@ -453,25 +438,9 @@ def spawn(
         if pid == 0:
             portage._ForkWatcher.hook(portage._ForkWatcher)
             try:
-                _exec(
-                    binary,
-                    mycommand,
-                    opt_name,
-                    fd_pipes,
-                    env,
-                    gid,
-                    groups,
-                    uid,
-                    umask,
-                    cwd,
-                    pre_exec,
-                    close_fds,
-                    unshare_net,
-                    unshare_ipc,
-                    unshare_mount,
-                    unshare_pid,
-                    unshare_flags,
-                )
+                _exec(binary, mycommand, opt_name, fd_pipes, env, gid, groups, uid, umask, cwd, pre_exec, close_fds,
+                      unshare_net, unshare_ipc, unshare_mount, unshare_pid, unshare_flags,
+                      )
             except SystemExit:
                 raise
             except Exception as e:
@@ -627,25 +596,9 @@ def _configure_loopback_interface():
         writemsg(f"Unable to configure loopback interface: {e.strerror}\n", noiselevel=-1)
 
 
-def _exec(
-    binary,
-    mycommand,
-    opt_name,
-    fd_pipes,
-    env,
-    gid,
-    groups,
-    uid,
-    umask,
-    cwd,
-    pre_exec,
-    close_fds,
-    unshare_net,
-    unshare_ipc,
-    unshare_mount,
-    unshare_pid,
-    unshare_flags,
-):
+def _exec(binary, mycommand, opt_name, fd_pipes, env, gid, groups, uid, umask, cwd, pre_exec, close_fds, unshare_net,
+          unshare_ipc, unshare_mount, unshare_pid, unshare_flags,
+          ):
     """
     Execute a given binary with options
 
@@ -754,13 +707,11 @@ def _exec(
                         if unshare_pid:
                             involved_features.append("pid-sandbox")
 
-                        writemsg(
-                            'Unable to unshare: %s (for FEATURES="%s")\n' % (
-                                errno.errorcode.get(errno_value, "?"),
-                                " ".join(involved_features),
-                            ),
-                            noiselevel=-1,
-                        )
+                        writemsg('Unable to unshare: %s (for FEATURES="%s")\n' %
+                                 (errno.errorcode.get(errno_value, "?"), " ".join(involved_features),
+                                  ),
+                                 noiselevel=-1,
+                                 )
                     else:
                         if unshare_pid:
                             main_child_pid = os.fork()
@@ -769,20 +720,16 @@ def _exec(
                                 # in case the pre_exec function invokes portage APIs.
                                 portage._ForkWatcher.hook(portage._ForkWatcher)
                                 # pid namespace requires us to become init
-                                binary, myargs = (
+                                binary, myargs = (portage._python_interpreter, [
                                     portage._python_interpreter,
-                                    [
-                                        portage._python_interpreter,
-                                        os.path.join(portage._bin_path, "pid-ns-init"),
-                                        _unicode_encode("" if uid is None else str(uid)),
-                                        _unicode_encode("" if gid is None else str(gid)),
-                                        _unicode_encode("" if groups is None else ",".join(
-                                            str(group) for group in groups)),
-                                        _unicode_encode("" if umask is None else str(umask)),
-                                        _unicode_encode(",".join(str(fd) for fd in fd_pipes)),
-                                        binary,
-                                    ] + myargs,
-                                )
+                                    os.path.join(portage._bin_path, "pid-ns-init"),
+                                    _unicode_encode("" if uid is None else str(uid)),
+                                    _unicode_encode("" if gid is None else str(gid)),
+                                    _unicode_encode("" if groups is None else ",".join(str(group) for group in groups)),
+                                    _unicode_encode("" if umask is None else str(umask)),
+                                    _unicode_encode(",".join(str(fd) for fd in fd_pipes)), binary,
+                                ] + myargs,
+                                                  )
                                 uid = None
                                 gid = None
                                 groups = None
@@ -809,29 +756,20 @@ def _exec(
                             mount_ret = s.wait()
                             if mount_ret != 0:
                                 # TODO: should it be fatal maybe?
-                                writemsg(
-                                    "Unable to mark mounts slave: %d\n" % (mount_ret, ),
-                                    noiselevel=-1,
-                                )
+                                writemsg("Unable to mark mounts slave: %d\n" % (mount_ret, ), noiselevel=-1, )
                         if unshare_pid:
                             # we need at least /proc being slave
                             s = subprocess.Popen(["mount", "--make-slave", "/proc"])
                             mount_ret = s.wait()
                             if mount_ret != 0:
                                 # can't proceed with shared /proc
-                                writemsg(
-                                    "Unable to mark /proc slave: %d\n" % (mount_ret, ),
-                                    noiselevel=-1,
-                                )
+                                writemsg("Unable to mark /proc slave: %d\n" % (mount_ret, ), noiselevel=-1, )
                                 os._exit(1)
                             # mount new /proc for our namespace
                             s = subprocess.Popen(["mount", "-n", "-t", "proc", "proc", "/proc"])
                             mount_ret = s.wait()
                             if mount_ret != 0:
-                                writemsg(
-                                    "Unable to mount new /proc: %d\n" % (mount_ret, ),
-                                    noiselevel=-1,
-                                )
+                                writemsg("Unable to mount new /proc: %d\n" % (mount_ret, ), noiselevel=-1, )
                                 os._exit(1)
                         if unshare_net:
                             # use 'localhost' to avoid hostname resolution problems
@@ -845,10 +783,9 @@ def _exec(
                                         errno_value = ctypes.get_errno()
                                         raise OSError(errno_value, os.strerror(errno_value))
                             except Exception as e:
-                                writemsg(
-                                    'Unable to set hostname: %s (for FEATURES="network-sandbox")\n' % (e, ),
-                                    noiselevel=-1,
-                                )
+                                writemsg('Unable to set hostname: %s (for FEATURES="network-sandbox")\n' % (e, ),
+                                         noiselevel=-1,
+                                         )
                             _configure_loopback_interface()
                 except AttributeError:
                     # unshare() not supported by libc
@@ -921,10 +858,9 @@ class _unshare_validator:
 
         parent_pipe, subproc_pipe = multiprocessing.Pipe(duplex=False)
 
-        proc = multiprocessing.Process(
-            target=cls._run_subproc,
-            args=(subproc_pipe, cls._validate_subproc, (filename, flags)),
-        )
+        proc = multiprocessing.Process(target=cls._run_subproc,
+                                       args=(subproc_pipe, cls._validate_subproc, (filename, flags)),
+                                       )
         proc.start()
         subproc_pipe.close()
 

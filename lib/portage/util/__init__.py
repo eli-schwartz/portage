@@ -4,16 +4,9 @@
 from portage.cache.mappings import UserDict
 from portage.proxy.objectproxy import ObjectProxy
 from portage.localization import _
-from portage.exception import (
-    InvalidAtom,
-    PortageException,
-    FileNotFound,
-    IsADirectory,
-    OperationNotPermitted,
-    ParseError,
-    PermissionDenied,
-    ReadOnlyFileSystem,
-)
+from portage.exception import (InvalidAtom, PortageException, FileNotFound, IsADirectory, OperationNotPermitted,
+                               ParseError, PermissionDenied, ReadOnlyFileSystem,
+                               )
 from portage.const import VCS_DIRS
 from portage import _unicode_decode
 from portage import _unicode_encode
@@ -22,41 +15,12 @@ from portage import _encodings
 from portage import os
 
 __all__ = [
-    "apply_permissions",
-    "apply_recursive_permissions",
-    "apply_secpass_permissions",
-    "apply_stat_permissions",
-    "atomic_ofstream",
-    "cmp_sort_key",
-    "ConfigProtect",
-    "dump_traceback",
-    "ensure_dirs",
-    "find_updated_config_files",
-    "getconfig",
-    "getlibpaths",
-    "grabdict",
-    "grabdict_package",
-    "grabfile",
-    "grabfile_package",
-    "grablines",
-    "initialize_logger",
-    "LazyItemsDict",
-    "map_dictlist_vals",
-    "new_protect_filename",
-    "normalize_path",
-    "pickle_read",
-    "stack_dictlist",
-    "stack_dicts",
-    "stack_lists",
-    "unique_array",
-    "unique_everseen",
-    "varexpand",
-    "write_atomic",
-    "writedict",
-    "writemsg",
-    "writemsg_level",
-    "writemsg_stdout",
-    "no_color",
+    "apply_permissions", "apply_recursive_permissions", "apply_secpass_permissions", "apply_stat_permissions",
+    "atomic_ofstream", "cmp_sort_key", "ConfigProtect", "dump_traceback", "ensure_dirs", "find_updated_config_files",
+    "getconfig", "getlibpaths", "grabdict", "grabdict_package", "grabfile", "grabfile_package", "grablines",
+    "initialize_logger", "LazyItemsDict", "map_dictlist_vals", "new_protect_filename", "normalize_path", "pickle_read",
+    "stack_dictlist", "stack_dicts", "stack_lists", "unique_array", "unique_everseen", "varexpand", "write_atomic",
+    "writedict", "writemsg", "writemsg_level", "writemsg_stdout", "no_color",
 ]
 
 from contextlib import AbstractContextManager
@@ -76,12 +40,7 @@ from typing import Optional, TextIO
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "pickle",
-    "portage.dep:Atom",
-    "subprocess",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "pickle", "portage.dep:Atom", "subprocess", )
 
 noiselimit = 0
 
@@ -303,14 +262,13 @@ def append_repo(atom_list, repo_name, remember_source_file=False):
     return [atom.repo is not None and atom or atom.with_repo(repo_name) for atom in atom_list]
 
 
-def stack_lists(
-    lists,
-    incremental=1,
-    remember_source_file=False,
-    warn_for_unmatched_removal=False,
-    strict_warn_for_unmatched_removal=False,
-    ignore_repo=False,
-):
+def stack_lists(lists,
+                incremental=1,
+                remember_source_file=False,
+                warn_for_unmatched_removal=False,
+                strict_warn_for_unmatched_removal=False,
+                ignore_repo=False,
+                ):
     """Stacks an array of list-types into one array. Optionally removing
     distinct values using '-value' notation. Higher index is preferenced.
 
@@ -372,16 +330,14 @@ def stack_lists(
         for source_file, tokens in unmatched_removals.items():
             if len(tokens) > 3:
                 selected = [tokens.pop(), tokens.pop(), tokens.pop()]
-                writemsg(
-                    _("--- Unmatched removal atoms in %s: %s and %s more\n") %
-                    (source_file, ", ".join(selected), len(tokens)),
-                    noiselevel=-1,
-                )
+                writemsg(_("--- Unmatched removal atoms in %s: %s and %s more\n") %
+                         (source_file, ", ".join(selected), len(tokens)),
+                         noiselevel=-1,
+                         )
             else:
-                writemsg(
-                    _("--- Unmatched removal atom(s) in %s: %s\n") % (source_file, ", ".join(tokens)),
-                    noiselevel=-1,
-                )
+                writemsg(_("--- Unmatched removal atom(s) in %s: %s\n") % (source_file, ", ".join(tokens)),
+                         noiselevel=-1,
+                         )
 
     if remember_source_file:
         return list(new_list.items())
@@ -461,19 +417,17 @@ def read_corresponding_eapi_file(filename, default="0"):
 
     eapi = None
     try:
-        with open(
-                _unicode_encode(eapi_file, encoding=_encodings["fs"], errors="strict"),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-        ) as f:
+        with open(_unicode_encode(eapi_file, encoding=_encodings["fs"], errors="strict"),
+                  encoding=_encodings["repo.content"],
+                  errors="replace",
+                  ) as f:
             lines = f.readlines()
         if len(lines) == 1:
             eapi = lines[0].rstrip("\n")
         else:
-            writemsg(
-                _("--- Invalid 'eapi' file (doesn't contain exactly one line): %s\n") % (eapi_file),
-                noiselevel=-1,
-            )
+            writemsg(_("--- Invalid 'eapi' file (doesn't contain exactly one line): %s\n") % (eapi_file),
+                     noiselevel=-1,
+                     )
     except OSError:
         pass
 
@@ -483,19 +437,18 @@ def read_corresponding_eapi_file(filename, default="0"):
     return eapi
 
 
-def grabdict_package(
-    myfilename,
-    juststrings=0,
-    recursive=0,
-    newlines=0,
-    allow_wildcard=False,
-    allow_repo=False,
-    allow_build_id=False,
-    allow_use=True,
-    verify_eapi=False,
-    eapi=None,
-    eapi_default="0",
-):
+def grabdict_package(myfilename,
+                     juststrings=0,
+                     recursive=0,
+                     newlines=0,
+                     allow_wildcard=False,
+                     allow_repo=False,
+                     allow_build_id=False,
+                     allow_use=True,
+                     verify_eapi=False,
+                     eapi=None,
+                     eapi_default="0",
+                     ):
     """Does the same thing as grabdict except it validates keys
     with isvalidatom()"""
 
@@ -506,14 +459,7 @@ def grabdict_package(
 
     atoms = {}
     for filename in file_list:
-        d = grabdict(
-            filename,
-            juststrings=False,
-            empty=True,
-            recursive=False,
-            incremental=True,
-            newlines=newlines,
-        )
+        d = grabdict(filename, juststrings=False, empty=True, recursive=False, incremental=True, newlines=newlines, )
         if not d:
             continue
         if verify_eapi and eapi is None:
@@ -521,21 +467,19 @@ def grabdict_package(
 
         for k, v in d.items():
             try:
-                k = Atom(
-                    k,
-                    allow_wildcard=allow_wildcard,
-                    allow_repo=allow_repo,
-                    allow_build_id=allow_build_id,
-                    eapi=eapi,
-                )
+                k = Atom(k,
+                         allow_wildcard=allow_wildcard,
+                         allow_repo=allow_repo,
+                         allow_build_id=allow_build_id,
+                         eapi=eapi,
+                         )
             except InvalidAtom as e:
                 writemsg(_("--- Invalid atom in %s: %s\n") % (filename, e), noiselevel=-1)
             else:
                 if not allow_use and k.use:
-                    writemsg(
-                        _("--- Atom is not allowed to have USE flag(s) in %s: %s\n") % (filename, k),
-                        noiselevel=-1,
-                    )
+                    writemsg(_("--- Atom is not allowed to have USE flag(s) in %s: %s\n") % (filename, k),
+                             noiselevel=-1,
+                             )
                     continue
                 atoms.setdefault(k, []).extend(v)
 
@@ -546,18 +490,17 @@ def grabdict_package(
     return atoms
 
 
-def grabfile_package(
-    myfilename,
-    compatlevel=0,
-    recursive=0,
-    allow_wildcard=False,
-    allow_repo=False,
-    allow_build_id=False,
-    remember_source_file=False,
-    verify_eapi=False,
-    eapi=None,
-    eapi_default="0",
-):
+def grabfile_package(myfilename,
+                     compatlevel=0,
+                     recursive=0,
+                     allow_wildcard=False,
+                     allow_repo=False,
+                     allow_build_id=False,
+                     remember_source_file=False,
+                     verify_eapi=False,
+                     eapi=None,
+                     eapi_default="0",
+                     ):
     pkgs = grabfile(myfilename, compatlevel, recursive=recursive, remember_source_file=True)
     if not pkgs:
         return pkgs
@@ -580,13 +523,12 @@ def grabfile_package(
         if pkg[:1] == "*" and is_packages_file:
             pkg = pkg[1:]
         try:
-            pkg = Atom(
-                pkg,
-                allow_wildcard=allow_wildcard,
-                allow_repo=allow_repo,
-                allow_build_id=allow_build_id,
-                eapi=eapi,
-            )
+            pkg = Atom(pkg,
+                       allow_wildcard=allow_wildcard,
+                       allow_repo=allow_repo,
+                       allow_build_id=allow_build_id,
+                       eapi=eapi,
+                       )
         except InvalidAtom as e:
             writemsg(_("--- Invalid atom in %s: %s\n") % (source_file, e), noiselevel=-1)
         else:
@@ -656,11 +598,10 @@ def grablines(myfilename, recursive=0, remember_source_file=False):
 
     else:
         try:
-            with open(
-                    _unicode_encode(myfilename, encoding=_encodings["fs"], errors="strict"),
-                    encoding=_encodings["content"],
-                    errors="replace",
-            ) as myfile:
+            with open(_unicode_encode(myfilename, encoding=_encodings["fs"], errors="strict"),
+                      encoding=_encodings["content"],
+                      errors="replace",
+                      ) as myfile:
                 if remember_source_file:
                     mylines = [(line, myfilename) for line in myfile.readlines()]
                 else:
@@ -752,24 +693,18 @@ def getconfig(mycfg, tolerant=False, allow_sourcing=False, expand=True, recursiv
         fname = None
         for fname in _recursive_file_list(mycfg):
             mykeys.update(
-                getconfig(
-                    fname,
-                    tolerant=tolerant,
-                    allow_sourcing=allow_sourcing,
-                    expand=expand_map,
-                    recursive=False,
-                ) or {})
+                getconfig(fname, tolerant=tolerant, allow_sourcing=allow_sourcing, expand=expand_map, recursive=False,
+                          ) or {})
         if fname is None:
             return None
         return mykeys
 
     f = None
     try:
-        f = open(
-            _unicode_encode(mycfg, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["content"],
-            errors="replace",
-        )
+        f = open(_unicode_encode(mycfg, encoding=_encodings["fs"], errors="strict"),
+                 encoding=_encodings["content"],
+                 errors="replace",
+                 )
         content = f.read()
     except OSError as e:
         if e.errno == PermissionDenied.errno:
@@ -796,10 +731,9 @@ def getconfig(mycfg, tolerant=False, allow_sourcing=False, expand=True, recursiv
     # Warn about dos-style line endings since that prevents
     # people from being able to source them with bash.
     if portage._native_string("\r") in content:
-        writemsg(
-            ("!!! " + _("Please use dos2unix to convert line endings " + "in config file: '%s'") + "\n") % mycfg,
-            noiselevel=-1,
-        )
+        writemsg(("!!! " + _("Please use dos2unix to convert line endings " + "in config file: '%s'") + "\n") % mycfg,
+                 noiselevel=-1,
+                 )
 
     lex = None
     try:
@@ -1290,15 +1224,14 @@ def apply_recursive_permissions(top, uid=-1, gid=-1, dirmode=-1, dirmask=-1, fil
         mask = filemask
 
     try:
-        applied = apply_secpass_permissions(
-            top,
-            uid=uid,
-            gid=gid,
-            mode=mode,
-            mask=mask,
-            stat_cached=stat_cached,
-            follow_links=follow_links,
-        )
+        applied = apply_secpass_permissions(top,
+                                            uid=uid,
+                                            gid=gid,
+                                            mode=mode,
+                                            mask=mask,
+                                            stat_cached=stat_cached,
+                                            follow_links=follow_links,
+                                            )
         if not applied:
             all_applied = False
     except PortageException as e:
@@ -1306,19 +1239,17 @@ def apply_recursive_permissions(top, uid=-1, gid=-1, dirmode=-1, dirmask=-1, fil
         onerror(e)
 
     for dirpath, dirnames, filenames in os.walk(top):
-        for name, mode, mask in chain(
-            ((x, filemode, filemask) for x in filenames),
-            ((x, dirmode, dirmask) for x in dirnames),
-        ):
+        for name, mode, mask in chain(((x, filemode, filemask) for x in filenames),
+                                      ((x, dirmode, dirmask) for x in dirnames),
+                                      ):
             try:
-                applied = apply_secpass_permissions(
-                    os.path.join(dirpath, name),
-                    uid=uid,
-                    gid=gid,
-                    mode=mode,
-                    mask=mask,
-                    follow_links=follow_links,
-                )
+                applied = apply_secpass_permissions(os.path.join(dirpath, name),
+                                                    uid=uid,
+                                                    gid=gid,
+                                                    mode=mode,
+                                                    mask=mask,
+                                                    follow_links=follow_links,
+                                                    )
                 if not applied:
                     all_applied = False
             except PortageException as e:
@@ -1356,15 +1287,14 @@ def apply_secpass_permissions(filename, uid=-1, gid=-1, mode=-1, mask=-1, stat_c
             all_applied = False
             gid = -1
 
-    apply_permissions(
-        filename,
-        uid=uid,
-        gid=gid,
-        mode=mode,
-        mask=mask,
-        stat_cached=stat_cached,
-        follow_links=follow_links,
-    )
+    apply_permissions(filename,
+                      uid=uid,
+                      gid=gid,
+                      mode=mode,
+                      mask=mask,
+                      stat_cached=stat_cached,
+                      follow_links=follow_links,
+                      )
     return all_applied
 
 
@@ -1391,13 +1321,11 @@ class atomic_ofstream(AbstractContextManager, ObjectProxy):
             tmp_name = "%s.%i" % (canonical_path, portage.getpid())
             try:
                 object.__setattr__(
-                    self,
-                    "_file",
-                    open_func(
-                        _unicode_encode(tmp_name, encoding=_encodings["fs"], errors="strict"),
-                        mode=mode,
-                        **kargs,
-                    ),
+                    self, "_file",
+                    open_func(_unicode_encode(tmp_name, encoding=_encodings["fs"], errors="strict"),
+                              mode=mode,
+                              **kargs,
+                              ),
                 )
                 return
             except OSError as e:
@@ -1410,13 +1338,9 @@ class atomic_ofstream(AbstractContextManager, ObjectProxy):
         object.__setattr__(self, "_real_name", filename)
         tmp_name = "%s.%i" % (filename, portage.getpid())
         object.__setattr__(
-            self,
-            "_file",
-            open_func(
-                _unicode_encode(tmp_name, encoding=_encodings["fs"], errors="strict"),
-                mode=mode,
-                **kargs,
-            ),
+            self, "_file",
+            open_func(_unicode_encode(tmp_name, encoding=_encodings["fs"], errors="strict"), mode=mode, **kargs,
+                      ),
         )
 
     def __exit__(self, exc_type, exc_val, exc_tb):

@@ -9,10 +9,7 @@ import os
 import re
 
 from portage.util import shlex_split
-from portage.util import (
-    normalize_path,
-    varexpand,
-)
+from portage.util import (normalize_path, varexpand, )
 
 
 class SonameDepsProcessor:
@@ -73,11 +70,8 @@ class SonameDepsProcessor:
             if entry.runpaths is not None:
                 expand = {"ORIGIN": os.path.dirname(entry.filename)}
                 runpaths = frozenset(
-                    normalize_path(varexpand(
-                        x,
-                        expand,
-                        error_leader=lambda: f"{entry.filename}: DT_RUNPATH: ",
-                    )) for x in entry.runpaths)
+                    normalize_path(varexpand(x, expand, error_leader=lambda: f"{entry.filename}: DT_RUNPATH: ",
+                                             )) for x in entry.runpaths)
             for x in entry.needed:
                 if (self._requires_exclude is None or self._requires_exclude.match(x) is None):
                     self._requires_map[multilib_cat][x].add(runpaths)

@@ -60,14 +60,10 @@ class IpcDaemonTestCase(TestCase):
                 exit_command = ExitCommand()
                 commands = {"exit": exit_command}
                 daemon = EbuildIpcDaemon(commands=commands, input_fifo=input_fifo, output_fifo=output_fifo)
-                proc = SpawnProcess(
-                    args=[
-                        BASH_BINARY,
-                        "-c",
-                        '"$PORTAGE_BIN_PATH"/ebuild-ipc exit %d' % exitcode,
-                    ],
-                    env=env,
-                )
+                proc = SpawnProcess(args=[BASH_BINARY, "-c",
+                                          '"$PORTAGE_BIN_PATH"/ebuild-ipc exit %d' % exitcode, ],
+                                    env=env,
+                                    )
                 task_scheduler = TaskScheduler(iter([daemon, proc]), max_jobs=2, event_loop=event_loop)
 
                 self.received_command = False
@@ -82,11 +78,9 @@ class IpcDaemonTestCase(TestCase):
 
                 hardlock_cleanup(env["PORTAGE_BUILDDIR"], remove_all_locks=True)
 
-                self.assertEqual(
-                    self.received_command,
-                    True,
-                    "command not received after %d seconds" % (time.time() - start_time, ),
-                )
+                self.assertEqual(self.received_command, True,
+                                 "command not received after %d seconds" % (time.time() - start_time, ),
+                                 )
                 self.assertEqual(proc.isAlive(), False)
                 self.assertEqual(daemon.isAlive(), False)
                 self.assertEqual(exit_command.exitcode, exitcode)
@@ -118,11 +112,9 @@ class IpcDaemonTestCase(TestCase):
 
                 hardlock_cleanup(env["PORTAGE_BUILDDIR"], remove_all_locks=True)
 
-                self.assertEqual(
-                    self.received_command,
-                    False,
-                    "command received after %d seconds" % (time.time() - start_time, ),
-                )
+                self.assertEqual(self.received_command, False,
+                                 "command received after %d seconds" % (time.time() - start_time, ),
+                                 )
                 self.assertEqual(proc.isAlive(), False)
                 self.assertEqual(daemon.isAlive(), False)
                 self.assertEqual(proc.returncode == os.EX_OK, False)

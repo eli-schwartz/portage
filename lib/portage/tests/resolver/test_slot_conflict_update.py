@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotConflictUpdateTestCase(TestCase):
@@ -67,20 +64,18 @@ class SlotConflictUpdateTestCase(TestCase):
             # versions that conflict with higher versions. Note that
             # this behavior makes SlotConflictMaskUpdateTestCase
             # fail.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                all_permutations=True,
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=[
-                    "dev-util/boost-build-1.53.0",
-                    "dev-libs/boost-1.53.0",
-                    "dev-cpp/libcmis-0.3.1",
-                ],
-            ), )
+            ResolverPlaygroundTestCase(["@world"],
+                                       all_permutations=True,
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       mergelist=[
+                                           "dev-util/boost-build-1.53.0", "dev-libs/boost-1.53.0",
+                                           "dev-cpp/libcmis-0.3.1",
+                                       ],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:

@@ -18,15 +18,14 @@ class PackageTrackerTestCase(TestCase):
         slot_atom = Atom(f"{atom.cp}:{atom.slot}")
         slot = atom.slot
 
-        return self.FakePackage(
-            root=root,
-            cp=atom.cp,
-            cpv=atom.cpv,
-            slot=slot,
-            slot_atom=slot_atom,
-            version=atom.version,
-            repo=repo,
-        )
+        return self.FakePackage(root=root,
+                                cp=atom.cp,
+                                cpv=atom.cpv,
+                                slot=slot,
+                                slot_atom=slot_atom,
+                                version=atom.version,
+                                repo=repo,
+                                )
 
     def make_conflict(self, description, root, pkgs):
         return self.FakeConflict(description=description, root=root, pkgs=pkgs)
@@ -255,9 +254,4 @@ class PackageTrackerTestCase(TestCase):
             self.make_conflict("cpv conflict", "/", [x4, x4b]),
         ])
 
-        check_conflicts(
-            [
-                self.make_conflict("slot conflict", "/", [x1, x3, x2]),
-            ],
-            slot_conflicts_only=True,
-        )
+        check_conflicts([self.make_conflict("slot conflict", "/", [x1, x3, x2]), ], slot_conflicts_only=True, )

@@ -109,8 +109,7 @@ class EbuildIpcDaemon(FifoIpcDaemon):
         except OSError as e:
             # This probably means that the client has been killed,
             # which causes open to fail with ENXIO.
-            writemsg_level(
-                f"!!! EbuildIpcDaemon {_('failed to send reply')}: {e}\n",
-                level=logging.ERROR,
-                noiselevel=-1,
-            )
+            writemsg_level(f"!!! EbuildIpcDaemon {_('failed to send reply')}: {e}\n",
+                           level=logging.ERROR,
+                           noiselevel=-1,
+                           )

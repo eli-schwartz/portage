@@ -32,13 +32,10 @@ module_spec = {
             },
             "validate_config":
             CheckSyncConfig,
-            "module_specific_options": (
-                "sync-mercurial-clone-env",
-                "sync-mercurial-clone-extra-opts",
-                "sync-mercurial-env",
-                "sync-mercurial-pull-env",
-                "sync-mercurial-pull-extra-opts",
-            ),
+            "module_specific_options":
+            ("sync-mercurial-clone-env", "sync-mercurial-clone-extra-opts", "sync-mercurial-env",
+             "sync-mercurial-pull-env", "sync-mercurial-pull-extra-opts",
+             ),
         }
     },
 }

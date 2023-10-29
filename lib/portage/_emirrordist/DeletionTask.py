@@ -34,14 +34,9 @@ class DeletionTask(CompositeTask):
                     self._async_wait()
                     return
 
-                self._start_task(
-                    FileCopier(
-                        src_path=self.distfile_path,
-                        dest_path=recycle_path,
-                        background=False,
-                    ),
-                    self._recycle_copier_exit,
-                )
+                self._start_task(FileCopier(src_path=self.distfile_path, dest_path=recycle_path, background=False,
+                                            ), self._recycle_copier_exit,
+                                 )
                 return
 
         success = True

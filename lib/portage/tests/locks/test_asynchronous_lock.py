@@ -19,23 +19,21 @@ class AsynchronousLockTestCase(TestCase):
         try:
             path = os.path.join(tempdir, "lock_me")
             for force_async in (True, False):
-                async_lock = AsynchronousLock(
-                    path=path,
-                    scheduler=scheduler,
-                    _force_async=force_async,
-                    _force_thread=True,
-                )
+                async_lock = AsynchronousLock(path=path,
+                                              scheduler=scheduler,
+                                              _force_async=force_async,
+                                              _force_thread=True,
+                                              )
                 async_lock.start()
                 self.assertEqual(async_lock.wait(), os.EX_OK)
                 self.assertEqual(async_lock.returncode, os.EX_OK)
                 scheduler.run_until_complete(async_lock.async_unlock())
 
-                async_lock = AsynchronousLock(
-                    path=path,
-                    scheduler=scheduler,
-                    _force_async=force_async,
-                    _force_process=True,
-                )
+                async_lock = AsynchronousLock(path=path,
+                                              scheduler=scheduler,
+                                              _force_async=force_async,
+                                              _force_process=True,
+                                              )
                 async_lock.start()
                 self.assertEqual(async_lock.wait(), os.EX_OK)
                 self.assertEqual(async_lock.returncode, os.EX_OK)

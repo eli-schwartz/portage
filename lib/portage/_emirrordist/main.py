@@ -17,192 +17,165 @@ from .MirrorDistTask import MirrorDistTask
 
 seconds_per_day = 24 * 60 * 60
 
-common_options = (
-    {
-        "longopt": "--dry-run",
-        "help": "perform a trial run with no changes made (usually combined "
-        "with --verbose)",
-        "action": "store_true",
-    },
-    {
-        "longopt": "--verbose",
-        "shortopt": "-v",
-        "help": "display extra information on stderr "
-        "(multiple occurences increase verbosity)",
-        "action": "count",
-        "default": 0,
-    },
-    {
-        "longopt": "--ignore-default-opts",
-        "help": "do not use the EMIRRORDIST_DEFAULT_OPTS environment variable",
-        "action": "store_true",
-    },
-    {
-        "longopt": "--distfiles",
-        "help": "distfiles directory to use (required)",
-        "metavar": "DIR",
-    },
-    {
-        "longopt": "--jobs",
-        "shortopt": "-j",
-        "help": "number of concurrent jobs to run",
-        "type": int,
-    },
-    {
-        "longopt": "--load-average",
-        "shortopt": "-l",
-        "help": "load average limit for spawning of new concurrent jobs",
-        "metavar": "LOAD",
-        "type": float,
-    },
-    {
-        "longopt": "--tries",
-        "help": "maximum number of tries per file, 0 means unlimited (default is 10)",
-        "default": 10,
-        "type": int,
-    },
-    {
-        "longopt": "--repo",
-        "help": "name of repo to operate on"
-    },
-    {
-        "longopt": "--config-root",
-        "help": "location of portage config files",
-        "metavar": "DIR",
-    },
-    {
-        "longopt": "--repositories-configuration",
-        "help": "override configuration of repositories (in format of repos.conf)",
-    },
-    {
-        "longopt": "--strict-manifests",
-        "help": 'manually override "strict" FEATURES setting',
-        "choices": ("y", "n"),
-        "metavar": "<y|n>",
-    },
-    {
-        "longopt": "--failure-log",
-        "help": "log file for fetch failures, with tab-delimited "
-        "output, for reporting purposes",
-        "metavar": "FILE",
-    },
-    {
-        "longopt": "--success-log",
-        "help": "log file for fetch successes, with tab-delimited "
-        "output, for reporting purposes",
-        "metavar": "FILE",
-    },
-    {
-        "longopt": "--scheduled-deletion-log",
-        "help": "log file for scheduled deletions, with tab-delimited "
-        "output, for reporting purposes",
-        "metavar": "FILE",
-    },
-    {
-        "longopt": "--delete",
-        "help": "enable deletion of unused distfiles",
-        "action": "store_true",
-    },
-    {
-        "longopt": "--deletion-db",
-        "help": "database file used to track lifetime of files "
-        "scheduled for delayed deletion",
-        "metavar": "FILE",
-    },
-    {
-        "longopt": "--deletion-delay",
-        "help": "delay time for deletion, measured in seconds",
-        "metavar": "SECONDS",
-    },
-    {
-        "longopt": "--temp-dir",
-        "help": "temporary directory for downloads",
-        "metavar": "DIR",
-    },
-    {
-        "longopt": "--mirror-overrides",
-        "help": "file holding a list of mirror overrides",
-        "metavar": "FILE",
-    },
-    {
-        "longopt": "--mirror-skip",
-        "help": "comma delimited list of mirror targets to skip "
-        "when fetching",
-    },
-    {
-        "longopt": "--restrict-mirror-exemptions",
-        "help": "comma delimited list of mirror targets for which to "
-        'ignore RESTRICT="mirror"',
-    },
-    {
-        "longopt": "--verify-existing-digest",
-        "help": "use digest as a verification of whether existing "
-        "distfiles are valid",
-        "action": "store_true",
-    },
-    {
-        "longopt": "--distfiles-local",
-        "help": "distfiles-local directory to use",
-        "metavar": "DIR",
-    },
-    {
-        "longopt": "--distfiles-db",
-        "help": "database file used to track which ebuilds a "
-        "distfile belongs to",
-        "metavar": "FILE",
-    },
-    {
-        "longopt": "--content-db",
-        "help": "database file used to map content digests to"
-        "distfiles names (required for content-hash layout)",
-        "metavar": "FILE",
-    },
-    {
-        "longopt": "--recycle-dir",
-        "help": "directory for extended retention of files that "
-        "are removed from distdir with the --delete option",
-        "metavar": "DIR",
-    },
-    {
-        "longopt": "--recycle-db",
-        "help": "database file used to track lifetime of files "
-        "in recycle dir",
-        "metavar": "FILE",
-    },
-    {
-        "longopt": "--recycle-deletion-delay",
-        "help": "delay time for deletion of unused files from "
-        "recycle dir, measured in seconds (defaults to "
-        "the equivalent of 60 days)",
-        "default": 60 * seconds_per_day,
-        "metavar": "SECONDS",
-        "type": int,
-    },
-    {
-        "longopt": "--fetch-log-dir",
-        "help": "directory for individual fetch logs",
-        "metavar": "DIR",
-    },
-    {
-        "longopt": "--whitelist-from",
-        "help": "specifies a file containing a list of files to "
-        "whitelist, one per line, # prefixed lines ignored",
-        "action": "append",
-        "metavar": "FILE",
-    },
-    {
-        "longopt": "--symlinks",
-        "help": "use symlinks rather than hardlinks for linking "
-        "distfiles between layouts",
-        "action": "store_true",
-    },
-    {
-        "longopt": "--layout-conf",
-        "help": "specifies layout.conf file to use instead of "
-        "the one present in the distfiles directory",
-        "metavar": "FILE",
-    },
-)
+common_options = ({
+    "longopt": "--dry-run",
+    "help": "perform a trial run with no changes made (usually combined "
+    "with --verbose)",
+    "action": "store_true",
+}, {
+    "longopt": "--verbose",
+    "shortopt": "-v",
+    "help": "display extra information on stderr "
+    "(multiple occurences increase verbosity)",
+    "action": "count",
+    "default": 0,
+}, {
+    "longopt": "--ignore-default-opts",
+    "help": "do not use the EMIRRORDIST_DEFAULT_OPTS environment variable",
+    "action": "store_true",
+}, {
+    "longopt": "--distfiles",
+    "help": "distfiles directory to use (required)",
+    "metavar": "DIR",
+}, {
+    "longopt": "--jobs",
+    "shortopt": "-j",
+    "help": "number of concurrent jobs to run",
+    "type": int,
+}, {
+    "longopt": "--load-average",
+    "shortopt": "-l",
+    "help": "load average limit for spawning of new concurrent jobs",
+    "metavar": "LOAD",
+    "type": float,
+}, {
+    "longopt": "--tries",
+    "help": "maximum number of tries per file, 0 means unlimited (default is 10)",
+    "default": 10,
+    "type": int,
+}, {
+    "longopt": "--repo",
+    "help": "name of repo to operate on"
+}, {
+    "longopt": "--config-root",
+    "help": "location of portage config files",
+    "metavar": "DIR",
+}, {
+    "longopt": "--repositories-configuration",
+    "help": "override configuration of repositories (in format of repos.conf)",
+}, {
+    "longopt": "--strict-manifests",
+    "help": 'manually override "strict" FEATURES setting',
+    "choices": ("y", "n"),
+    "metavar": "<y|n>",
+}, {
+    "longopt": "--failure-log",
+    "help": "log file for fetch failures, with tab-delimited "
+    "output, for reporting purposes",
+    "metavar": "FILE",
+}, {
+    "longopt": "--success-log",
+    "help": "log file for fetch successes, with tab-delimited "
+    "output, for reporting purposes",
+    "metavar": "FILE",
+}, {
+    "longopt": "--scheduled-deletion-log",
+    "help": "log file for scheduled deletions, with tab-delimited "
+    "output, for reporting purposes",
+    "metavar": "FILE",
+}, {
+    "longopt": "--delete",
+    "help": "enable deletion of unused distfiles",
+    "action": "store_true",
+}, {
+    "longopt": "--deletion-db",
+    "help": "database file used to track lifetime of files "
+    "scheduled for delayed deletion",
+    "metavar": "FILE",
+}, {
+    "longopt": "--deletion-delay",
+    "help": "delay time for deletion, measured in seconds",
+    "metavar": "SECONDS",
+}, {
+    "longopt": "--temp-dir",
+    "help": "temporary directory for downloads",
+    "metavar": "DIR",
+}, {
+    "longopt": "--mirror-overrides",
+    "help": "file holding a list of mirror overrides",
+    "metavar": "FILE",
+}, {
+    "longopt": "--mirror-skip",
+    "help": "comma delimited list of mirror targets to skip "
+    "when fetching",
+}, {
+    "longopt": "--restrict-mirror-exemptions",
+    "help": "comma delimited list of mirror targets for which to "
+    'ignore RESTRICT="mirror"',
+}, {
+    "longopt": "--verify-existing-digest",
+    "help": "use digest as a verification of whether existing "
+    "distfiles are valid",
+    "action": "store_true",
+}, {
+    "longopt": "--distfiles-local",
+    "help": "distfiles-local directory to use",
+    "metavar": "DIR",
+}, {
+    "longopt": "--distfiles-db",
+    "help": "database file used to track which ebuilds a "
+    "distfile belongs to",
+    "metavar": "FILE",
+}, {
+    "longopt": "--content-db",
+    "help": "database file used to map content digests to"
+    "distfiles names (required for content-hash layout)",
+    "metavar": "FILE",
+}, {
+    "longopt": "--recycle-dir",
+    "help": "directory for extended retention of files that "
+    "are removed from distdir with the --delete option",
+    "metavar": "DIR",
+}, {
+    "longopt": "--recycle-db",
+    "help": "database file used to track lifetime of files "
+    "in recycle dir",
+    "metavar": "FILE",
+}, {
+    "longopt":
+    "--recycle-deletion-delay",
+    "help":
+    "delay time for deletion of unused files from "
+    "recycle dir, measured in seconds (defaults to "
+    "the equivalent of 60 days)",
+    "default":
+    60 * seconds_per_day,
+    "metavar":
+    "SECONDS",
+    "type":
+    int,
+}, {
+    "longopt": "--fetch-log-dir",
+    "help": "directory for individual fetch logs",
+    "metavar": "DIR",
+}, {
+    "longopt": "--whitelist-from",
+    "help": "specifies a file containing a list of files to "
+    "whitelist, one per line, # prefixed lines ignored",
+    "action": "append",
+    "metavar": "FILE",
+}, {
+    "longopt": "--symlinks",
+    "help": "use symlinks rather than hardlinks for linking "
+    "distfiles between layouts",
+    "action": "store_true",
+}, {
+    "longopt": "--layout-conf",
+    "help": "specifies layout.conf file to use instead of "
+    "the one present in the distfiles directory",
+    "metavar": "FILE",
+},
+                  )
 
 
 def parse_args(args):
@@ -212,11 +185,7 @@ def parse_args(args):
 
     actions = parser.add_argument_group("Actions")
     actions.add_argument("--version", action="store_true", help="display portage version and exit")
-    actions.add_argument(
-        "--mirror",
-        action="store_true",
-        help="mirror distfiles for the selected repository",
-    )
+    actions.add_argument("--mirror", action="store_true", help="mirror distfiles for the selected repository", )
 
     common = parser.add_argument_group("Common options")
     for opt_info in common_options:

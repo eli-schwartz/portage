@@ -4,14 +4,12 @@
 
 from enum import Enum
 
-TYPES = Enum(
-    "InstallationType",
-    [
-        "SOURCE",  # Portage is not installed, but running from its source tree.
-        "MODULE",  # Portage is installed solely as a Python module.
-        "SYSTEM",  # Portage is fully installed to the system, possibly prefixed.
-    ],
-)
+TYPES = Enum("InstallationType", [
+    "SOURCE",  # Portage is not installed, but running from its source tree.
+    "MODULE",  # Portage is installed solely as a Python module.
+    "SYSTEM",  # Portage is fully installed to the system, possibly prefixed.
+],
+             )
 
 if "@INSTALL_TYPE@" == "MODULE":
     TYPE = TYPES.MODULE

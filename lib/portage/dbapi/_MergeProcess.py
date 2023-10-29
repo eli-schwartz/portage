@@ -22,28 +22,10 @@ class MergeProcess(ForkProcess):
     thread while files are moved or copied asynchronously.
     """
 
-    __slots__ = (
-        "mycat",
-        "mypkg",
-        "settings",
-        "treetype",
-        "vartree",
-        "blockers",
-        "pkgloc",
-        "infloc",
-        "myebuild",
-        "mydbapi",
-        "postinst_failure",
-        "prev_mtimes",
-        "unmerge",
-        "_elog_reader_fd",
-        "_buf",
-        "_counter",
-        "_dblink",
-        "_elog_keys",
-        "_locked_vdb",
-        "_mtime_reader",
-    )
+    __slots__ = ("mycat", "mypkg", "settings", "treetype", "vartree", "blockers", "pkgloc", "infloc", "myebuild",
+                 "mydbapi", "postinst_failure", "prev_mtimes", "unmerge", "_elog_reader_fd", "_buf", "_counter",
+                 "_dblink", "_elog_keys", "_locked_vdb", "_mtime_reader",
+                 )
 
     def _start(self):
         # Portage should always call setcpv prior to this
@@ -139,12 +121,10 @@ class MergeProcess(ForkProcess):
 
         elog_reader_fd, elog_writer_fd = multiprocessing.Pipe(duplex=False)
 
-        fcntl.fcntl(
-            elog_reader_fd.fileno(),
-            fcntl.F_SETFL,
-            fcntl.fcntl(elog_reader_fd.fileno(), fcntl.F_GETFL)
-            | os.O_NONBLOCK,
-        )
+        fcntl.fcntl(elog_reader_fd.fileno(), fcntl.F_SETFL,
+                    fcntl.fcntl(elog_reader_fd.fileno(), fcntl.F_GETFL)
+                    | os.O_NONBLOCK,
+                    )
 
         mtime_reader, mtime_writer = multiprocessing.Pipe(duplex=False)
         self.scheduler.add_reader(mtime_reader.fileno(), self._mtime_handler)
@@ -157,16 +137,15 @@ class MergeProcess(ForkProcess):
             # access to open database connections such as that
             # used by the sqlite metadata cache module.
             blockers = self.blockers()
-        mylink = portage.dblink(
-            self.mycat,
-            self.mypkg,
-            settings=self.settings,
-            treetype=self.treetype,
-            vartree=self.vartree,
-            blockers=blockers,
-            pipe=elog_writer_fd,
-            mtime_pipe=mtime_writer,
-        )
+        mylink = portage.dblink(self.mycat,
+                                self.mypkg,
+                                settings=self.settings,
+                                treetype=self.treetype,
+                                vartree=self.vartree,
+                                blockers=blockers,
+                                pipe=elog_writer_fd,
+                                mtime_pipe=mtime_writer,
+                                )
         self.scheduler.add_reader(elog_reader_fd.fileno(), self._elog_output_handler)
 
         # If a concurrent emerge process tries to install a package
@@ -191,20 +170,10 @@ class MergeProcess(ForkProcess):
             for tree_type in ("vartree", "porttree"):
                 child_db[root][tree_type] = parent_db[root][tree_type]
 
-        self.target = functools.partial(
-            self._target,
-            self._counter,
-            self._dblink,
-            self.infloc,
-            self.mydbapi,
-            self.myebuild,
-            self.pkgloc,
-            self.prev_mtimes,
-            self.settings,
-            self.unmerge,
-            self.vartree.dbapi,
-            child_db,
-        )
+        self.target = functools.partial(self._target, self._counter, self._dblink, self.infloc, self.mydbapi,
+                                        self.myebuild, self.pkgloc, self.prev_mtimes, self.settings, self.unmerge,
+                                        self.vartree.dbapi, child_db,
+                                        )
 
         pids = super()._spawn(args, fd_pipes, **kwargs)
         elog_writer_fd.close()
@@ -224,19 +193,7 @@ class MergeProcess(ForkProcess):
         return pids
 
     @staticmethod
-    def _target(
-        counter,
-        mylink,
-        infloc,
-        mydbapi,
-        myebuild,
-        pkgloc,
-        prev_mtimes,
-        settings,
-        unmerge,
-        vardb,
-        db,
-    ):
+    def _target(counter, mylink, infloc, mydbapi, myebuild, pkgloc, prev_mtimes, settings, unmerge, vardb, db, ):
         if QueryCommand._db is None:
             # Initialize QueryCommand._db for AbstractEbuildProcess/EbuildIpcDaemon
             # when not using the multiprocessing fork start method.
@@ -273,14 +230,13 @@ class MergeProcess(ForkProcess):
                     mylink.unlockdb()
                 rval = os.EX_OK
         else:
-            rval = mylink.merge(
-                pkgloc,
-                infloc,
-                myebuild=myebuild,
-                mydbapi=mydbapi,
-                prev_mtimes=prev_mtimes,
-                counter=counter,
-            )
+            rval = mylink.merge(pkgloc,
+                                infloc,
+                                myebuild=myebuild,
+                                mydbapi=mydbapi,
+                                prev_mtimes=prev_mtimes,
+                                counter=counter,
+                                )
         return rval
 
     def _proc_join_done(self, proc, future):

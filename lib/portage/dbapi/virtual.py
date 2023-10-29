@@ -64,13 +64,7 @@ class fakedbapi(dbapi):
                 latest = pkg
 
         if latest is not None:
-            return (
-                latest,
-                latest.build_id,
-                latest.file_size,
-                latest.build_time,
-                latest.mtime,
-            )
+            return (latest, latest.build_id, latest.file_size, latest.build_time, latest.mtime, )
 
         raise KeyError(cpv)
 

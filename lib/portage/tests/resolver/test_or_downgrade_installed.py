@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class OrDowngradeInstalledTestCase(TestCase):
@@ -29,26 +26,17 @@ class OrDowngradeInstalledTestCase(TestCase):
             },
         }
 
-        installed = {
-            "sys-libs/glibc-2.26": {
-                "EAPI": "6",
-                "IUSE": ""
-            },
-        }
+        installed = {"sys-libs/glibc-2.26": {"EAPI": "6", "IUSE": ""}, }
 
         world = ["sys-libs/glibc"]
 
         test_cases = (
             # Test bug 635540, where we need to install libtirpc
             # rather than downgrade glibc.
-            ResolverPlaygroundTestCase(
-                ["net-misc/foo"],
-                success=True,
-                mergelist=[
-                    "net-libs/libtirpc-1",
-                    "net-misc/foo-1",
-                ],
-            ), )
+            ResolverPlaygroundTestCase(["net-misc/foo"],
+                                       success=True,
+                                       mergelist=["net-libs/libtirpc-1", "net-misc/foo-1", ],
+                                       ), )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
 
@@ -64,26 +52,19 @@ class OrDowngradeInstalledTestCase(TestCase):
         # the installed package being masked (glibc is a
         # not an ideal example because it's usually not
         # practical to downgrade it).
-        user_config = {
-            "package.mask": (">=sys-libs/glibc-2.26", ),
-        }
+        user_config = {"package.mask": (">=sys-libs/glibc-2.26", ), }
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["net-misc/foo"],
-            success=True,
-            mergelist=[
-                "sys-libs/glibc-2.24",
-                "net-misc/foo-1",
-            ],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["net-misc/foo"],
+                                                 success=True,
+                                                 mergelist=["sys-libs/glibc-2.24", "net-misc/foo-1", ],
+                                                 ), )
 
-        playground = ResolverPlayground(
-            debug=False,
-            ebuilds=ebuilds,
-            installed=installed,
-            world=world,
-            user_config=user_config,
-        )
+        playground = ResolverPlayground(debug=False,
+                                        ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        user_config=user_config,
+                                        )
 
         try:
             for test_case in test_cases:

@@ -46,12 +46,7 @@ from portage import _encodings
 from portage import _shell_quote
 from portage import _unicode_encode
 from portage.const import VDB_PATH
-from portage.exception import (
-    PermissionDenied,
-    PortageKeyError,
-    PortagePackageException,
-    UnsupportedAPIException,
-)
+from portage.exception import (PermissionDenied, PortageKeyError, PortagePackageException, UnsupportedAPIException, )
 from portage.localization import _
 import portage.util
 from portage.util._eventloop.global_event_loop import global_event_loop
@@ -75,11 +70,10 @@ def main():
     parser.add_argument("--color", help="enable or disable color output", choices=("y", "n"))
     parser.add_argument("--debug", help="show debug output", action="store_true")
     parser.add_argument("--version", help="show version and exit", action="store_true")
-    parser.add_argument(
-        "--ignore-default-opts",
-        action="store_true",
-        help="do not use the EBUILD_DEFAULT_OPTS environment variable",
-    )
+    parser.add_argument("--ignore-default-opts",
+                        action="store_true",
+                        help="do not use the EBUILD_DEFAULT_OPTS environment variable",
+                        )
     parser.add_argument("--skip-manifest", help="skip all manifest checks", action="store_true")
 
     opts, pargs = parser.parse_known_args(args=sys.argv[1:])
@@ -165,11 +159,10 @@ def main():
     ebuild_split = ebuild.split("/")
     cpv = f"{ebuild_split[-3]}/{pf}"
 
-    with open(
-            _unicode_encode(ebuild, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["repo.content"],
-            errors="replace",
-    ) as f:
+    with open(_unicode_encode(ebuild, encoding=_encodings["fs"], errors="strict"),
+              encoding=_encodings["repo.content"],
+              errors="replace",
+              ) as f:
         eapi = portage._parse_eapi_ebuild_head(f)[0]
     if eapi is None:
         eapi = "0"
@@ -211,11 +204,7 @@ def main():
             fetchlist_dict = portage.FetchlistDict(pkgdir, mysettings, mydbapi)
             mf = mysettings.repositories.get_repo_for_location(os.path.dirname(os.path.dirname(pkgdir)))
             mf = mf.load_manifest(pkgdir, mysettings["DISTDIR"], fetchlist_dict=fetchlist_dict)
-            mf.create(
-                requiredDistfiles=None,
-                assumeDistHashesSometimes=True,
-                assumeDistHashesAlways=True,
-            )
+            mf.create(requiredDistfiles=None, assumeDistHashesSometimes=True, assumeDistHashesAlways=True, )
             distfiles = fetchlist_dict[cpv]
             for myfile in distfiles:
                 try:
@@ -229,17 +218,7 @@ def main():
     portage.settings.validate()  # generate warning messages if necessary
 
     build_dir_phases = {
-        "setup",
-        "unpack",
-        "prepare",
-        "configure",
-        "compile",
-        "test",
-        "install",
-        "package",
-        "rpm",
-        "merge",
-        "qmerge",
+        "setup", "unpack", "prepare", "configure", "compile", "test", "install", "package", "rpm", "merge", "qmerge",
     }
 
     # If the current metadata is invalid then force the ebuild to be
@@ -291,31 +270,28 @@ def main():
 
     try:
         metadata = dict(
-            zip(
-                Package.metadata_keys,
+            zip(Package.metadata_keys,
                 portage.db[portage.settings["EROOT"]][mytree].dbapi.aux_get(cpv, Package.metadata_keys, myrepo=myrepo),
-            ))
+                ))
     except PortageKeyError:
         # aux_get failure, message should have been shown on stderr.
         sys.exit(1)
 
     root_config = RootConfig(portage.settings, portage.db[portage.settings["EROOT"]], None)
 
-    cpv = portage.versions._pkg_str(
-        cpv,
-        metadata=metadata,
-        settings=portage.settings,
-        db=portage.db[portage.settings["EROOT"]][mytree].dbapi,
-    )
+    cpv = portage.versions._pkg_str(cpv,
+                                    metadata=metadata,
+                                    settings=portage.settings,
+                                    db=portage.db[portage.settings["EROOT"]][mytree].dbapi,
+                                    )
 
-    pkg = Package(
-        built=(pkg_type != "ebuild"),
-        cpv=cpv,
-        installed=(pkg_type == "installed"),
-        metadata=metadata,
-        root_config=root_config,
-        type_name=pkg_type,
-    )
+    pkg = Package(built=(pkg_type != "ebuild"),
+                  cpv=cpv,
+                  installed=(pkg_type == "installed"),
+                  metadata=metadata,
+                  root_config=root_config,
+                  type_name=pkg_type,
+                  )
 
     # Apply package.env and repo-level settings. This allows per-package
     # FEATURES and other variables (possibly PORTAGE_TMPDIR) to be
@@ -337,10 +313,7 @@ def main():
                     portage.writemsg(f">>> {x}\n")
 
                 if ebuild_changed:
-                    open(
-                        os.path.join(tmpsettings["PORTAGE_BUILDDIR"], ".ebuild_changed"),
-                        "w",
-                    ).close()
+                    open(os.path.join(tmpsettings["PORTAGE_BUILDDIR"], ".ebuild_changed"), "w", ).close()
 
     checked_for_stale_env = False
 
@@ -354,14 +327,13 @@ def main():
 
             if arg in ("digest", "manifest") and force:
                 discard_digests(ebuild, tmpsettings, portage.portdb)
-            a = portage.doebuild(
-                ebuild,
-                arg,
-                settings=tmpsettings,
-                debug=debug,
-                tree=mytree,
-                vartree=portage.db[portage.root]["vartree"],
-            )
+            a = portage.doebuild(ebuild,
+                                 arg,
+                                 settings=tmpsettings,
+                                 debug=debug,
+                                 tree=mytree,
+                                 vartree=portage.db[portage.root]["vartree"],
+                                 )
         except PortageKeyError:
             # aux_get error
             a = 1

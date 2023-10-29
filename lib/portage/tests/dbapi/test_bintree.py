@@ -31,36 +31,12 @@ class BinarytreeTestCase(TestCase):
         # Quite smoky test. What would it be a better testing strategy?
         # Not sure yet...
         required_attrs_no_multi_instance = {
-            "pkgdir",
-            "_multi_instance",
-            "dbapi",
-            "update_ents",
-            "move_slot_ent",
-            "populated",
-            "tree",
-            "_binrepos_conf",
-            "_remote_has_index",
-            "_remotepkgs",
-            "_additional_pkgs",
-            "invalids",
-            "invalid_paths",
-            "settings",
-            "_pkg_paths",
-            "_populating",
-            "_all_directory",
-            "_pkgindex_version",
-            "_pkgindex_hashes",
-            "_pkgindex_file",
-            "_pkgindex_keys",
-            "_pkgindex_aux_keys",
-            "_pkgindex_use_evaluated_keys",
-            "_pkgindex_header",
-            "_pkgindex_header_keys",
-            "_pkgindex_default_pkg_data",
-            "_pkgindex_inherited_keys",
-            "_pkgindex_default_header_data",
-            "_pkgindex_translated_keys",
-            "_pkgindex_allowed_pkg_keys",
+            "pkgdir", "_multi_instance", "dbapi", "update_ents", "move_slot_ent", "populated", "tree", "_binrepos_conf",
+            "_remote_has_index", "_remotepkgs", "_additional_pkgs", "invalids", "invalid_paths", "settings",
+            "_pkg_paths", "_populating", "_all_directory", "_pkgindex_version", "_pkgindex_hashes", "_pkgindex_file",
+            "_pkgindex_keys", "_pkgindex_aux_keys", "_pkgindex_use_evaluated_keys", "_pkgindex_header",
+            "_pkgindex_header_keys", "_pkgindex_default_pkg_data", "_pkgindex_inherited_keys",
+            "_pkgindex_default_header_data", "_pkgindex_translated_keys", "_pkgindex_allowed_pkg_keys",
         }
         no_multi_instance_settings = MagicMock()
         no_multi_instance_settings.features = ""
@@ -126,11 +102,10 @@ class BinarytreeTestCase(TestCase):
         bt = binarytree(pkgdir=os.getenv("TMPDIR", "/tmp"), settings=settings)
         bt.populate(getbinpkgs=True, getbinpkg_refresh=refresh)
         ppopulate_remote.assert_not_called()
-        pwritemsg.assert_called_once_with(
-            _(f"!!! {conf_file} is missing (or PORTAGE_BINHOST is unset)"
-              ", but use is requested.\n"),
-            noiselevel=-1,
-        )
+        pwritemsg.assert_called_once_with(_(f"!!! {conf_file} is missing (or PORTAGE_BINHOST is unset)"
+                                            ", but use is requested.\n"),
+                                          noiselevel=-1,
+                                          )
 
     @patch("portage.dbapi.bintree.BinRepoConfigLoader")
     @patch("portage.dbapi.bintree.binarytree._populate_remote")

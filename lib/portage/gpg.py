@@ -29,8 +29,7 @@ class GPG:
         self.signing_gpg_home = self.settings.get("BINPKG_GPG_SIGNING_GPG_HOME")
         self.signing_gpg_key = self.settings.get("BINPKG_GPG_SIGNING_KEY")
         self.GPG_unlock_command = self.GPG_signing_base_command.replace(
-            "[PORTAGE_CONFIG]",
-            f"--homedir {self.signing_gpg_home} "
+            "[PORTAGE_CONFIG]", f"--homedir {self.signing_gpg_home} "
             f"--digest-algo {self.digest_algo} "
             f"--local-user {self.signing_gpg_key} "
             "--output - /dev/null",
@@ -90,11 +89,10 @@ class GPG:
             else:
                 count = 0
 
-            proc = subprocess.Popen(
-                self.GPG_unlock_command,
-                stdin=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.STDOUT,
-            )
+            proc = subprocess.Popen(self.GPG_unlock_command,
+                                    stdin=subprocess.DEVNULL,
+                                    stdout=subprocess.DEVNULL,
+                                    stderr=subprocess.STDOUT,
+                                    )
             if proc.wait() != os.EX_OK:
                 raise GPGException("GPG keepalive failed")

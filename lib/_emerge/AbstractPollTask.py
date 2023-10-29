@@ -104,10 +104,8 @@ class AbstractPollTask(AsynchronousTask):
             tasks.append(asyncio.ensure_future(asyncio.sleep(timeout, loop=loop), loop=loop))
         try:
             loop.run_until_complete(
-                asyncio.ensure_future(
-                    asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, loop=loop),
-                    loop=loop,
-                ))
+                asyncio.ensure_future(asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, loop=loop), loop=loop,
+                                      ))
         finally:
             for task in tasks:
                 task.cancel()

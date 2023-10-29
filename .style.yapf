@@ -3,3 +3,8 @@ based_on_style = pep8
 
 # The column limit.
 column_limit=120
+
+# fixup black
+# Disable the heuristic which places each list element on a separate line
+# if the list is comma-terminated.
+disable_ending_comma_heuristic=True

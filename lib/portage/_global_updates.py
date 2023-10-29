@@ -9,12 +9,7 @@ from portage.data import secpass
 from portage.exception import DirectoryNotFound
 from portage.localization import _
 from portage.output import bold, colorize
-from portage.update import (
-    grab_updates,
-    parse_updates,
-    update_config_files,
-    update_dbentry,
-)
+from portage.update import (grab_updates, parse_updates, update_config_files, update_dbentry, )
 from portage.util import grabfile, shlex_split, writemsg, writemsg_stdout, write_atomic
 
 
@@ -90,17 +85,12 @@ def _do_global_updates(trees, prev_mtimes, quiet=False, if_mtime_changed=True):
                     writemsg_stdout(colorize("GOOD", "Performing Global Updates\n"))
                     writemsg_stdout(_("(Could take a couple of minutes if you have a lot of binary packages.)\n"))
                     if not quiet:
-                        writemsg_stdout("  ".join((
-                            "",
-                            f"{bold('.')}='update pass'",
-                            f"{bold('*')}='binary update'",
-                            f"{bold('#')}='/var/db update'",
-                            f"{bold('@')}='/var/db move'\n",
-                            f"{bold('s')}='/var/db SLOT move'",
-                            f"{bold('%')}='binary move'",
-                            f"{bold('S')}='binary SLOT move'\n",
-                            f"{bold('p')}='update /etc/portage/package.*'\n",
-                        )))
+                        writemsg_stdout("  ".join(
+                            ("", f"{bold('.')}='update pass'", f"{bold('*')}='binary update'",
+                             f"{bold('#')}='/var/db update'", f"{bold('@')}='/var/db move'\n",
+                             f"{bold('s')}='/var/db SLOT move'", f"{bold('%')}='binary move'",
+                             f"{bold('S')}='binary SLOT move'\n", f"{bold('p')}='update /etc/portage/package.*'\n",
+                             )))
                 valid_updates, errors = parse_updates(mycontent)
                 myupd.extend(valid_updates)
                 if not quiet:
@@ -206,14 +196,13 @@ def _do_global_updates(trees, prev_mtimes, quiet=False, if_mtime_changed=True):
             repository = vardb.aux_get(best(matches), ["repository"])[0]
             return repository == repo_name or (repo_name == master_repo and repository not in repo_map)
 
-        update_config_files(
-            root,
-            shlex_split(mysettings.get("CONFIG_PROTECT", "")),
-            shlex_split(mysettings.get("CONFIG_PROTECT_MASK", "")),
-            repo_map,
-            match_callback=_config_repo_match,
-            case_insensitive="case-insensitive-fs" in mysettings.features,
-        )
+        update_config_files(root,
+                            shlex_split(mysettings.get("CONFIG_PROTECT", "")),
+                            shlex_split(mysettings.get("CONFIG_PROTECT_MASK", "")),
+                            repo_map,
+                            match_callback=_config_repo_match,
+                            case_insensitive="case-insensitive-fs" in mysettings.features,
+                            )
 
         # The above global updates proceed quickly, so they
         # are considered a single mtimedb transaction.

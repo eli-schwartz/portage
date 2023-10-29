@@ -12,16 +12,7 @@ from portage import os
 from portage._sets.base import InternalPackageSet
 from portage.exception import PackageSetNotFound
 from portage.localization import localized_size
-from portage.output import (
-    blue,
-    colorize,
-    create_color_func,
-    green,
-    red,
-    teal,
-    turquoise,
-    yellow,
-)
+from portage.output import (blue, colorize, create_color_func, green, red, teal, turquoise, yellow, )
 
 bad = create_color_func("BAD")
 from portage.util import writemsg
@@ -183,10 +174,9 @@ class _DisplayConfig:
                 mywidth = int(frozen_config.settings["COLUMNWIDTH"])
             except ValueError as e:
                 writemsg(f"!!! {str(e)}\n", noiselevel=-1)
-                writemsg(
-                    f"!!! Unable to parse COLUMNWIDTH='{frozen_config.settings['COLUMNWIDTH']}'\n",
-                    noiselevel=-1,
-                )
+                writemsg(f"!!! Unable to parse COLUMNWIDTH='{frozen_config.settings['COLUMNWIDTH']}'\n",
+                         noiselevel=-1,
+                         )
                 del e
         self.columnwidth = mywidth
 
@@ -235,18 +225,9 @@ def _alnum_sort_key(x):
     return tuple(_convert_even_to_int(_alnum_sort_re.split(x)))
 
 
-def _create_use_string(
-    conf,
-    name,
-    cur_iuse,
-    iuse_forced,
-    cur_use,
-    old_iuse,
-    old_use,
-    is_new,
-    feature_flags,
-    reinst_flags,
-):
+def _create_use_string(conf, name, cur_iuse, iuse_forced, cur_use, old_iuse, old_use, is_new, feature_flags,
+                       reinst_flags,
+                       ):
     if not conf.print_use_string:
         return ""
 
@@ -493,27 +474,10 @@ class PkgInfo:
     information about the pkg being printed.
     """
 
-    __slots__ = (
-        "attr_display",
-        "built",
-        "cp",
-        "ebuild_path",
-        "fetch_symbol",
-        "merge",
-        "oldbest",
-        "oldbest_list",
-        "operation",
-        "ordered",
-        "previous_pkg",
-        "repo_name",
-        "repo_path_real",
-        "slot",
-        "sub_slot",
-        "system",
-        "use",
-        "ver",
-        "world",
-    )
+    __slots__ = ("attr_display", "built", "cp", "ebuild_path", "fetch_symbol", "merge", "oldbest", "oldbest_list",
+                 "operation", "ordered", "previous_pkg", "repo_name", "repo_path_real", "slot", "sub_slot", "system",
+                 "use", "ver", "world",
+                 )
 
     def __init__(self):
         self.built = False
@@ -538,18 +502,9 @@ class PkgInfo:
 
 
 class PkgAttrDisplay(SlotObject):
-    __slots__ = (
-        "downgrade",
-        "fetch_restrict",
-        "fetch_restrict_satisfied",
-        "force_reinstall",
-        "interactive",
-        "mask",
-        "new",
-        "new_slot",
-        "new_version",
-        "replace",
-    )
+    __slots__ = ("downgrade", "fetch_restrict", "fetch_restrict_satisfied", "force_reinstall", "interactive", "mask",
+                 "new", "new_slot", "new_version", "replace",
+                 )
 
     def __str__(self):
         output = []

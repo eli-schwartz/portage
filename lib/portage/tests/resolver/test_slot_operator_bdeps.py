@@ -3,10 +3,7 @@
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -71,51 +68,46 @@ class SlotOperatorBdependTestCase(TestCase):
 
         test_cases = (
             # Test rebuild triggered by slot operator := dependency in BDEPEND.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                },
-                success=True,
-                mergelist=[
-                    "dev-lang/go-1.15.5",
-                    "app-emulation/buildah-1.16.1",
-                    "app-emulation/libpod-2.1.0",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True,
+                                       },
+                                       success=True,
+                                       mergelist=[
+                                           "dev-lang/go-1.15.5", "app-emulation/buildah-1.16.1",
+                                           "app-emulation/libpod-2.1.0",
+                                       ],
+                                       ),
             # Test the above case with --usepkg --with-bdeps=y. It should not use the
             # binary packages because rebuild is needed.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--usepkg": True,
-                    "--with-bdeps": "y",
-                    "--update": True,
-                    "--deep": True,
-                },
-                success=True,
-                mergelist=[
-                    "dev-lang/go-1.15.5",
-                    "app-emulation/buildah-1.16.1",
-                    "app-emulation/libpod-2.1.0",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--usepkg": True,
+                                           "--with-bdeps": "y",
+                                           "--update": True,
+                                           "--deep": True,
+                                       },
+                                       success=True,
+                                       mergelist=[
+                                           "dev-lang/go-1.15.5", "app-emulation/buildah-1.16.1",
+                                           "app-emulation/libpod-2.1.0",
+                                       ],
+                                       ),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
-                playground = ResolverPlayground(
-                    ebuilds=ebuilds,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(ebuilds=ebuilds,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
@@ -188,49 +180,40 @@ class SlotOperatorBdependTestCase(TestCase):
 
         test_cases = (
             # Test rebuild triggered by slot operator := dependency in BDEPEND.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                },
-                success=True,
-                mergelist=[
-                    "app-emulation/buildah-1.16.1",
-                    "app-emulation/libpod-2.1.0",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True,
+                                       },
+                                       success=True,
+                                       mergelist=["app-emulation/buildah-1.16.1", "app-emulation/libpod-2.1.0", ],
+                                       ),
             # Test the above case with --usepkg --with-bdeps=y. It should not use the
             # binary packages because rebuild is needed.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--usepkg": True,
-                    "--with-bdeps": "y",
-                    "--update": True,
-                    "--deep": True,
-                },
-                success=True,
-                mergelist=[
-                    "app-emulation/buildah-1.16.1",
-                    "app-emulation/libpod-2.1.0",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--usepkg": True,
+                                           "--with-bdeps": "y",
+                                           "--update": True,
+                                           "--deep": True,
+                                       },
+                                       success=True,
+                                       mergelist=["app-emulation/buildah-1.16.1", "app-emulation/libpod-2.1.0", ],
+                                       ),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
-                playground = ResolverPlayground(
-                    ebuilds=ebuilds,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    debug=False,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(ebuilds=ebuilds,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                debug=False,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)

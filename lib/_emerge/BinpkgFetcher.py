@@ -38,22 +38,20 @@ class BinpkgFetcher(CompositeTask):
         self.pkg_path = self.pkg_allocated_path + ".partial"
 
     def _start(self):
-        fetcher = _BinpkgFetcherProcess(
-            background=self.background,
-            logfile=self.logfile,
-            pkg=self.pkg,
-            pkg_path=self.pkg_path,
-            pretend=self.pretend,
-            scheduler=self.scheduler,
-        )
+        fetcher = _BinpkgFetcherProcess(background=self.background,
+                                        logfile=self.logfile,
+                                        pkg=self.pkg,
+                                        pkg_path=self.pkg_path,
+                                        pretend=self.pretend,
+                                        scheduler=self.scheduler,
+                                        )
 
         if not self.pretend:
             portage.util.ensure_dirs(os.path.dirname(self.pkg_path))
             if "distlocks" in self.pkg.root_config.settings.features:
-                self._start_task(
-                    AsyncTaskFuture(future=fetcher.async_lock()),
-                    functools.partial(self._start_locked, fetcher),
-                )
+                self._start_task(AsyncTaskFuture(future=fetcher.async_lock()),
+                                 functools.partial(self._start_locked, fetcher),
+                                 )
                 return
 
         self._start_task(fetcher, self._fetcher_exit)
@@ -72,10 +70,9 @@ class BinpkgFetcher(CompositeTask):
         if not self.pretend and fetcher.returncode == os.EX_OK:
             fetcher.sync_timestamp()
         if fetcher.locked:
-            self._start_task(
-                AsyncTaskFuture(future=fetcher.async_unlock()),
-                functools.partial(self._fetcher_exit_unlocked, fetcher),
-            )
+            self._start_task(AsyncTaskFuture(future=fetcher.async_unlock()),
+                             functools.partial(self._fetcher_exit_unlocked, fetcher),
+                             )
         else:
             self._fetcher_exit_unlocked(fetcher)
 
@@ -150,11 +147,7 @@ class _BinpkgFetcherProcess(SpawnProcess):
             if not fcmd:
                 fcmd = settings.get(fcmd_prefix)
 
-        fcmd_vars = {
-            "DISTDIR": os.path.dirname(pkg_path),
-            "URI": uri,
-            "FILE": os.path.basename(pkg_path),
-        }
+        fcmd_vars = {"DISTDIR": os.path.dirname(pkg_path), "URI": uri, "FILE": os.path.basename(pkg_path), }
 
         for k in ("PORTAGE_SSH_OPTS", ):
             v = settings.get(k)

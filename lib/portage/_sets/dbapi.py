@@ -15,13 +15,7 @@ from portage._sets import SetConfigError, get_boolean
 import portage
 
 __all__ = [
-    "CategorySet",
-    "ChangedDepsSet",
-    "DowngradeSet",
-    "EverythingSet",
-    "OwnerSet",
-    "SubslotChangedSet",
-    "VariableSet",
+    "CategorySet", "ChangedDepsSet", "DowngradeSet", "EverythingSet", "OwnerSet", "SubslotChangedSet", "VariableSet",
 ]
 
 
@@ -124,11 +118,10 @@ class OwnerSet(PackageSet):
         exclude_files = options.get("exclude-files")
         if exclude_files is not None:
             exclude_files = frozenset(portage.util.shlex_split(exclude_files))
-        return cls(
-            vardb=trees["vartree"].dbapi,
-            exclude_files=exclude_files,
-            files=frozenset(portage.util.shlex_split(options["files"])),
-        )
+        return cls(vardb=trees["vartree"].dbapi,
+                   exclude_files=exclude_files,
+                   files=frozenset(portage.util.shlex_split(options["files"])),
+                   )
 
     singleBuilder = classmethod(singleBuilder)
 
@@ -190,13 +183,12 @@ class VariableSet(EverythingSet):
         if not metadatadb in trees:
             raise SetConfigError(_("invalid value '%s' for option metadata-source") % metadatadb)
 
-        return cls(
-            trees["vartree"].dbapi,
-            metadatadb=trees[metadatadb].dbapi,
-            excludes=frozenset(excludes.split()),
-            includes=frozenset(includes.split()),
-            variable=variable,
-        )
+        return cls(trees["vartree"].dbapi,
+                   metadatadb=trees[metadatadb].dbapi,
+                   excludes=frozenset(excludes.split()),
+                   includes=frozenset(includes.split()),
+                   variable=variable,
+                   )
 
     singleBuilder = classmethod(singleBuilder)
 
@@ -295,10 +287,7 @@ class UnavailableSet(EverythingSet):
 
 
 class UnavailableBinaries(EverythingSet):
-    _operations = (
-        "merge",
-        "unmerge",
-    )
+    _operations = ("merge", "unmerge", )
 
     description = ("Package set which contains all installed " + "packages for which corresponding binary packages " +
                    "are not available.")
@@ -337,10 +326,7 @@ class CategorySet(PackageSet):
             s = "visible"
         else:
             s = "all"
-        self.description = "Package set containing {} packages of category {}".format(
-            s,
-            self._category,
-        )
+        self.description = "Package set containing {} packages of category {}".format(s, self._category, )
 
     def load(self):
         myatoms = []
@@ -574,21 +560,13 @@ class ChangedDepsSet(PackageSet):
             # meaningful since vdb dependencies are conditional-free.
             vdbvars = [
                 strip_slots(
-                    use_reduce(
-                        installed_metadata[k],
-                        uselist=usel,
-                        eapi=installed_metadata["EAPI"],
-                        token_class=Atom,
-                    )) for k in depvars
+                    use_reduce(installed_metadata[k], uselist=usel, eapi=installed_metadata["EAPI"], token_class=Atom,
+                               )) for k in depvars
             ]
             pdbvars = [
                 strip_slots(
-                    use_reduce(
-                        ebuild_metadata[k],
-                        uselist=usel,
-                        eapi=ebuild_metadata["EAPI"],
-                        token_class=Atom,
-                    )) for k in depvars
+                    use_reduce(ebuild_metadata[k], uselist=usel, eapi=ebuild_metadata["EAPI"], token_class=Atom,
+                               )) for k in depvars
             ]
 
             # if dependencies don't match, trigger the rebuild.

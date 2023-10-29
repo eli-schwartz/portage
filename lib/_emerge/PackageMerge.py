@@ -18,11 +18,7 @@ class PackageMerge(CompositeTask):
         if pkg.type_name == "binary":
             pkg_color = "PKG_BINARY_MERGE"
 
-        msg = "{} {}{}".format(
-            action_desc,
-            counter_str,
-            colorize(pkg_color, pkg.cpv + _repo_separator + pkg.repo),
-        )
+        msg = "{} {}{}".format(action_desc, counter_str, colorize(pkg_color, pkg.cpv + _repo_separator + pkg.repo), )
 
         if pkg.root_config.settings["ROOT"] != "/":
             msg += f" {preposition} {pkg.root}"
@@ -41,10 +37,9 @@ class PackageMerge(CompositeTask):
         else:
             action_desc = "Installing"
             preposition = "to"
-            counter_str = "({} of {}) ".format(
-                colorize("MERGE_LIST_PROGRESS", str(pkg_count.curval)),
-                colorize("MERGE_LIST_PROGRESS", str(pkg_count.maxval)),
-            )
+            counter_str = "({} of {}) ".format(colorize("MERGE_LIST_PROGRESS", str(pkg_count.curval)),
+                                               colorize("MERGE_LIST_PROGRESS", str(pkg_count.maxval)),
+                                               )
 
         if self._should_show_status():
             msg = self._make_msg(pkg, action_desc, preposition, counter_str)
@@ -66,10 +61,9 @@ class PackageMerge(CompositeTask):
         else:
             action_desc = "Completed"
             preposition = "to"
-            counter_str = "({} of {}) ".format(
-                colorize("MERGE_LIST_PROGRESS", str(pkg_count.curval)),
-                colorize("MERGE_LIST_PROGRESS", str(pkg_count.maxval)),
-            )
+            counter_str = "({} of {}) ".format(colorize("MERGE_LIST_PROGRESS", str(pkg_count.curval)),
+                                               colorize("MERGE_LIST_PROGRESS", str(pkg_count.maxval)),
+                                               )
 
         if self._should_show_status():
             msg = self._make_msg(pkg, action_desc, preposition, counter_str)

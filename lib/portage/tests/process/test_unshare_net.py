@@ -24,16 +24,14 @@ ABILITY_TO_UNSHARE = portage.process._unshare_validate(CLONE_NEWNET)
 
 class UnshareNetTestCase(TestCase):
 
-    @pytest.mark.skipif(
-        ABILITY_TO_UNSHARE != 0,
-        reason=f"Unable to unshare: {errno.errorcode.get(ABILITY_TO_UNSHARE, '?')}",
-    )
+    @pytest.mark.skipif(ABILITY_TO_UNSHARE != 0,
+                        reason=f"Unable to unshare: {errno.errorcode.get(ABILITY_TO_UNSHARE, '?')}",
+                        )
     @pytest.mark.skipif(portage.process.find_binary("ping") is None, reason="ping not found")
     @pytest.mark.skipif(platform.system() != "Linux", reason="not Linux")
     def testUnshareNet(self):
         env = os.environ.copy()
         env["IPV6"] = "1" if portage.process._has_ipv6() else ""
-        self.assertEqual(
-            portage.process.spawn([BASH_BINARY, "-c", UNSHARE_NET_TEST_SCRIPT], unshare_net=True, env=env),
-            0,
-        )
+        self.assertEqual(portage.process.spawn([BASH_BINARY, "-c", UNSHARE_NET_TEST_SCRIPT], unshare_net=True, env=env),
+                         0,
+                         )

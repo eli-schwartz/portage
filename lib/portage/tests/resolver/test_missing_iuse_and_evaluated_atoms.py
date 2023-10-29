@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class MissingIUSEandEvaluatedAtomsTestCase(TestCase):
@@ -27,10 +24,9 @@ class MissingIUSEandEvaluatedAtomsTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(["=dev-libs/A-1"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/A-2"], success=False),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["=dev-libs/A-1"], success=False),
+                      ResolverPlaygroundTestCase(["=dev-libs/A-2"], success=False),
+                      )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)
         try:

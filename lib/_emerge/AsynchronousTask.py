@@ -18,11 +18,9 @@ class AsynchronousTask(SlotObject):
     the task is complete and self.returncode has been set.
     """
 
-    __slots__ = ("background", "cancelled", "returncode", "scheduler") + (
-        "_exit_listener_handles",
-        "_exit_listeners",
-        "_start_listeners",
-    )
+    __slots__ = ("background", "cancelled", "returncode", "scheduler") + ("_exit_listener_handles", "_exit_listeners",
+                                                                          "_start_listeners",
+                                                                          )
 
     _cancelled_returncode = -signal.SIGINT
 

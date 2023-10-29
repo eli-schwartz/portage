@@ -50,15 +50,14 @@ class FakeVartree(vartree):
     is not a matching ebuild in the tree). Instances of this class are not
     populated until the sync() method is called."""
 
-    def __init__(
-        self,
-        root_config,
-        pkg_cache=None,
-        pkg_root_config=None,
-        dynamic_deps=False,
-        ignore_built_slot_operator_deps=False,
-        soname_deps=False,
-    ):
+    def __init__(self,
+                 root_config,
+                 pkg_cache=None,
+                 pkg_root_config=None,
+                 dynamic_deps=False,
+                 ignore_built_slot_operator_deps=False,
+                 soname_deps=False,
+                 ):
         self._root_config = root_config
         self._dynamic_deps = dynamic_deps
         self._ignore_built_slot_operator_deps = ignore_built_slot_operator_deps
@@ -130,10 +129,8 @@ class FakeVartree(vartree):
         pkg = self.dbapi._cpv_map[cpv]
 
         try:
-            live_metadata = dict(zip(
-                self._portdb_keys,
-                self._portdb.aux_get(cpv, self._portdb_keys, myrepo=pkg.repo),
-            ))
+            live_metadata = dict(zip(self._portdb_keys, self._portdb.aux_get(cpv, self._portdb_keys, myrepo=pkg.repo),
+                                     ))
         except (KeyError, portage.exception.PortageException):
             live_metadata = None
 
@@ -276,14 +273,13 @@ class FakeVartree(vartree):
         depgraph._pkg() method which uses a specially optimized
         RootConfig that has a FakeVartree instead of a real vartree.
         """
-        pkg = Package(
-            cpv=cpv,
-            built=True,
-            installed=True,
-            metadata=zip(self._db_keys, self._real_vardb.aux_get(cpv, self._db_keys)),
-            root_config=self._pkg_root_config,
-            type_name="installed",
-        )
+        pkg = Package(cpv=cpv,
+                      built=True,
+                      installed=True,
+                      metadata=zip(self._db_keys, self._real_vardb.aux_get(cpv, self._db_keys)),
+                      root_config=self._pkg_root_config,
+                      type_name="installed",
+                      )
 
         self._pkg_cache[pkg] = pkg
         return pkg

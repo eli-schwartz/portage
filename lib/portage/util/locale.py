@@ -17,19 +17,9 @@ from portage.util import _unicode_decode, writemsg_level
 from portage.util._ctypes import find_library, LoadLibrary
 
 locale_categories = (
-    "LC_COLLATE",
-    "LC_CTYPE",
-    "LC_MONETARY",
-    "LC_MESSAGES",
-    "LC_NUMERIC",
-    "LC_TIME",
+    "LC_COLLATE", "LC_CTYPE", "LC_MONETARY", "LC_MESSAGES", "LC_NUMERIC", "LC_TIME",
     # GNU extensions
-    "LC_ADDRESS",
-    "LC_IDENTIFICATION",
-    "LC_MEASUREMENT",
-    "LC_NAME",
-    "LC_PAPER",
-    "LC_TELEPHONE",
+    "LC_ADDRESS", "LC_IDENTIFICATION", "LC_MEASUREMENT", "LC_NAME", "LC_PAPER", "LC_TELEPHONE",
 )
 
 _check_locale_cache = {}
@@ -69,15 +59,9 @@ def _check_locale(silent):
         msg.append("")
         chars = lambda l: "".join(_unicode_decode(chr(x)) for x in l)
         if uc != ruc:
-            msg.extend([
-                f"  {chars(lc)} -> {chars(ruc)}",
-                "  %28s: %s" % ("expected", chars(uc)),
-            ])
+            msg.extend([f"  {chars(lc)} -> {chars(ruc)}", "  %28s: %s" % ("expected", chars(uc)), ])
         if lc != rlc:
-            msg.extend([
-                f"  {chars(uc)} -> {chars(rlc)}",
-                "  %28s: %s" % ("expected", chars(lc)),
-            ])
+            msg.extend([f"  {chars(uc)} -> {chars(rlc)}", "  %28s: %s" % ("expected", chars(lc)), ])
         writemsg_level("".join([f"!!! {l}\n" for l in msg]), level=logging.ERROR, noiselevel=-1)
         return False
 

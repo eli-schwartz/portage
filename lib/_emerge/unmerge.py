@@ -20,15 +20,14 @@ from _emerge.UninstallFailure import UninstallFailure
 from _emerge.countdown import countdown
 
 
-def _unmerge_display(
-    root_config,
-    myopts,
-    unmerge_action,
-    unmerge_files,
-    clean_delay=1,
-    ordered=0,
-    writemsg_level=portage.util.writemsg_level,
-):
+def _unmerge_display(root_config,
+                     myopts,
+                     unmerge_action,
+                     unmerge_files,
+                     clean_delay=1,
+                     ordered=0,
+                     writemsg_level=portage.util.writemsg_level,
+                     ):
     """
     Returns a tuple of (returncode, pkgmap) where returncode is
     os.EX_OK if no errors occur, and 1 otherwise.
@@ -47,15 +46,14 @@ def _unmerge_display(
     def _pkg(cpv):
         pkg = pkg_cache.get(cpv)
         if pkg is None:
-            pkg = Package(
-                built=True,
-                cpv=cpv,
-                installed=True,
-                metadata=zip(db_keys, vartree.dbapi.aux_get(cpv, db_keys)),
-                operation="uninstall",
-                root_config=root_config,
-                type_name="installed",
-            )
+            pkg = Package(built=True,
+                          cpv=cpv,
+                          installed=True,
+                          metadata=zip(db_keys, vartree.dbapi.aux_get(cpv, db_keys)),
+                          operation="uninstall",
+                          root_config=root_config,
+                          type_name="installed",
+                          )
             pkg_cache[cpv] = pkg
         return pkg
 
@@ -161,11 +159,7 @@ def _unmerge_display(
                         if idx >= sp_absx_len or sp_vdb[idx] != sp_absx[idx]:
                             print(sp_absx)
                             print(absx)
-                            print(
-                                "\n!!!",
-                                x,
-                                "is not inside " + vdb_path + "; aborting.\n",
-                            )
+                            print("\n!!!", x, "is not inside " + vdb_path + "; aborting.\n", )
                             return 1, {}
 
                     print("=" + "/".join(sp_absx[sp_vdb_len:]))
@@ -202,10 +196,9 @@ def _unmerge_display(
             if not mymatch and x[0] not in "<>=~":
                 mymatch = vartree.dep_match(x)
             if not mymatch:
-                portage.writemsg(
-                    f"\n--- Couldn't find '{x.replace('null/', '')}' to {unmerge_action}.\n",
-                    noiselevel=-1,
-                )
+                portage.writemsg(f"\n--- Couldn't find '{x.replace('null/', '')}' to {unmerge_action}.\n",
+                                 noiselevel=-1,
+                                 )
                 continue
 
             pkgmap.append({"protected": set(), "selected": set(), "omitted": set()})
@@ -450,19 +443,15 @@ def _unmerge_display(
                 cp_info = f"'{cp}'"
             else:
                 cp_info = f"'{cp}' ({virt_cp})"
-            writemsg_level(
-                colorize(
-                    "BAD",
-                    "\n\n!!! " + f"{cp_info} is part of your system profile.\n",
-                ),
-                level=logging.WARNING,
-                noiselevel=-1,
-            )
-            writemsg_level(
-                colorize("WARN", "!!! Unmerging it may " + "be damaging to your system.\n\n"),
-                level=logging.WARNING,
-                noiselevel=-1,
-            )
+            writemsg_level(colorize("BAD", "\n\n!!! " + f"{cp_info} is part of your system profile.\n",
+                                    ),
+                           level=logging.WARNING,
+                           noiselevel=-1,
+                           )
+            writemsg_level(colorize("WARN", "!!! Unmerging it may " + "be damaging to your system.\n\n"),
+                           level=logging.WARNING,
+                           noiselevel=-1,
+                           )
         if not quiet:
             writemsg_level(f"\n {bold(cp)}\n", noiselevel=-1)
         else:
@@ -490,10 +479,7 @@ def _unmerge_display(
         if quiet:
             writemsg_level("\n", noiselevel=-1)
 
-    writemsg_level(
-        f"\nAll selected packages: {' '.join(f'={x}' for x in all_selected)}\n",
-        noiselevel=-1,
-    )
+    writemsg_level(f"\nAll selected packages: {' '.join(f'={x}' for x in all_selected)}\n", noiselevel=-1, )
 
     writemsg_level("\n>>> " + colorize("UNMERGE_WARN", "'Selected'") + " packages are slated for removal.\n")
     writemsg_level(">>> " + colorize("GOOD", "'Protected'") + " and " + colorize("GOOD", "'omitted'") +
@@ -502,20 +488,19 @@ def _unmerge_display(
     return os.EX_OK, pkgmap
 
 
-def unmerge(
-    root_config,
-    myopts,
-    unmerge_action,
-    unmerge_files,
-    ldpath_mtimes,
-    autoclean=0,
-    clean_world=1,
-    clean_delay=1,
-    ordered=0,
-    raise_on_error=0,
-    scheduler=None,
-    writemsg_level=portage.util.writemsg_level,
-):
+def unmerge(root_config,
+            myopts,
+            unmerge_action,
+            unmerge_files,
+            ldpath_mtimes,
+            autoclean=0,
+            clean_world=1,
+            clean_delay=1,
+            ordered=0,
+            raise_on_error=0,
+            scheduler=None,
+            writemsg_level=portage.util.writemsg_level,
+            ):
     """
     Returns os.EX_OK if no errors occur, 1 if an error occurs, and
     130 if interrupted due to a 'no' answer for --ask.
@@ -524,15 +509,14 @@ def unmerge(
     if clean_world:
         clean_world = myopts.get("--deselect") != "n"
 
-    rval, pkgmap = _unmerge_display(
-        root_config,
-        myopts,
-        unmerge_action,
-        unmerge_files,
-        clean_delay=clean_delay,
-        ordered=ordered,
-        writemsg_level=writemsg_level,
-    )
+    rval, pkgmap = _unmerge_display(root_config,
+                                    myopts,
+                                    unmerge_action,
+                                    unmerge_files,
+                                    clean_delay=clean_delay,
+                                    ordered=ordered,
+                                    writemsg_level=writemsg_level,
+                                    )
 
     if rval != os.EX_OK:
         return rval
@@ -558,11 +542,7 @@ def unmerge(
             return 128 + signal.SIGINT
 
     if not vartree.dbapi.writable:
-        writemsg_level(
-            f"!!! Read-only file system: {vartree.dbapi._dbroot}\n",
-            level=logging.ERROR,
-            noiselevel=-1,
-        )
+        writemsg_level(f"!!! Read-only file system: {vartree.dbapi._dbroot}\n", level=logging.ERROR, noiselevel=-1, )
         return 1
 
     # the real unmerging begins, after a short delay unless we're raging....
@@ -579,24 +559,21 @@ def unmerge(
     for x in range(len(pkgmap)):
         for y in pkgmap[x]["selected"]:
             emergelog(xterm_titles, "=== Unmerging... (" + y + ")")
-            message = ">>> Unmerging ({} of {}) {}...\n".format(
-                colorize("MERGE_LIST_PROGRESS", str(curval)),
-                colorize("MERGE_LIST_PROGRESS", str(maxval)),
-                y,
-            )
+            message = ">>> Unmerging ({} of {}) {}...\n".format(colorize("MERGE_LIST_PROGRESS", str(curval)),
+                                                                colorize("MERGE_LIST_PROGRESS", str(maxval)), y,
+                                                                )
             writemsg_level(message, noiselevel=-1)
             curval += 1
 
             mysplit = y.split("/")
             # unmerge...
-            retval = portage.unmerge(
-                mysplit[0],
-                mysplit[1],
-                settings=mysettings,
-                vartree=vartree,
-                ldpath_mtimes=ldpath_mtimes,
-                scheduler=scheduler,
-            )
+            retval = portage.unmerge(mysplit[0],
+                                     mysplit[1],
+                                     settings=mysettings,
+                                     vartree=vartree,
+                                     ldpath_mtimes=ldpath_mtimes,
+                                     scheduler=scheduler,
+                                     )
 
             if retval != os.EX_OK:
                 emergelog(xterm_titles, " !!! unmerge FAILURE: " + y)

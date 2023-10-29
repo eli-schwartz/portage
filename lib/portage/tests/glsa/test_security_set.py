@@ -4,10 +4,7 @@
 import portage
 from portage import os, _encodings
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 from portage.glsa import GlsaFormatException
 
@@ -66,75 +63,56 @@ class SecuritySetTestCase(TestCase):
             self.skipTest("python is missing xml support")
 
     def write_glsa_test_case(self, glsa_dir, glsa):
-        with open(
-                os.path.join(glsa_dir, "glsa-" + glsa["glsa_id"] + ".xml"),
-                encoding=_encodings["repo.content"],
-                mode="w",
-        ) as f:
+        with open(os.path.join(glsa_dir, "glsa-" + glsa["glsa_id"] + ".xml"),
+                  encoding=_encodings["repo.content"],
+                  mode="w",
+                  ) as f:
             f.write(self.glsa_template % glsa)
 
     def testSecuritySet(self):
         self._must_skip()
 
-        ebuilds = {
-            "cat/A-vulnerable-2.2": {
-                "KEYWORDS": "x86"
-            },
-            "cat/B-not-vulnerable-4.5": {
-                "KEYWORDS": "x86"
-            },
-        }
+        ebuilds = {"cat/A-vulnerable-2.2": {"KEYWORDS": "x86"}, "cat/B-not-vulnerable-4.5": {"KEYWORDS": "x86"}, }
 
-        installed = {
-            "cat/A-vulnerable-2.1": {
-                "KEYWORDS": "x86"
-            },
-            "cat/B-not-vulnerable-4.4": {
-                "KEYWORDS": "x86"
-            },
-        }
+        installed = {"cat/A-vulnerable-2.1": {"KEYWORDS": "x86"}, "cat/B-not-vulnerable-4.4": {"KEYWORDS": "x86"}, }
 
-        glsas = (
-            {
-                "glsa_id": "201301-01",
-                "pkgname": "A-vulnerable",
-                "cp": "cat/A-vulnerable",
-                "unaffected_range": "ge",
-                "affected_range": "lt",
-                "unaffected_version": "2.2",
-                "affected_version": "2.2",
-                "arch": "*",
-            },
-            {
-                "glsa_id": "201301-02",
-                "pkgname": "B-not-vulnerable",
-                "cp": "cat/B-not-vulnerable",
-                "unaffected_range": "ge",
-                "affected_range": "lt",
-                "unaffected_version": "4.4",
-                "affected_version": "4.4",
-                "arch": "*",
-            },
-            {
-                "glsa_id": "201301-03",
-                "pkgname": "NotInstalled",
-                "cp": "cat/NotInstalled",
-                "unaffected_range": "ge",
-                "affected_range": "lt",
-                "unaffected_version": "3.5",
-                "affected_version": "3.5",
-                "arch": "*",
-            },
-        )
+        glsas = ({
+            "glsa_id": "201301-01",
+            "pkgname": "A-vulnerable",
+            "cp": "cat/A-vulnerable",
+            "unaffected_range": "ge",
+            "affected_range": "lt",
+            "unaffected_version": "2.2",
+            "affected_version": "2.2",
+            "arch": "*",
+        }, {
+            "glsa_id": "201301-02",
+            "pkgname": "B-not-vulnerable",
+            "cp": "cat/B-not-vulnerable",
+            "unaffected_range": "ge",
+            "affected_range": "lt",
+            "unaffected_version": "4.4",
+            "affected_version": "4.4",
+            "arch": "*",
+        }, {
+            "glsa_id": "201301-03",
+            "pkgname": "NotInstalled",
+            "cp": "cat/NotInstalled",
+            "unaffected_range": "ge",
+            "affected_range": "lt",
+            "unaffected_version": "3.5",
+            "affected_version": "3.5",
+            "arch": "*",
+        },
+                 )
 
         world = ["cat/A"]
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["@security"],
-            options={},
-            success=True,
-            mergelist=["cat/A-vulnerable-2.2"],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["@security"],
+                                                 options={},
+                                                 success=True,
+                                                 mergelist=["cat/A-vulnerable-2.2"],
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
 
@@ -158,77 +136,55 @@ class SecuritySetTestCase(TestCase):
 
         self._must_skip()
 
-        ebuilds = {
-            "cat/A-vulnerable-2.2": {
-                "KEYWORDS": "x86"
-            },
-            "cat/B-not-vulnerable-4.5": {
-                "KEYWORDS": "x86"
-            },
-        }
+        ebuilds = {"cat/A-vulnerable-2.2": {"KEYWORDS": "x86"}, "cat/B-not-vulnerable-4.5": {"KEYWORDS": "x86"}, }
 
-        installed = {
-            "cat/A-vulnerable-2.1": {
-                "KEYWORDS": "x86"
-            },
-            "cat/B-not-vulnerable-4.4": {
-                "KEYWORDS": "x86"
-            },
-        }
+        installed = {"cat/A-vulnerable-2.1": {"KEYWORDS": "x86"}, "cat/B-not-vulnerable-4.4": {"KEYWORDS": "x86"}, }
 
-        glsas = (
-            {
-                "glsa_id": "201301-04",
-                "pkgname": "A-vulnerable",
-                "cp": "cat/A-vulnerable",
-                "unaffected_range": "ge",
-                "affected_range": "lt",
-                "unaffected_version": "2.2",
-                "affected_version": "2.2",
-                # Use an invalid delimiter (comma)
-                "arch": "amd64,sparc",
-            },
-            {
-                "glsa_id": "201301-05",
-                "pkgname": "A-vulnerable",
-                "cp": "cat/A-vulnerable",
-                "unaffected_range": "ge",
-                "affected_range": "lt",
-                "unaffected_version": "2.2",
-                "affected_version": "2.2",
-                # Use an invalid arch (~arch)
-                "arch": "~amd64",
-            },
-            {
-                "glsa_id": "201301-06",
-                "pkgname": "A-vulnerable",
-                "cp": "cat/A-vulnerable",
-                "unaffected_range": "ge",
-                "affected_range": "lt",
-                "unaffected_version": "2.2",
-                "affected_version": "2.2",
-                # Two valid arches followed by an invalid one
-                "arch": "amd64 sparc $$$$",
-            },
-            {
-                "glsa_id": "201301-07",
-                "pkgname": "A-vulnerable",
-                "cp": "cat/A-vulnerable",
-                "unaffected_range": "None",
-                "affected_range": "lt",
-                "unaffected_version": "2.2",
-                "affected_version": "2.2",
-                "arch": "*",
-            },
-        )
+        glsas = ({
+            "glsa_id": "201301-04",
+            "pkgname": "A-vulnerable",
+            "cp": "cat/A-vulnerable",
+            "unaffected_range": "ge",
+            "affected_range": "lt",
+            "unaffected_version": "2.2",
+            "affected_version": "2.2",
+            # Use an invalid delimiter (comma)
+            "arch": "amd64,sparc",
+        }, {
+            "glsa_id": "201301-05",
+            "pkgname": "A-vulnerable",
+            "cp": "cat/A-vulnerable",
+            "unaffected_range": "ge",
+            "affected_range": "lt",
+            "unaffected_version": "2.2",
+            "affected_version": "2.2",
+            # Use an invalid arch (~arch)
+            "arch": "~amd64",
+        }, {
+            "glsa_id": "201301-06",
+            "pkgname": "A-vulnerable",
+            "cp": "cat/A-vulnerable",
+            "unaffected_range": "ge",
+            "affected_range": "lt",
+            "unaffected_version": "2.2",
+            "affected_version": "2.2",
+            # Two valid arches followed by an invalid one
+            "arch": "amd64 sparc $$$$",
+        }, {
+            "glsa_id": "201301-07",
+            "pkgname": "A-vulnerable",
+            "cp": "cat/A-vulnerable",
+            "unaffected_range": "None",
+            "affected_range": "lt",
+            "unaffected_version": "2.2",
+            "affected_version": "2.2",
+            "arch": "*",
+        },
+                 )
 
         world = ["cat/A"]
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["@security"],
-            success=True,
-            mergelist=["cat/A-vulnerable-2.2"],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["@security"], success=True, mergelist=["cat/A-vulnerable-2.2"], ), )
 
         # Give each GLSA a clean slate
         for glsa in glsas:

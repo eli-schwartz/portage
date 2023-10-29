@@ -15,10 +15,7 @@ from portage.versions import best
 
 
 class QueryCommand(IpcCommand):
-    __slots__ = (
-        "phase",
-        "settings",
-    )
+    __slots__ = ("phase", "settings", )
 
     _db = None
 
@@ -88,13 +85,7 @@ class QueryCommand(IpcCommand):
         if cmd == "best_version":
             m = best(vardb.match(atom))
             return (f"{m}\n", warnings_str, 0)
-        if cmd in (
-                "master_repositories",
-                "repository_path",
-                "available_eclasses",
-                "eclass_path",
-                "license_path",
-        ):
+        if cmd in ("master_repositories", "repository_path", "available_eclasses", "eclass_path", "license_path", ):
             repo = _repo_name_re.match(args[0])
             if repo is None:
                 return ("", f"{cmd}: Invalid repository: {args[0]}\n", 2)
@@ -104,19 +95,11 @@ class QueryCommand(IpcCommand):
                 return ("", warnings_str, 1)
 
             if cmd == "master_repositories":
-                return (
-                    f"{' '.join(x.name for x in repo.masters)}\n",
-                    warnings_str,
-                    0,
-                )
+                return (f"{' '.join(x.name for x in repo.masters)}\n", warnings_str, 0, )
             if cmd == "repository_path":
                 return (f"{repo.location}\n", warnings_str, 0)
             if cmd == "available_eclasses":
-                return (
-                    f"{' '.join(sorted(repo.eclass_db.eclasses))}\n",
-                    warnings_str,
-                    0,
-                )
+                return (f"{' '.join(sorted(repo.eclass_db.eclasses))}\n", warnings_str, 0, )
             if cmd == "eclass_path":
                 try:
                     eclass = repo.eclass_db.eclasses[args[1]]

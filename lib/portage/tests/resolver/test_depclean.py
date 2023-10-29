@@ -2,32 +2,22 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SimpleDepcleanTestCase(TestCase):
 
     def testSimpleDepclean(self):
-        ebuilds = {
-            "dev-libs/A-1": {},
-            "dev-libs/B-1": {},
-        }
-        installed = {
-            "dev-libs/A-1": {},
-            "dev-libs/B-1": {},
-        }
+        ebuilds = {"dev-libs/A-1": {}, "dev-libs/B-1": {}, }
+        installed = {"dev-libs/A-1": {}, "dev-libs/B-1": {}, }
 
         world = ("dev-libs/A", )
 
-        test_cases = (ResolverPlaygroundTestCase(
-            [],
-            options={"--depclean": True},
-            success=True,
-            cleanlist=["dev-libs/B-1"],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase([],
+                                                 options={"--depclean": True},
+                                                 success=True,
+                                                 cleanlist=["dev-libs/B-1"],
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:
@@ -76,17 +66,13 @@ class DepcleanWithDepsTestCase(TestCase):
 
         world = ("dev-libs/A", )
 
-        test_cases = (ResolverPlaygroundTestCase(
-            [],
-            options={"--depclean": True},
-            success=True,
-            cleanlist=[
-                "dev-libs/B-1",
-                "dev-libs/D-1",
-                "dev-libs/E-1",
-                "dev-libs/F-1",
-            ],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase([],
+                                                 options={"--depclean": True},
+                                                 success=True,
+                                                 cleanlist=[
+                                                     "dev-libs/B-1", "dev-libs/D-1", "dev-libs/E-1", "dev-libs/F-1",
+                                                 ],
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:
@@ -133,13 +119,12 @@ class DepcleanWithInstalledMaskedTestCase(TestCase):
         world = ("dev-libs/A", )
 
         test_cases = (
-            ResolverPlaygroundTestCase(
-                [],
-                options={"--depclean": True},
-                success=True,
-                # cleanlist=["dev-libs/C-1"]),
-                cleanlist=["dev-libs/B-1"],
-            ), )
+            ResolverPlaygroundTestCase([],
+                                       options={"--depclean": True},
+                                       success=True,
+                                       # cleanlist=["dev-libs/C-1"]),
+                                       cleanlist=["dev-libs/B-1"],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:
@@ -187,12 +172,11 @@ class DepcleanInstalledKeywordMaskedSlotTestCase(TestCase):
 
         world = ("dev-libs/A", )
 
-        test_cases = (ResolverPlaygroundTestCase(
-            [],
-            options={"--depclean": True},
-            success=True,
-            cleanlist=["dev-libs/B-2.7"],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase([],
+                                                 options={"--depclean": True},
+                                                 success=True,
+                                                 cleanlist=["dev-libs/B-2.7"],
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
         try:
@@ -206,50 +190,41 @@ class DepcleanInstalledKeywordMaskedSlotTestCase(TestCase):
 class DepcleanWithExcludeTestCase(TestCase):
 
     def testDepcleanWithExclude(self):
-        installed = {
-            "dev-libs/A-1": {},
-            "dev-libs/B-1": {
-                "RDEPEND": "dev-libs/A"
-            },
-        }
+        installed = {"dev-libs/A-1": {}, "dev-libs/B-1": {"RDEPEND": "dev-libs/A"}, }
 
         # depclean asserts non-empty @world set
         world = ["non-empty/world-set"]
 
         test_cases = (
             # Without --exclude.
-            ResolverPlaygroundTestCase(
-                [],
-                options={"--depclean": True},
-                success=True,
-                cleanlist=["dev-libs/B-1", "dev-libs/A-1"],
-            ),
+            ResolverPlaygroundTestCase([],
+                                       options={"--depclean": True},
+                                       success=True,
+                                       cleanlist=["dev-libs/B-1", "dev-libs/A-1"],
+                                       ),
             ResolverPlaygroundTestCase(["dev-libs/A"], options={"--depclean": True}, success=True, cleanlist=[]),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/B"],
-                options={"--depclean": True},
-                success=True,
-                cleanlist=["dev-libs/B-1"],
-            ),
+            ResolverPlaygroundTestCase(["dev-libs/B"],
+                                       options={"--depclean": True},
+                                       success=True,
+                                       cleanlist=["dev-libs/B-1"],
+                                       ),
             # With --exclude
-            ResolverPlaygroundTestCase(
-                [],
-                options={
-                    "--depclean": True,
-                    "--exclude": ["dev-libs/A"]
-                },
-                success=True,
-                cleanlist=["dev-libs/B-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/B"],
-                options={
-                    "--depclean": True,
-                    "--exclude": ["dev-libs/B"]
-                },
-                success=True,
-                cleanlist=[],
-            ),
+            ResolverPlaygroundTestCase([],
+                                       options={
+                                           "--depclean": True,
+                                           "--exclude": ["dev-libs/A"]
+                                       },
+                                       success=True,
+                                       cleanlist=["dev-libs/B-1"],
+                                       ),
+            ResolverPlaygroundTestCase(["dev-libs/B"],
+                                       options={
+                                           "--depclean": True,
+                                           "--exclude": ["dev-libs/B"]
+                                       },
+                                       success=True,
+                                       cleanlist=[],
+                                       ),
         )
 
         playground = ResolverPlayground(installed=installed, world=world)
@@ -285,30 +260,27 @@ class DepcleanWithExcludeAndSlotsTestCase(TestCase):
 
         test_cases = (
             # Without --exclude.
-            ResolverPlaygroundTestCase(
-                [],
-                options={"--depclean": True},
-                success=True,
-                cleanlist=["dev-libs/Y-1", "dev-libs/Z-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                [],
-                options={
-                    "--depclean": True,
-                    "--exclude": ["dev-libs/Z"]
-                },
-                success=True,
-                cleanlist=["dev-libs/Y-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                [],
-                options={
-                    "--depclean": True,
-                    "--exclude": ["dev-libs/Y"]
-                },
-                success=True,
-                cleanlist=[],
-            ),
+            ResolverPlaygroundTestCase([],
+                                       options={"--depclean": True},
+                                       success=True,
+                                       cleanlist=["dev-libs/Y-1", "dev-libs/Z-1"],
+                                       ),
+            ResolverPlaygroundTestCase([],
+                                       options={
+                                           "--depclean": True,
+                                           "--exclude": ["dev-libs/Z"]
+                                       },
+                                       success=True,
+                                       cleanlist=["dev-libs/Y-1"],
+                                       ),
+            ResolverPlaygroundTestCase([],
+                                       options={
+                                           "--depclean": True,
+                                           "--exclude": ["dev-libs/Y"]
+                                       },
+                                       success=True,
+                                       cleanlist=[],
+                                       ),
         )
 
         playground = ResolverPlayground(installed=installed, world=world)
@@ -323,37 +295,28 @@ class DepcleanWithExcludeAndSlotsTestCase(TestCase):
 class DepcleanAndWildcardsTestCase(TestCase):
 
     def testDepcleanAndWildcards(self):
-        installed = {
-            "dev-libs/A-1": {
-                "RDEPEND": "dev-libs/B"
-            },
-            "dev-libs/B-1": {},
-        }
+        installed = {"dev-libs/A-1": {"RDEPEND": "dev-libs/B"}, "dev-libs/B-1": {}, }
 
         # depclean asserts non-empty @world set
         world = ["non-empty/world-set"]
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["*/*"],
-                options={"--depclean": True},
-                success=True,
-                cleanlist=["dev-libs/A-1", "dev-libs/B-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/*"],
-                options={"--depclean": True},
-                success=True,
-                cleanlist=["dev-libs/A-1", "dev-libs/B-1"],
-            ),
-            ResolverPlaygroundTestCase(
-                ["*/A"],
-                options={"--depclean": True},
-                success=True,
-                cleanlist=["dev-libs/A-1"],
-            ),
-            ResolverPlaygroundTestCase(["*/B"], options={"--depclean": True}, success=True, cleanlist=[]),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["*/*"],
+                                                 options={"--depclean": True},
+                                                 success=True,
+                                                 cleanlist=["dev-libs/A-1", "dev-libs/B-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["dev-libs/*"],
+                                                 options={"--depclean": True},
+                                                 success=True,
+                                                 cleanlist=["dev-libs/A-1", "dev-libs/B-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["*/A"],
+                                                 options={"--depclean": True},
+                                                 success=True,
+                                                 cleanlist=["dev-libs/A-1"],
+                                                 ),
+                      ResolverPlaygroundTestCase(["*/B"], options={"--depclean": True}, success=True, cleanlist=[]),
+                      )
 
         playground = ResolverPlayground(installed=installed, world=world)
         try:

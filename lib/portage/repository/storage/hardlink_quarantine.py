@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage import os
-from portage.repository.storage.interface import (
-    RepoStorageException,
-    RepoStorageInterface,
-)
+from portage.repository.storage.interface import (RepoStorageException, RepoStorageInterface, )
 from portage.util.futures import asyncio
 
 from _emerge.SpawnProcess import SpawnProcess
@@ -54,18 +51,9 @@ class HardlinkQuarantineRepoStorage(RepoStorageInterface):
         # Use  rsync --link-dest to hardlink a files into self._update_location,
         # since cp -l is not portable.
         await self._check_call([
-            "rsync",
-            "-a",
-            "--link-dest",
-            self._user_location,
-            "--exclude=/distfiles",
-            "--exclude=/local",
-            "--exclude=/lost+found",
-            "--exclude=/packages",
-            "--exclude",
-            f"/{os.path.basename(update_location)}",
-            self._user_location + "/",
-            update_location + "/",
+            "rsync", "-a", "--link-dest", self._user_location, "--exclude=/distfiles", "--exclude=/local",
+            "--exclude=/lost+found", "--exclude=/packages", "--exclude", f"/{os.path.basename(update_location)}",
+            self._user_location + "/", update_location + "/",
         ])
 
         self._update_location = update_location
@@ -82,16 +70,8 @@ class HardlinkQuarantineRepoStorage(RepoStorageInterface):
         update_location = self.current_update
         self._update_location = None
         await self._check_call([
-            "rsync",
-            "-a",
-            "--delete",
-            "--exclude=/distfiles",
-            "--exclude=/local",
-            "--exclude=/lost+found",
-            "--exclude=/packages",
-            "--exclude",
-            f"/{os.path.basename(update_location)}",
-            update_location + "/",
+            "rsync", "-a", "--delete", "--exclude=/distfiles", "--exclude=/local", "--exclude=/lost+found",
+            "--exclude=/packages", "--exclude", f"/{os.path.basename(update_location)}", update_location + "/",
             self._user_location + "/",
         ])
 

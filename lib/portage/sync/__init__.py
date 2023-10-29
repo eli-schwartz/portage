@@ -9,11 +9,8 @@ from portage.module import Modules
 from portage.sync.controller import SyncManager
 from portage.sync.config_checks import check_type
 
-_SUBMODULE_PATH_MAP = OrderedDict([
-    ("glsa", ("metadata/glsa", )),
-    ("news", ("metadata/news", )),
-    ("profiles", ("metadata/layout.conf", "profiles")),
-])
+_SUBMODULE_PATH_MAP = OrderedDict([("glsa", ("metadata/glsa", )), ("news", ("metadata/news", )),
+                                   ("profiles", ("metadata/layout.conf", "profiles")), ])
 
 path = os.path.join(os.path.dirname(__file__), "modules")
 # initial development debug info

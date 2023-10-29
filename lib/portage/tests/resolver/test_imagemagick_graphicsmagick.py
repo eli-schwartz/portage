@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class ImageMagickGraphicsMagickTestCase(TestCase):
@@ -62,27 +59,19 @@ class ImageMagickGraphicsMagickTestCase(TestCase):
             },
         }
 
-        world = (
-            "media-gfx/inkscape",
-            "media-video/dvdrip",
-            "media-gfx/graphicsmagick",
-        )
+        world = ("media-gfx/inkscape", "media-video/dvdrip", "media-gfx/graphicsmagick", )
 
         test_cases = (
             # bug #554070: imagemagick upgrade triggered erroneous
             # autounmask USE change for media-gfx/graphicsmagick[imagemagick]
-            ResolverPlaygroundTestCase(
-                ["media-gfx/imagemagick", "@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=[
-                    "media-gfx/imagemagick-6.9.7.0",
-                    "media-gfx/inkscape-0.91-r3",
-                ],
-            ), )
+            ResolverPlaygroundTestCase(["media-gfx/imagemagick", "@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       mergelist=["media-gfx/imagemagick-6.9.7.0", "media-gfx/inkscape-0.91-r3", ],
+                                       ), )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
         try:

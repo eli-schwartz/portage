@@ -5,16 +5,10 @@ import logging
 
 from _emerge.SpawnProcess import SpawnProcess
 import portage
-from portage.util.compression_probe import (
-    compression_probe,
-    _compressors,
-)
+from portage.util.compression_probe import (compression_probe, _compressors, )
 from portage.util.cpuinfo import makeopts_to_job_count
 from portage.process import find_binary
-from portage.util import (
-    shlex_split,
-    varexpand,
-)
+from portage.util import (shlex_split, varexpand, )
 from portage.exception import InvalidBinaryPackageFormat
 from portage.binpkg import get_binpkg_format
 import signal
@@ -53,19 +47,15 @@ class BinpkgExtractorAsync(SpawnProcess):
         elif tarfile.is_tarfile(
                 portage._unicode_encode(self.pkg_path, encoding=portage._encodings["fs"], errors="strict")):
             decomp_cmd = "cat"
-            decomp = {
-                "compress": "cat",
-                "package": "sys-apps/coreutils",
-            }
+            decomp = {"compress": "cat", "package": "sys-apps/coreutils", }
         else:
             decomp_cmd = None
         if decomp_cmd is None:
-            self.scheduler.output(
-                f"!!! File compression header unrecognized: {self.pkg_path}\n",
-                log_path=self.logfile,
-                background=self.background,
-                level=logging.ERROR,
-            )
+            self.scheduler.output(f"!!! File compression header unrecognized: {self.pkg_path}\n",
+                                  log_path=self.logfile,
+                                  background=self.background,
+                                  level=logging.ERROR,
+                                  )
             self.returncode = 1
             self._async_wait()
             return
@@ -104,8 +94,7 @@ class BinpkgExtractorAsync(SpawnProcess):
         # SIGPIPE handling (128 + SIGPIPE) should be compatible with
         # assert_sigpipe_ok() that's used by the ebuild unpack() helper.
         self.args = [
-            self._shell_binary,
-            "-c",
+            self._shell_binary, "-c",
             textwrap.dedent(f"""
                     cmd0=(head -c {pkg_xpak.filestat.st_size - pkg_xpak.xpaksize} -- {portage._shell_quote(self.pkg_path)})
                     cmd1=({decomp_cmd})

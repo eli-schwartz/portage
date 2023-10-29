@@ -21,16 +21,9 @@ from .ManifestProcess import ManifestProcess
 
 
 class ManifestTask(CompositeTask):
-    __slots__ = (
-        "cp",
-        "distdir",
-        "fetchlist_dict",
-        "gpg_cmd",
-        "gpg_vars",
-        "repo_config",
-        "force_sign_key",
-        "_manifest_path",
-    )
+    __slots__ = ("cp", "distdir", "fetchlist_dict", "gpg_cmd", "gpg_vars", "repo_config", "force_sign_key",
+                 "_manifest_path",
+                 )
 
     _PGP_HEADER = b"BEGIN PGP SIGNED MESSAGE"
     _manifest_line_re = re.compile(r"^(%s) " % "|".join(MANIFEST2_IDENTIFIERS))
@@ -48,20 +41,18 @@ class ManifestTask(CompositeTask):
                 try:
                     self.fetchlist_dict.result()
                 except InvalidDependString as e:
-                    writemsg(
-                        _("!!! %s%s%s: SRC_URI: %s\n") % (self.cp, _repo_separator, self.repo_config.name, e),
-                        noiselevel=-1,
-                    )
+                    writemsg(_("!!! %s%s%s: SRC_URI: %s\n") % (self.cp, _repo_separator, self.repo_config.name, e),
+                             noiselevel=-1,
+                             )
             self._async_wait()
             return
         self.fetchlist_dict = self.fetchlist_dict.result()
-        manifest_proc = ManifestProcess(
-            cp=self.cp,
-            distdir=self.distdir,
-            fetchlist_dict=self.fetchlist_dict,
-            repo_config=self.repo_config,
-            scheduler=self.scheduler,
-        )
+        manifest_proc = ManifestProcess(cp=self.cp,
+                                        distdir=self.distdir,
+                                        fetchlist_dict=self.fetchlist_dict,
+                                        repo_config=self.repo_config,
+                                        scheduler=self.scheduler,
+                                        )
         self._start_task(manifest_proc, self._manifest_proc_exit)
 
     def _manifest_proc_exit(self, manifest_proc):
@@ -91,15 +82,13 @@ class ManifestTask(CompositeTask):
 
     def _check_sig_key(self):
         null_fd = os.open("/dev/null", os.O_RDONLY)
-        popen_proc = PopenProcess(
-            proc=subprocess.Popen(
-                ["gpg", "--verify", self._manifest_path],
-                stdin=null_fd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            ),
-            pipe_reader=PipeReader(),
-        )
+        popen_proc = PopenProcess(proc=subprocess.Popen(["gpg", "--verify", self._manifest_path],
+                                                        stdin=null_fd,
+                                                        stdout=subprocess.PIPE,
+                                                        stderr=subprocess.STDOUT,
+                                                        ),
+                                  pipe_reader=PipeReader(),
+                                  )
         os.close(null_fd)
         popen_proc.pipe_reader.input_files = {"producer": popen_proc.proc.stdout}
         self._start_task(popen_proc, self._check_sig_key_exit)
@@ -179,11 +168,10 @@ class ManifestTask(CompositeTask):
         gpg_proc = PopenProcess(proc=subprocess.Popen(gpg_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT))
         # PipeLogger echos output and efficiently monitors for process
         # exit by listening for the stdout EOF event.
-        gpg_proc.pipe_reader = PipeLogger(
-            background=self.background,
-            input_fd=gpg_proc.proc.stdout,
-            scheduler=self.scheduler,
-        )
+        gpg_proc.pipe_reader = PipeLogger(background=self.background,
+                                          input_fd=gpg_proc.proc.stdout,
+                                          scheduler=self.scheduler,
+                                          )
         self._start_task(gpg_proc, self._gpg_proc_exit)
 
     def _gpg_proc_exit(self, gpg_proc):
@@ -209,10 +197,7 @@ class ManifestTask(CompositeTask):
 
     def _need_signature(self):
         try:
-            with open(
-                    _unicode_encode(self._manifest_path, encoding=_encodings["fs"], errors="strict"),
-                    "rb",
-            ) as f:
+            with open(_unicode_encode(self._manifest_path, encoding=_encodings["fs"], errors="strict"), "rb", ) as f:
                 return self._PGP_HEADER not in f.readline()
         except OSError as e:
             if e.errno in (errno.ENOENT, errno.ESTALE):

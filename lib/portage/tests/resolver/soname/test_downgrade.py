@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -48,85 +45,66 @@ class SonameDowngradeTestCase(TestCase):
             },
         }
 
-        user_config = {
-            "package.mask": (">=dev-libs/icu-49", ),
-        }
+        user_config = {"package.mask": (">=dev-libs/icu-49", ), }
 
         world = ["dev-libs/libxml2"]
 
         test_cases = (
-            ResolverPlaygroundTestCase(
-                ["dev-libs/icu"],
-                options={
-                    "--autounmask": "n",
-                    "--ignore-soname-deps": "n",
-                    "--oneshot": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]dev-libs/icu-4.8",
-                    "[binary]dev-libs/libxml2-2.7.8",
-                ],
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-libs/icu"],
-                options={
-                    "--autounmask": "n",
-                    "--ignore-soname-deps": "y",
-                    "--oneshot": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]dev-libs/icu-4.8",
-                ],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--autounmask": "n",
-                    "--deep": True,
-                    "--ignore-soname-deps": "n",
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]dev-libs/icu-4.8",
-                    "[binary]dev-libs/libxml2-2.7.8",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["dev-libs/icu"],
+                                       options={
+                                           "--autounmask": "n",
+                                           "--ignore-soname-deps": "n",
+                                           "--oneshot": True,
+                                           "--usepkgonly": True,
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]dev-libs/icu-4.8", "[binary]dev-libs/libxml2-2.7.8", ],
+                                       ),
+            ResolverPlaygroundTestCase(["dev-libs/icu"],
+                                       options={
+                                           "--autounmask": "n",
+                                           "--ignore-soname-deps": "y",
+                                           "--oneshot": True,
+                                           "--usepkgonly": True,
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]dev-libs/icu-4.8", ],
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--autounmask": "n",
+                                           "--deep": True,
+                                           "--ignore-soname-deps": "n",
+                                           "--update": True,
+                                           "--usepkgonly": True,
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]dev-libs/icu-4.8", "[binary]dev-libs/libxml2-2.7.8", ],
+                                       ),
             # In this case, soname dependencies are not respected,
             # because --usepkgonly is not enabled. This could be
             # handled differently, by respecting soname dependencies
             # as long as no unbuilt ebuilds get pulled into the graph.
             # However, that kind of conditional dependency accounting
             # would add a significant amount of complexity.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--deep": True,
-                    "--ignore-soname-deps": "n",
-                    "--update": True,
-                    "--usepkg": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]dev-libs/icu-4.8",
-                ],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--deep": True,
-                    "--update": True,
-                },
-                success=True,
-                mergelist=[
-                    "dev-libs/icu-4.8",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--deep": True,
+                                           "--ignore-soname-deps": "n",
+                                           "--update": True,
+                                           "--usepkg": True,
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]dev-libs/icu-4.8", ],
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--deep": True,
+                                           "--update": True,
+                                       },
+                                       success=True,
+                                       mergelist=["dev-libs/icu-4.8", ],
+                                       ),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
@@ -134,14 +112,13 @@ class SonameDowngradeTestCase(TestCase):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
                 user_config["make.conf"] = (f'BINPKG_FORMAT="{binpkg_format}"', )
-                playground = ResolverPlayground(
-                    binpkgs=binpkgs,
-                    ebuilds=ebuilds,
-                    installed=installed,
-                    user_config=user_config,
-                    world=world,
-                    debug=False,
-                )
+                playground = ResolverPlayground(binpkgs=binpkgs,
+                                                ebuilds=ebuilds,
+                                                installed=installed,
+                                                user_config=user_config,
+                                                world=world,
+                                                debug=False,
+                                                )
                 try:
                     for test_case in test_cases:
                         playground.run_TestCase(test_case)
@@ -202,14 +179,9 @@ class SonameDowngradeTestCase(TestCase):
             },
         }
 
-        user_config = {
-            "package.mask": (">=dev-libs/glib-2.32", ),
-        }
+        user_config = {"package.mask": (">=dev-libs/glib-2.32", ), }
 
-        world = [
-            "dev-libs/glib:1",
-            "dev-libs/dbus-glib",
-        ]
+        world = ["dev-libs/glib:1", "dev-libs/dbus-glib", ]
 
         test_cases = (ResolverPlaygroundTestCase(
             ["@world"],
@@ -221,10 +193,7 @@ class SonameDowngradeTestCase(TestCase):
                 "--usepkgonly": True,
             },
             success=True,
-            mergelist=[
-                "[binary]dev-libs/glib-2.30.2",
-                "[binary]dev-libs/dbus-glib-0.98",
-            ],
+            mergelist=["[binary]dev-libs/glib-2.30.2", "[binary]dev-libs/dbus-glib-0.98", ],
         ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
@@ -232,14 +201,13 @@ class SonameDowngradeTestCase(TestCase):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
                 user_config["make.conf"] = (f'BINPKG_FORMAT="{binpkg_format}"', )
-                playground = ResolverPlayground(
-                    ebuilds=ebuilds,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    user_config=user_config,
-                    world=world,
-                    debug=False,
-                )
+                playground = ResolverPlayground(ebuilds=ebuilds,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                user_config=user_config,
+                                                world=world,
+                                                debug=False,
+                                                )
 
                 try:
                     for test_case in test_cases:

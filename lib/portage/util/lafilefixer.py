@@ -170,17 +170,15 @@ def rewrite_lafile(contents):
 
     changed = False
     if dep_libs != expected_dep_libs:
-        contents = contents.replace(
-            b"dependency_libs='" + dep_libs + b"'",
-            b"dependency_libs='" + expected_dep_libs + b"'",
-        )
+        contents = contents.replace(b"dependency_libs='" + dep_libs + b"'",
+                                    b"dependency_libs='" + expected_dep_libs + b"'",
+                                    )
         changed = True
 
     if inh_link_flags is not None and expected_inh_link_flags != inh_link_flags:
-        contents = contents.replace(
-            b"inherited_linker_flags='" + inh_link_flags + b"'",
-            b"inherited_linker_flags='" + expected_inh_link_flags + b"'",
-        )
+        contents = contents.replace(b"inherited_linker_flags='" + inh_link_flags + b"'",
+                                    b"inherited_linker_flags='" + expected_inh_link_flags + b"'",
+                                    )
         changed = True
 
     if changed:

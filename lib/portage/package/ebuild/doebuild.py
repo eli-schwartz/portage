@@ -25,91 +25,45 @@ import zlib
 import portage
 
 portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.package.ebuild.config:check_config_instance",
-    "portage.package.ebuild.digestcheck:digestcheck",
+    globals(), "portage.package.ebuild.config:check_config_instance", "portage.package.ebuild.digestcheck:digestcheck",
     "portage.package.ebuild.digestgen:digestgen",
     "portage.package.ebuild.fetch:_drop_privs_userfetch,_want_userfetch,fetch",
     "portage.package.ebuild.prepare_build_dirs:_prepare_fake_distdir",
     "portage.package.ebuild._ipc.QueryCommand:QueryCommand",
     "portage.dep._slot_operator:evaluate_slot_operator_equal_deps",
-    "portage.package.ebuild._spawn_nofetch:spawn_nofetch",
-    "portage.util.elf.header:ELFHeader",
+    "portage.package.ebuild._spawn_nofetch:spawn_nofetch", "portage.util.elf.header:ELFHeader",
     "portage.dep.soname.multilib_category:compute_multilib_category",
-    "portage.util._desktop_entry:validate_desktop_entry",
-    "portage.util._dyn_libs.NeededEntry:NeededEntry",
+    "portage.util._desktop_entry:validate_desktop_entry", "portage.util._dyn_libs.NeededEntry:NeededEntry",
     "portage.util._dyn_libs.soname_deps:SonameDepsProcessor",
     "portage.util._async.SchedulerInterface:SchedulerInterface",
     "portage.util._eventloop.global_event_loop:global_event_loop",
     "portage.util.ExtractKernelVersion:ExtractKernelVersion",
 )
 
-from portage import (
-    bsd_chflags,
-    eapi_is_supported,
-    merge,
-    os,
-    selinux,
-    shutil,
-    unmerge,
-    _encodings,
-    _os_merge,
-    _shell_quote,
-    _unicode_decode,
-    _unicode_encode,
-)
-from portage.const import (
-    EBUILD_SH_ENV_FILE,
-    EBUILD_SH_ENV_DIR,
-    EBUILD_SH_BINARY,
-    INVALID_ENV_FILE,
-    MISC_SH_BINARY,
-    PORTAGE_PYM_PACKAGES,
-    SUPPORTED_GENTOO_BINPKG_FORMATS,
-)
+from portage import (bsd_chflags, eapi_is_supported, merge, os, selinux, shutil, unmerge, _encodings, _os_merge,
+                     _shell_quote, _unicode_decode, _unicode_encode,
+                     )
+from portage.const import (EBUILD_SH_ENV_FILE, EBUILD_SH_ENV_DIR, EBUILD_SH_BINARY, INVALID_ENV_FILE, MISC_SH_BINARY,
+                           PORTAGE_PYM_PACKAGES, SUPPORTED_GENTOO_BINPKG_FORMATS,
+                           )
 from portage.data import portage_gid, portage_uid, secpass, uid, userpriv_groups
 from portage.dbapi.porttree import _parse_uri_map
-from portage.dep import (
-    Atom,
-    check_required_use,
-    human_readable_required_use,
-    paren_enclose,
-    use_reduce,
-)
-from portage.eapi import (
-    eapi_exports_KV,
-    eapi_exports_merge_type,
-    eapi_exports_replace_vars,
-    eapi_has_required_use,
-    eapi_has_src_prepare_and_src_configure,
-    eapi_has_pkg_pretend,
-    _get_eapi_attrs,
-)
+from portage.dep import (Atom, check_required_use, human_readable_required_use, paren_enclose, use_reduce, )
+from portage.eapi import (eapi_exports_KV, eapi_exports_merge_type, eapi_exports_replace_vars, eapi_has_required_use,
+                          eapi_has_src_prepare_and_src_configure, eapi_has_pkg_pretend, _get_eapi_attrs,
+                          )
 from portage.elog import elog_process, _preload_elog_modules
 from portage.elog.messages import eerror, eqawarn
-from portage.exception import (
-    DigestException,
-    FileNotFound,
-    IncorrectParameter,
-    InvalidData,
-    InvalidDependString,
-    PermissionDenied,
-    UnsupportedAPIException,
-)
+from portage.exception import (DigestException, FileNotFound, IncorrectParameter, InvalidData, InvalidDependString,
+                               PermissionDenied, UnsupportedAPIException,
+                               )
 from portage.localization import _
 from portage.output import colormap
 from portage.package.ebuild.prepare_build_dirs import prepare_build_dirs
 from portage.process import find_binary
-from portage.util import (
-    apply_recursive_permissions,
-    apply_secpass_permissions,
-    noiselimit,
-    shlex_split,
-    varexpand,
-    writemsg,
-    writemsg_stdout,
-    write_atomic,
-)
+from portage.util import (apply_recursive_permissions, apply_secpass_permissions, noiselimit, shlex_split, varexpand,
+                          writemsg, writemsg_stdout, write_atomic,
+                          )
 from portage.util.cpuinfo import get_cpu_count, makeopts_to_job_count
 from portage.util.lafilefixer import rewrite_lafile
 from portage.util.compression_probe import _compressors
@@ -127,30 +81,11 @@ from _emerge.Package import Package
 from _emerge.RootConfig import RootConfig
 
 _unsandboxed_phases = frozenset([
-    "clean",
-    "cleanrm",
-    "config",
-    "help",
-    "info",
-    "postinst",
-    "preinst",
-    "pretend",
-    "postrm",
-    "prerm",
-    "setup",
+    "clean", "cleanrm", "config", "help", "info", "postinst", "preinst", "pretend", "postrm", "prerm", "setup",
 ])
 
 # phases in which IPC with host is allowed
-_ipc_phases = frozenset([
-    "setup",
-    "pretend",
-    "config",
-    "info",
-    "preinst",
-    "postinst",
-    "prerm",
-    "postrm",
-])
+_ipc_phases = frozenset(["setup", "pretend", "config", "info", "preinst", "postinst", "prerm", "postrm", ])
 
 # phases which execute in the global PID namespace
 _global_pid_phases = frozenset(["config", "depend", "preinst", "prerm", "postinst", "postrm"])
@@ -173,11 +108,7 @@ _phase_func_map = {
     "pretend": "pkg_pretend",
 }
 
-_vdb_use_conditional_keys = Package._dep_keys + (
-    "LICENSE",
-    "PROPERTIES",
-    "RESTRICT",
-)
+_vdb_use_conditional_keys = Package._dep_keys + ("LICENSE", "PROPERTIES", "RESTRICT", )
 
 
 def _doebuild_spawn(phase, settings, actionmap=None, **kwargs):
@@ -216,8 +147,7 @@ def _doebuild_spawn(phase, settings, actionmap=None, **kwargs):
             ebuild_sh_arg = phase
 
         cmd = "{} {}".format(
-            _shell_quote(os.path.join(settings["PORTAGE_BIN_PATH"], os.path.basename(EBUILD_SH_BINARY))),
-            ebuild_sh_arg,
+            _shell_quote(os.path.join(settings["PORTAGE_BIN_PATH"], os.path.basename(EBUILD_SH_BINARY))), ebuild_sh_arg,
         )
 
     settings["EBUILD_PHASE"] = phase
@@ -229,25 +159,17 @@ def _doebuild_spawn(phase, settings, actionmap=None, **kwargs):
 
 def _spawn_phase(phase, settings, actionmap=None, returnpid=False, logfile=None, **kwargs):
     if returnpid:
-        return _doebuild_spawn(
-            phase,
-            settings,
-            actionmap=actionmap,
-            returnpid=returnpid,
-            logfile=logfile,
-            **kwargs,
-        )
+        return _doebuild_spawn(phase, settings, actionmap=actionmap, returnpid=returnpid, logfile=logfile, **kwargs, )
 
     # The logfile argument is unused here, since EbuildPhase uses
     # the PORTAGE_LOG_FILE variable if set.
-    ebuild_phase = EbuildPhase(
-        actionmap=actionmap,
-        background=False,
-        phase=phase,
-        scheduler=SchedulerInterface(asyncio._safe_loop()),
-        settings=settings,
-        **kwargs,
-    )
+    ebuild_phase = EbuildPhase(actionmap=actionmap,
+                               background=False,
+                               phase=phase,
+                               scheduler=SchedulerInterface(asyncio._safe_loop()),
+                               settings=settings,
+                               **kwargs,
+                               )
 
     ebuild_phase.start()
     ebuild_phase.wait()
@@ -487,10 +409,7 @@ def doebuild_environment(myebuild, mydo, myroot=None, settings=None, debug=False
             src_uri = mysettings.configdict["pkg"].get("SRC_URI")
             if src_uri is None:
                 (src_uri, ) = mydbapi.aux_get(mysettings.mycpv, ["SRC_URI"], mytree=mytree)
-            metadata = {
-                "EAPI": eapi,
-                "SRC_URI": src_uri,
-            }
+            metadata = {"EAPI": eapi, "SRC_URI": src_uri, }
             use = frozenset(mysettings["PORTAGE_USE"].split())
             try:
                 uri_map = _parse_uri_map(mysettings.mycpv, metadata, use=use)
@@ -551,22 +470,10 @@ def doebuild_environment(myebuild, mydo, myroot=None, settings=None, debug=False
             # Discard KV for EAPIs that don't support it. Cached KV is restored
             # from the backupenv whenever config.reset() is called.
             mysettings.pop("KV", None)
-        elif "KV" not in mysettings and mydo in (
-                "compile",
-                "config",
-                "configure",
-                "info",
-                "install",
-                "nofetch",
-                "postinst",
-                "postrm",
-                "preinst",
-                "prepare",
-                "prerm",
-                "setup",
-                "test",
-                "unpack",
-        ):
+        elif "KV" not in mysettings and mydo in ("compile", "config", "configure", "info", "install", "nofetch",
+                                                 "postinst", "postrm", "preinst", "prepare", "prerm", "setup", "test",
+                                                 "unpack",
+                                                 ):
             mykv, err1 = ExtractKernelVersion(os.path.join(mysettings["EROOT"], "usr/src/linux"))
             if mykv:
                 # Regular source tree
@@ -577,11 +484,9 @@ def doebuild_environment(myebuild, mydo, myroot=None, settings=None, debug=False
 
         binpkg_format = mysettings.get("BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0])
         if binpkg_format not in portage.const.SUPPORTED_GENTOO_BINPKG_FORMATS:
-            writemsg(
-                "!!! BINPKG_FORMAT contains invalid or "
-                "unsupported format: %s" % binpkg_format,
-                noiselevel=-1,
-            )
+            writemsg("!!! BINPKG_FORMAT contains invalid or "
+                     "unsupported format: %s" % binpkg_format, noiselevel=-1,
+                     )
             binpkg_format = "xpak"
         mysettings["BINPKG_FORMAT"] = binpkg_format
 
@@ -597,14 +502,12 @@ def doebuild_environment(myebuild, mydo, myroot=None, settings=None, debug=False
         else:
             if (settings.get(f"BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}", None) is not None):
                 compression["compress"] = compression["compress"].replace(
-                    "${BINPKG_COMPRESS_FLAGS}",
-                    f"${{BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}}}",
+                    "${BINPKG_COMPRESS_FLAGS}", f"${{BINPKG_COMPRESS_FLAGS_{binpkg_compression.upper()}}}",
                 )
 
             try:
                 compression_binary = compression["compress"].replace(
-                    "{JOBS}",
-                    str(makeopts_to_job_count(mysettings.get("MAKEOPTS", "1"))),
+                    "{JOBS}", str(makeopts_to_job_count(mysettings.get("MAKEOPTS", "1"))),
                 )
                 compression_binary = shlex_split(varexpand(compression_binary, mydict=settings))[0]
             except IndexError as e:
@@ -616,8 +519,7 @@ def doebuild_environment(myebuild, mydo, myroot=None, settings=None, debug=False
                              (binpkg_compression, missing_package))
                 else:
                     compression_binary = compression["compress"].replace(
-                        "{JOBS}",
-                        str(makeopts_to_job_count(mysettings.get("MAKEOPTS", "1"))),
+                        "{JOBS}", str(makeopts_to_job_count(mysettings.get("MAKEOPTS", "1"))),
                     )
                     cmd = [varexpand(x, mydict=settings) for x in shlex_split(compression_binary)]
                     # Filter empty elements
@@ -628,36 +530,27 @@ def doebuild_environment(myebuild, mydo, myroot=None, settings=None, debug=False
 _doebuild_manifest_cache = None
 _doebuild_broken_ebuilds = set()
 _doebuild_broken_manifests = set()
-_doebuild_commands_without_builddir = (
-    "clean",
-    "cleanrm",
-    "depend",
-    "digest",
-    "fetch",
-    "fetchall",
-    "help",
-    "manifest",
-)
+_doebuild_commands_without_builddir = ("clean", "cleanrm", "depend", "digest", "fetch", "fetchall", "help", "manifest",
+                                       )
 
 
-def doebuild(
-    myebuild,
-    mydo,
-    _unused=DeprecationWarning,
-    settings=None,
-    debug=0,
-    listonly=0,
-    fetchonly=0,
-    cleanup=0,
-    use_cache=1,
-    fetchall=0,
-    tree=None,
-    mydbapi=None,
-    vartree=None,
-    prev_mtimes=None,
-    fd_pipes=None,
-    returnpid=False,
-):
+def doebuild(myebuild,
+             mydo,
+             _unused=DeprecationWarning,
+             settings=None,
+             debug=0,
+             listonly=0,
+             fetchonly=0,
+             cleanup=0,
+             use_cache=1,
+             fetchall=0,
+             tree=None,
+             mydbapi=None,
+             vartree=None,
+             prev_mtimes=None,
+             fd_pipes=None,
+             returnpid=False,
+             ):
     """
     Wrapper function that invokes specific ebuild phases through the spawning
     of ebuild.sh
@@ -755,43 +648,14 @@ def doebuild(
 
     clean_phases = ("clean", "cleanrm")
     validcommands = [
-        "help",
-        "clean",
-        "prerm",
-        "postrm",
-        "cleanrm",
-        "preinst",
-        "postinst",
-        "config",
-        "info",
-        "setup",
-        "depend",
-        "pretend",
-        "fetch",
-        "fetchall",
-        "digest",
-        "unpack",
-        "prepare",
-        "configure",
-        "compile",
-        "test",
-        "install",
-        "instprep",
-        "rpm",
-        "qmerge",
-        "merge",
-        "package",
-        "unmerge",
-        "manifest",
-        "nofetch",
+        "help", "clean", "prerm", "postrm", "cleanrm", "preinst", "postinst", "config", "info", "setup", "depend",
+        "pretend", "fetch", "fetchall", "digest", "unpack", "prepare", "configure", "compile", "test", "install",
+        "instprep", "rpm", "qmerge", "merge", "package", "unmerge", "manifest", "nofetch",
     ]
 
     if mydo not in validcommands:
         validcommands.sort()
-        writemsg(
-            f"!!! doebuild: '{mydo}' is not one of the following valid commands:",
-            noiselevel=-1,
-        )
+        writemsg(f"!!! doebuild: '{mydo}' is not one of the following valid commands:", noiselevel=-1, )
         for vcount in range(len(validcommands)):
             if vcount % 6 == 0:
                 writemsg("\n!!! ", noiselevel=-1)
@@ -938,10 +802,9 @@ def doebuild(
 
         if mydo == "nofetch":
             if returnpid:
-                writemsg(
-                    "!!! doebuild: %s\n" % _("returnpid is not supported for phase '%s'\n" % mydo),
-                    noiselevel=-1,
-                )
+                writemsg("!!! doebuild: %s\n" % _("returnpid is not supported for phase '%s'\n" % mydo),
+                         noiselevel=-1,
+                         )
 
             return spawn_nofetch(mydbapi, myebuild, settings=mysettings, fd_pipes=fd_pipes)
 
@@ -970,17 +833,10 @@ def doebuild(
 
         if mydo == "unmerge":
             if returnpid:
-                writemsg(
-                    "!!! doebuild: %s\n" % _("returnpid is not supported for phase '%s'\n" % mydo),
-                    noiselevel=-1,
-                )
-            return unmerge(
-                mysettings["CATEGORY"],
-                mysettings["PF"],
-                myroot,
-                mysettings,
-                vartree=vartree,
-            )
+                writemsg("!!! doebuild: %s\n" % _("returnpid is not supported for phase '%s'\n" % mydo),
+                         noiselevel=-1,
+                         )
+            return unmerge(mysettings["CATEGORY"], mysettings["PF"], myroot, mysettings, vartree=vartree, )
 
         phases_to_run = set()
         if returnpid or "noauto" in mysettings.features or mydo not in actionmap_deps:
@@ -1100,28 +956,13 @@ def doebuild(
 
         # if any of these are being called, handle them -- running them out of
         # the sandbox -- and stop now.
-        if mydo in (
-                "config",
-                "help",
-                "info",
-                "postinst",
-                "preinst",
-                "pretend",
-                "postrm",
-                "prerm",
-        ):
+        if mydo in ("config", "help", "info", "postinst", "preinst", "pretend", "postrm", "prerm", ):
             if mydo in ("preinst", "postinst"):
                 env_file = os.path.join(os.path.dirname(mysettings["EBUILD"]), "environment.bz2")
                 if os.path.isfile(env_file):
                     mysettings["PORTAGE_UPDATE_ENV"] = env_file
             try:
-                return _spawn_phase(
-                    mydo,
-                    mysettings,
-                    fd_pipes=fd_pipes,
-                    logfile=logfile,
-                    returnpid=returnpid,
-                )
+                return _spawn_phase(mydo, mysettings, fd_pipes=fd_pipes, logfile=logfile, returnpid=returnpid, )
             finally:
                 mysettings.pop("PORTAGE_UPDATE_ENV", None)
 
@@ -1136,15 +977,10 @@ def doebuild(
         if need_distfiles:
             src_uri = mysettings.configdict["pkg"].get("SRC_URI")
             if src_uri is None:
-                (src_uri, ) = mydbapi.aux_get(
-                    mysettings.mycpv,
-                    ["SRC_URI"],
-                    mytree=os.path.dirname(os.path.dirname(os.path.dirname(myebuild))),
-                )
-            metadata = {
-                "EAPI": mysettings["EAPI"],
-                "SRC_URI": src_uri,
-            }
+                (src_uri, ) = mydbapi.aux_get(mysettings.mycpv, ["SRC_URI"],
+                                              mytree=os.path.dirname(os.path.dirname(os.path.dirname(myebuild))),
+                                              )
+            metadata = {"EAPI": mysettings["EAPI"], "SRC_URI": src_uri, }
             use = frozenset(mysettings["PORTAGE_USE"].split())
             try:
                 alist = _parse_uri_map(mysettings.mycpv, metadata, use=use)
@@ -1167,25 +1003,18 @@ def doebuild(
             loop = asyncio._safe_loop()
             if loop.is_running():
                 # Called by EbuildFetchonly for emerge --pretend --fetchonly.
-                success = fetch(
-                    fetchme,
-                    mysettings,
-                    listonly=listonly,
-                    fetchonly=fetchonly,
-                    allow_missing_digests=False,
-                    digests=dist_digests,
-                )
+                success = fetch(fetchme,
+                                mysettings,
+                                listonly=listonly,
+                                fetchonly=fetchonly,
+                                allow_missing_digests=False,
+                                digests=dist_digests,
+                                )
             else:
                 success = loop.run_until_complete(
-                    loop.run_in_executor(
-                        ForkExecutor(loop=loop),
-                        _fetch_subprocess,
-                        fetchme,
-                        mysettings,
-                        listonly,
-                        dist_digests,
-                        fetchonly,
-                    ))
+                    loop.run_in_executor(ForkExecutor(loop=loop), _fetch_subprocess, fetchme, mysettings, listonly,
+                                         dist_digests, fetchonly,
+                                         ))
             if not success:
                 # Since listonly mode is called by emerge --pretend in an
                 # asynchronous context, spawn_nofetch would trigger event loop
@@ -1262,55 +1091,46 @@ def doebuild(
                     bintree = portage.db[mysettings["EROOT"]]["bintree"]
                     binpkg_tmpfile_dir = os.path.join(bintree.pkgdir, mysettings["CATEGORY"])
                     bintree._ensure_dir(binpkg_tmpfile_dir)
-                    with tempfile.NamedTemporaryFile(
-                            prefix=mysettings["PF"],
-                            suffix=".tbz2." + str(portage.getpid()),
-                            dir=binpkg_tmpfile_dir,
-                            delete=False,
-                    ) as binpkg_tmpfile:
+                    with tempfile.NamedTemporaryFile(prefix=mysettings["PF"],
+                                                     suffix=".tbz2." + str(portage.getpid()),
+                                                     dir=binpkg_tmpfile_dir,
+                                                     delete=False,
+                                                     ) as binpkg_tmpfile:
                         mysettings["PORTAGE_BINPKG_TMPFILE"] = binpkg_tmpfile.name
                 else:
                     parent_dir = os.path.join(mysettings["PKGDIR"], mysettings["CATEGORY"])
                     portage.util.ensure_dirs(parent_dir)
                     if not os.access(parent_dir, os.W_OK):
                         raise PermissionDenied(f"access('{parent_dir}', os.W_OK)")
-            retval = spawnebuild(
-                mydo,
-                actionmap,
-                mysettings,
-                debug,
-                logfile=logfile,
-                fd_pipes=fd_pipes,
-                returnpid=returnpid,
-            )
+            retval = spawnebuild(mydo,
+                                 actionmap,
+                                 mysettings,
+                                 debug,
+                                 logfile=logfile,
+                                 fd_pipes=fd_pipes,
+                                 returnpid=returnpid,
+                                 )
 
             if returnpid and isinstance(retval, list):
                 return retval
 
             if retval == os.EX_OK:
                 if mydo == "package" and bintree is not None:
-                    pkg = bintree.inject(
-                        mysettings.mycpv,
-                        current_pkg_path=mysettings["PORTAGE_BINPKG_TMPFILE"],
-                    )
+                    pkg = bintree.inject(mysettings.mycpv, current_pkg_path=mysettings["PORTAGE_BINPKG_TMPFILE"], )
                     if pkg is not None:
                         infoloc = os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info")
-                        build_info = {
-                            "BINPKGMD5": f"{pkg._metadata['MD5']}\n",
-                        }
+                        build_info = {"BINPKGMD5": f"{pkg._metadata['MD5']}\n", }
                         if pkg.build_id is not None:
                             build_info["BUILD_ID"] = f"{pkg.build_id}\n"
                         for k, v in build_info.items():
-                            with open(
-                                    _unicode_encode(
-                                        os.path.join(infoloc, k),
-                                        encoding=_encodings["fs"],
-                                        errors="strict",
-                                    ),
-                                    mode="w",
-                                    encoding=_encodings["repo.content"],
-                                    errors="strict",
-                            ) as f:
+                            with open(_unicode_encode(os.path.join(infoloc, k),
+                                                      encoding=_encodings["fs"],
+                                                      errors="strict",
+                                                      ),
+                                      mode="w",
+                                      encoding=_encodings["repo.content"],
+                                      errors="strict",
+                                      ) as f:
                                 f.write(v)
             else:
                 if "PORTAGE_BINPKG_TMPFILE" in mysettings:
@@ -1320,10 +1140,7 @@ def doebuild(
                         pass
 
         elif returnpid:
-            writemsg(
-                "!!! doebuild: %s\n" % _("returnpid is not supported for phase '%s'\n" % mydo),
-                noiselevel=-1,
-            )
+            writemsg("!!! doebuild: %s\n" % _("returnpid is not supported for phase '%s'\n" % mydo), noiselevel=-1, )
 
         if regular_actionmap_phase:
             # handled above
@@ -1332,41 +1149,36 @@ def doebuild(
             # check to ensure install was run.  this *only* pops up when users
             # forget it and are using ebuild
             if not os.path.exists(os.path.join(mysettings["PORTAGE_BUILDDIR"], ".installed")):
-                writemsg(
-                    _("!!! mydo=qmerge, but the install phase has not been run\n"),
-                    noiselevel=-1,
-                )
+                writemsg(_("!!! mydo=qmerge, but the install phase has not been run\n"), noiselevel=-1, )
                 return 1
             # qmerge is a special phase that implies noclean.
             if "noclean" not in mysettings.features:
                 mysettings.features.add("noclean")
             _handle_self_update(mysettings, vartree.dbapi)
             # qmerge is specifically not supposed to do a runtime dep check
-            retval = merge(
-                mysettings["CATEGORY"],
-                mysettings["PF"],
-                mysettings["D"],
-                os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info"),
-                myroot,
-                mysettings,
-                myebuild=mysettings["EBUILD"],
-                mytree=tree,
-                mydbapi=mydbapi,
-                vartree=vartree,
-                prev_mtimes=prev_mtimes,
-                fd_pipes=fd_pipes,
-            )
+            retval = merge(mysettings["CATEGORY"],
+                           mysettings["PF"],
+                           mysettings["D"],
+                           os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info"),
+                           myroot,
+                           mysettings,
+                           myebuild=mysettings["EBUILD"],
+                           mytree=tree,
+                           mydbapi=mydbapi,
+                           vartree=vartree,
+                           prev_mtimes=prev_mtimes,
+                           fd_pipes=fd_pipes,
+                           )
         elif mydo == "merge":
-            retval = spawnebuild(
-                "install",
-                actionmap,
-                mysettings,
-                debug,
-                alwaysdep=1,
-                logfile=logfile,
-                fd_pipes=fd_pipes,
-                returnpid=returnpid,
-            )
+            retval = spawnebuild("install",
+                                 actionmap,
+                                 mysettings,
+                                 debug,
+                                 alwaysdep=1,
+                                 logfile=logfile,
+                                 fd_pipes=fd_pipes,
+                                 returnpid=returnpid,
+                                 )
             if retval != os.EX_OK:
                 # The merge phase handles this already.  Callers don't know how
                 # far this function got, so we have to call elog_process() here
@@ -1374,20 +1186,19 @@ def doebuild(
                 elog_process(mysettings.mycpv, mysettings)
             if retval == os.EX_OK:
                 _handle_self_update(mysettings, vartree.dbapi)
-                retval = merge(
-                    mysettings["CATEGORY"],
-                    mysettings["PF"],
-                    mysettings["D"],
-                    os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info"),
-                    myroot,
-                    mysettings,
-                    myebuild=mysettings["EBUILD"],
-                    mytree=tree,
-                    mydbapi=mydbapi,
-                    vartree=vartree,
-                    prev_mtimes=prev_mtimes,
-                    fd_pipes=fd_pipes,
-                )
+                retval = merge(mysettings["CATEGORY"],
+                               mysettings["PF"],
+                               mysettings["D"],
+                               os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info"),
+                               myroot,
+                               mysettings,
+                               myebuild=mysettings["EBUILD"],
+                               mytree=tree,
+                               mydbapi=mydbapi,
+                               vartree=vartree,
+                               prev_mtimes=prev_mtimes,
+                               fd_pipes=fd_pipes,
+                               )
 
         else:
             writemsg_stdout(_("!!! Unknown mydo: %s\n") % mydo, noiselevel=-1)
@@ -1423,25 +1234,23 @@ def _fetch_subprocess(fetchme, mysettings, listonly, dist_digests, fetchonly):
     if _want_userfetch(mysettings):
         _drop_privs_userfetch(mysettings)
 
-    return fetch(
-        fetchme,
-        mysettings,
-        listonly=listonly,
-        fetchonly=fetchonly,
-        allow_missing_digests=False,
-        digests=dist_digests,
-    )
+    return fetch(fetchme,
+                 mysettings,
+                 listonly=listonly,
+                 fetchonly=fetchonly,
+                 allow_missing_digests=False,
+                 digests=dist_digests,
+                 )
 
 
 def _check_temp_dir(settings):
     if "PORTAGE_TMPDIR" not in settings or not os.path.isdir(settings["PORTAGE_TMPDIR"]):
-        writemsg(
-            _("The directory specified in your "
-              "PORTAGE_TMPDIR variable, '%s',\n"
-              "does not exist.  Please create this directory or "
-              "correct your PORTAGE_TMPDIR setting.\n") % settings.get("PORTAGE_TMPDIR", ""),
-            noiselevel=-1,
-        )
+        writemsg(_("The directory specified in your "
+                   "PORTAGE_TMPDIR variable, '%s',\n"
+                   "does not exist.  Please create this directory or "
+                   "correct your PORTAGE_TMPDIR setting.\n") % settings.get("PORTAGE_TMPDIR", ""),
+                 noiselevel=-1,
+                 )
         return 1
 
     # as some people use a separate PORTAGE_TMPDIR mount
@@ -1453,20 +1262,18 @@ def _check_temp_dir(settings):
         with tempfile.NamedTemporaryFile(prefix="exectest-", dir=checkdir) as fd:
             os.chmod(fd.name, 0o755)
             if not os.access(fd.name, os.X_OK):
-                writemsg(
-                    _("Can not execute files in %s\n"
-                      "Likely cause is that you've mounted it with one of the\n"
-                      "following mount options: 'noexec', 'user', 'users'\n\n"
-                      "Please make sure that portage can execute files in this directory.\n") % checkdir,
-                    noiselevel=-1,
-                )
+                writemsg(_("Can not execute files in %s\n"
+                           "Likely cause is that you've mounted it with one of the\n"
+                           "following mount options: 'noexec', 'user', 'users'\n\n"
+                           "Please make sure that portage can execute files in this directory.\n") % checkdir,
+                         noiselevel=-1,
+                         )
                 return 1
     except PermissionError:
-        writemsg(
-            _("%s is not writable.\n"
-              "Likely cause is that you've mounted it as readonly.\n") % checkdir,
-            noiselevel=-1,
-        )
+        writemsg(_("%s is not writable.\n"
+                   "Likely cause is that you've mounted it as readonly.\n") % checkdir,
+                 noiselevel=-1,
+                 )
         return 1
 
     return os.EX_OK
@@ -1632,20 +1439,14 @@ def _validate_deps(mysettings, myroot, mydo, mydbapi):
     all_keys = tuple(all_keys)
     metadata = mysettings.configdict["pkg"]
     if all(k in metadata for k in ("PORTAGE_REPO_NAME", "SRC_URI")):
-        metadata = dict(
-            ((k, metadata[k]) for k in all_keys if k in metadata),
-            repository=metadata["PORTAGE_REPO_NAME"],
-        )
+        metadata = dict(((k, metadata[k]) for k in all_keys if k in metadata),
+                        repository=metadata["PORTAGE_REPO_NAME"],
+                        )
     else:
         metadata = dict(
-            zip(
-                all_keys,
-                mydbapi.aux_get(
-                    mysettings.mycpv,
-                    all_keys,
-                    myrepo=mysettings.get("PORTAGE_REPO_NAME"),
-                ),
-            ))
+            zip(all_keys, mydbapi.aux_get(mysettings.mycpv, all_keys, myrepo=mysettings.get("PORTAGE_REPO_NAME"),
+                                          ),
+                ))
 
     class FakeTree:
 
@@ -1654,13 +1455,7 @@ def _validate_deps(mysettings, myroot, mydo, mydbapi):
 
     root_config = RootConfig(mysettings, {"porttree": FakeTree(mydbapi)}, None)
 
-    pkg = Package(
-        built=False,
-        cpv=mysettings.mycpv,
-        metadata=metadata,
-        root_config=root_config,
-        type_name="ebuild",
-    )
+    pkg = Package(built=False, cpv=mysettings.mycpv, metadata=metadata, root_config=root_config, type_name="ebuild", )
 
     msgs = []
     if pkg.invalid:
@@ -1669,11 +1464,10 @@ def _validate_deps(mysettings, myroot, mydo, mydbapi):
                 msgs.append(f"  {msg}\n")
 
     if msgs:
-        portage.util.writemsg_level(
-            _("Error(s) in metadata for '%s':\n") % (mysettings.mycpv, ),
-            level=logging.ERROR,
-            noiselevel=-1,
-        )
+        portage.util.writemsg_level(_("Error(s) in metadata for '%s':\n") % (mysettings.mycpv, ),
+                                    level=logging.ERROR,
+                                    noiselevel=-1,
+                                    )
         for x in msgs:
             portage.util.writemsg_level(x, level=logging.ERROR, noiselevel=-1)
         if mydo not in invalid_dep_exempt_phases:
@@ -1681,29 +1475,24 @@ def _validate_deps(mysettings, myroot, mydo, mydbapi):
 
     if (not pkg.built and mydo not in ("digest", "help", "manifest") and pkg._metadata["REQUIRED_USE"]
             and eapi_has_required_use(pkg.eapi)):
-        result = check_required_use(
-            pkg._metadata["REQUIRED_USE"],
-            pkg.use.enabled,
-            pkg.iuse.is_valid_flag,
-            eapi=pkg.eapi,
-        )
+        result = check_required_use(pkg._metadata["REQUIRED_USE"],
+                                    pkg.use.enabled,
+                                    pkg.iuse.is_valid_flag,
+                                    eapi=pkg.eapi,
+                                    )
         if not result:
             reduced_noise = result.tounicode()
-            writemsg(
-                "\n  %s\n" % _("The following REQUIRED_USE flag" + " constraints are unsatisfied:"),
-                noiselevel=-1,
-            )
+            writemsg("\n  %s\n" % _("The following REQUIRED_USE flag" + " constraints are unsatisfied:"),
+                     noiselevel=-1,
+                     )
             writemsg(f"    {reduced_noise}\n", noiselevel=-1)
             normalized_required_use = " ".join(pkg._metadata["REQUIRED_USE"].split())
             if reduced_noise != normalized_required_use:
-                writemsg(
-                    "\n  %s\n" % _("The above constraints " + "are a subset of the following complete expression:"),
-                    noiselevel=-1,
-                )
-                writemsg(
-                    f"    {human_readable_required_use(normalized_required_use)}\n",
-                    noiselevel=-1,
-                )
+                writemsg("\n  %s\n" %
+                         _("The above constraints " + "are a subset of the following complete expression:"),
+                         noiselevel=-1,
+                         )
+                writemsg(f"    {human_readable_required_use(normalized_required_use)}\n", noiselevel=-1, )
             writemsg("\n", noiselevel=-1)
             return 1
 
@@ -1714,20 +1503,19 @@ def _validate_deps(mysettings, myroot, mydo, mydbapi):
 # XXX Issue: cannot block execution. Deadlock condition.
 
 
-def spawn(
-    mystring,
-    mysettings,
-    debug=False,
-    free=False,
-    droppriv=False,
-    sesandbox=False,
-    fakeroot=False,
-    networked=True,
-    ipc=True,
-    mountns=False,
-    pidns=False,
-    **keywords,
-):
+def spawn(mystring,
+          mysettings,
+          debug=False,
+          free=False,
+          droppriv=False,
+          sesandbox=False,
+          fakeroot=False,
+          networked=True,
+          ipc=True,
+          mountns=False,
+          pidns=False,
+          **keywords,
+          ):
     """
     Spawn a subprocess with extra portage-specific options.
     Optiosn include:
@@ -1776,11 +1564,7 @@ def spawn(
 
     fd_pipes = keywords.get("fd_pipes")
     if fd_pipes is None:
-        fd_pipes = {
-            0: portage._get_stdin().fileno(),
-            1: sys.__stdout__.fileno(),
-            2: sys.__stderr__.fileno(),
-        }
+        fd_pipes = {0: portage._get_stdin().fileno(), 1: sys.__stdout__.fileno(), 2: sys.__stderr__.fileno(), }
     # In some cases the above print statements don't flush stdout, so
     # it needs to be flushed before allowing a child process to use it
     # so that output always shows in the correct order.
@@ -1823,12 +1607,7 @@ def spawn(
     if uid == 0 and portage_uid and portage_gid and hasattr(os, "setgroups"):
         if droppriv:
             logname = portage.data._portage_username
-            keywords.update({
-                "uid": portage_uid,
-                "gid": portage_gid,
-                "groups": userpriv_groups,
-                "umask": 0o22,
-            })
+            keywords.update({"uid": portage_uid, "gid": portage_gid, "groups": userpriv_groups, "umask": 0o22, })
 
             # Adjust pty ownership so that subprocesses
             # can directly access /dev/fd/{1,2}.
@@ -1887,10 +1666,7 @@ def spawn(
     if mysettings.mycpv is not None:
         keywords["opt_name"] = f"[{mysettings.mycpv}]"
     else:
-        keywords["opt_name"] = "[{}/{}]".format(
-            mysettings.get("CATEGORY", ""),
-            mysettings.get("PF", ""),
-        )
+        keywords["opt_name"] = "[{}/{}]".format(mysettings.get("CATEGORY", ""), mysettings.get("PF", ""), )
 
     if free or "SANDBOX_ACTIVE" in os.environ:
         keywords["opt_name"] += " bash"
@@ -1915,14 +1691,13 @@ def spawn(
         if keywords.get("returnpid"):
             return spawn_func(mystring, env=mysettings.environ(), **keywords)
 
-        proc = EbuildSpawnProcess(
-            background=False,
-            args=mystring,
-            scheduler=SchedulerInterface(asyncio._safe_loop()),
-            spawn_func=spawn_func,
-            settings=mysettings,
-            **keywords,
-        )
+        proc = EbuildSpawnProcess(background=False,
+                                  args=mystring,
+                                  scheduler=SchedulerInterface(asyncio._safe_loop()),
+                                  spawn_func=spawn_func,
+                                  settings=mysettings,
+                                  **keywords,
+                                  )
 
         proc.start()
         proc.wait()
@@ -1941,16 +1716,7 @@ def spawn(
 # parse actionmap to spawn ebuild with the appropriate args
 
 
-def spawnebuild(
-    mydo,
-    actionmap,
-    mysettings,
-    debug,
-    alwaysdep=0,
-    logfile=None,
-    fd_pipes=None,
-    returnpid=False,
-):
+def spawnebuild(mydo, actionmap, mysettings, debug, alwaysdep=0, logfile=None, fd_pipes=None, returnpid=False, ):
     if returnpid:
         warnings.warn(
             "portage.spawnebuild() called "
@@ -1963,16 +1729,15 @@ def spawnebuild(
     if not returnpid and (alwaysdep or "noauto" not in mysettings.features):
         # process dependency first
         if "dep" in actionmap[mydo]:
-            retval = spawnebuild(
-                actionmap[mydo]["dep"],
-                actionmap,
-                mysettings,
-                debug,
-                alwaysdep=alwaysdep,
-                logfile=logfile,
-                fd_pipes=fd_pipes,
-                returnpid=returnpid,
-            )
+            retval = spawnebuild(actionmap[mydo]["dep"],
+                                 actionmap,
+                                 mysettings,
+                                 debug,
+                                 alwaysdep=alwaysdep,
+                                 logfile=logfile,
+                                 fd_pipes=fd_pipes,
+                                 returnpid=returnpid,
+                                 )
             if retval:
                 return retval
 
@@ -1996,39 +1761,27 @@ def spawnebuild(
             writemsg_stdout(_(">>> Remove '%(file)s' to force %(action)s.\n") % {"file": check_file, "action": mydo})
             return os.EX_OK
 
-    return _spawn_phase(
-        mydo,
-        mysettings,
-        actionmap=actionmap,
-        logfile=logfile,
-        fd_pipes=fd_pipes,
-        returnpid=returnpid,
-    )
+    return _spawn_phase(mydo,
+                        mysettings,
+                        actionmap=actionmap,
+                        logfile=logfile,
+                        fd_pipes=fd_pipes,
+                        returnpid=returnpid,
+                        )
 
 
 _post_phase_cmds = {
     "install": ["install_qa_check", "install_symlink_html_docs", "install_hooks"],
-    "preinst": (
-        (
-            # Since SELinux does not allow LD_PRELOAD across domain transitions,
-            # disable the LD_PRELOAD sandbox for preinst_selinux_labels.
-            {
-                "ld_preload_sandbox": False,
-                "selinux_only": True,
-            },
-            [
-                "preinst_selinux_labels",
-            ],
+    "preinst": ((
+        # Since SELinux does not allow LD_PRELOAD across domain transitions,
+        # disable the LD_PRELOAD sandbox for preinst_selinux_labels.
+        {
+            "ld_preload_sandbox": False,
+            "selinux_only": True,
+        }, ["preinst_selinux_labels", ],
+    ), ({}, ["preinst_sfperms", "preinst_suid_scan", "preinst_qa_check", ],
         ),
-        (
-            {},
-            [
-                "preinst_sfperms",
-                "preinst_suid_scan",
-                "preinst_qa_check",
-            ],
-        ),
-    ),
+                ),
     "postinst": ["postinst_qa_check"],
 }
 
@@ -2038,15 +1791,14 @@ def _post_phase_userpriv_perms(mysettings):
         """Privileged phases may have left files that need to be made
         writable to a less privileged user."""
         for path in (mysettings["HOME"], mysettings["T"]):
-            apply_recursive_permissions(
-                path,
-                uid=portage_uid,
-                gid=portage_gid,
-                dirmode=0o700,
-                dirmask=0,
-                filemode=0o600,
-                filemask=0,
-            )
+            apply_recursive_permissions(path,
+                                        uid=portage_uid,
+                                        gid=portage_gid,
+                                        dirmode=0o700,
+                                        dirmask=0,
+                                        filemode=0o600,
+                                        filemask=0,
+                                        )
 
 
 def _post_phase_emptydir_cleanup(mysettings):
@@ -2067,10 +1819,7 @@ def _check_build_log(mysettings, out=None):
     if logfile is None:
         return
     try:
-        f = open(
-            _unicode_encode(logfile, encoding=_encodings["fs"], errors="strict"),
-            mode="rb",
-        )
+        f = open(_unicode_encode(logfile, encoding=_encodings["fs"], errors="strict"), mode="rb", )
     except OSError:
         return
 
@@ -2091,15 +1840,13 @@ def _check_build_log(mysettings, out=None):
 
     qa_configure_opts = ""
     try:
-        with open(
-                _unicode_encode(
-                    os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info", "QA_CONFIGURE_OPTIONS"),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-        ) as qa_configure_opts_f:
+        with open(_unicode_encode(os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info", "QA_CONFIGURE_OPTIONS"),
+                                  encoding=_encodings["fs"],
+                                  errors="strict",
+                                  ),
+                  encoding=_encodings["repo.content"],
+                  errors="replace",
+                  ) as qa_configure_opts_f:
             qa_configure_opts = qa_configure_opts_f.read()
     except OSError as e:
         if e.errno not in (errno.ENOENT, errno.ESTALE):
@@ -2116,19 +1863,14 @@ def _check_build_log(mysettings, out=None):
 
     qa_am_maintainer_mode = []
     try:
-        with open(
-                _unicode_encode(
-                    os.path.join(
-                        mysettings["PORTAGE_BUILDDIR"],
-                        "build-info",
-                        "QA_AM_MAINTAINER_MODE",
-                    ),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-        ) as qa_am_maintainer_mode_f:
+        with open(_unicode_encode(os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info", "QA_AM_MAINTAINER_MODE",
+                                               ),
+                                  encoding=_encodings["fs"],
+                                  errors="strict",
+                                  ),
+                  encoding=_encodings["repo.content"],
+                  errors="replace",
+                  ) as qa_am_maintainer_mode_f:
             qa_am_maintainer_mode = [x for x in qa_am_maintainer_mode_f.read().splitlines() if x]
     except OSError as e:
         if e.errno not in (errno.ENOENT, errno.ESTALE):
@@ -2157,10 +1899,7 @@ def _check_build_log(mysettings, out=None):
     setuptools_warn = set()
     setuptools_warn_re = re.compile(r".*\/setuptools\/.*: .*Warning: (.*)")
     # skip useless version normalization warnings
-    setuptools_warn_ignore_re = [
-        re.compile(r"Normalizing .*"),
-        re.compile(r"setup.py install is deprecated"),
-    ]
+    setuptools_warn_ignore_re = [re.compile(r"Normalizing .*"), re.compile(r"setup.py install is deprecated"), ]
 
     def _eerror(lines):
         for line in lines:
@@ -2199,10 +1938,7 @@ def _check_build_log(mysettings, out=None):
                     setuptools_warn.add(warn_text)
 
     except (EOFError, zlib.error) as e:
-        _eerror([
-            f"portage encountered a zlib error: '{e}'",
-            f"while reading the log file: '{logfile}'",
-        ])
+        _eerror([f"portage encountered a zlib error: '{e}'", f"while reading the log file: '{logfile}'", ])
     finally:
         f.close()
 
@@ -2227,8 +1963,7 @@ def _check_build_log(mysettings, out=None):
                   "for which it is impossible to run "
                   "autotools during stage building. "
                   "See https://wiki.gentoo.org/wiki/Project:Quality_Assurance/Autotools_failures"
-                  " for more information."),
-                wrap_width,
+                  " for more information."), wrap_width,
             ))
         _eqawarn(msg)
 
@@ -2293,16 +2028,12 @@ def _post_src_install_write_metadata(settings):
         if v is not None:
             write_atomic(os.path.join(build_info_dir, k), v + "\n")
 
-    with open(
-            _unicode_encode(
-                os.path.join(build_info_dir, "BUILD_TIME"),
-                encoding=_encodings["fs"],
-                errors="strict",
-            ),
-            mode="w",
-            encoding=_encodings["repo.content"],
-            errors="strict",
-    ) as f:
+    with open(_unicode_encode(os.path.join(build_info_dir, "BUILD_TIME"), encoding=_encodings["fs"], errors="strict",
+                              ),
+              mode="w",
+              encoding=_encodings["repo.content"],
+              errors="strict",
+              ) as f:
         f.write(f"{time.time():.0f}\n")
 
     use = frozenset(settings["PORTAGE_USE"].split())
@@ -2331,16 +2062,12 @@ def _post_src_install_write_metadata(settings):
             except OSError:
                 pass
             continue
-        with open(
-                _unicode_encode(
-                    os.path.join(build_info_dir, k),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                mode="w",
-                encoding=_encodings["repo.content"],
-                errors="strict",
-        ) as f:
+        with open(_unicode_encode(os.path.join(build_info_dir, k), encoding=_encodings["fs"], errors="strict",
+                                  ),
+                  mode="w",
+                  encoding=_encodings["repo.content"],
+                  errors="strict",
+                  ) as f:
             f.write(f"{v}\n")
 
     if eapi_attrs.slot_operator:
@@ -2353,26 +2080,21 @@ def _post_src_install_write_metadata(settings):
                 except OSError:
                     pass
                 continue
-            with open(
-                    _unicode_encode(
-                        os.path.join(build_info_dir, k),
-                        encoding=_encodings["fs"],
-                        errors="strict",
-                    ),
-                    mode="w",
-                    encoding=_encodings["repo.content"],
-                    errors="strict",
-            ) as f:
+            with open(_unicode_encode(os.path.join(build_info_dir, k), encoding=_encodings["fs"], errors="strict",
+                                      ),
+                      mode="w",
+                      encoding=_encodings["repo.content"],
+                      errors="strict",
+                      ) as f:
                 f.write(f"{v}\n")
 
 
 def _preinst_bsdflags(mysettings):
     if bsd_chflags:
         # Save all the file flags for restoration later.
-        os.system("mtree -c -p %s -k flags > %s" % (
-            _shell_quote(mysettings["D"]),
-            _shell_quote(os.path.join(mysettings["T"], "bsdflags.mtree")),
-        ))
+        os.system("mtree -c -p %s -k flags > %s" %
+                  (_shell_quote(mysettings["D"]), _shell_quote(os.path.join(mysettings["T"], "bsdflags.mtree")),
+                   ))
 
         # Remove all the file flags to avoid EPERM errors.
         os.system("chflags -R noschg,nouchg,nosappnd,nouappnd %s" % (_shell_quote(mysettings["D"]), ))
@@ -2382,10 +2104,9 @@ def _preinst_bsdflags(mysettings):
 def _postinst_bsdflags(mysettings):
     if bsd_chflags:
         # Restore all of the flags saved above.
-        os.system("mtree -e -p %s -U -k flags < %s > /dev/null" % (
-            _shell_quote(mysettings["ROOT"]),
-            _shell_quote(os.path.join(mysettings["T"], "bsdflags.mtree")),
-        ))
+        os.system("mtree -e -p %s -U -k flags < %s > /dev/null" %
+                  (_shell_quote(mysettings["ROOT"]), _shell_quote(os.path.join(mysettings["T"], "bsdflags.mtree")),
+                   ))
 
 
 def _post_src_install_uid_fix(mysettings, out):
@@ -2413,15 +2134,13 @@ def _post_src_install_uid_fix(mysettings, out):
 
     qa_desktop_file = ""
     try:
-        with open(
-                _unicode_encode(
-                    os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info", "QA_DESKTOP_FILE"),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-        ) as f:
+        with open(_unicode_encode(os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info", "QA_DESKTOP_FILE"),
+                                  encoding=_encodings["fs"],
+                                  errors="strict",
+                                  ),
+                  encoding=_encodings["repo.content"],
+                  errors="replace",
+                  ) as f:
             qa_desktop_file = f.read()
     except OSError as e:
         if e.errno not in (errno.ENOENT, errno.ESTALE):
@@ -2486,10 +2205,7 @@ def _post_src_install_uid_fix(mysettings, out):
                         desktopfile_errors.extend(desktop_validate)
 
                 if fixlafiles and fname.endswith(".la") and os.path.isfile(fpath):
-                    f = open(
-                        _unicode_encode(fpath, encoding=_encodings["merge"], errors="strict"),
-                        mode="rb",
-                    )
+                    f = open(_unicode_encode(fpath, encoding=_encodings["merge"], errors="strict"), mode="rb", )
                     has_lafile_header = b".la - a libtool library file" in f.readline()
                     f.seek(0)
                     contents = f.read()
@@ -2507,10 +2223,7 @@ def _post_src_install_uid_fix(mysettings, out):
                         # missing, we still call rewrite_lafile() since some
                         # valid libtool archives may not have the header.
                         msg = ("   %s is not a valid libtool archive, skipping\n" % fpath[len(destdir):])
-                        qa_msg = "QA Notice: invalid .la file found: {}, {}".format(
-                            fpath[len(destdir):],
-                            e,
-                        )
+                        qa_msg = "QA Notice: invalid .la file found: {}, {}".format(fpath[len(destdir):], e, )
                         if has_lafile_header:
                             writemsg(msg, fd=out)
                             eqawarn(qa_msg, key=mysettings.mycpv, out=out)
@@ -2523,12 +2236,11 @@ def _post_src_install_uid_fix(mysettings, out):
                         # write_atomic succeeds even in some cases in which
                         # a normal write might fail due to file permission
                         # settings on some operating systems such as HP-UX
-                        write_atomic(
-                            fpath if portage.utf8_mode else _unicode_encode(
-                                fpath, encoding=_encodings["merge"], errors="strict"),
-                            new_contents,
-                            mode="wb",
-                        )
+                        write_atomic(fpath if portage.utf8_mode else _unicode_encode(
+                            fpath, encoding=_encodings["merge"], errors="strict"),
+                                     new_contents,
+                                     mode="wb",
+                                     )
 
                 mystat = os.lstat(fpath)
                 if stat.S_ISREG(mystat.st_mode) and mystat.st_ino not in counted_inodes:
@@ -2542,14 +2254,13 @@ def _post_src_install_uid_fix(mysettings, out):
                     myuid = inst_uid
                 if mystat.st_gid == portage_gid:
                     mygid = inst_gid
-                apply_secpass_permissions(
-                    _unicode_encode(fpath, encoding=_encodings["merge"]),
-                    uid=myuid,
-                    gid=mygid,
-                    mode=mystat.st_mode,
-                    stat_cached=mystat,
-                    follow_links=False,
-                )
+                apply_secpass_permissions(_unicode_encode(fpath, encoding=_encodings["merge"]),
+                                          uid=myuid,
+                                          gid=mygid,
+                                          mode=mystat.st_mode,
+                                          stat_cached=mystat,
+                                          follow_links=False,
+                                          )
 
             if unicode_error:
                 break
@@ -2568,16 +2279,12 @@ def _post_src_install_uid_fix(mysettings, out):
 
     build_info_dir = os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info")
 
-    f = open(
-        _unicode_encode(
-            os.path.join(build_info_dir, "SIZE"),
-            encoding=_encodings["fs"],
-            errors="strict",
-        ),
-        mode="w",
-        encoding=_encodings["repo.content"],
-        errors="strict",
-    )
+    f = open(_unicode_encode(os.path.join(build_info_dir, "SIZE"), encoding=_encodings["fs"], errors="strict",
+                             ),
+             mode="w",
+             encoding=_encodings["repo.content"],
+             errors="strict",
+             )
     f.write("%d\n" % size)
     f.close()
 
@@ -2589,10 +2296,9 @@ def _reapply_bsdflags_to_image(mysettings):
     Reapply flags saved and removed by _preinst_bsdflags.
     """
     if bsd_chflags:
-        os.system("mtree -e -p %s -U -k flags < %s > /dev/null" % (
-            _shell_quote(mysettings["D"]),
-            _shell_quote(os.path.join(mysettings["T"], "bsdflags.mtree")),
-        ))
+        os.system("mtree -e -p %s -U -k flags < %s > /dev/null" %
+                  (_shell_quote(mysettings["D"]), _shell_quote(os.path.join(mysettings["T"], "bsdflags.mtree")),
+                   ))
 
 
 def _post_src_install_soname_symlinks(mysettings, out):
@@ -2608,11 +2314,10 @@ def _post_src_install_soname_symlinks(mysettings, out):
 
     f = None
     try:
-        f = open(
-            _unicode_encode(needed_filename, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["repo.content"],
-            errors="replace",
-        )
+        f = open(_unicode_encode(needed_filename, encoding=_encodings["fs"], errors="strict"),
+                 encoding=_encodings["repo.content"],
+                 errors="replace",
+                 )
         lines = f.readlines()
     except OSError as e:
         if e.errno not in (errno.ENOENT, errno.ESTALE):
@@ -2625,15 +2330,13 @@ def _post_src_install_soname_symlinks(mysettings, out):
     metadata = {}
     for k in ("QA_PREBUILT", "QA_SONAME_NO_SYMLINK"):
         try:
-            with open(
-                    _unicode_encode(
-                        os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info", k),
-                        encoding=_encodings["fs"],
-                        errors="strict",
-                    ),
-                    encoding=_encodings["repo.content"],
-                    errors="replace",
-            ) as f:
+            with open(_unicode_encode(os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info", k),
+                                      encoding=_encodings["fs"],
+                                      errors="strict",
+                                      ),
+                      encoding=_encodings["repo.content"],
+                      errors="replace",
+                      ) as f:
                 v = f.read()
         except OSError as e:
             if e.errno not in (errno.ENOENT, errno.ESTALE):
@@ -2692,15 +2395,13 @@ def _post_src_install_soname_symlinks(mysettings, out):
 
     build_info_dir = os.path.join(mysettings["PORTAGE_BUILDDIR"], "build-info")
     try:
-        with open(
-                _unicode_encode(
-                    os.path.join(build_info_dir, "PROVIDES_EXCLUDE"),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-        ) as f:
+        with open(_unicode_encode(os.path.join(build_info_dir, "PROVIDES_EXCLUDE"),
+                                  encoding=_encodings["fs"],
+                                  errors="strict",
+                                  ),
+                  encoding=_encodings["repo.content"],
+                  errors="replace",
+                  ) as f:
             provides_exclude = f.read()
     except OSError as e:
         if e.errno not in (errno.ENOENT, errno.ESTALE):
@@ -2708,15 +2409,13 @@ def _post_src_install_soname_symlinks(mysettings, out):
         provides_exclude = ""
 
     try:
-        with open(
-                _unicode_encode(
-                    os.path.join(build_info_dir, "REQUIRES_EXCLUDE"),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-        ) as f:
+        with open(_unicode_encode(os.path.join(build_info_dir, "REQUIRES_EXCLUDE"),
+                                  encoding=_encodings["fs"],
+                                  errors="strict",
+                                  ),
+                  encoding=_encodings["repo.content"],
+                  errors="replace",
+                  ) as f:
             requires_exclude = f.read()
     except OSError as e:
         if e.errno not in (errno.ENOENT, errno.ESTALE):
@@ -2781,38 +2480,33 @@ def _post_src_install_soname_symlinks(mysettings, out):
     needed_file.close()
 
     if soname_deps.requires is not None:
-        with open(
-                _unicode_encode(
-                    os.path.join(build_info_dir, "REQUIRES"),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                mode="w",
-                encoding=_encodings["repo.content"],
-                errors="strict",
-        ) as f:
+        with open(_unicode_encode(os.path.join(build_info_dir, "REQUIRES"),
+                                  encoding=_encodings["fs"],
+                                  errors="strict",
+                                  ),
+                  mode="w",
+                  encoding=_encodings["repo.content"],
+                  errors="strict",
+                  ) as f:
             f.write(soname_deps.requires)
 
     if soname_deps.provides is not None:
-        with open(
-                _unicode_encode(
-                    os.path.join(build_info_dir, "PROVIDES"),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                mode="w",
-                encoding=_encodings["repo.content"],
-                errors="strict",
-        ) as f:
+        with open(_unicode_encode(os.path.join(build_info_dir, "PROVIDES"),
+                                  encoding=_encodings["fs"],
+                                  errors="strict",
+                                  ),
+                  mode="w",
+                  encoding=_encodings["repo.content"],
+                  errors="strict",
+                  ) as f:
             f.write(soname_deps.provides)
     else:
         if check_dyn_libs_inconsistent(image_dir, soname_deps.provides):
-            eerror(
-                "Error! Installing dynamic libraries (.so) with blank PROVIDES!",
-                phase="install",
-                key=mysettings.mycpv,
-                out=out,
-            )
+            eerror("Error! Installing dynamic libraries (.so) with blank PROVIDES!",
+                   phase="install",
+                   key=mysettings.mycpv,
+                   out=out,
+                   )
 
     if unrecognized_elf_files:
         qa_msg = ["QA Notice: Unrecognized ELF file(s):"]
@@ -2827,10 +2521,8 @@ def _post_src_install_soname_symlinks(mysettings, out):
 
     qa_msg = ["QA Notice: Missing soname symlink(s):"]
     qa_msg.append("")
-    qa_msg.extend("\t%s -> %s" % (
-        os.path.join(os.path.dirname(obj).lstrip(os.sep), soname),
-        os.path.basename(obj),
-    ) for obj, soname in missing_symlinks)
+    qa_msg.extend("\t%s -> %s" % (os.path.join(os.path.dirname(obj).lstrip(os.sep), soname), os.path.basename(obj),
+                                  ) for obj, soname in missing_symlinks)
     qa_msg.append("")
     for line in qa_msg:
         eqawarn(line, key=mysettings.mycpv, out=out)
@@ -2899,11 +2591,7 @@ def _prepare_self_update(settings):
     portage._pym_path = os.path.join(base_path_tmp, "lib")
     os.mkdir(portage._pym_path)
     for pmod in PORTAGE_PYM_PACKAGES:
-        shutil.copytree(
-            os.path.join(orig_pym_path, pmod),
-            os.path.join(portage._pym_path, pmod),
-            symlinks=True,
-        )
+        shutil.copytree(os.path.join(orig_pym_path, pmod), os.path.join(portage._pym_path, pmod), symlinks=True, )
 
     for dir_path in (base_path_tmp, portage._bin_path, portage._pym_path):
         os.chmod(dir_path, 0o755)

@@ -148,11 +148,10 @@ def post_emerge(myaction, myopts, myfiles, target_root, trees, mtimedb, retval):
     if os.access(postemerge, os.X_OK):
         hook_retval = portage.process.spawn([postemerge], env=settings.environ())
         if hook_retval != os.EX_OK:
-            portage.util.writemsg_level(
-                f" {colorize('BAD', '*')} spawn failed of {postemerge}\n",
-                level=logging.ERROR,
-                noiselevel=-1,
-            )
+            portage.util.writemsg_level(f" {colorize('BAD', '*')} spawn failed of {postemerge}\n",
+                                        level=logging.ERROR,
+                                        noiselevel=-1,
+                                        )
 
     clean_logs(settings)
 

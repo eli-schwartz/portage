@@ -159,11 +159,9 @@ class database(fs_template.FsBased):
             return True, missing_keys
 
         m = re.match(
-            r"^\s*CREATE\s*TABLE\s*%s\s*\(\s*%s\s*INTEGER\s*PRIMARY\s*KEY\s*AUTOINCREMENT\s*,(.*)\)\s*$" % (
-                self._db_table["packages"]["table_name"],
-                self._db_table["packages"]["package_id"],
-            ),
-            statement,
+            r"^\s*CREATE\s*TABLE\s*%s\s*\(\s*%s\s*INTEGER\s*PRIMARY\s*KEY\s*AUTOINCREMENT\s*,(.*)\)\s*$" %
+            (self._db_table["packages"]["table_name"], self._db_table["packages"]["package_id"],
+             ), statement,
         )
         if m is None:
             return False, missing_keys
@@ -217,11 +215,10 @@ class database(fs_template.FsBased):
 
     def _getitem(self, cpv):
         cursor = self._db_cursor
-        cursor.execute("select * from %s where %s=%s" % (
-            self._db_table["packages"]["table_name"],
-            self._db_table["packages"]["package_key"],
-            self._db_escape_string(cpv),
-        ))
+        cursor.execute("select * from %s where %s=%s" %
+                       (self._db_table["packages"]["table_name"], self._db_table["packages"]["package_key"],
+                        self._db_escape_string(cpv),
+                        ))
         result = cursor.fetchall()
         if len(result) == 1:
             pass
@@ -270,23 +267,18 @@ class database(fs_template.FsBased):
 
     def _delitem(self, cpv):
         cursor = self._db_cursor
-        cursor.execute("DELETE FROM %s WHERE %s=%s" % (
-            self._db_table["packages"]["table_name"],
-            self._db_table["packages"]["package_key"],
-            self._db_escape_string(cpv),
-        ))
+        cursor.execute("DELETE FROM %s WHERE %s=%s" %
+                       (self._db_table["packages"]["table_name"], self._db_table["packages"]["package_key"],
+                        self._db_escape_string(cpv),
+                        ))
 
     def __contains__(self, cpv):
         cursor = self._db_cursor
         cursor.execute(" ".join([
-            "SELECT %s FROM %s" % (
-                self._db_table["packages"]["package_id"],
-                self._db_table["packages"]["table_name"],
-            ),
-            "WHERE %s=%s" % (
-                self._db_table["packages"]["package_key"],
-                self._db_escape_string(cpv),
-            ),
+            "SELECT %s FROM %s" % (self._db_table["packages"]["package_id"], self._db_table["packages"]["table_name"],
+                                   ),
+            "WHERE %s=%s" % (self._db_table["packages"]["package_key"], self._db_escape_string(cpv),
+                             ),
         ]))
         result = cursor.fetchall()
         if len(result) == 0:
@@ -298,10 +290,9 @@ class database(fs_template.FsBased):
     def __iter__(self):
         """generator for walking the dir struct"""
         cursor = self._db_cursor
-        cursor.execute("SELECT %s FROM %s" % (
-            self._db_table["packages"]["package_key"],
-            self._db_table["packages"]["table_name"],
-        ))
+        cursor.execute("SELECT %s FROM %s" %
+                       (self._db_table["packages"]["package_key"], self._db_table["packages"]["table_name"],
+                        ))
         result = cursor.fetchall()
         key_list = [x[0] for x in result]
         del result

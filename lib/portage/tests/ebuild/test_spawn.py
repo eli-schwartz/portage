@@ -22,25 +22,23 @@ class SpawnTestCase(TestCase):
             os.close(fd)
             null_fd = os.open("/dev/null", os.O_RDWR)
             test_string = 2 * "blah blah blah\n"
-            proc = SpawnProcess(
-                args=[BASH_BINARY, "-c", f"echo -n '{test_string}'"],
-                env={},
-                fd_pipes={
-                    0: portage._get_stdin().fileno(),
-                    1: null_fd,
-                    2: null_fd
-                },
-                scheduler=global_event_loop(),
-                logfile=logfile,
-            )
+            proc = SpawnProcess(args=[BASH_BINARY, "-c", f"echo -n '{test_string}'"],
+                                env={},
+                                fd_pipes={
+                                    0: portage._get_stdin().fileno(),
+                                    1: null_fd,
+                                    2: null_fd
+                                },
+                                scheduler=global_event_loop(),
+                                logfile=logfile,
+                                )
             proc.start()
             os.close(null_fd)
             self.assertEqual(proc.wait(), os.EX_OK)
-            f = open(
-                _unicode_encode(logfile, encoding=_encodings["fs"], errors="strict"),
-                encoding=_encodings["content"],
-                errors="strict",
-            )
+            f = open(_unicode_encode(logfile, encoding=_encodings["fs"], errors="strict"),
+                     encoding=_encodings["content"],
+                     errors="strict",
+                     )
             log_content = f.read()
             f.close()
             # When logging passes through a pty, this comparison will fail

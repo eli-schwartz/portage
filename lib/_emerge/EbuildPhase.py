@@ -15,15 +15,9 @@ from _emerge.CompositeTask import CompositeTask
 from _emerge.PackagePhase import PackagePhase
 from _emerge.TaskSequence import TaskSequence
 from portage.package.ebuild._ipc.QueryCommand import QueryCommand
-from portage.util._dyn_libs.soname_deps_qa import (
-    _get_all_provides,
-    _get_unresolved_soname_deps,
-)
-from portage.package.ebuild.prepare_build_dirs import (
-    _prepare_workdir,
-    _prepare_fake_distdir,
-    _prepare_fake_filesdir,
-)
+from portage.util._dyn_libs.soname_deps_qa import (_get_all_provides, _get_unresolved_soname_deps, )
+from portage.package.ebuild.prepare_build_dirs import (_prepare_workdir, _prepare_fake_distdir, _prepare_fake_filesdir,
+                                                       )
 from portage.util import writemsg, ensure_dirs
 from portage.util._async.AsyncTaskFuture import AsyncTaskFuture
 from portage.util._async.BuildLogger import BuildLogger
@@ -44,8 +38,7 @@ except (ImportError, SystemError, RuntimeError, Exception):
 import portage
 
 portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.elog:messages@elog_messages",
+    globals(), "portage.elog:messages@elog_messages",
     "portage.package.ebuild.doebuild:_check_build_log," + "_post_phase_cmds,_post_phase_userpriv_perms," +
     "_post_phase_emptydir_cleanup," + "_post_src_install_soname_symlinks," +
     "_post_src_install_uid_fix,_postinst_bsdflags," + "_post_src_install_write_metadata," + "_preinst_bsdflags",
@@ -60,27 +53,10 @@ class EbuildPhase(CompositeTask):
     __slots__ = ("actionmap", "fd_pipes", "phase", "settings") + ("_ebuild_lock", )
 
     # FEATURES displayed prior to setup phase
-    _features_display = (
-        "ccache",
-        "compressdebug",
-        "distcc",
-        "fakeroot",
-        "installsources",
-        "keeptemp",
-        "keepwork",
-        "network-sandbox",
-        "network-sandbox-proxy",
-        "nostrip",
-        "preserve-libs",
-        "sandbox",
-        "selinux",
-        "sesandbox",
-        "splitdebug",
-        "suidctl",
-        "test",
-        "userpriv",
-        "usersandbox",
-    )
+    _features_display = ("ccache", "compressdebug", "distcc", "fakeroot", "installsources", "keeptemp", "keepwork",
+                         "network-sandbox", "network-sandbox-proxy", "nostrip", "preserve-libs", "sandbox", "selinux",
+                         "sesandbox", "splitdebug", "suidctl", "test", "userpriv", "usersandbox",
+                         )
 
     # Locked phases
     _locked_phases = ("setup", "preinst", "postinst", "prerm", "postrm")
@@ -149,18 +125,14 @@ class EbuildPhase(CompositeTask):
                 binpkg_format = self.settings.get("BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0])
                 if binpkg_format == "xpak":
                     self.settings["BINPKG_FORMAT"] = "xpak"
-                    self.settings["PORTAGE_BINPKG_TMPFILE"] = (os.path.join(
-                        self.settings["PKGDIR"],
-                        self.settings["CATEGORY"],
-                        self.settings["PF"],
-                    ) + ".tbz2")
+                    self.settings["PORTAGE_BINPKG_TMPFILE"] = (
+                        os.path.join(self.settings["PKGDIR"], self.settings["CATEGORY"], self.settings["PF"],
+                                     ) + ".tbz2")
                 elif binpkg_format == "gpkg":
                     self.settings["BINPKG_FORMAT"] = "gpkg"
-                    self.settings["PORTAGE_BINPKG_TMPFILE"] = (os.path.join(
-                        self.settings["PKGDIR"],
-                        self.settings["CATEGORY"],
-                        self.settings["PF"],
-                    ) + ".gpkg.tar")
+                    self.settings["PORTAGE_BINPKG_TMPFILE"] = (
+                        os.path.join(self.settings["PKGDIR"], self.settings["CATEGORY"], self.settings["PF"],
+                                     ) + ".gpkg.tar")
                 else:
                     raise InvalidBinaryPackageFormat(binpkg_format)
 
@@ -171,11 +143,10 @@ class EbuildPhase(CompositeTask):
             return
 
         if self.phase in ("pretend", "prerm"):
-            env_extractor = BinpkgEnvExtractor(
-                background=self.background,
-                scheduler=self.scheduler,
-                settings=self.settings,
-            )
+            env_extractor = BinpkgEnvExtractor(background=self.background,
+                                               scheduler=self.scheduler,
+                                               settings=self.settings,
+                                               )
             if env_extractor.saved_env_exists():
                 self._start_task(env_extractor, self._env_extractor_exit)
                 return
@@ -220,15 +191,13 @@ class EbuildPhase(CompositeTask):
     def _start_ebuild(self):
         if self.phase == "package":
             self._start_task(
-                PackagePhase(
-                    actionmap=self.actionmap,
-                    background=self.background,
-                    fd_pipes=self.fd_pipes,
-                    logfile=self._get_log_path(),
-                    scheduler=self.scheduler,
-                    settings=self.settings,
-                ),
-                self._ebuild_exit,
+                PackagePhase(actionmap=self.actionmap,
+                             background=self.background,
+                             fd_pipes=self.fd_pipes,
+                             logfile=self._get_log_path(),
+                             scheduler=self.scheduler,
+                             settings=self.settings,
+                             ), self._ebuild_exit,
             )
             return
 
@@ -244,15 +213,14 @@ class EbuildPhase(CompositeTask):
                 # it's considered to be an error message.
                 fd_pipes = {1: sys.__stderr__.fileno()}
 
-        ebuild_process = EbuildProcess(
-            actionmap=self.actionmap,
-            background=self.background,
-            fd_pipes=fd_pipes,
-            logfile=self._get_log_path(),
-            phase=self.phase,
-            scheduler=self.scheduler,
-            settings=self.settings,
-        )
+        ebuild_process = EbuildProcess(actionmap=self.actionmap,
+                                       background=self.background,
+                                       fd_pipes=fd_pipes,
+                                       logfile=self._get_log_path(),
+                                       phase=self.phase,
+                                       scheduler=self.scheduler,
+                                       settings=self.settings,
+                                       )
 
         self._start_task(ebuild_process, self._ebuild_exit)
 
@@ -261,10 +229,9 @@ class EbuildPhase(CompositeTask):
         if self._ebuild_lock is None:
             self._ebuild_exit_unlocked(ebuild_process)
         else:
-            self._start_task(
-                AsyncTaskFuture(future=self._ebuild_lock.async_unlock()),
-                functools.partial(self._ebuild_exit_unlocked, ebuild_process),
-            )
+            self._start_task(AsyncTaskFuture(future=self._ebuild_lock.async_unlock()),
+                             functools.partial(self._ebuild_exit_unlocked, ebuild_process),
+                             )
 
     def _ebuild_exit_unlocked(self, ebuild_process, unlock_task=None):
         if unlock_task is not None:
@@ -283,12 +250,10 @@ class EbuildPhase(CompositeTask):
                 # mark test phase as complete (bug #452030)
                 try:
                     open(
-                        _unicode_encode(
-                            os.path.join(self.settings["PORTAGE_BUILDDIR"], ".tested"),
-                            encoding=_encodings["fs"],
-                            errors="strict",
-                        ),
-                        "wb",
+                        _unicode_encode(os.path.join(self.settings["PORTAGE_BUILDDIR"], ".tested"),
+                                        encoding=_encodings["fs"],
+                                        errors="strict",
+                                        ), "wb",
                     ).close()
                 except OSError:
                     pass
@@ -342,16 +307,15 @@ class EbuildPhase(CompositeTask):
                 # when FEATURES=compress-build-logs is enabled.
                 fd, logfile = tempfile.mkstemp()
                 os.close(fd)
-            post_phase = _PostPhaseCommands(
-                background=self.background,
-                commands=post_phase_cmds,
-                elog=self._elog,
-                fd_pipes=self.fd_pipes,
-                logfile=logfile,
-                phase=self.phase,
-                scheduler=self.scheduler,
-                settings=settings,
-            )
+            post_phase = _PostPhaseCommands(background=self.background,
+                                            commands=post_phase_cmds,
+                                            elog=self._elog,
+                                            fd_pipes=self.fd_pipes,
+                                            logfile=logfile,
+                                            phase=self.phase,
+                                            scheduler=self.scheduler,
+                                            settings=settings,
+                                            )
             self._start_task(post_phase, self._post_phase_exit)
             return
 
@@ -399,10 +363,7 @@ class EbuildPhase(CompositeTask):
         os.unlink(temp_log)
 
     def _open_log(self, log_path):
-        f = open(
-            _unicode_encode(log_path, encoding=_encodings["fs"], errors="strict"),
-            mode="ab",
-        )
+        f = open(_unicode_encode(log_path, encoding=_encodings["fs"], errors="strict"), mode="ab", )
         f_real = f
 
         if log_path.endswith(".gz"):
@@ -413,15 +374,14 @@ class EbuildPhase(CompositeTask):
     def _die_hooks(self):
         self.returncode = None
         phase = "die_hooks"
-        die_hooks = MiscFunctionsProcess(
-            background=self.background,
-            commands=[phase],
-            phase=phase,
-            logfile=self._get_log_path(),
-            fd_pipes=self.fd_pipes,
-            scheduler=self.scheduler,
-            settings=self.settings,
-        )
+        die_hooks = MiscFunctionsProcess(background=self.background,
+                                         commands=[phase],
+                                         phase=phase,
+                                         logfile=self._get_log_path(),
+                                         fd_pipes=self.fd_pipes,
+                                         scheduler=self.scheduler,
+                                         settings=self.settings,
+                                         )
         self._start_task(die_hooks, self._die_hooks_exit)
 
     def _die_hooks_exit(self, die_hooks):
@@ -438,13 +398,12 @@ class EbuildPhase(CompositeTask):
         self.returncode = None
         portage.elog.elog_process(self.settings.mycpv, self.settings)
         phase = "clean"
-        clean_phase = EbuildPhase(
-            background=self.background,
-            fd_pipes=self.fd_pipes,
-            phase=phase,
-            scheduler=self.scheduler,
-            settings=self.settings,
-        )
+        clean_phase = EbuildPhase(background=self.background,
+                                  fd_pipes=self.fd_pipes,
+                                  phase=phase,
+                                  scheduler=self.scheduler,
+                                  settings=self.settings,
+                                  )
         self._start_task(clean_phase, self._fail_clean_exit)
 
     def _fail_clean_exit(self, clean_phase):
@@ -474,12 +433,11 @@ class EbuildPhase(CompositeTask):
                 if self.settings.get("PORTAGE_BACKGROUND") != "subprocess":
                     log_path = self.settings.get("PORTAGE_LOG_FILE")
                 if log_path:
-                    build_logger = BuildLogger(
-                        env=self.settings.environ(),
-                        log_path=log_path,
-                        log_filter_file=self.settings.get("PORTAGE_LOG_FILTER_FILE_CMD"),
-                        scheduler=self.scheduler,
-                    )
+                    build_logger = BuildLogger(env=self.settings.environ(),
+                                               log_path=log_path,
+                                               log_filter_file=self.settings.get("PORTAGE_LOG_FILTER_FILE_CMD"),
+                                               scheduler=self.scheduler,
+                                               )
                     build_logger.start()
                     _set_nonblocking(build_logger.stdin.fileno())
                     log_file = build_logger.stdin
@@ -512,16 +470,15 @@ class _PostPhaseCommands(CompositeTask):
             # Select args intended for MiscFunctionsProcess.
             kwargs = {k: v for k, v in kwargs.items() if k in ("ld_preload_sandbox", )}
             tasks.add(
-                MiscFunctionsProcess(
-                    background=self.background,
-                    commands=commands,
-                    fd_pipes=self.fd_pipes,
-                    logfile=self.logfile,
-                    phase=self.phase,
-                    scheduler=self.scheduler,
-                    settings=self.settings,
-                    **kwargs,
-                ))
+                MiscFunctionsProcess(background=self.background,
+                                     commands=commands,
+                                     fd_pipes=self.fd_pipes,
+                                     logfile=self.logfile,
+                                     phase=self.phase,
+                                     scheduler=self.scheduler,
+                                     settings=self.settings,
+                                     **kwargs,
+                                     ))
 
         self._start_task(tasks, self._commands_exit)
 

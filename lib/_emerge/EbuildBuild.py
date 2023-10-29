@@ -26,19 +26,9 @@ from portage.util.path import first_existing
 
 
 class EbuildBuild(CompositeTask):
-    __slots__ = (
-        "args_set",
-        "config_pool",
-        "find_blockers",
-        "ldpath_mtimes",
-        "logger",
-        "opts",
-        "pkg",
-        "pkg_count",
-        "prefetcher",
-        "settings",
-        "world_atom",
-    ) + ("_build_dir", "_buildpkg", "_ebuild_path", "_issyspkg", "_tree")
+    __slots__ = ("args_set", "config_pool", "find_blockers", "ldpath_mtimes", "logger", "opts", "pkg", "pkg_count",
+                 "prefetcher", "settings", "world_atom",
+                 ) + ("_build_dir", "_buildpkg", "_ebuild_path", "_issyspkg", "_tree")
 
     def _start(self):
         if not self.opts.fetchonly:
@@ -53,8 +43,7 @@ class EbuildBuild(CompositeTask):
         # because some packages have an extremely large SRC_URI value).
         self._start_task(
             AsyncTaskFuture(future=self.pkg.root_config.trees["porttree"].dbapi.async_aux_get(
-                self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler)),
-            self._start_with_metadata,
+                self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler)), self._start_with_metadata,
         )
 
     def _start_with_metadata(self, aux_get_task):
@@ -96,11 +85,9 @@ class EbuildBuild(CompositeTask):
         elif prefetcher.isAlive() and prefetcher.poll() is None:
             if not self.background:
                 fetch_log = os.path.join(_emerge.emergelog._emerge_log_dir, "emerge-fetch.log")
-                msg = (
-                    "Fetching files in the background.",
-                    "To view fetch progress, run in another terminal:",
-                    f"tail -f {fetch_log}",
-                )
+                msg = ("Fetching files in the background.", "To view fetch progress, run in another terminal:",
+                       f"tail -f {fetch_log}",
+                       )
                 out = portage.output.EOutput()
                 for l in msg:
                     out.einfo(l)
@@ -140,12 +127,11 @@ class EbuildBuild(CompositeTask):
 
         if opts.fetchonly:
             if opts.pretend:
-                fetcher = EbuildFetchonly(
-                    fetch_all=opts.fetch_all_uri,
-                    pkg=pkg,
-                    pretend=opts.pretend,
-                    settings=settings,
-                )
+                fetcher = EbuildFetchonly(fetch_all=opts.fetch_all_uri,
+                                          pkg=pkg,
+                                          pretend=opts.pretend,
+                                          settings=settings,
+                                          )
                 retval = fetcher.execute()
                 if retval == os.EX_OK:
                     self._current_task = None
@@ -155,14 +141,12 @@ class EbuildBuild(CompositeTask):
                     # For pretend mode, the convention it to execute
                     # pkg_nofetch and return a successful exitcode.
                     self._start_task(
-                        SpawnNofetchWithoutBuilddir(
-                            background=self.background,
-                            portdb=self.pkg.root_config.trees[self._tree].dbapi,
-                            ebuild_path=self._ebuild_path,
-                            scheduler=self.scheduler,
-                            settings=self.settings,
-                        ),
-                        self._default_final_exit,
+                        SpawnNofetchWithoutBuilddir(background=self.background,
+                                                    portdb=self.pkg.root_config.trees[self._tree].dbapi,
+                                                    ebuild_path=self._ebuild_path,
+                                                    scheduler=self.scheduler,
+                                                    settings=self.settings,
+                                                    ), self._default_final_exit,
                     )
                 return
 
@@ -173,16 +157,15 @@ class EbuildBuild(CompositeTask):
                 fetch_log = os.path.join(_emerge.emergelog._emerge_log_dir, "emerge-fetch.log")
                 logwrite_access = os.access(first_existing(fetch_log), os.W_OK)
 
-            fetcher = EbuildFetcher(
-                config_pool=self.config_pool,
-                ebuild_path=self._ebuild_path,
-                fetchall=self.opts.fetch_all_uri,
-                fetchonly=self.opts.fetchonly,
-                background=quiet_setting if logwrite_access else False,
-                logfile=fetch_log if logwrite_access else None,
-                pkg=self.pkg,
-                scheduler=self.scheduler,
-            )
+            fetcher = EbuildFetcher(config_pool=self.config_pool,
+                                    ebuild_path=self._ebuild_path,
+                                    fetchall=self.opts.fetch_all_uri,
+                                    fetchonly=self.opts.fetchonly,
+                                    background=quiet_setting if logwrite_access else False,
+                                    logfile=fetch_log if logwrite_access else None,
+                                    pkg=self.pkg,
+                                    scheduler=self.scheduler,
+                                    )
 
             if fetch_log and logwrite_access:
                 fetcher.addExitListener(self._fetchonly_exit)
@@ -204,25 +187,17 @@ class EbuildBuild(CompositeTask):
         lock_task.future.result()
         # Cleaning needs to happen before fetch, since the build dir
         # is used for log handling.
-        msg = " === ({} of {}) Cleaning ({}::{})".format(
-            self.pkg_count.curval,
-            self.pkg_count.maxval,
-            self.pkg.cpv,
-            self._ebuild_path,
-        )
-        short_msg = "emerge: ({} of {}) {} Clean".format(
-            self.pkg_count.curval,
-            self.pkg_count.maxval,
-            self.pkg.cpv,
-        )
+        msg = " === ({} of {}) Cleaning ({}::{})".format(self.pkg_count.curval, self.pkg_count.maxval, self.pkg.cpv,
+                                                         self._ebuild_path,
+                                                         )
+        short_msg = "emerge: ({} of {}) {} Clean".format(self.pkg_count.curval, self.pkg_count.maxval, self.pkg.cpv, )
         self.logger.log(msg, short_msg=short_msg)
 
-        pre_clean_phase = EbuildPhase(
-            background=self.background,
-            phase="clean",
-            scheduler=self.scheduler,
-            settings=self.settings,
-        )
+        pre_clean_phase = EbuildPhase(background=self.background,
+                                      phase="clean",
+                                      scheduler=self.scheduler,
+                                      settings=self.settings,
+                                      )
         self._start_task(pre_clean_phase, self._pre_clean_exit)
 
     def _fetchonly_exit(self, fetcher):
@@ -231,14 +206,12 @@ class EbuildBuild(CompositeTask):
             self.returncode = None
             portdb = self.pkg.root_config.trees[self._tree].dbapi
             self._start_task(
-                SpawnNofetchWithoutBuilddir(
-                    background=self.background,
-                    portdb=portdb,
-                    ebuild_path=self._ebuild_path,
-                    scheduler=self.scheduler,
-                    settings=self.settings,
-                ),
-                self._nofetch_without_builddir_exit,
+                SpawnNofetchWithoutBuilddir(background=self.background,
+                                            portdb=portdb,
+                                            ebuild_path=self._ebuild_path,
+                                            scheduler=self.scheduler,
+                                            settings=self.settings,
+                                            ), self._nofetch_without_builddir_exit,
             )
             return
 
@@ -257,21 +230,19 @@ class EbuildBuild(CompositeTask):
         # for log handling
         portage.prepare_build_dirs(self.pkg.root, self.settings, 1)
 
-        fetcher = EbuildFetcher(
-            config_pool=self.config_pool,
-            ebuild_path=self._ebuild_path,
-            fetchall=self.opts.fetch_all_uri,
-            fetchonly=self.opts.fetchonly,
-            background=self.background,
-            logfile=self.settings.get("PORTAGE_LOG_FILE"),
-            pkg=self.pkg,
-            scheduler=self.scheduler,
-        )
+        fetcher = EbuildFetcher(config_pool=self.config_pool,
+                                ebuild_path=self._ebuild_path,
+                                fetchall=self.opts.fetch_all_uri,
+                                fetchonly=self.opts.fetchonly,
+                                background=self.background,
+                                logfile=self.settings.get("PORTAGE_LOG_FILE"),
+                                pkg=self.pkg,
+                                scheduler=self.scheduler,
+                                )
 
-        self._start_task(
-            AsyncTaskFuture(future=fetcher.async_already_fetched(self.settings)),
-            functools.partial(self._start_fetch, fetcher),
-        )
+        self._start_task(AsyncTaskFuture(future=fetcher.async_already_fetched(self.settings)),
+                         functools.partial(self._start_fetch, fetcher),
+                         )
 
     def _start_fetch(self, fetcher, already_fetched_task):
         self._assert_current(already_fetched_task)
@@ -340,31 +311,17 @@ class EbuildBuild(CompositeTask):
                 and not self.opts.buildpkg_exclude.findAtomForPackage(pkg)):
             self._buildpkg = True
 
-            msg = " === ({} of {}) Compiling/Packaging ({}::{})".format(
-                pkg_count.curval,
-                pkg_count.maxval,
-                pkg.cpv,
-                ebuild_path,
-            )
-            short_msg = "emerge: ({} of {}) {} Compile".format(
-                pkg_count.curval,
-                pkg_count.maxval,
-                pkg.cpv,
-            )
+            msg = " === ({} of {}) Compiling/Packaging ({}::{})".format(pkg_count.curval, pkg_count.maxval, pkg.cpv,
+                                                                        ebuild_path,
+                                                                        )
+            short_msg = "emerge: ({} of {}) {} Compile".format(pkg_count.curval, pkg_count.maxval, pkg.cpv, )
             logger.log(msg, short_msg=short_msg)
 
         else:
-            msg = " === ({} of {}) Compiling/Merging ({}::{})".format(
-                pkg_count.curval,
-                pkg_count.maxval,
-                pkg.cpv,
-                ebuild_path,
-            )
-            short_msg = "emerge: ({} of {}) {} Compile".format(
-                pkg_count.curval,
-                pkg_count.maxval,
-                pkg.cpv,
-            )
+            msg = " === ({} of {}) Compiling/Merging ({}::{})".format(pkg_count.curval, pkg_count.maxval, pkg.cpv,
+                                                                      ebuild_path,
+                                                                      )
+            short_msg = "emerge: ({} of {}) {} Compile".format(pkg_count.curval, pkg_count.maxval, pkg.cpv, )
             logger.log(msg, short_msg=short_msg)
 
         build = EbuildExecuter(background=self.background, pkg=pkg, scheduler=scheduler, settings=settings)
@@ -382,12 +339,11 @@ class EbuildBuild(CompositeTask):
             return
 
         self.returncode = None
-        nofetch_phase = EbuildPhase(
-            background=self.background,
-            phase="nofetch",
-            scheduler=self.scheduler,
-            settings=self.settings,
-        )
+        nofetch_phase = EbuildPhase(background=self.background,
+                                    phase="nofetch",
+                                    scheduler=self.scheduler,
+                                    settings=self.settings,
+                                    )
         self._start_task(nofetch_phase, self._nofetch_exit)
 
     def _nofetch_exit(self, nofetch_phase):
@@ -403,10 +359,9 @@ class EbuildBuild(CompositeTask):
             # The returncode will be set after unlock is complete.
             self.returncode = None
         portage.elog.elog_process(self.pkg.cpv, self.settings)
-        self._start_task(
-            AsyncTaskFuture(future=self._build_dir.async_unlock()),
-            functools.partial(self._unlock_builddir_exit, returncode=returncode),
-        )
+        self._start_task(AsyncTaskFuture(future=self._build_dir.async_unlock()),
+                         functools.partial(self._unlock_builddir_exit, returncode=returncode),
+                         )
 
     def _unlock_builddir_exit(self, unlock_task, returncode=None):
         self._assert_current(unlock_task)
@@ -442,19 +397,17 @@ class EbuildBuild(CompositeTask):
             if pkg_fmt in requested_binpkg_formats:
                 if pkg_fmt == "rpm":
                     binpkg_tasks.add(
-                        EbuildPhase(
-                            background=self.background,
-                            phase="rpm",
-                            scheduler=self.scheduler,
-                            settings=self.settings,
-                        ))
+                        EbuildPhase(background=self.background,
+                                    phase="rpm",
+                                    scheduler=self.scheduler,
+                                    settings=self.settings,
+                                    ))
                 else:
-                    task = EbuildBinpkg(
-                        background=self.background,
-                        pkg=self.pkg,
-                        scheduler=self.scheduler,
-                        settings=self.settings,
-                    )
+                    task = EbuildBinpkg(background=self.background,
+                                        pkg=self.pkg,
+                                        scheduler=self.scheduler,
+                                        settings=self.settings,
+                                        )
                     binpkg_tasks.add(task)
                     # Guarantee that _record_binpkg_info is called
                     # immediately after EbuildBinpkg. Note that
@@ -476,10 +429,7 @@ class EbuildBuild(CompositeTask):
         scheduled as a member of a TaskSequence.
         """
 
-        __slots__ = (
-            "ebuild_binpkg",
-            "ebuild_build",
-        )
+        __slots__ = ("ebuild_binpkg", "ebuild_build", )
 
         def _start(self):
             self.ebuild_build._record_binpkg_info(self.ebuild_binpkg)
@@ -498,13 +448,12 @@ class EbuildBuild(CompositeTask):
 
         if self.opts.buildpkgonly:
             phase = "success_hooks"
-            success_hooks = MiscFunctionsProcess(
-                background=self.background,
-                commands=[phase],
-                phase=phase,
-                scheduler=self.scheduler,
-                settings=self.settings,
-            )
+            success_hooks = MiscFunctionsProcess(background=self.background,
+                                                 commands=[phase],
+                                                 phase=phase,
+                                                 scheduler=self.scheduler,
+                                                 settings=self.settings,
+                                                 )
             self._start_task(success_hooks, self._buildpkgonly_success_hook_exit)
             return
 
@@ -523,18 +472,15 @@ class EbuildBuild(CompositeTask):
         # task, to be recorded in the installed package database.
         pkg = task.get_binpkg_info()
         infoloc = os.path.join(self.settings["PORTAGE_BUILDDIR"], "build-info")
-        info = {
-            "BINPKGMD5": f"{pkg._metadata['MD5']}\n",
-        }
+        info = {"BINPKGMD5": f"{pkg._metadata['MD5']}\n", }
         if pkg.build_id is not None:
             info["BUILD_ID"] = f"{pkg.build_id}\n"
         for k, v in info.items():
-            with open(
-                    _unicode_encode(os.path.join(infoloc, k), encoding=_encodings["fs"], errors="strict"),
-                    mode="w",
-                    encoding=_encodings["repo.content"],
-                    errors="strict",
-            ) as f:
+            with open(_unicode_encode(os.path.join(infoloc, k), encoding=_encodings["fs"], errors="strict"),
+                      mode="w",
+                      encoding=_encodings["repo.content"],
+                      errors="strict",
+                      ) as f:
                 f.write(v)
 
     def _buildpkgonly_success_hook_exit(self, success_hooks):
@@ -543,12 +489,11 @@ class EbuildBuild(CompositeTask):
         # Need to call "clean" phase for buildpkgonly mode
         portage.elog.elog_process(self.pkg.cpv, self.settings)
         phase = "clean"
-        clean_phase = EbuildPhase(
-            background=self.background,
-            phase=phase,
-            scheduler=self.scheduler,
-            settings=self.settings,
-        )
+        clean_phase = EbuildPhase(background=self.background,
+                                  phase=phase,
+                                  scheduler=self.scheduler,
+                                  settings=self.settings,
+                                  )
         self._start_task(clean_phase, self._clean_exit)
 
     def _clean_exit(self, clean_phase):
@@ -573,31 +518,21 @@ class EbuildBuild(CompositeTask):
         ebuild_path = self._ebuild_path
         tree = self._tree
 
-        task = EbuildMerge(
-            exit_hook=self._install_exit,
-            find_blockers=self.find_blockers,
-            ldpath_mtimes=ldpath_mtimes,
-            logger=logger,
-            pkg=pkg,
-            pkg_count=pkg_count,
-            pkg_path=ebuild_path,
-            scheduler=self.scheduler,
-            settings=settings,
-            tree=tree,
-            world_atom=world_atom,
-        )
+        task = EbuildMerge(exit_hook=self._install_exit,
+                           find_blockers=self.find_blockers,
+                           ldpath_mtimes=ldpath_mtimes,
+                           logger=logger,
+                           pkg=pkg,
+                           pkg_count=pkg_count,
+                           pkg_path=ebuild_path,
+                           scheduler=self.scheduler,
+                           settings=settings,
+                           tree=tree,
+                           world_atom=world_atom,
+                           )
 
-        msg = " === ({} of {}) Merging ({}::{})".format(
-            pkg_count.curval,
-            pkg_count.maxval,
-            pkg.cpv,
-            ebuild_path,
-        )
-        short_msg = "emerge: ({} of {}) {} Merge".format(
-            pkg_count.curval,
-            pkg_count.maxval,
-            pkg.cpv,
-        )
+        msg = " === ({} of {}) Merging ({}::{})".format(pkg_count.curval, pkg_count.maxval, pkg.cpv, ebuild_path, )
+        short_msg = "emerge: ({} of {}) {} Merge".format(pkg_count.curval, pkg_count.maxval, pkg.cpv, )
         logger.log(msg, short_msg=short_msg)
 
         return task

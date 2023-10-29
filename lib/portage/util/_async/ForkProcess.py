@@ -19,13 +19,7 @@ class ForkProcess(SpawnProcess):
     # NOTE: This class overrides the meaning of the SpawnProcess 'args'
     # attribute, and uses it to hold the positional arguments for the
     # 'target' function.
-    __slots__ = (
-        "kwargs",
-        "target",
-        "_child_connection",
-        "_proc",
-        "_proc_join_task",
-    )
+    __slots__ = ("kwargs", "target", "_child_connection", "_proc", "_proc_join_task", )
 
     _file_names = ("connection", "slave_fd")
     _files_dict = slot_dict_class(_file_names, prefix="")
@@ -95,19 +89,12 @@ class ForkProcess(SpawnProcess):
         fd_list = list(set(self.fd_pipes.values()))
         self._files.connection.send((self.fd_pipes, fd_list), )
         for fd in fd_list:
-            multiprocessing.reduction.send_handle(
-                self._files.connection,
-                fd,
-                self.pid,
-            )
+            multiprocessing.reduction.send_handle(self._files.connection, fd, self.pid, )
 
     async def _main(self, build_logger, pipe_logger, loop=None):
         try:
             if self._fd_pipes_send_handle:
-                await self.scheduler.run_in_executor(
-                    None,
-                    self._send_fd_pipes,
-                )
+                await self.scheduler.run_in_executor(None, self._send_fd_pipes, )
         except asyncio.CancelledError:
             self._main_cancel(build_logger, pipe_logger)
             raise
@@ -162,17 +149,11 @@ class ForkProcess(SpawnProcess):
                 # Handle fd_pipes in _main instead.
                 fd_pipes = None
 
-            self._proc = multiprocessing.Process(
-                target=self._bootstrap,
-                args=(
-                    self._child_connection,
-                    self._HAVE_SEND_HANDLE,
-                    fd_pipes,
-                    target,
-                    args,
-                    kwargs,
-                ),
-            )
+            self._proc = multiprocessing.Process(target=self._bootstrap,
+                                                 args=(self._child_connection, self._HAVE_SEND_HANDLE, fd_pipes, target,
+                                                       args, kwargs,
+                                                       ),
+                                                 )
             self._proc.start()
         finally:
             if stdin_dup is not None:
@@ -200,10 +181,7 @@ class ForkProcess(SpawnProcess):
 
     async def _proc_join(self, proc, loop=None):
         sentinel_reader = self.scheduler.create_future()
-        self.scheduler.add_reader(
-            proc.sentinel,
-            lambda: sentinel_reader.done() or sentinel_reader.set_result(None),
-        )
+        self.scheduler.add_reader(proc.sentinel, lambda: sentinel_reader.done() or sentinel_reader.set_result(None), )
         try:
             await sentinel_reader
         finally:

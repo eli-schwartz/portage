@@ -11,10 +11,8 @@ import warnings
 import portage
 
 portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.checksum:get_valid_checksum_keys,perform_multiple_checksums," +
-    "verify_all,_apply_hash_filter,_filter_unaccelarated_hashes",
-    "portage.repository.config:_find_invalid_path_char",
+    globals(), "portage.checksum:get_valid_checksum_keys,perform_multiple_checksums," +
+    "verify_all,_apply_hash_filter,_filter_unaccelarated_hashes", "portage.repository.config:_find_invalid_path_char",
     "portage.util:write_atomic,writemsg_level",
 )
 
@@ -22,15 +20,9 @@ from portage import os
 from portage import _encodings
 from portage import _unicode_decode
 from portage import _unicode_encode
-from portage.exception import (
-    DigestException,
-    FileNotFound,
-    InvalidDataType,
-    MissingParameter,
-    PermissionDenied,
-    PortageException,
-    PortagePackageException,
-)
+from portage.exception import (DigestException, FileNotFound, InvalidDataType, MissingParameter, PermissionDenied,
+                               PortageException, PortagePackageException,
+                               )
 from portage.const import MANIFEST2_HASH_DEFAULTS, MANIFEST2_IDENTIFIERS
 from portage.localization import _
 
@@ -118,21 +110,20 @@ class Manifest2Entry(ManifestEntry):
 class Manifest:
     parsers = (parseManifest2, )
 
-    def __init__(
-        self,
-        pkgdir,
-        distdir=None,
-        fetchlist_dict=None,
-        manifest1_compat=DeprecationWarning,
-        from_scratch=False,
-        thin=False,
-        allow_missing=False,
-        allow_create=True,
-        hashes=None,
-        required_hashes=None,
-        find_invalid_path_char=None,
-        strict_misc_digests=True,
-    ):
+    def __init__(self,
+                 pkgdir,
+                 distdir=None,
+                 fetchlist_dict=None,
+                 manifest1_compat=DeprecationWarning,
+                 from_scratch=False,
+                 thin=False,
+                 allow_missing=False,
+                 allow_create=True,
+                 hashes=None,
+                 required_hashes=None,
+                 find_invalid_path_char=None,
+                 strict_misc_digests=True,
+                 ):
         """Create new Manifest instance for package in pkgdir.
         Do not parse Manifest file if from_scratch == True (only for internal use)
             The fetchlist_dict parameter is required only for generation of
@@ -208,11 +199,10 @@ class Manifest:
         """Parse a manifest.  If myhashdict is given then data will be added too it.
         Otherwise, a new dict will be created and returned."""
         try:
-            with open(
-                    _unicode_encode(file_path, encoding=_encodings["fs"], errors="strict"),
-                    encoding=_encodings["repo.content"],
-                    errors="replace",
-            ) as f:
+            with open(_unicode_encode(file_path, encoding=_encodings["fs"], errors="strict"),
+                      encoding=_encodings["repo.content"],
+                      errors="replace",
+                      ) as f:
                 if myhashdict is None:
                     myhashdict = {}
                 self._parseDigests(f, myhashdict=myhashdict, **kwargs)
@@ -274,11 +264,8 @@ class Manifest:
                 )
 
     def checkIntegrity(self):
-        manifest_data = ((
-            self.required_hashes.difference(set(self.fhashdict[mytype][myfile])),
-            mytype,
-            myfile,
-        ) for mytype in self.fhashdict for myfile in self.fhashdict[mytype])
+        manifest_data = ((self.required_hashes.difference(set(self.fhashdict[mytype][myfile])), mytype, myfile,
+                          ) for mytype in self.fhashdict for myfile in self.fhashdict[mytype])
         for needed_hashes, its_type, its_file in manifest_data:
             if needed_hashes:
                 raise MissingParameter(_(f"Missing {' '.join(needed_hashes)} checksum(s): {its_type} {its_file}"))
@@ -297,15 +284,11 @@ class Manifest:
             preserved_stats = {self.pkgdir.rstrip(os.sep): os.stat(self.pkgdir)}
             if myentries and not force:
                 try:
-                    with open(
-                            _unicode_encode(
-                                self.getFullname(),
-                                encoding=_encodings["fs"],
-                                errors="strict",
-                            ),
-                            encoding=_encodings["repo.content"],
-                            errors="replace",
-                    ) as f:
+                    with open(_unicode_encode(self.getFullname(), encoding=_encodings["fs"], errors="strict",
+                                              ),
+                              encoding=_encodings["repo.content"],
+                              errors="replace",
+                              ) as f:
                         oldentries = list(self._parseManifestLines(f))
                         preserved_stats[self.getFullname()] = os.fstat(f.fileno())
                         if len(oldentries) == len(myentries):
@@ -326,10 +309,7 @@ class Manifest:
                     # when thin or allow_missing is enabled. Except for
                     # thin manifests with no DIST entries, myentries is
                     # non-empty for all currently known use cases.
-                    write_atomic(
-                        self.getFullname(),
-                        "".join(f"{myentry}\n" for myentry in myentries),
-                    )
+                    write_atomic(self.getFullname(), "".join(f"{myentry}\n" for myentry in myentries), )
                     self._apply_max_mtime(preserved_stats, myentries)
                     rval = True
                 else:
@@ -421,11 +401,10 @@ class Manifest:
                     # Only warn in this case, since it's not a problem
                     # unless this repo is being prepared for distribution
                     # via rsync.
-                    writemsg_level(
-                        f"!!! utime('{path}', ({max_mtime}, {max_mtime})): {e}\n",
-                        level=logging.WARNING,
-                        noiselevel=-1,
-                    )
+                    writemsg_level(f"!!! utime('{path}', ({max_mtime}, {max_mtime})): {e}\n",
+                                   level=logging.WARNING,
+                                   noiselevel=-1,
+                                   )
 
     def sign(self):
         """Sign the Manifest"""
@@ -465,13 +444,12 @@ class Manifest:
         found_entries = (t for t in MANIFEST2_IDENTIFIERS if fname in self.fhashdict[t])
         return next(found_entries, None)
 
-    def create(
-        self,
-        checkExisting=False,
-        assumeDistHashesSometimes=False,
-        assumeDistHashesAlways=False,
-        requiredDistfiles=None,
-    ):
+    def create(self,
+               checkExisting=False,
+               assumeDistHashesSometimes=False,
+               assumeDistHashesAlways=False,
+               requiredDistfiles=None,
+               ):
         """Recreate this Manifest from scratch.  This will not use any
         existing checksums unless assumeDistHashesSometimes or
         assumeDistHashesAlways is true (assumeDistHashesSometimes will only
@@ -487,29 +465,25 @@ class Manifest:
         distfilehashes = {}
         if assumeDistHashesSometimes or assumeDistHashesAlways:
             distfilehashes.update(self.fhashdict["DIST"])
-        self.__init__(
-            self.pkgdir,
-            distdir=self.distdir,
-            fetchlist_dict=self.fetchlist_dict,
-            from_scratch=True,
-            thin=self.thin,
-            allow_missing=self.allow_missing,
-            allow_create=self.allow_create,
-            hashes=self.hashes,
-            required_hashes=self.required_hashes,
-            find_invalid_path_char=self._find_invalid_path_char,
-            strict_misc_digests=self.strict_misc_digests,
-        )
+        self.__init__(self.pkgdir,
+                      distdir=self.distdir,
+                      fetchlist_dict=self.fetchlist_dict,
+                      from_scratch=True,
+                      thin=self.thin,
+                      allow_missing=self.allow_missing,
+                      allow_create=self.allow_create,
+                      hashes=self.hashes,
+                      required_hashes=self.required_hashes,
+                      find_invalid_path_char=self._find_invalid_path_char,
+                      strict_misc_digests=self.strict_misc_digests,
+                      )
 
         update_pkgdir = self._update_thick_pkgdir
         if self.thin:
             update_pkgdir = self._update_thin_pkgdir
 
-        cpvlist = update_pkgdir(
-            self._pkgdir_category(),
-            os.path.basename(self.pkgdir.rstrip(os.path.sep)),
-            self.pkgdir,
-        )
+        cpvlist = update_pkgdir(self._pkgdir_category(), os.path.basename(self.pkgdir.rstrip(os.path.sep)), self.pkgdir,
+                                )
         distlist = {distfile for cpv in cpvlist for distfile in self._getCpvDistfiles(cpv)}
 
         if requiredDistfiles is None:
@@ -685,29 +659,23 @@ class Manifest:
 
     def updateAllHashes(self, checkExisting=False, ignoreMissingFiles=True):
         """Regenerate all hashes for all files in this Manifest."""
-        self.updateTypeHashes(
-            idtypes=MANIFEST2_IDENTIFIERS,
-            checkExisting=checkExisting,
-            ignoreMissingFiles=ignoreMissingFiles,
-        )
+        self.updateTypeHashes(idtypes=MANIFEST2_IDENTIFIERS,
+                              checkExisting=checkExisting,
+                              ignoreMissingFiles=ignoreMissingFiles,
+                              )
 
     def updateCpvHashes(self, cpv, ignoreMissingFiles=True):
         """Regenerate all hashes associated to the given cpv (includes all AUX and MISC
         files)."""
-        self.updateAllTypeHashes(
-            idtypes=("AUX", "MISC"),
-            ignoreMissingFiles=ignoreMissingFiles,
-        )
-        self.updateAllFileHashes(
-            ftype="EBUILD",
-            fnames=(f"{self._catsplit(cpv)[1]}.ebuild", ),
-            ignoreMissingFiles=ignoreMissingFiles,
-        )
-        self.updateAllFileHashes(
-            ftype="DIST",
-            fnames=self._getCpvDistfiles(cpv),
-            ignoreMissingFiles=ignoreMissingFiles,
-        )
+        self.updateAllTypeHashes(idtypes=("AUX", "MISC"), ignoreMissingFiles=ignoreMissingFiles, )
+        self.updateAllFileHashes(ftype="EBUILD",
+                                 fnames=(f"{self._catsplit(cpv)[1]}.ebuild", ),
+                                 ignoreMissingFiles=ignoreMissingFiles,
+                                 )
+        self.updateAllFileHashes(ftype="DIST",
+                                 fnames=self._getCpvDistfiles(cpv),
+                                 ignoreMissingFiles=ignoreMissingFiles,
+                                 )
 
     def updateHashesGuessType(self, fname, *args, **kwargs):
         """Regenerate hashes for the given file (guesses the type and then
@@ -732,11 +700,10 @@ class Manifest:
         mfname = self.getFullname()
         if not os.path.exists(mfname):
             return []
-        with open(
-                _unicode_encode(mfname, encoding=_encodings["fs"], errors="strict"),
-                encoding=_encodings["repo.content"],
-                errors="replace",
-        ) as myfile:
+        with open(_unicode_encode(mfname, encoding=_encodings["fs"], errors="strict"),
+                  encoding=_encodings["repo.content"],
+                  errors="replace",
+                  ) as myfile:
             line_splits = (line.split() for line in myfile.readlines())
             validation = (True for line_split in line_splits
                           if len(line_split) > 4 and line_split[0] in MANIFEST2_IDENTIFIERS and (len(line_split) - 3) %

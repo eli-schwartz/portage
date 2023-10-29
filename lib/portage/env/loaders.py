@@ -6,10 +6,7 @@ import errno
 import stat
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.util:writemsg",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.util:writemsg", )
 from portage import os
 from portage import _encodings
 from portage import _unicode_decode
@@ -31,10 +28,7 @@ class LoaderError(Exception):
         self.error_msg = error_msg
 
     def __str__(self):
-        return "Failed while loading resource: {}, error was: {}".format(
-            self.resource,
-            self.error_msg,
-        )
+        return "Failed while loading resource: {}, error was: {}".format(self.resource, self.error_msg, )
 
 
 def RecursiveFileLoader(filename):
@@ -160,11 +154,10 @@ class FileLoader(DataLoader):
         func = self.lineParser
         for fn in RecursiveFileLoader(self.fname):
             try:
-                with open(
-                        _unicode_encode(fn, encoding=_encodings["fs"], errors="strict"),
-                        encoding=_encodings["content"],
-                        errors="replace",
-                ) as f:
+                with open(_unicode_encode(fn, encoding=_encodings["fs"], errors="strict"),
+                          encoding=_encodings["content"],
+                          errors="replace",
+                          ) as f:
                     lines = f.readlines()
             except OSError as e:
                 if e.errno == errno.EACCES:

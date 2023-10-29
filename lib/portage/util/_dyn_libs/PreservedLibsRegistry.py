@@ -27,11 +27,7 @@ class PreservedLibsRegistry:
     # JSON read support has been available since portage-2.2.0_alpha89.
     _json_write = True
 
-    _json_write_opts = {
-        "ensure_ascii": False,
-        "indent": "\t",
-        "sort_keys": True,
-    }
+    _json_write_opts = {"ensure_ascii": False, "indent": "\t", "sort_keys": True, }
 
     def __init__(self, root, filename):
         """
@@ -64,10 +60,7 @@ class PreservedLibsRegistry:
         f = None
         content = None
         try:
-            f = open(
-                _unicode_encode(self._filename, encoding=_encodings["fs"], errors="strict"),
-                "rb",
-            )
+            f = open(_unicode_encode(self._filename, encoding=_encodings["fs"], errors="strict"), "rb", )
             content = f.read()
         except OSError as e:
             if not hasattr(e, "errno"):
@@ -94,11 +87,10 @@ class PreservedLibsRegistry:
                 except SystemExit:
                     raise
                 except Exception:
-                    writemsg_level(
-                        _("!!! Error loading '%s': %s\n") % (self._filename, e),
-                        level=logging.ERROR,
-                        noiselevel=-1,
-                    )
+                    writemsg_level(_("!!! Error loading '%s': %s\n") % (self._filename, e),
+                                   level=logging.ERROR,
+                                   noiselevel=-1,
+                                   )
 
         if self._data is None:
             self._data = {}
@@ -125,21 +117,16 @@ class PreservedLibsRegistry:
             f = atomic_ofstream(self._filename, "wb")
             if self._json_write:
                 f.write(
-                    _unicode_encode(
-                        json.dumps(self._data, **self._json_write_opts),
-                        encoding=_encodings["repo.content"],
-                        errors="strict",
-                    ))
+                    _unicode_encode(json.dumps(self._data, **self._json_write_opts),
+                                    encoding=_encodings["repo.content"],
+                                    errors="strict",
+                                    ))
             else:
                 pickle.dump(self._data, f, protocol=2)
             f.close()
         except OSError as e:
             if e.errno != PermissionDenied.errno:
-                writemsg_level(
-                    f"!!! {e} {self._filename}\n",
-                    level=logging.ERROR,
-                    noiselevel=-1,
-                )
+                writemsg_level(f"!!! {e} {self._filename}\n", level=logging.ERROR, noiselevel=-1, )
         else:
             self._data_orig = self._data.copy()
 

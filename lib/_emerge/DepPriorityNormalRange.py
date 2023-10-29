@@ -45,9 +45,7 @@ class DepPriorityNormalRange:
     ignore_soft = _ignore_optional
 
 
-DepPriorityNormalRange.ignore_priority = (
-    None,
-    DepPriorityNormalRange._ignore_optional,
-    DepPriorityNormalRange._ignore_runtime_post,
-    DepPriorityNormalRange._ignore_runtime,
-)
+DepPriorityNormalRange.ignore_priority = (None, DepPriorityNormalRange._ignore_optional,
+                                          DepPriorityNormalRange._ignore_runtime_post,
+                                          DepPriorityNormalRange._ignore_runtime,
+                                          )

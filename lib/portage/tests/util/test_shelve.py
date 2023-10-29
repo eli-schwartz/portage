@@ -34,20 +34,16 @@ class ShelveUtilsTestCase(TestCase):
         for data in self.TEST_DATA:
             tmpdir = tempfile.mkdtemp()
             try:
-                dump_args = argparse.Namespace(
-                    src=os.path.join(tmpdir, "shelve_file"),
-                    dest=os.path.join(tmpdir, "pickle_file"),
-                )
+                dump_args = argparse.Namespace(src=os.path.join(tmpdir, "shelve_file"),
+                                               dest=os.path.join(tmpdir, "pickle_file"),
+                                               )
                 db = open_shelve(dump_args.src, flag="c")
                 for k, v in data.items():
                     db[k] = v
                 db.close()
                 dump(dump_args)
 
-                restore_args = argparse.Namespace(
-                    dest=dump_args.src,
-                    src=dump_args.dest,
-                )
+                restore_args = argparse.Namespace(dest=dump_args.src, src=dump_args.dest, )
                 restore(restore_args)
 
                 db = open_shelve(restore_args.dest, flag="r")

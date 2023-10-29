@@ -27,19 +27,18 @@ class search:
     #
     # public interface
     #
-    def __init__(
-        self,
-        root_config,
-        spinner,
-        searchdesc,
-        verbose,
-        usepkg,
-        usepkgonly,
-        search_index=True,
-        search_similarity=None,
-        fuzzy=True,
-        regex_auto=False,
-    ):
+    def __init__(self,
+                 root_config,
+                 spinner,
+                 searchdesc,
+                 verbose,
+                 usepkg,
+                 usepkgonly,
+                 search_index=True,
+                 search_similarity=None,
+                 fuzzy=True,
+                 regex_auto=False,
+                 ):
         """Searches the available and installed packages for the supplied search key.
         The list of available and installed packages is created at object instantiation.
         This makes successive searches faster."""
@@ -138,14 +137,13 @@ class search:
             pkg_type = "installed"
         elif built:
             pkg_type = "binary"
-        return Package(
-            type_name=pkg_type,
-            root_config=self.root_config,
-            cpv=cpv,
-            built=built,
-            installed=installed,
-            metadata=metadata,
-        ).visible
+        return Package(type_name=pkg_type,
+                       root_config=self.root_config,
+                       cpv=cpv,
+                       built=built,
+                       installed=installed,
+                       metadata=metadata,
+                       ).visible
 
     def _first_cp(self, cp):
         for db in self._dbs:
@@ -434,14 +432,13 @@ class search:
                 mycpv = match + "-" + myversion
                 myebuild = self._findname(mycpv)
                 if myebuild:
-                    pkg = Package(
-                        built=False,
-                        cpv=mycpv,
-                        installed=False,
-                        metadata=metadata,
-                        root_config=self.root_config,
-                        type_name="ebuild",
-                    )
+                    pkg = Package(built=False,
+                                  cpv=mycpv,
+                                  installed=False,
+                                  metadata=metadata,
+                                  root_config=self.root_config,
+                                  type_name="ebuild",
+                                  )
                     pkgdir = os.path.dirname(myebuild)
                     mf = self.settings.repositories.get_repo_for_location(os.path.dirname(os.path.dirname(pkgdir)))
                     mf = mf.load_manifest(pkgdir, self.settings["DISTDIR"])

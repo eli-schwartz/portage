@@ -2,40 +2,24 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class TestDepend(TestCase):
-    ebuilds = {
-        "dev-libs/A-1": {
-            "IUSE": "test",
-            "DEPEND": "test? ( dev-libs/B )",
-        },
-        "dev-libs/B-1": {},
-    }
+    ebuilds = {"dev-libs/A-1": {"IUSE": "test", "DEPEND": "test? ( dev-libs/B )", }, "dev-libs/B-1": {}, }
 
-    installed = {
-        "dev-libs/A-1": {
-            "USE": "",
-            "IUSE": "test",
-            "DEPEND": "test? ( dev-libs/B )",
-        },
-    }
+    installed = {"dev-libs/A-1": {"USE": "", "IUSE": "test", "DEPEND": "test? ( dev-libs/B )", }, }
 
     def test_default_use_test(self):
         """
         Test that FEATURES=test enables USE=test by default.
         """
         user_config = {"make.conf": ("FEATURES=test", 'USE=""')}
-        test_case = ResolverPlaygroundTestCase(
-            ["dev-libs/A"],
-            options={},
-            success=True,
-            mergelist=["dev-libs/B-1", "dev-libs/A-1"],
-        )
+        test_case = ResolverPlaygroundTestCase(["dev-libs/A"],
+                                               options={},
+                                               success=True,
+                                               mergelist=["dev-libs/B-1", "dev-libs/A-1"],
+                                               )
 
         playground = ResolverPlayground(ebuilds=self.ebuilds, user_config=user_config, debug=False)
         try:
@@ -63,15 +47,14 @@ class TestDepend(TestCase):
         Test that --newuse now detects USE=test changes.
         """
         user_config = {"make.conf": ("FEATURES=test", 'USE=""')}
-        test_case = ResolverPlaygroundTestCase(
-            ["dev-libs/A"],
-            options={
-                "--newuse": True,
-                "--selective": True
-            },
-            success=True,
-            mergelist=["dev-libs/B-1", "dev-libs/A-1"],
-        )
+        test_case = ResolverPlaygroundTestCase(["dev-libs/A"],
+                                               options={
+                                                   "--newuse": True,
+                                                   "--selective": True
+                                               },
+                                               success=True,
+                                               mergelist=["dev-libs/B-1", "dev-libs/A-1"],
+                                               )
 
         playground = ResolverPlayground(ebuilds=self.ebuilds, user_config=user_config, debug=False)
         try:

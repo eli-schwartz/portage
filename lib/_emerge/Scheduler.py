@@ -85,14 +85,7 @@ class Scheduler(PollScheduler):
     _task_queues_class = slot_dict_class(("merge", "jobs", "ebuild_locks", "fetch", "unpack"), prefix="")
 
     class _build_opts_class(SlotObject):
-        __slots__ = (
-            "buildpkg",
-            "buildpkg_exclude",
-            "buildpkgonly",
-            "fetch_all_uri",
-            "fetchonly",
-            "pretend",
-        )
+        __slots__ = ("buildpkg", "buildpkg_exclude", "buildpkgonly", "fetch_all_uri", "fetchonly", "pretend", )
 
     class _binpkg_opts_class(SlotObject):
         __slots__ = ("fetchonly", "getbinpkg", "pretend")
@@ -140,26 +133,15 @@ class Scheduler(PollScheduler):
         def __init__(self, value=""):
             portage.exception.PortageException.__init__(self, value)
 
-    def __init__(
-        self,
-        settings,
-        trees,
-        mtimedb,
-        myopts,
-        spinner,
-        mergelist=None,
-        favorites=None,
-        graph_config=None,
-    ):
+    def __init__(self, settings, trees, mtimedb, myopts, spinner, mergelist=None, favorites=None, graph_config=None, ):
         PollScheduler.__init__(self, main=True)
 
         if mergelist is not None:
-            warnings.warn(
-                "The mergelist parameter of the " + "_emerge.Scheduler constructor is now unused. Use " +
-                "the graph_config parameter instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+            warnings.warn("The mergelist parameter of the " + "_emerge.Scheduler constructor is now unused. Use " +
+                          "the graph_config parameter instead.",
+                          DeprecationWarning,
+                          stacklevel=2,
+                          )
 
         self.settings = settings
         self.target_root = settings["EROOT"]
@@ -173,11 +155,11 @@ class Scheduler(PollScheduler):
 
         for k in self._build_opts.__slots__:
             setattr(self._build_opts, k, myopts.get("--" + k.replace("_", "-")))
-        self._build_opts.buildpkg_exclude = InternalPackageSet(
-            initial_atoms=" ".join(myopts.get("--buildpkg-exclude", [])).split(),
-            allow_wildcard=True,
-            allow_repo=True,
-        )
+        self._build_opts.buildpkg_exclude = InternalPackageSet(initial_atoms=" ".join(
+            myopts.get("--buildpkg-exclude", [])).split(),
+                                                               allow_wildcard=True,
+                                                               allow_repo=True,
+                                                               )
         if "mirror" in self.settings.features:
             self._build_opts.fetch_all_uri = True
 
@@ -231,13 +213,12 @@ class Scheduler(PollScheduler):
 
         self._fetch_log = os.path.join(_emerge.emergelog._emerge_log_dir, "emerge-fetch.log")
         fetch_iface = self._fetch_iface_class(log_file=self._fetch_log, schedule=self._schedule_fetch)
-        self._sched_iface = self._iface_class(
-            self._event_loop,
-            is_background=self._is_background,
-            fetch=fetch_iface,
-            scheduleSetup=self._schedule_setup,
-            scheduleUnpack=self._schedule_unpack,
-        )
+        self._sched_iface = self._iface_class(self._event_loop,
+                                              is_background=self._is_background,
+                                              fetch=fetch_iface,
+                                              scheduleSetup=self._schedule_setup,
+                                              scheduleUnpack=self._schedule_unpack,
+                                              )
 
         self._prefetchers = weakref.WeakValueDictionary()
         self._pkg_queue = []
@@ -281,14 +262,13 @@ class Scheduler(PollScheduler):
                                                  or "--fetchonly" in self.myopts):
             if "distlocks" not in features:
                 portage.writemsg(red("!!!") + "\n", noiselevel=-1)
-                portage.writemsg(
-                    red("!!!") + " parallel-fetching " + "requires the distlocks feature enabled" + "\n",
-                    noiselevel=-1,
-                )
-                portage.writemsg(
-                    red("!!!") + " you have it disabled, " + "thus parallel-fetching is being disabled" + "\n",
-                    noiselevel=-1,
-                )
+                portage.writemsg(red("!!!") + " parallel-fetching " + "requires the distlocks feature enabled" + "\n",
+                                 noiselevel=-1,
+                                 )
+                portage.writemsg(red("!!!") + " you have it disabled, " + "thus parallel-fetching is being disabled" +
+                                 "\n",
+                                 noiselevel=-1,
+                                 )
                 portage.writemsg(red("!!!") + "\n", noiselevel=-1)
             elif merge_count > 1:
                 self._parallel_fetch = True
@@ -359,12 +339,11 @@ class Scheduler(PollScheduler):
         ignore_built_slot_operator_deps = (self.myopts.get("--ignore-built-slot-operator-deps", "n") == "y")
         for root in self.trees:
             if graph_config is None:
-                fake_vartree = FakeVartree(
-                    self.trees[root]["root_config"],
-                    pkg_cache=self._pkg_cache,
-                    dynamic_deps=dynamic_deps,
-                    ignore_built_slot_operator_deps=ignore_built_slot_operator_deps,
-                )
+                fake_vartree = FakeVartree(self.trees[root]["root_config"],
+                                           pkg_cache=self._pkg_cache,
+                                           dynamic_deps=dynamic_deps,
+                                           ignore_built_slot_operator_deps=ignore_built_slot_operator_deps,
+                                           )
                 fake_vartree.sync()
             else:
                 fake_vartree = graph_config.trees[root]["vartree"]
@@ -402,11 +381,10 @@ class Scheduler(PollScheduler):
             interactive_tasks = self._get_interactive_tasks()
             if interactive_tasks:
                 background = False
-                writemsg_level(
-                    ">>> Sending package output to stdio due " + "to interactive package(s):\n",
-                    level=logging.INFO,
-                    noiselevel=-1,
-                )
+                writemsg_level(">>> Sending package output to stdio due " + "to interactive package(s):\n",
+                               level=logging.INFO,
+                               noiselevel=-1,
+                               )
                 msg = [""]
                 for pkg in interactive_tasks:
                     pkg_str = "  " + colorize("INFORM", str(pkg.cpv))
@@ -414,24 +392,18 @@ class Scheduler(PollScheduler):
                         pkg_str += " for " + pkg.root
                     msg.append(pkg_str)
                 msg.append("")
-                writemsg_level(
-                    "".join(f"{l}\n" for l in msg),
-                    level=logging.INFO,
-                    noiselevel=-1,
-                )
+                writemsg_level("".join(f"{l}\n" for l in msg), level=logging.INFO, noiselevel=-1, )
                 if self._max_jobs is True or self._max_jobs > 1:
                     self._set_max_jobs(1)
-                    writemsg_level(
-                        ">>> Setting --jobs=1 due " + "to the above interactive package(s)\n",
-                        level=logging.INFO,
-                        noiselevel=-1,
-                    )
-                    writemsg_level(
-                        ">>> In order to temporarily mask " + "interactive updates, you may\n" +
-                        ">>> specify --accept-properties=-interactive\n",
-                        level=logging.INFO,
-                        noiselevel=-1,
-                    )
+                    writemsg_level(">>> Setting --jobs=1 due " + "to the above interactive package(s)\n",
+                                   level=logging.INFO,
+                                   noiselevel=-1,
+                                   )
+                    writemsg_level(">>> In order to temporarily mask " + "interactive updates, you may\n" +
+                                   ">>> specify --accept-properties=-interactive\n",
+                                   level=logging.INFO,
+                                   noiselevel=-1,
+                                   )
         self._status_display.quiet = not background or ("--quiet" in self.myopts and "--verbose" not in self.myopts)
 
         self._logger.xterm_titles = ("notitles" not in self.settings.features and self._status_display.quiet)
@@ -665,11 +637,10 @@ class Scheduler(PollScheduler):
                 raise AssertionError(f"ebuild not found for '{x.cpv}'")
             pkgsettings["O"] = os.path.dirname(ebuild_path)
             if not digestgen(mysettings=pkgsettings, myportdb=portdb):
-                writemsg_level(
-                    f"!!! Unable to generate manifest for '{x.cpv}'.\n",
-                    level=logging.ERROR,
-                    noiselevel=-1,
-                )
+                writemsg_level(f"!!! Unable to generate manifest for '{x.cpv}'.\n",
+                               level=logging.ERROR,
+                               noiselevel=-1,
+                               )
                 return FAILURE
 
         return os.EX_OK
@@ -747,16 +718,16 @@ class Scheduler(PollScheduler):
             pass
 
         elif pkg.type_name == "ebuild":
-            prefetcher = EbuildFetcher(
-                background=True,
-                config_pool=self._ConfigPool(pkg.root, self._allocate_config, self._deallocate_config),
-                fetchonly=1,
-                fetchall=self._build_opts.fetch_all_uri,
-                logfile=self._fetch_log,
-                pkg=pkg,
-                prefetch=True,
-                scheduler=self._sched_iface,
-            )
+            prefetcher = EbuildFetcher(background=True,
+                                       config_pool=self._ConfigPool(pkg.root, self._allocate_config,
+                                                                    self._deallocate_config),
+                                       fetchonly=1,
+                                       fetchall=self._build_opts.fetch_all_uri,
+                                       logfile=self._fetch_log,
+                                       pkg=pkg,
+                                       prefetch=True,
+                                       scheduler=self._sched_iface,
+                                       )
 
         elif (pkg.type_name == "binary" and "--getbinpkg" in self.myopts
               and pkg.root_config.trees["bintree"].isremote(pkg.cpv)):
@@ -815,12 +786,7 @@ class Scheduler(PollScheduler):
                 self._deallocate_config(settings)
                 continue
 
-            build_dir_path = os.path.join(
-                os.path.realpath(settings["PORTAGE_TMPDIR"]),
-                "portage",
-                x.category,
-                x.pf,
-            )
+            build_dir_path = os.path.join(os.path.realpath(settings["PORTAGE_TMPDIR"]), "portage", x.category, x.pf, )
             existing_builddir = os.path.isdir(build_dir_path)
             settings["PORTAGE_BUILDDIR"] = build_dir_path
             build_dir = EbuildBuildDir(scheduler=sched_iface, settings=settings)
@@ -841,18 +807,16 @@ class Scheduler(PollScheduler):
                         ebuild_path = portdb.findname(x.cpv, myrepo=x.repo)
                         if ebuild_path is None:
                             raise AssertionError(f"ebuild not found for '{x.cpv}'")
-                    portage.package.ebuild.doebuild.doebuild_environment(
-                        ebuild_path,
-                        "clean",
-                        settings=settings,
-                        db=self.trees[settings["EROOT"]][tree].dbapi,
-                    )
-                    clean_phase = EbuildPhase(
-                        background=False,
-                        phase="clean",
-                        scheduler=sched_iface,
-                        settings=settings,
-                    )
+                    portage.package.ebuild.doebuild.doebuild_environment(ebuild_path,
+                                                                         "clean",
+                                                                         settings=settings,
+                                                                         db=self.trees[settings["EROOT"]][tree].dbapi,
+                                                                         )
+                    clean_phase = EbuildPhase(background=False,
+                                              phase="clean",
+                                              scheduler=sched_iface,
+                                              settings=settings,
+                                              )
                     current_task = clean_phase
                     clean_phase.start()
                     await clean_phase.async_wait()
@@ -892,11 +856,7 @@ class Scheduler(PollScheduler):
                         continue
 
                     if fetched:
-                        bintree.inject(
-                            x.cpv,
-                            current_pkg_path=fetched,
-                            allocated_pkg_path=fetcher.pkg_allocated_path,
-                        )
+                        bintree.inject(x.cpv, current_pkg_path=fetched, allocated_pkg_path=fetcher.pkg_allocated_path, )
 
                     infloc = os.path.join(build_dir_path, "build-info")
                     ensure_dirs(infloc)
@@ -917,12 +877,11 @@ class Scheduler(PollScheduler):
                     else:
                         settings.configdict["pkg"]["MERGE_TYPE"] = "source"
 
-                portage.package.ebuild.doebuild.doebuild_environment(
-                    ebuild_path,
-                    "pretend",
-                    settings=settings,
-                    db=self.trees[settings["EROOT"]][tree].dbapi,
-                )
+                portage.package.ebuild.doebuild.doebuild_environment(ebuild_path,
+                                                                     "pretend",
+                                                                     settings=settings,
+                                                                     db=self.trees[settings["EROOT"]][tree].dbapi,
+                                                                     )
 
                 prepare_build_dirs(root_config.root, settings, cleanup=0)
 
@@ -945,12 +904,11 @@ class Scheduler(PollScheduler):
                     if current_task.isAlive():
                         current_task.cancel()
                     if current_task.returncode == os.EX_OK:
-                        clean_phase = EbuildPhase(
-                            background=False,
-                            phase="clean",
-                            scheduler=sched_iface,
-                            settings=settings,
-                        )
+                        clean_phase = EbuildPhase(background=False,
+                                                  phase="clean",
+                                                  scheduler=sched_iface,
+                                                  settings=settings,
+                                                  )
                         clean_phase.start()
                         await clean_phase.async_wait()
 
@@ -966,12 +924,11 @@ class Scheduler(PollScheduler):
         from the --keep-going merge list, and immediately calls
         _failed_pkg_msg if we have not been terminated."""
         self._failed_pkgs.append(
-            self._failed_pkg(
-                build_dir=settings.get("PORTAGE_BUILDDIR"),
-                build_log=settings.get("PORTAGE_LOG_FILE"),
-                pkg=pkg,
-                returncode=ret,
-            ))
+            self._failed_pkg(build_dir=settings.get("PORTAGE_BUILDDIR"),
+                             build_log=settings.get("PORTAGE_LOG_FILE"),
+                             pkg=pkg,
+                             returncode=ret,
+                             ))
         if not self._terminated_tasks:
             self._failed_pkg_msg(self._failed_pkgs[-1], "emerge", "for")
             self._status_display.failed = len(self._failed_pkgs)
@@ -1001,11 +958,9 @@ class Scheduler(PollScheduler):
             # for ensuring sane $PWD (bug #239560) and storing elog messages.
             tmpdir = root_config.settings.get("PORTAGE_TMPDIR", "")
             if not tmpdir or not os.path.isdir(tmpdir):
-                msg = (
-                    "The directory specified in your PORTAGE_TMPDIR variable does not exist:",
-                    tmpdir,
-                    "Please create this directory or correct your PORTAGE_TMPDIR setting.",
-                )
+                msg = ("The directory specified in your PORTAGE_TMPDIR variable does not exist:", tmpdir,
+                       "Please create this directory or correct your PORTAGE_TMPDIR setting.",
+                       )
                 out = portage.output.EOutput()
                 for l in msg:
                     out.eerror(l)
@@ -1126,10 +1081,7 @@ class Scheduler(PollScheduler):
             log_path = self._locate_failure_log(failed_pkg)
             if log_path is not None:
                 try:
-                    log_file = open(
-                        _unicode_encode(log_path, encoding=_encodings["fs"], errors="strict"),
-                        mode="rb",
-                    )
+                    log_file = open(_unicode_encode(log_path, encoding=_encodings["fs"], errors="strict"), mode="rb", )
                 except OSError:
                     pass
                 else:
@@ -1304,12 +1256,8 @@ class Scheduler(PollScheduler):
             build_log = settings.get("PORTAGE_LOG_FILE")
 
             self._failed_pkgs.append(
-                self._failed_pkg(
-                    build_dir=build_dir,
-                    build_log=build_log,
-                    pkg=pkg,
-                    returncode=merge.returncode,
-                ))
+                self._failed_pkg(build_dir=build_dir, build_log=build_log, pkg=pkg, returncode=merge.returncode,
+                                 ))
             if not self._terminated_tasks:
                 self._failed_pkg_msg(self._failed_pkgs[-1], "install", "to")
                 self._status_display.failed = len(self._failed_pkgs)
@@ -1318,13 +1266,12 @@ class Scheduler(PollScheduler):
         if merge.postinst_failure:
             # Append directly to _failed_pkgs_all for non-critical errors.
             self._failed_pkgs_all.append(
-                self._failed_pkg(
-                    build_dir=merge.merge.settings.get("PORTAGE_BUILDDIR"),
-                    build_log=merge.merge.settings.get("PORTAGE_LOG_FILE"),
-                    pkg=pkg,
-                    postinst_failure=True,
-                    returncode=merge.returncode,
-                ))
+                self._failed_pkg(build_dir=merge.merge.settings.get("PORTAGE_BUILDDIR"),
+                                 build_log=merge.merge.settings.get("PORTAGE_LOG_FILE"),
+                                 pkg=pkg,
+                                 postinst_failure=True,
+                                 returncode=merge.returncode,
+                                 ))
             self._failed_pkg_msg(self._failed_pkgs_all[-1], "execute postinst for", "for")
 
         self._task_complete(pkg)
@@ -1379,12 +1326,8 @@ class Scheduler(PollScheduler):
             build_log = settings.get("PORTAGE_LOG_FILE")
 
             self._failed_pkgs.append(
-                self._failed_pkg(
-                    build_dir=build_dir,
-                    build_log=build_log,
-                    pkg=build.pkg,
-                    returncode=build.returncode,
-                ))
+                self._failed_pkg(build_dir=build_dir, build_log=build_log, pkg=build.pkg, returncode=build.returncode,
+                                 ))
             if not self._terminated_tasks:
                 self._failed_pkg_msg(self._failed_pkgs[-1], "emerge", "for")
                 self._status_display.failed = len(self._failed_pkgs)
@@ -1659,8 +1602,7 @@ class Scheduler(PollScheduler):
         if self._task_queues.merge and (self._schedule_merge_wakeup_task is None
                                         or self._schedule_merge_wakeup_task.done()):
             self._schedule_merge_wakeup_task = asyncio.ensure_future(
-                self._task_queues.merge.wait(loop=self._event_loop),
-                loop=self._event_loop,
+                self._task_queues.merge.wait(loop=self._event_loop), loop=self._event_loop,
             )
             self._schedule_merge_wakeup_task.add_done_callback(self._schedule_merge_wakeup)
 
@@ -1797,35 +1739,33 @@ class Scheduler(PollScheduler):
                 previous_cpv = [pkg.cpv]
             if previous_cpv:
                 previous_cpv = previous_cpv.pop()
-                pkg_to_replace = self._pkg(
-                    previous_cpv,
-                    "installed",
-                    pkg.root_config,
-                    installed=True,
-                    operation="uninstall",
-                )
+                pkg_to_replace = self._pkg(previous_cpv,
+                                           "installed",
+                                           pkg.root_config,
+                                           installed=True,
+                                           operation="uninstall",
+                                           )
 
         prefetcher = self._get_prefetcher(pkg)
 
-        task = MergeListItem(
-            args_set=self._args_set,
-            background=self._background,
-            binpkg_opts=self._binpkg_opts,
-            build_opts=self._build_opts,
-            config_pool=self._ConfigPool(pkg.root, self._allocate_config, self._deallocate_config),
-            emerge_opts=self.myopts,
-            find_blockers=self._find_blockers(pkg),
-            logger=self._logger,
-            mtimedb=self._mtimedb,
-            pkg=pkg,
-            pkg_count=self._pkg_count.copy(),
-            pkg_to_replace=pkg_to_replace,
-            prefetcher=prefetcher,
-            scheduler=self._sched_iface,
-            settings=self._allocate_config(pkg.root),
-            statusMessage=self._status_msg,
-            world_atom=self._world_atom,
-        )
+        task = MergeListItem(args_set=self._args_set,
+                             background=self._background,
+                             binpkg_opts=self._binpkg_opts,
+                             build_opts=self._build_opts,
+                             config_pool=self._ConfigPool(pkg.root, self._allocate_config, self._deallocate_config),
+                             emerge_opts=self.myopts,
+                             find_blockers=self._find_blockers(pkg),
+                             logger=self._logger,
+                             mtimedb=self._mtimedb,
+                             pkg=pkg,
+                             pkg_count=self._pkg_count.copy(),
+                             pkg_to_replace=pkg_to_replace,
+                             prefetcher=prefetcher,
+                             scheduler=self._sched_iface,
+                             settings=self._allocate_config(pkg.root),
+                             statusMessage=self._status_msg,
+                             world_atom=self._world_atom,
+                             )
 
         return task
 
@@ -1900,14 +1840,9 @@ class Scheduler(PollScheduler):
         success = False
         e = None
         try:
-            success, mydepgraph, dropped_tasks = resume_depgraph(
-                self.settings,
-                self.trees,
-                self._mtimedb,
-                self.myopts,
-                myparams,
-                self._spinner,
-            )
+            success, mydepgraph, dropped_tasks = resume_depgraph(self.settings, self.trees, self._mtimedb, self.myopts,
+                                                                 myparams, self._spinner,
+                                                                 )
         except depgraph.UnsatisfiedResumeDep as exc:
             # rename variable to avoid python-3.0 error:
             # SyntaxError: can not delete variable 'e' referenced in nested
@@ -1992,14 +1927,8 @@ class Scheduler(PollScheduler):
         it's supposed to be added or removed. Otherwise, do nothing.
         """
 
-        if {
-                "--buildpkgonly",
-                "--fetchonly",
-                "--fetch-all-uri",
-                "--oneshot",
-                "--onlydeps",
-                "--pretend",
-        }.intersection(self.myopts):
+        if {"--buildpkgonly", "--fetchonly", "--fetch-all-uri", "--oneshot", "--onlydeps", "--pretend",
+            }.intersection(self.myopts):
             return
 
         if pkg.root != self.target_root:
@@ -2041,11 +1970,10 @@ class Scheduler(PollScheduler):
                                    f"Updating world file ({pkg.cpv})")
                         world_set.add(atom)
                     else:
-                        writemsg_level(
-                            f'\n!!! Unable to record {atom} in "world"\n',
-                            level=logging.WARN,
-                            noiselevel=-1,
-                        )
+                        writemsg_level(f'\n!!! Unable to record {atom} in "world"\n',
+                                       level=logging.WARN,
+                                       noiselevel=-1,
+                                       )
         finally:
             if world_locked:
                 world_set.unlock()
@@ -2060,14 +1988,13 @@ class Scheduler(PollScheduler):
 
         # Reuse existing instance when available.
         pkg = self._pkg_cache.get(
-            Package._gen_hash_key(
-                cpv=cpv,
-                type_name=type_name,
-                repo_name=myrepo,
-                root_config=root_config,
-                installed=installed,
-                operation=operation,
-            ))
+            Package._gen_hash_key(cpv=cpv,
+                                  type_name=type_name,
+                                  repo_name=myrepo,
+                                  root_config=root_config,
+                                  installed=installed,
+                                  operation=operation,
+                                  ))
 
         if pkg is not None:
             return pkg
@@ -2076,13 +2003,12 @@ class Scheduler(PollScheduler):
         db = root_config.trees[tree_type].dbapi
         db_keys = list(self.trees[root_config.root][tree_type].dbapi._aux_cache_keys)
         metadata = zip(db_keys, db.aux_get(cpv, db_keys, myrepo=myrepo))
-        pkg = Package(
-            built=(type_name != "ebuild"),
-            cpv=cpv,
-            installed=installed,
-            metadata=metadata,
-            root_config=root_config,
-            type_name=type_name,
-        )
+        pkg = Package(built=(type_name != "ebuild"),
+                      cpv=cpv,
+                      installed=installed,
+                      metadata=metadata,
+                      root_config=root_config,
+                      type_name=type_name,
+                      )
         self._pkg_cache[pkg] = pkg
         return pkg

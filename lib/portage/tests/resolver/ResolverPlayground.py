@@ -9,12 +9,7 @@ import portage
 from itertools import permutations
 from portage import os
 from portage import shutil
-from portage.const import (
-    GLOBAL_CONFIG_PATH,
-    PORTAGE_BIN_PATH,
-    USER_CONFIG_PATH,
-    SUPPORTED_GENTOO_BINPKG_FORMATS,
-)
+from portage.const import (GLOBAL_CONFIG_PATH, PORTAGE_BIN_PATH, USER_CONFIG_PATH, SUPPORTED_GENTOO_BINPKG_FORMATS, )
 from portage.process import find_binary
 from portage.dep import Atom, _repo_separator
 from portage.dbapi.bintree import binarytree
@@ -44,29 +39,12 @@ class ResolverPlayground:
     its work.
     """
 
-    config_files = frozenset((
-        "eapi",
-        "layout.conf",
-        "make.conf",
-        "modules",
-        "package.accept_keywords",
-        "package.keywords",
-        "package.license",
-        "package.mask",
-        "package.properties",
-        "package.provided",
-        "packages",
-        "package.unmask",
-        "package.use",
-        "package.use.force",
-        "package.use.mask",
-        "package.use.stable.force",
-        "package.use.stable.mask",
-        "soname.provided",
-        "use.force",
-        "use.mask",
-        "layout.conf",
-    ))
+    config_files = frozenset(
+        ("eapi", "layout.conf", "make.conf", "modules", "package.accept_keywords", "package.keywords",
+         "package.license", "package.mask", "package.properties", "package.provided", "packages", "package.unmask",
+         "package.use", "package.use.force", "package.use.mask", "package.use.stable.force", "package.use.stable.mask",
+         "soname.provided", "use.force", "use.mask", "layout.conf",
+         ))
 
     metadata_xml_template = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
@@ -82,44 +60,29 @@ class ResolverPlayground:
 </pkgmetadata>
 """
 
-    portage_bin = (
-        "ebuild",
-        "egencache",
-        "emerge",
-        "emerge-webrsync",
-        "emirrordist",
-        "glsa-check",
-        "portageq",
-        "quickpkg",
-    )
+    portage_bin = ("ebuild", "egencache", "emerge", "emerge-webrsync", "emirrordist", "glsa-check", "portageq",
+                   "quickpkg",
+                   )
 
-    portage_sbin = (
-        "archive-conf",
-        "dispatch-conf",
-        "emaint",
-        "env-update",
-        "etc-update",
-        "fixpackages",
-        "regenworld",
-    )
+    portage_sbin = ("archive-conf", "dispatch-conf", "emaint", "env-update", "etc-update", "fixpackages", "regenworld",
+                    )
 
-    def __init__(
-        self,
-        ebuilds={},
-        binpkgs={},
-        installed={},
-        profile={},
-        repo_configs={},
-        user_config={},
-        sets={},
-        world=[],
-        world_sets=[],
-        distfiles={},
-        eclasses={},
-        eprefix=None,
-        targetroot=False,
-        debug=False,
-    ):
+    def __init__(self,
+                 ebuilds={},
+                 binpkgs={},
+                 installed={},
+                 profile={},
+                 repo_configs={},
+                 user_config={},
+                 sets={},
+                 world=[],
+                 world_sets=[],
+                 distfiles={},
+                 eclasses={},
+                 eprefix=None,
+                 targetroot=False,
+                 debug=False,
+                 ):
         """
         ebuilds: cpv -> metadata mapping simulating available ebuilds.
         installed: cpv -> metadata mapping simulating installed packages.
@@ -145,40 +108,11 @@ class ResolverPlayground:
             for x in self.portage_sbin:
                 os.symlink(os.path.join(PORTAGE_BIN_PATH, x), os.path.join(eusbin, x))
 
-            essential_binaries = (
-                "awk",
-                "basename",
-                "bash",
-                "bzip2",
-                "cat",
-                "chgrp",
-                "chmod",
-                "chown",
-                "comm",
-                "cp",
-                "egrep",
-                "env",
-                "find",
-                "flock",
-                "grep",
-                "head",
-                "install",
-                "ln",
-                "mkdir",
-                "mkfifo",
-                "mktemp",
-                "mv",
-                "readlink",
-                "rm",
-                "sed",
-                "sort",
-                "tar",
-                "tr",
-                "uname",
-                "uniq",
-                "xargs",
-                "zstd",
-            )
+            essential_binaries = ("awk", "basename", "bash", "bzip2", "cat", "chgrp", "chmod", "chown", "comm", "cp",
+                                  "egrep", "env", "find", "flock", "grep", "head", "install", "ln", "mkdir", "mkfifo",
+                                  "mktemp", "mv", "readlink", "rm", "sed", "sort", "tar", "tr", "uname", "uniq",
+                                  "xargs", "zstd",
+                                  )
             # Exclude internal wrappers from PATH lookup.
             orig_path = os.environ["PATH"]
             included_paths = []
@@ -362,11 +296,7 @@ class ResolverPlayground:
                 if binpkg_format == "xpak":
                     binpkg_path = os.path.join(category_dir, pn, f"{pf}-{metadata['BUILD_ID']}.xpak")
                 elif binpkg_format == "gpkg":
-                    binpkg_path = os.path.join(
-                        category_dir,
-                        pn,
-                        f"{pf}-{metadata['BUILD_ID']}.gpkg.tar",
-                    )
+                    binpkg_path = os.path.join(category_dir, pn, f"{pf}-{metadata['BUILD_ID']}.gpkg.tar", )
                 else:
                     raise InvalidBinaryPackageFormat(binpkg_format)
             else:
@@ -615,10 +545,7 @@ class ResolverPlayground:
             pass
 
         provided_sets_portage_conf = os.path.join(str(cnf_path), "sets", "portage.conf")
-        os.symlink(
-            provided_sets_portage_conf,
-            os.path.join(default_sets_conf_dir, "portage.conf"),
-        )
+        os.symlink(provided_sets_portage_conf, os.path.join(default_sets_conf_dir, "portage.conf"), )
 
         set_config_dir = os.path.join(user_config_dir, "sets")
 
@@ -658,10 +585,8 @@ class ResolverPlayground:
             "PATH":
             os.environ["PATH"],
             "PORTAGE_REPOSITORIES":
-            "\n".join("[%s]\n%s" % (
-                repo_name,
-                "\n".join(f"{k} = {v}" for k, v in repo_config.items()),
-            ) for repo_name, repo_config in self._repositories.items()),
+            "\n".join("[%s]\n%s" % (repo_name, "\n".join(f"{k} = {v}" for k, v in repo_config.items()),
+                                    ) for repo_name, repo_config in self._repositories.items()),
         }
 
         if self.debug:
@@ -700,23 +625,13 @@ class ResolverPlayground:
             _emerge.emergelog._disable = True
 
             if action in ("depclean", "prune"):
-                depclean_result = _calc_depclean(
-                    self.settings,
-                    self.trees,
-                    None,
-                    options,
-                    action,
-                    InternalPackageSet(initial_atoms=atoms, allow_wildcard=True),
-                    None,
-                )
-                result = ResolverPlaygroundDepcleanResult(
-                    atoms,
-                    depclean_result.returncode,
-                    depclean_result.cleanlist,
-                    depclean_result.ordered,
-                    depclean_result.req_pkg_count,
-                    depclean_result.depgraph,
-                )
+                depclean_result = _calc_depclean(self.settings, self.trees, None, options, action,
+                                                 InternalPackageSet(initial_atoms=atoms, allow_wildcard=True), None,
+                                                 )
+                result = ResolverPlaygroundDepcleanResult(atoms, depclean_result.returncode, depclean_result.cleanlist,
+                                                          depclean_result.ordered, depclean_result.req_pkg_count,
+                                                          depclean_result.depgraph,
+                                                          )
             else:
                 params = create_depgraph_params(options, action)
                 success, depgraph, favorites = backtrack_depgraph(self.settings, self.trees, options, params, action,
@@ -883,12 +798,8 @@ class ResolverPlaygroundTestCase:
                     if x == got:
                         expected = x
                         break
-            elif (key in (
-                    "unstable_keywords",
-                    "needed_p_mask_changes",
-                    "unsatisfied_deps",
-                    "required_use_unsatisfied",
-            ) and expected is not None):
+            elif (key in ("unstable_keywords", "needed_p_mask_changes", "unsatisfied_deps", "required_use_unsatisfied",
+                          ) and expected is not None):
                 expected = set(expected)
 
             elif key == "forced_rebuilds" and expected is not None:
@@ -929,26 +840,11 @@ def _mergelist_str(x, depgraph):
 
 
 class ResolverPlaygroundResult:
-    checks = (
-        "success",
-        "mergelist",
-        "use_changes",
-        "license_changes",
-        "unstable_keywords",
-        "slot_collision_solutions",
-        "circular_dependency_solutions",
-        "needed_p_mask_changes",
-        "unsatisfied_deps",
-        "forced_rebuilds",
-        "required_use_unsatisfied",
-        "graph_order",
-    )
-    optional_checks = (
-        "forced_rebuilds",
-        "required_use_unsatisfied",
-        "unsatisfied_deps",
-        "graph_order",
-    )
+    checks = ("success", "mergelist", "use_changes", "license_changes", "unstable_keywords", "slot_collision_solutions",
+              "circular_dependency_solutions", "needed_p_mask_changes", "unsatisfied_deps", "forced_rebuilds",
+              "required_use_unsatisfied", "graph_order",
+              )
+    optional_checks = ("forced_rebuilds", "required_use_unsatisfied", "unsatisfied_deps", "graph_order", )
 
     def __init__(self, atoms, success, mydepgraph, favorites):
         self.atoms = atoms
@@ -975,10 +871,7 @@ class ResolverPlaygroundResult:
 
         if self.depgraph._dynamic_config._needed_use_config_changes:
             self.use_changes = {}
-            for (
-                    pkg,
-                    needed_use_config_changes,
-            ) in self.depgraph._dynamic_config._needed_use_config_changes.items():
+            for (pkg, needed_use_config_changes, ) in self.depgraph._dynamic_config._needed_use_config_changes.items():
                 new_use, changes = needed_use_config_changes
                 self.use_changes[pkg.cpv] = changes
 
@@ -994,10 +887,7 @@ class ResolverPlaygroundResult:
 
         if self.depgraph._dynamic_config._needed_license_changes:
             self.license_changes = {}
-            for (
-                    pkg,
-                    missing_licenses,
-            ) in self.depgraph._dynamic_config._needed_license_changes.items():
+            for (pkg, missing_licenses, ) in self.depgraph._dynamic_config._needed_license_changes.items():
                 self.license_changes[pkg.cpv] = missing_licenses
 
         if self.depgraph._dynamic_config._slot_conflict_handler is not None:
@@ -1030,10 +920,7 @@ class ResolverPlaygroundResult:
             }
 
         required_use_unsatisfied = []
-        for (
-                pargs,
-                kwargs,
-        ) in self.depgraph._dynamic_config._unsatisfied_deps_for_display:
+        for (pargs, kwargs, ) in self.depgraph._dynamic_config._unsatisfied_deps_for_display:
             if "show_req_use" in kwargs:
                 required_use_unsatisfied.append(pargs[1])
         if required_use_unsatisfied:
@@ -1041,18 +928,8 @@ class ResolverPlaygroundResult:
 
 
 class ResolverPlaygroundDepcleanResult:
-    checks = (
-        "success",
-        "cleanlist",
-        "ordered",
-        "req_pkg_count",
-        "graph_order",
-    )
-    optional_checks = (
-        "ordered",
-        "req_pkg_count",
-        "graph_order",
-    )
+    checks = ("success", "cleanlist", "ordered", "req_pkg_count", "graph_order", )
+    optional_checks = ("ordered", "req_pkg_count", "graph_order", )
 
     def __init__(self, atoms, rval, cleanlist, ordered, req_pkg_count, depgraph):
         self.atoms = atoms

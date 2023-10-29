@@ -1,10 +1,7 @@
 # Copyright 2018-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-from portage.repository.storage.interface import (
-    RepoStorageException,
-    RepoStorageInterface,
-)
+from portage.repository.storage.interface import (RepoStorageException, RepoStorageInterface, )
 
 
 class InplaceRepoStorage(RepoStorageInterface):

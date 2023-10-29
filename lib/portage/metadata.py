@@ -22,27 +22,14 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
     portage.writemsg_stdout("\n>>> Updating Portage cache\n")
     cachedir = os.path.normpath(settings.depcachedir)
     if cachedir in [
-            "/",
-            "/bin",
-            "/dev",
-            "/etc",
-            "/home",
-            "/lib",
-            "/opt",
-            "/proc",
-            "/root",
-            "/sbin",
-            "/sys",
-            "/tmp",
-            "/usr",
+            "/", "/bin", "/dev", "/etc", "/home", "/lib", "/opt", "/proc", "/root", "/sbin", "/sys", "/tmp", "/usr",
             "/var",
     ]:
-        print(
-            ("!!! PORTAGE_DEPCACHEDIR IS SET TO A PRIMARY "
-             "ROOT DIRECTORY ON YOUR SYSTEM.\n"
-             f"!!! This is ALMOST CERTAINLY NOT what you want: '{cachedir}'", ),
-            file=sys.stderr,
-        )
+        print(("!!! PORTAGE_DEPCACHEDIR IS SET TO A PRIMARY "
+               "ROOT DIRECTORY ON YOUR SYSTEM.\n"
+               f"!!! This is ALMOST CERTAINLY NOT what you want: '{cachedir}'", ),
+              file=sys.stderr,
+              )
         sys.exit(73)
     if not os.path.exists(cachedir):
         os.makedirs(cachedir)
@@ -168,8 +155,7 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
                 if dest is not None:
                     if not (dest.get(dest_chf_key) == src[dest_chf_key]
                             and tree_data.eclass_db.validate_and_rewrite_cache(
-                                dest["_eclasses_"],
-                                tree_data.dest_db.validation_chf,
+                                dest["_eclasses_"], tree_data.dest_db.validation_chf,
                                 tree_data.dest_db.store_eclass_paths,
                             ) is not None and set(dest["_eclasses_"]) == set(src["_eclasses_"])):
                         dest = None
@@ -202,12 +188,11 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
         try:
             dead_nodes = set(tree_data.dest_db)
         except CacheError as e:
-            writemsg_level(
-                ("Error listing cache entries for "
-                 f"'{tree_data.path}': {e}, continuing...\n"),
-                level=logging.ERROR,
-                noiselevel=-1,
-            )
+            writemsg_level(("Error listing cache entries for "
+                            f"'{tree_data.path}': {e}, continuing...\n"),
+                           level=logging.ERROR,
+                           noiselevel=-1,
+                           )
             del e
         else:
             dead_nodes.difference_update(tree_data.valid_nodes)

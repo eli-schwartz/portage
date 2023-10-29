@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotOperatorReverseDepsTestCase(TestCase):
@@ -64,32 +61,26 @@ class SlotOperatorReverseDepsTestCase(TestCase):
             # the check_reverse_dependencies function seeing that
             # updating llvm will break a dependency of the installed
             # version of clang (though a clang update is available).
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                success=True,
-                mergelist=[
-                    "sys-devel/llvm-3.8.0-r2",
-                    "sys-devel/clang-3.8.0-r100",
-                    "media-libs/mesa-11.2.2",
-                ],
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True,
-                    "--ignore-built-slot-operator-deps": "y",
-                },
-                success=True,
-                mergelist=[
-                    "sys-devel/llvm-3.8.0-r2",
-                    "sys-devel/clang-3.8.0-r100",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True
+                                       },
+                                       success=True,
+                                       mergelist=[
+                                           "sys-devel/llvm-3.8.0-r2", "sys-devel/clang-3.8.0-r100",
+                                           "media-libs/mesa-11.2.2",
+                                       ],
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--update": True,
+                                           "--deep": True,
+                                           "--ignore-built-slot-operator-deps": "y",
+                                       },
+                                       success=True,
+                                       mergelist=["sys-devel/llvm-3.8.0-r2", "sys-devel/clang-3.8.0-r100", ],
+                                       ),
         )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
@@ -245,20 +236,18 @@ class SlotOperatorReverseDepsVirtualTestCase(TestCase):
 
         world = ["app-emulation/virtualbox-modules", "x11-drivers/nvidia-drivers"]
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["@world"],
-            options={
-                "--update": True,
-                "--deep": True
-            },
-            success=True,
-            mergelist=[
-                "sys-kernel/gentoo-kernel-5.10.6",
-                "virtual/dist-kernel-5.10.6",
-                "app-emulation/virtualbox-modules-6.1.16-r1",
-                "x11-drivers/nvidia-drivers-460.32.03",
-            ],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=[
+                                                     "sys-kernel/gentoo-kernel-5.10.6", "virtual/dist-kernel-5.10.6",
+                                                     "app-emulation/virtualbox-modules-6.1.16-r1",
+                                                     "x11-drivers/nvidia-drivers-460.32.03",
+                                                 ],
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
         try:

@@ -5,24 +5,11 @@ __all__ = ("UseManager", )
 
 from _emerge.Package import Package
 from portage import os
-from portage.dep import (
-    dep_getrepo,
-    dep_getslot,
-    ExtendedAtomDict,
-    remove_slot,
-    _get_useflag_re,
-)
-from portage.eapi import (
-    eapi_supports_stable_use_forcing_and_masking, )
+from portage.dep import (dep_getrepo, dep_getslot, ExtendedAtomDict, remove_slot, _get_useflag_re, )
+from portage.eapi import (eapi_supports_stable_use_forcing_and_masking, )
 from portage.localization import _
 from portage.repository.config import allow_profile_repo_deps
-from portage.util import (
-    grabfile,
-    grabdict_package,
-    read_corresponding_eapi_file,
-    stack_lists,
-    writemsg,
-)
+from portage.util import (grabfile, grabdict_package, read_corresponding_eapi_file, stack_lists, writemsg, )
 from portage.versions import _pkg_str
 
 from portage.package.ebuild._config.helper import ordered_by_atom_specificity
@@ -75,54 +62,38 @@ class UseManager:
         self._is_stable = is_stable
         self._repo_usemask_dict = self._parse_repository_files_to_dict_of_tuples("use.mask", repositories)
         self._repo_usestablemask_dict = self._parse_repository_files_to_dict_of_tuples(
-            "use.stable.mask",
-            repositories,
-            eapi_filter=eapi_supports_stable_use_forcing_and_masking,
+            "use.stable.mask", repositories, eapi_filter=eapi_supports_stable_use_forcing_and_masking,
         )
         self._repo_useforce_dict = self._parse_repository_files_to_dict_of_tuples("use.force", repositories)
         self._repo_usestableforce_dict = self._parse_repository_files_to_dict_of_tuples(
-            "use.stable.force",
-            repositories,
-            eapi_filter=eapi_supports_stable_use_forcing_and_masking,
+            "use.stable.force", repositories, eapi_filter=eapi_supports_stable_use_forcing_and_masking,
         )
         self._repo_pusemask_dict = self._parse_repository_files_to_dict_of_dicts("package.use.mask", repositories)
         self._repo_pusestablemask_dict = self._parse_repository_files_to_dict_of_dicts(
-            "package.use.stable.mask",
-            repositories,
-            eapi_filter=eapi_supports_stable_use_forcing_and_masking,
+            "package.use.stable.mask", repositories, eapi_filter=eapi_supports_stable_use_forcing_and_masking,
         )
         self._repo_puseforce_dict = self._parse_repository_files_to_dict_of_dicts("package.use.force", repositories)
         self._repo_pusestableforce_dict = self._parse_repository_files_to_dict_of_dicts(
-            "package.use.stable.force",
-            repositories,
-            eapi_filter=eapi_supports_stable_use_forcing_and_masking,
+            "package.use.stable.force", repositories, eapi_filter=eapi_supports_stable_use_forcing_and_masking,
         )
         self._repo_puse_dict = self._parse_repository_files_to_dict_of_dicts("package.use", repositories)
 
         self._usemask_list = self._parse_profile_files_to_tuple_of_tuples("use.mask", profiles)
         self._usestablemask_list = self._parse_profile_files_to_tuple_of_tuples(
-            "use.stable.mask",
-            profiles,
-            eapi_filter=eapi_supports_stable_use_forcing_and_masking,
+            "use.stable.mask", profiles, eapi_filter=eapi_supports_stable_use_forcing_and_masking,
         )
         self._useforce_list = self._parse_profile_files_to_tuple_of_tuples("use.force", profiles)
         self._usestableforce_list = self._parse_profile_files_to_tuple_of_tuples(
-            "use.stable.force",
-            profiles,
-            eapi_filter=eapi_supports_stable_use_forcing_and_masking,
+            "use.stable.force", profiles, eapi_filter=eapi_supports_stable_use_forcing_and_masking,
         )
         self._pusemask_list = self._parse_profile_files_to_tuple_of_dicts("package.use.mask", profiles)
         self._pusestablemask_list = self._parse_profile_files_to_tuple_of_dicts(
-            "package.use.stable.mask",
-            profiles,
-            eapi_filter=eapi_supports_stable_use_forcing_and_masking,
+            "package.use.stable.mask", profiles, eapi_filter=eapi_supports_stable_use_forcing_and_masking,
         )
         self._pkgprofileuse = self._parse_profile_files_to_tuple_of_dicts("package.use", profiles, juststrings=True)
         self._puseforce_list = self._parse_profile_files_to_tuple_of_dicts("package.use.force", profiles)
         self._pusestableforce_list = self._parse_profile_files_to_tuple_of_dicts(
-            "package.use.stable.force",
-            profiles,
-            eapi_filter=eapi_supports_stable_use_forcing_and_masking,
+            "package.use.stable.force", profiles, eapi_filter=eapi_supports_stable_use_forcing_and_masking,
         )
 
         self._pusedict = self._parse_user_files_to_extatomdict("package.use", abs_user_config, user_config)
@@ -155,10 +126,10 @@ class UseManager:
             eapi = read_corresponding_eapi_file(file_name, default=eapi_default)
         if eapi_filter is not None and not eapi_filter(eapi):
             if lines:
-                writemsg(
-                    _("--- EAPI '%s' does not support '%s': '%s'\n") % (eapi, os.path.basename(file_name), file_name),
-                    noiselevel=-1,
-                )
+                writemsg(_("--- EAPI '%s' does not support '%s': '%s'\n") %
+                         (eapi, os.path.basename(file_name), file_name),
+                         noiselevel=-1,
+                         )
             return ()
         useflag_re = _get_useflag_re(eapi)
         for prefixed_useflag in lines:
@@ -167,26 +138,22 @@ class UseManager:
             else:
                 useflag = prefixed_useflag
             if useflag_re.match(useflag) is None:
-                writemsg(
-                    _("--- Invalid USE flag in '%s': '%s'\n") % (file_name, prefixed_useflag),
-                    noiselevel=-1,
-                )
+                writemsg(_("--- Invalid USE flag in '%s': '%s'\n") % (file_name, prefixed_useflag), noiselevel=-1, )
             else:
                 ret.append(prefixed_useflag)
         return tuple(ret)
 
-    def _parse_file_to_dict(
-        self,
-        file_name,
-        juststrings=False,
-        recursive=True,
-        eapi_filter=None,
-        user_config=False,
-        eapi=None,
-        eapi_default="0",
-        allow_repo=False,
-        allow_build_id=False,
-    ):
+    def _parse_file_to_dict(self,
+                            file_name,
+                            juststrings=False,
+                            recursive=True,
+                            eapi_filter=None,
+                            user_config=False,
+                            eapi=None,
+                            eapi_default="0",
+                            allow_repo=False,
+                            allow_build_id=False,
+                            ):
         """
         @param file_name: input file name
         @type file_name: str
@@ -225,23 +192,22 @@ class UseManager:
         else:
             ret = {}
         allow_repo = allow_repo or extended_syntax
-        file_dict = grabdict_package(
-            file_name,
-            recursive=recursive,
-            allow_wildcard=extended_syntax,
-            allow_repo=allow_repo,
-            verify_eapi=(not extended_syntax),
-            eapi=eapi,
-            eapi_default=eapi_default,
-            allow_build_id=allow_build_id,
-            allow_use=False,
-        )
+        file_dict = grabdict_package(file_name,
+                                     recursive=recursive,
+                                     allow_wildcard=extended_syntax,
+                                     allow_repo=allow_repo,
+                                     verify_eapi=(not extended_syntax),
+                                     eapi=eapi,
+                                     eapi_default=eapi_default,
+                                     allow_build_id=allow_build_id,
+                                     allow_use=False,
+                                     )
         if eapi is not None and eapi_filter is not None and not eapi_filter(eapi):
             if file_dict:
-                writemsg(
-                    _("--- EAPI '%s' does not support '%s': '%s'\n") % (eapi, os.path.basename(file_name), file_name),
-                    noiselevel=-1,
-                )
+                writemsg(_("--- EAPI '%s' does not support '%s': '%s'\n") %
+                         (eapi, os.path.basename(file_name), file_name),
+                         noiselevel=-1,
+                         )
             return ret
         useflag_re = _get_useflag_re(eapi)
         for k, v in file_dict.items():
@@ -262,10 +228,9 @@ class UseManager:
                     useflag = use_expand_prefix + prefixed_useflag
                     prefixed_useflag = useflag
                 if useflag_re.match(useflag) is None:
-                    writemsg(
-                        _("--- Invalid USE flag for '%s' in '%s': '%s'\n") % (k, file_name, prefixed_useflag),
-                        noiselevel=-1,
-                    )
+                    writemsg(_("--- Invalid USE flag for '%s' in '%s': '%s'\n") % (k, file_name, prefixed_useflag),
+                             noiselevel=-1,
+                             )
                 else:
                     useflags.append(prefixed_useflag)
             location_dict.setdefault(k, []).extend(useflags)
@@ -280,16 +245,15 @@ class UseManager:
     def _parse_user_files_to_extatomdict(self, file_name, location, user_config):
         ret = ExtendedAtomDict(dict)
         if user_config:
-            pusedict = grabdict_package(
-                os.path.join(location, file_name),
-                recursive=1,
-                newlines=1,
-                allow_wildcard=True,
-                allow_repo=True,
-                verify_eapi=False,
-                allow_build_id=True,
-                allow_use=False,
-            )
+            pusedict = grabdict_package(os.path.join(location, file_name),
+                                        recursive=1,
+                                        newlines=1,
+                                        allow_wildcard=True,
+                                        allow_repo=True,
+                                        verify_eapi=False,
+                                        allow_build_id=True,
+                                        allow_use=False,
+                                        )
             for k, v in pusedict.items():
                 l = []
                 use_expand_prefix = ""
@@ -312,48 +276,44 @@ class UseManager:
     def _parse_repository_files_to_dict_of_tuples(self, file_name, repositories, eapi_filter=None):
         ret = {}
         for repo in repositories.repos_with_profiles():
-            ret[repo.name] = self._parse_file_to_tuple(
-                os.path.join(repo.location, "profiles", file_name),
-                eapi_filter=eapi_filter,
-                eapi_default=repo.eapi,
-            )
+            ret[repo.name] = self._parse_file_to_tuple(os.path.join(repo.location, "profiles", file_name),
+                                                       eapi_filter=eapi_filter,
+                                                       eapi_default=repo.eapi,
+                                                       )
         return ret
 
     def _parse_repository_files_to_dict_of_dicts(self, file_name, repositories, eapi_filter=None):
         ret = {}
         for repo in repositories.repos_with_profiles():
-            ret[repo.name] = self._parse_file_to_dict(
-                os.path.join(repo.location, "profiles", file_name),
-                eapi_filter=eapi_filter,
-                eapi_default=repo.eapi,
-                allow_repo=allow_profile_repo_deps(repo),
-                allow_build_id=("build-id" in repo.profile_formats),
-            )
+            ret[repo.name] = self._parse_file_to_dict(os.path.join(repo.location, "profiles", file_name),
+                                                      eapi_filter=eapi_filter,
+                                                      eapi_default=repo.eapi,
+                                                      allow_repo=allow_profile_repo_deps(repo),
+                                                      allow_build_id=("build-id" in repo.profile_formats),
+                                                      )
         return ret
 
     def _parse_profile_files_to_tuple_of_tuples(self, file_name, locations, eapi_filter=None):
         return tuple(
-            self._parse_file_to_tuple(
-                os.path.join(profile.location, file_name),
-                recursive=profile.portage1_directories,
-                eapi_filter=eapi_filter,
-                eapi=profile.eapi,
-                eapi_default=None,
-            ) for profile in locations)
+            self._parse_file_to_tuple(os.path.join(profile.location, file_name),
+                                      recursive=profile.portage1_directories,
+                                      eapi_filter=eapi_filter,
+                                      eapi=profile.eapi,
+                                      eapi_default=None,
+                                      ) for profile in locations)
 
     def _parse_profile_files_to_tuple_of_dicts(self, file_name, locations, juststrings=False, eapi_filter=None):
         return tuple(
-            self._parse_file_to_dict(
-                os.path.join(profile.location, file_name),
-                juststrings,
-                recursive=profile.portage1_directories,
-                eapi_filter=eapi_filter,
-                user_config=profile.user_config,
-                eapi=profile.eapi,
-                eapi_default=None,
-                allow_build_id=profile.allow_build_id,
-                allow_repo=allow_profile_repo_deps(profile),
-            ) for profile in locations)
+            self._parse_file_to_dict(os.path.join(profile.location, file_name),
+                                     juststrings,
+                                     recursive=profile.portage1_directories,
+                                     eapi_filter=eapi_filter,
+                                     user_config=profile.user_config,
+                                     eapi=profile.eapi,
+                                     eapi_default=None,
+                                     allow_build_id=profile.allow_build_id,
+                                     allow_repo=allow_profile_repo_deps(profile),
+                                     ) for profile in locations)
 
     def _isStable(self, pkg):
         if self._user_config:

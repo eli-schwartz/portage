@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -45,50 +42,42 @@ class SonameReinstallTestCase(TestCase):
         test_cases = (
             # Test that --ignore-soname-deps prevents the above
             # rebuild from being triggered.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--deep": True,
-                    "--ignore-soname-deps": "n",
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]dev-libs/B-2",
-                    "[binary]app-misc/A-1",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--deep": True,
+                                           "--ignore-soname-deps": "n",
+                                           "--update": True,
+                                           "--usepkgonly": True,
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]dev-libs/B-2", "[binary]app-misc/A-1", ],
+                                       ),
             # Test that --ignore-soname-deps prevents the above
             # reinstall from being triggered.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--deep": True,
-                    "--ignore-soname-deps": "y",
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=[
-                    "[binary]dev-libs/B-2",
-                ],
-            ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--deep": True,
+                                           "--ignore-soname-deps": "y",
+                                           "--update": True,
+                                           "--usepkgonly": True,
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]dev-libs/B-2", ],
+                                       ),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    debug=False,
-                    binpkgs=binpkgs,
-                    installed=installed,
-                    world=world,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(debug=False,
+                                                binpkgs=binpkgs,
+                                                installed=installed,
+                                                world=world,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:

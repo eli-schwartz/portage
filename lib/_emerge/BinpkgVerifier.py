@@ -8,11 +8,7 @@ import sys
 from _emerge.CompositeTask import CompositeTask
 import portage
 from portage import os
-from portage.checksum import (
-    _apply_hash_filter,
-    _filter_unaccelarated_hashes,
-    _hash_filter,
-)
+from portage.checksum import (_apply_hash_filter, _filter_unaccelarated_hashes, _hash_filter, )
 from portage.output import EOutput
 from portage.util._async.FileDigester import FileDigester
 from portage.package.ebuild.fetch import _checksum_failure_temp_file
@@ -41,11 +37,10 @@ class BinpkgVerifier(CompositeTask):
         except OSError as e:
             if e.errno not in (errno.ENOENT, errno.ESTALE):
                 raise
-            self.scheduler.output(
-                f"!!! Fetching Binary failed for '{self.pkg.cpv}'\n",
-                log_path=self.logfile,
-                background=self.background,
-            )
+            self.scheduler.output(f"!!! Fetching Binary failed for '{self.pkg.cpv}'\n",
+                                  log_path=self.logfile,
+                                  background=self.background,
+                                  )
             self.returncode = 1
             self._async_wait()
             return
@@ -57,14 +52,12 @@ class BinpkgVerifier(CompositeTask):
                 return
 
         self._start_task(
-            FileDigester(
-                file_path=self._pkg_path,
-                hash_names=[k for k in digests if k != "size"],
-                background=self.background,
-                logfile=self.logfile,
-                scheduler=self.scheduler,
-            ),
-            self._digester_exit,
+            FileDigester(file_path=self._pkg_path,
+                         hash_names=[k for k in digests if k != "size"],
+                         background=self.background,
+                         logfile=self.logfile,
+                         scheduler=self.scheduler,
+                         ), self._digester_exit,
         )
 
     def _digester_exit(self, digester):

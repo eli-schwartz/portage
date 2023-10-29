@@ -231,15 +231,14 @@ class SyncBase:
 
             return None
 
-        return retry(
-            reraise=True,
-            try_max=retry_count,
-            overall_timeout=(retry_overall_timeout if retry_overall_timeout > 0 else None),
-            delay_func=RandomExponentialBackoff(
-                multiplier=(1 if retry_delay_mult is None else retry_delay_mult),
-                base=(2 if retry_delay_exp_base is None else retry_delay_exp_base),
-            ),
-        )
+        return retry(reraise=True,
+                     try_max=retry_count,
+                     overall_timeout=(retry_overall_timeout if retry_overall_timeout > 0 else None),
+                     delay_func=RandomExponentialBackoff(
+                         multiplier=(1 if retry_delay_mult is None else retry_delay_mult),
+                         base=(2 if retry_delay_exp_base is None else retry_delay_exp_base),
+                     ),
+                     )
 
     def _refresh_keys(self, openpgp_env):
         """

@@ -4,11 +4,7 @@
 import threading
 
 from portage import os
-from portage.checksum import (
-    _apply_hash_filter,
-    _filter_unaccelarated_hashes,
-    _hash_filter,
-)
+from portage.checksum import (_apply_hash_filter, _filter_unaccelarated_hashes, _hash_filter, )
 from portage.dep import use_reduce
 from portage.exception import PortageException, PortageKeyError
 from portage.package.ebuild.fetch import DistfileName
@@ -67,12 +63,7 @@ class FetchIterator:
                         return
 
                     yield _EbuildFetchTasks(fetch_tasks_future=_async_fetch_tasks(
-                        self._config,
-                        hash_filter,
-                        repo_config,
-                        digests_future,
-                        cpv,
-                        portdb._event_loop,
+                        self._config, hash_filter, repo_config, digests_future, cpv, portdb._event_loop,
                     ))
 
 
@@ -92,14 +83,9 @@ class _EbuildFetchTasks(CompositeTask):
             self._async_wait()
             return
 
-        self._start_task(
-            TaskScheduler(
-                iter(self.fetch_tasks_future.result()),
-                max_jobs=1,
-                event_loop=self.scheduler,
-            ),
-            self._default_final_exit,
-        )
+        self._start_task(TaskScheduler(iter(self.fetch_tasks_future.result()), max_jobs=1, event_loop=self.scheduler,
+                                       ), self._default_final_exit,
+                         )
 
 
 def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, loop):
@@ -251,15 +237,14 @@ def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, lo
                 file_digests = _apply_hash_filter(file_digests, hash_filter)
 
             fetch_tasks.append(
-                FetchTask(
-                    cpv=cpv,
-                    background=True,
-                    digests=file_digests,
-                    distfile=DistfileName(filename, digests=file_digests),
-                    restrict=restrict,
-                    uri_tuple=uri_tuple,
-                    config=config,
-                ))
+                FetchTask(cpv=cpv,
+                          background=True,
+                          digests=file_digests,
+                          distfile=DistfileName(filename, digests=file_digests),
+                          restrict=restrict,
+                          uri_tuple=uri_tuple,
+                          config=config,
+                          ))
 
         result.set_result(fetch_tasks)
 
@@ -271,11 +256,7 @@ def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, lo
     # _EbuildFetchTask instance, and also to avoid spawning two bash
     # processes for the same cpv simultaneously (the second one can
     # use metadata cached by the first one).
-    gather_result = iter_gather(
-        future_generator(),
-        max_jobs=1,
-        loop=loop,
-    )
+    gather_result = iter_gather(future_generator(), max_jobs=1, loop=loop, )
     gather_result.add_done_callback(aux_get_done)
     result.add_done_callback(lambda result: gather_result.cancel()
                              if result.cancelled() and not gather_result.done() else None)

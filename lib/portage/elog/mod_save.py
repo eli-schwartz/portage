@@ -34,9 +34,7 @@ def process(mysettings, key, logentries, fulltext):
     cat, pf = portage.catsplit(key)
 
     elogfilename = (pf + ":" + _unicode_decode(
-        time.strftime("%Y%m%d-%H%M%S", time.gmtime(time.time())),
-        encoding=_encodings["content"],
-        errors="replace",
+        time.strftime("%Y%m%d-%H%M%S", time.gmtime(time.time())), encoding=_encodings["content"], errors="replace",
     ) + ".log")
 
     if "split-elog" in mysettings.features:
@@ -48,12 +46,11 @@ def process(mysettings, key, logentries, fulltext):
     _ensure_log_subdirs(logdir, log_subdir)
 
     try:
-        with open(
-                _unicode_encode(elogfilename, encoding=_encodings["fs"], errors="strict"),
-                mode="w",
-                encoding=_encodings["content"],
-                errors="backslashreplace",
-        ) as elogfile:
+        with open(_unicode_encode(elogfilename, encoding=_encodings["fs"], errors="strict"),
+                  mode="w",
+                  encoding=_encodings["content"],
+                  errors="backslashreplace",
+                  ) as elogfile:
             elogfile.write(_unicode_decode(fulltext))
     except OSError as e:
         func_call = f"open('{elogfilename}', 'w')"

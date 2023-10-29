@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class AutounmaskKeepKeywordsTestCase(TestCase):
@@ -32,35 +29,27 @@ class AutounmaskKeepKeywordsTestCase(TestCase):
         installed = {}
 
         test_cases = (
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"],
-                success=False,
-                options={
-                    "--autounmask-keep-keywords": "n",
-                },
-                mergelist=[
-                    "app-misc/B-1",
-                    "app-misc/A-2",
-                ],
-                unstable_keywords={"app-misc/B-1"},
-            ),
+            ResolverPlaygroundTestCase(["app-misc/A"],
+                                       success=False,
+                                       options={
+                                           "--autounmask-keep-keywords": "n",
+                                       },
+                                       mergelist=["app-misc/B-1", "app-misc/A-2", ],
+                                       unstable_keywords={"app-misc/B-1"},
+                                       ),
             # --autounmask-keep-keywords prefers app-misc/A-1 because
             # it can be installed without accepting unstable
             # keywords
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"],
-                success=False,
-                options={
-                    "--autounmask-keep-keywords": "y",
-                },
-                mergelist=[
-                    "app-misc/C-1",
-                    "app-misc/A-1",
-                ],
-                use_changes={"app-misc/C-1": {
-                    "foo": True
-                }},
-            ),
+            ResolverPlaygroundTestCase(["app-misc/A"],
+                                       success=False,
+                                       options={
+                                           "--autounmask-keep-keywords": "y",
+                                       },
+                                       mergelist=["app-misc/C-1", "app-misc/A-1", ],
+                                       use_changes={"app-misc/C-1": {
+                                           "foo": True
+                                       }},
+                                       ),
         )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)

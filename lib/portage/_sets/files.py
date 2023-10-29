@@ -21,13 +21,7 @@ from portage.env.loaders import ItemFileLoader, KeyListFileLoader
 from portage.env.validators import ValidAtomValidator
 from portage import cpv_getkey
 
-__all__ = [
-    "StaticFileSet",
-    "ConfigFileSet",
-    "WorldSelectedSet",
-    "WorldSelectedPackagesSet",
-    "WorldSelectedSetsSet",
-]
+__all__ = ["StaticFileSet", "ConfigFileSet", "WorldSelectedSet", "WorldSelectedPackagesSet", "WorldSelectedSetsSet", ]
 
 
 class StaticFileSet(EditablePackageSet):
@@ -71,10 +65,7 @@ class StaticFileSet(EditablePackageSet):
         return bool(atom[:1] == SETPREFIX or ValidAtomValidator(atom, allow_repo=True))
 
     def write(self):
-        write_atomic(
-            self._filename,
-            "".join(f"{atom}\n" for atom in sorted(chain(self._atoms, self._nonatoms))),
-        )
+        write_atomic(self._filename, "".join(f"{atom}\n" for atom in sorted(chain(self._atoms, self._nonatoms))), )
 
     def load(self):
         try:
@@ -116,10 +107,9 @@ class StaticFileSet(EditablePackageSet):
         match = self._repopath_match.match(filename)
         if match:
             try:
-                filename = self._repopath_sub.sub(
-                    trees["porttree"].dbapi.treemap[match.groupdict()["reponame"]],
-                    filename,
-                )
+                filename = self._repopath_sub.sub(trees["porttree"].dbapi.treemap[match.groupdict()["reponame"]],
+                                                  filename,
+                                                  )
             except KeyError:
                 raise SetConfigError(_("Could not find repository '%s'") % match.groupdict()["reponame"])
         return StaticFileSet(filename, greedy=greedy, dbapi=trees["vartree"].dbapi)
@@ -128,10 +118,7 @@ class StaticFileSet(EditablePackageSet):
 
     def multiBuilder(self, options, settings, trees):
         rValue = {}
-        directory = options.get(
-            "directory",
-            os.path.join(settings["PORTAGE_CONFIGROOT"], USER_CONFIG_PATH, "sets"),
-        )
+        directory = options.get("directory", os.path.join(settings["PORTAGE_CONFIGROOT"], USER_CONFIG_PATH, "sets"), )
         name_pattern = options.get("name_pattern", "${name}")
         if not "$name" in name_pattern and not "${name}" in name_pattern:
             raise SetConfigError(_("name_pattern doesn't include ${name} placeholder"))
@@ -140,10 +127,9 @@ class StaticFileSet(EditablePackageSet):
         match = self._repopath_match.match(directory)
         if match:
             try:
-                directory = self._repopath_sub.sub(
-                    trees["porttree"].dbapi.treemap[match.groupdict()["reponame"]],
-                    directory,
-                )
+                directory = self._repopath_sub.sub(trees["porttree"].dbapi.treemap[match.groupdict()["reponame"]],
+                                                   directory,
+                                                   )
             except KeyError:
                 raise SetConfigError(_("Could not find repository '%s'") % match.groupdict()["reponame"])
 
@@ -189,11 +175,10 @@ class StaticFileSet(EditablePackageSet):
                     filename = os.path.join(parent, filename)[1 + len(directory):]
                     myname = name_pattern.replace("$name", filename)
                     myname = myname.replace("${name}", filename)
-                    rValue[myname] = StaticFileSet(
-                        os.path.join(directory, filename),
-                        greedy=greedy,
-                        dbapi=trees["vartree"].dbapi,
-                    )
+                    rValue[myname] = StaticFileSet(os.path.join(directory, filename),
+                                                   greedy=greedy,
+                                                   dbapi=trees["vartree"].dbapi,
+                                                   )
         return rValue
 
     multiBuilder = classmethod(multiBuilder)

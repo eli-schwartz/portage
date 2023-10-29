@@ -8,11 +8,7 @@ from portage import os
 
 from portage.proxy.lazyimport import lazyimport
 
-lazyimport(
-    globals(),
-    "portage.exception:PortageException",
-    "portage.util:apply_permissions,ensure_dirs",
-)
+lazyimport(globals(), "portage.exception:PortageException", "portage.util:apply_permissions,ensure_dirs", )
 del lazyimport
 
 

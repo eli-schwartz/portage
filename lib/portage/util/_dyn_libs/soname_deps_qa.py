@@ -1,11 +1,7 @@
 # Copyright 2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-from portage import (
-    _encodings,
-    _unicode_encode,
-    os,
-)
+from portage import (_encodings, _unicode_encode, os, )
 from portage.dep.soname.parse import parse_soname_deps
 from portage.util._dyn_libs.NeededEntry import NeededEntry
 
@@ -58,15 +54,11 @@ def _get_unresolved_soname_deps(metadata_dir, all_provides):
     @return: list of tuple(filename, tuple(unresolved sonames))
     """
     try:
-        with open(
-                _unicode_encode(
-                    os.path.join(metadata_dir, "REQUIRES"),
-                    encoding=_encodings["fs"],
-                    errors="strict",
-                ),
-                encoding=_encodings["repo.content"],
-                errors="strict",
-        ) as f:
+        with open(_unicode_encode(os.path.join(metadata_dir, "REQUIRES"), encoding=_encodings["fs"], errors="strict",
+                                  ),
+                  encoding=_encodings["repo.content"],
+                  errors="strict",
+                  ) as f:
             requires = frozenset(parse_soname_deps(f.read()))
     except OSError:
         return []
@@ -77,11 +69,10 @@ def _get_unresolved_soname_deps(metadata_dir, all_provides):
             unresolved_by_category.setdefault(atom.multilib_category, set()).add(atom.soname)
 
     needed_filename = os.path.join(metadata_dir, "NEEDED.ELF.2")
-    with open(
-            _unicode_encode(needed_filename, encoding=_encodings["fs"], errors="strict"),
-            encoding=_encodings["repo.content"],
-            errors="strict",
-    ) as f:
+    with open(_unicode_encode(needed_filename, encoding=_encodings["fs"], errors="strict"),
+              encoding=_encodings["repo.content"],
+              errors="strict",
+              ) as f:
         needed = f.readlines()
 
     unresolved_by_file = []

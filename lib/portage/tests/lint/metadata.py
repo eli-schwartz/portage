@@ -3,8 +3,4 @@
 
 module_metadata = {}
 
-script_metadata = {
-    "socks5-server.py": {
-        "required_python": "3.3",
-    },
-}
+script_metadata = {"socks5-server.py": {"required_python": "3.3", }, }

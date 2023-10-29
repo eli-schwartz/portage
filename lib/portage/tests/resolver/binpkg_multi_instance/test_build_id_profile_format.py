@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -28,15 +25,9 @@ class BuildIdProfileFormatTestCase(TestCase):
             "package.provided": ("sys-libs/zlib-1.2.8-r1", ),
         }
 
-        repo_configs = {
-            "test_repo": {
-                "layout.conf": ("profile-formats = build-id profile-repo-deps profile-set", ),
-            }
-        }
+        repo_configs = {"test_repo": {"layout.conf": ("profile-formats = build-id profile-repo-deps profile-set", ), }}
 
-        user_config = {
-            "make.conf": ('FEATURES="binpkg-multi-instance"', ),
-        }
+        user_config = {"make.conf": ('FEATURES="binpkg-multi-instance"', ), }
 
         ebuilds = {
             "app-misc/A-1": {
@@ -50,68 +41,50 @@ class BuildIdProfileFormatTestCase(TestCase):
             },
         }
 
-        binpkgs = (
-            (
-                "app-misc/A-1",
-                {
-                    "EAPI": "5",
-                    "BUILD_ID": "1",
-                    "BUILD_TIME": "1",
-                    "RDEPEND": "sys-libs/zlib dev-libs/B[foo]",
-                    "DEPEND": "sys-libs/zlib dev-libs/B[foo]",
-                },
-            ),
-            (
-                "app-misc/A-1",
-                {
-                    "EAPI": "5",
-                    "BUILD_ID": "2",
-                    "BUILD_TIME": "2",
-                    "RDEPEND": "sys-libs/zlib dev-libs/B[foo]",
-                    "DEPEND": "sys-libs/zlib dev-libs/B[foo]",
-                },
-            ),
-            (
-                "app-misc/A-1",
-                {
-                    "EAPI": "5",
-                    "BUILD_ID": "3",
-                    "BUILD_TIME": "3",
-                    "RDEPEND": "sys-libs/zlib dev-libs/B[foo]",
-                    "DEPEND": "sys-libs/zlib dev-libs/B[foo]",
-                },
-            ),
-            (
-                "dev-libs/B-1",
-                {
-                    "EAPI": "5",
-                    "IUSE": "foo",
-                    "USE": "",
-                    "BUILD_ID": "1",
-                    "BUILD_TIME": "1",
-                },
-            ),
-            (
-                "dev-libs/B-1",
-                {
-                    "EAPI": "5",
-                    "IUSE": "foo",
-                    "USE": "foo",
-                    "BUILD_ID": "2",
-                    "BUILD_TIME": "2",
-                },
-            ),
-            (
-                "dev-libs/B-1",
-                {
-                    "EAPI": "5",
-                    "IUSE": "foo",
-                    "USE": "",
-                    "BUILD_ID": "3",
-                    "BUILD_TIME": "3",
-                },
-            ),
-        )
+        binpkgs = (("app-misc/A-1", {
+            "EAPI": "5",
+            "BUILD_ID": "1",
+            "BUILD_TIME": "1",
+            "RDEPEND": "sys-libs/zlib dev-libs/B[foo]",
+            "DEPEND": "sys-libs/zlib dev-libs/B[foo]",
+        },
+                    ), ("app-misc/A-1", {
+                        "EAPI": "5",
+                        "BUILD_ID": "2",
+                        "BUILD_TIME": "2",
+                        "RDEPEND": "sys-libs/zlib dev-libs/B[foo]",
+                        "DEPEND": "sys-libs/zlib dev-libs/B[foo]",
+                    },
+                        ), ("app-misc/A-1", {
+                            "EAPI": "5",
+                            "BUILD_ID": "3",
+                            "BUILD_TIME": "3",
+                            "RDEPEND": "sys-libs/zlib dev-libs/B[foo]",
+                            "DEPEND": "sys-libs/zlib dev-libs/B[foo]",
+                        },
+                            ), ("dev-libs/B-1", {
+                                "EAPI": "5",
+                                "IUSE": "foo",
+                                "USE": "",
+                                "BUILD_ID": "1",
+                                "BUILD_TIME": "1",
+                            },
+                                ), ("dev-libs/B-1", {
+                                    "EAPI": "5",
+                                    "IUSE": "foo",
+                                    "USE": "foo",
+                                    "BUILD_ID": "2",
+                                    "BUILD_TIME": "2",
+                                },
+                                    ), ("dev-libs/B-1", {
+                                        "EAPI": "5",
+                                        "IUSE": "foo",
+                                        "USE": "",
+                                        "BUILD_ID": "3",
+                                        "BUILD_TIME": "3",
+                                    },
+                                        ),
+                   )
 
         installed = {
             "app-misc/A-1": {
@@ -132,15 +105,14 @@ class BuildIdProfileFormatTestCase(TestCase):
 
         world = ()
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["@world"],
-            options={
-                "--emptytree": True,
-                "--usepkgonly": True
-            },
-            success=True,
-            mergelist=["[binary]dev-libs/B-1-2", "[binary]app-misc/A-1-2"],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--emptytree": True,
+                                                     "--usepkgonly": True
+                                                 },
+                                                 success=True,
+                                                 mergelist=["[binary]dev-libs/B-1-2", "[binary]app-misc/A-1-2"],
+                                                 ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -148,16 +120,15 @@ class BuildIdProfileFormatTestCase(TestCase):
                 sys.stdout.flush()
                 _user_config = user_config.copy()
                 _user_config["make.conf"] += (f'BINPKG_FORMAT="{binpkg_format}"', )
-                playground = ResolverPlayground(
-                    debug=False,
-                    binpkgs=binpkgs,
-                    ebuilds=ebuilds,
-                    installed=installed,
-                    repo_configs=repo_configs,
-                    profile=profile,
-                    user_config=_user_config,
-                    world=world,
-                )
+                playground = ResolverPlayground(debug=False,
+                                                binpkgs=binpkgs,
+                                                ebuilds=ebuilds,
+                                                installed=installed,
+                                                repo_configs=repo_configs,
+                                                profile=profile,
+                                                user_config=_user_config,
+                                                world=world,
+                                                )
 
                 try:
                     for test_case in test_cases:

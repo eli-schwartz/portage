@@ -32,11 +32,10 @@ class database(fs_template.FsBased):
         # Don't use os.path.join, for better performance.
         fp = self.location + _os.sep + cpv
         try:
-            with open(
-                    _unicode_encode(fp, encoding=_encodings["fs"], errors="strict"),
-                    encoding=_encodings["repo.content"],
-                    errors="replace",
-            ) as myf:
+            with open(_unicode_encode(fp, encoding=_encodings["fs"], errors="strict"),
+                      encoding=_encodings["repo.content"],
+                      errors="replace",
+                      ) as myf:
                 lines = myf.read().split("\n")
                 if not lines[-1]:
                     lines.pop()

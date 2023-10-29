@@ -30,12 +30,9 @@ def MockSubprocessPopen(stdin):
 class SystemCommandsTest(TestCase):
     """Test _XattrSystemCommands"""
 
-    OUTPUT = "\n".join((
-        "# file: /bin/ping",
-        "security.capability=0sAQAAAgAgAAAAAAAAAAAAAAAAAAA=",
-        'user.foo="asdf"',
-        "",
-    ))
+    OUTPUT = "\n".join(
+        ("# file: /bin/ping", "security.capability=0sAQAAAgAgAAAAAAAAAAAAAAAAAAA=", 'user.foo="asdf"', "",
+         ))
 
     def _setUp(self):
         return _XattrSystemCommands
@@ -59,11 +56,7 @@ class SystemCommandsTest(TestCase):
         xattr = self._setUp()
         with mock.patch.object(subprocess, "Popen") as call_mock:
             # Verify output parsing.
-            call_mock.return_value = MockSubprocessPopen("\n".join([
-                "# file: /some/file",
-                'user.foo="asdf"',
-                "",
-            ]))
+            call_mock.return_value = MockSubprocessPopen("\n".join(["# file: /some/file", 'user.foo="asdf"', "", ]))
             call_mock.reset()
             self.assertEqual(xattr.get("/some/file", "user.foo"), b'"asdf"')
 
@@ -85,10 +78,7 @@ class SystemCommandsTest(TestCase):
         with mock.patch.object(subprocess, "Popen") as call_mock:
             # Verify output parsing.
             call_mock.return_value = MockSubprocessPopen(self.OUTPUT)
-            exp = [
-                (b"security.capability", b"0sAQAAAgAgAAAAAAAAAAAAAAAAAAA="),
-                (b"user.foo", b'"asdf"'),
-            ]
+            exp = [(b"security.capability", b"0sAQAAAgAgAAAAAAAAAAAAAAAAAAA="), (b"user.foo", b'"asdf"'), ]
             self.assertEqual(exp, xattr.get_all("/some/file"))
 
     def testSetBasic(self):

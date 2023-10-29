@@ -32,38 +32,25 @@ class PackagesSystemSet(PackageSet):
     def load(self):
         debug = self._debug
         if debug:
-            writemsg_level(
-                f"\nPackagesSystemSet: profiles: {self._profiles}\n",
-                level=logging.DEBUG,
-                noiselevel=-1,
-            )
+            writemsg_level(f"\nPackagesSystemSet: profiles: {self._profiles}\n", level=logging.DEBUG, noiselevel=-1, )
 
         mylist = [
-            grabfile_package(
-                os.path.join(x.location, "packages"),
-                verify_eapi=True,
-                eapi=x.eapi,
-                eapi_default=None,
-                allow_build_id=x.allow_build_id,
-                allow_repo=allow_profile_repo_deps(x),
-            ) for x in self._profiles
+            grabfile_package(os.path.join(x.location, "packages"),
+                             verify_eapi=True,
+                             eapi=x.eapi,
+                             eapi_default=None,
+                             allow_build_id=x.allow_build_id,
+                             allow_repo=allow_profile_repo_deps(x),
+                             ) for x in self._profiles
         ]
 
         if debug:
-            writemsg_level(
-                f"\nPackagesSystemSet: raw packages: {mylist}\n",
-                level=logging.DEBUG,
-                noiselevel=-1,
-            )
+            writemsg_level(f"\nPackagesSystemSet: raw packages: {mylist}\n", level=logging.DEBUG, noiselevel=-1, )
 
         mylist = stack_lists(mylist, incremental=1)
 
         if debug:
-            writemsg_level(
-                f"\nPackagesSystemSet: stacked packages: {mylist}\n",
-                level=logging.DEBUG,
-                noiselevel=-1,
-            )
+            writemsg_level(f"\nPackagesSystemSet: stacked packages: {mylist}\n", level=logging.DEBUG, noiselevel=-1, )
 
         self._setAtoms([x[1:] for x in mylist if x[0] == "*"])
 

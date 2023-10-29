@@ -44,11 +44,9 @@ class test_gpkg_metadata_url_case(TestCase):
     def test_gpkg_get_metadata_url(self):
         playground = ResolverPlayground(
             user_config={
-                "make.conf": (
-                    'BINPKG_COMPRESS="gzip"',
-                    'FEATURES="${FEATURES} -binpkg-signing '
-                    '-binpkg-request-signature"',
-                ),
+                "make.conf": ('BINPKG_COMPRESS="gzip"', 'FEATURES="${FEATURES} -binpkg-signing '
+                              '-binpkg-request-signature"',
+                              ),
             })
         tmpdir = tempfile.mkdtemp()
         try:
@@ -70,10 +68,7 @@ class test_gpkg_metadata_url_case(TestCase):
             gpkg_file_loc = os.path.join(tmpdir, "test.gpkg.tar")
             test_gpkg = gpkg(settings, "test", gpkg_file_loc)
 
-            meta = {
-                "test1": b"{abcdefghijklmnopqrstuvwxyz, 1234567890}",
-                "test2": urandom(102400),
-            }
+            meta = {"test1": b"{abcdefghijklmnopqrstuvwxyz, 1234567890}", "test2": urandom(102400), }
 
             test_gpkg.compress(os.path.join(tmpdir, "orig"), meta)
 
@@ -87,11 +82,9 @@ class test_gpkg_metadata_url_case(TestCase):
     def test_gpkg_get_metadata_url_unknown_signature(self):
         playground = ResolverPlayground(
             user_config={
-                "make.conf": (
-                    'BINPKG_COMPRESS="gzip"',
-                    'FEATURES="${FEATURES} binpkg-signing '
-                    'binpkg-request-signature"',
-                ),
+                "make.conf": ('BINPKG_COMPRESS="gzip"', 'FEATURES="${FEATURES} binpkg-signing '
+                              'binpkg-request-signature"',
+                              ),
             })
         tmpdir = tempfile.mkdtemp()
         try:
@@ -116,10 +109,7 @@ class test_gpkg_metadata_url_case(TestCase):
             gpkg_file_loc = os.path.join(tmpdir, "test-1.gpkg.tar")
             test_gpkg = gpkg(settings, "test", gpkg_file_loc)
 
-            meta = {
-                "test1": b"{abcdefghijklmnopqrstuvwxyz, 1234567890}",
-                "test2": urandom(102400),
-            }
+            meta = {"test1": b"{abcdefghijklmnopqrstuvwxyz, 1234567890}", "test2": urandom(102400), }
 
             test_gpkg.compress(os.path.join(tmpdir, "orig"), meta)
 
@@ -144,11 +134,9 @@ IkCfAP49AOYjzuQPP0n5P0SGCINnAVEXN7QLQ4PurY/lt7cT2gEAq01stXjFhrz5
                             tar_2.addfile(f, tar_1.extractfile(f))
 
             test_gpkg = gpkg(settings, "test")
-            self.assertRaises(
-                InvalidSignature,
-                test_gpkg.get_metadata_url,
-                "http://127.0.0.1:" + str(port) + "/test-2.gpkg.tar",
-            )
+            self.assertRaises(InvalidSignature, test_gpkg.get_metadata_url,
+                              "http://127.0.0.1:" + str(port) + "/test-2.gpkg.tar",
+                              )
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()

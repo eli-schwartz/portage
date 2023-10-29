@@ -46,14 +46,10 @@ class trace_handler:
                 return self.event_handler
 
     def trace_event(self, frame, event, arg):
-        writemsg("%s line=%d name=%s event=%s %slocals=%s\n" % (
-            self.trim_filename(frame.f_code.co_filename),
-            frame.f_lineno,
-            frame.f_code.co_name,
-            event,
-            self.arg_repr(frame, event, arg),
-            self.locals_repr(frame, event, arg),
-        ))
+        writemsg("%s line=%d name=%s event=%s %slocals=%s\n" %
+                 (self.trim_filename(frame.f_code.co_filename), frame.f_lineno, frame.f_code.co_name, event,
+                  self.arg_repr(frame, event, arg), self.locals_repr(frame, event, arg),
+                  ))
 
     def arg_repr(self, _frame, event, arg):
         my_repr = None

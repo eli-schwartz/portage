@@ -15,12 +15,9 @@ _pri = {
 
 
 def process(mysettings, key, logentries, fulltext):
-    syslog.openlog(
-        "portage",
-        syslog.LOG_ERR | syslog.LOG_WARNING | syslog.LOG_INFO
-        | syslog.LOG_NOTICE,
-        syslog.LOG_LOCAL5,
-    )
+    syslog.openlog("portage", syslog.LOG_ERR | syslog.LOG_WARNING | syslog.LOG_INFO
+                   | syslog.LOG_NOTICE, syslog.LOG_LOCAL5,
+                   )
     for phase in EBUILD_PHASES:
         if not phase in logentries:
             continue

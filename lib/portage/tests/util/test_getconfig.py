@@ -51,14 +51,13 @@ class GetConfigTestCase(TestCase):
 
             # With allow_sourcing=True and empty expand map, this should
             # throw a FileNotFound exception.
-            self.assertRaisesMsg(
-                "An empty expand map should throw an exception",
-                ParseError,
-                getconfig,
-                make_conf_file,
-                allow_sourcing=True,
-                expand={},
-            )
+            self.assertRaisesMsg("An empty expand map should throw an exception",
+                                 ParseError,
+                                 getconfig,
+                                 make_conf_file,
+                                 allow_sourcing=True,
+                                 expand={},
+                                 )
         finally:
             shutil.rmtree(tempdir)
 

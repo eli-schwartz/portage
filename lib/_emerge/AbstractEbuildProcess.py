@@ -17,30 +17,15 @@ from portage import os
 from portage.util.futures import asyncio
 from portage.util import apply_secpass_permissions, no_color
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.package.ebuild.doebuild:_global_pid_phases",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.package.ebuild.doebuild:_global_pid_phases", )
 
 
 class AbstractEbuildProcess(SpawnProcess):
-    __slots__ = (
-        "phase",
-        "settings",
-        "_build_dir",
-        "_build_dir_unlock",
-        "_ipc_daemon",
-        "_exit_command",
-        "_exit_timeout_id",
-        "_start_future",
-    )
+    __slots__ = ("phase", "settings", "_build_dir", "_build_dir_unlock", "_ipc_daemon", "_exit_command",
+                 "_exit_timeout_id", "_start_future",
+                 )
 
-    _phases_without_builddir = (
-        "clean",
-        "cleanrm",
-        "depend",
-        "help",
-    )
+    _phases_without_builddir = ("clean", "cleanrm", "depend", "help", )
     _phases_interactive_whitelist = ("config", )
 
     # Number of milliseconds to allow natural exit of the ebuild
@@ -91,10 +76,8 @@ class AbstractEbuildProcess(SpawnProcess):
                     self._build_dir = EbuildBuildDir(scheduler=self.scheduler, settings=self.settings)
                     self._start_future = self._build_dir.async_lock()
                     self._start_future.add_done_callback(
-                        functools.partial(
-                            self._start_post_builddir_lock,
-                            start_ipc_daemon=start_ipc_daemon,
-                        ))
+                        functools.partial(self._start_post_builddir_lock, start_ipc_daemon=start_ipc_daemon,
+                                          ))
                     return
             else:
                 self.settings.pop("PORTAGE_IPC_DAEMON", None)
@@ -168,13 +151,7 @@ class AbstractEbuildProcess(SpawnProcess):
                         pass
                     os.mkfifo(p)
 
-            apply_secpass_permissions(
-                p,
-                uid=os.getuid(),
-                gid=portage.data.portage_gid,
-                mode=0o770,
-                stat_cached=st,
-            )
+            apply_secpass_permissions(p, uid=os.getuid(), gid=portage.data.portage_gid, mode=0o770, stat_cached=st, )
 
         return (input_fifo, output_fifo)
 
@@ -193,12 +170,11 @@ class AbstractEbuildProcess(SpawnProcess):
             "repository_path": query_command,
         }
         input_fifo, output_fifo = self._init_ipc_fifos()
-        self._ipc_daemon = EbuildIpcDaemon(
-            commands=commands,
-            input_fifo=input_fifo,
-            output_fifo=output_fifo,
-            scheduler=self.scheduler,
-        )
+        self._ipc_daemon = EbuildIpcDaemon(commands=commands,
+                                           input_fifo=input_fifo,
+                                           output_fifo=output_fifo,
+                                           scheduler=self.scheduler,
+                                           )
         self._ipc_daemon.start()
 
     def _exit_command_callback(self):

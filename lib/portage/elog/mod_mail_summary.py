@@ -12,21 +12,16 @@ from portage import _unicode_decode
 import socket
 import time
 
-_config_keys = (
-    "PORTAGE_ELOG_MAILURI",
-    "PORTAGE_ELOG_MAILFROM",
-    "PORTAGE_ELOG_MAILSUBJECT",
-)
+_config_keys = ("PORTAGE_ELOG_MAILURI", "PORTAGE_ELOG_MAILFROM", "PORTAGE_ELOG_MAILSUBJECT", )
 _items = {}
 
 
 def process(mysettings, key, logentries, fulltext):
     global _items
-    time_str = _unicode_decode(
-        time.strftime("%Y%m%d-%H%M%S %Z", time.localtime(time.time())),
-        encoding=_encodings["content"],
-        errors="replace",
-    )
+    time_str = _unicode_decode(time.strftime("%Y%m%d-%H%M%S %Z", time.localtime(time.time())),
+                               encoding=_encodings["content"],
+                               errors="replace",
+                               )
     header = _(">>> Messages generated for package %(pkg)s by process %(pid)d on %(time)s:\n\n") % {
         "pkg": key,
         "pid": portage.getpid(),

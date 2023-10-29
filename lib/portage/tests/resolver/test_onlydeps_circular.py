@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class OnlydepsTestCase(TestCase):
@@ -26,22 +23,16 @@ class OnlydepsTestCase(TestCase):
             },
         }
 
-        installed = {
-            "app-misc/A-2": {
-                "EAPI": "5",
-                "SLOT": "2",
-            }
-        }
+        installed = {"app-misc/A-2": {"EAPI": "5", "SLOT": "2", }}
 
         test_cases = (
             # bug 524916 - direct circular dep should not pull
             # in an onlydeps node when possible
-            ResolverPlaygroundTestCase(
-                ["app-misc/A:1"],
-                success=True,
-                options={"--onlydeps": True},
-                mergelist=["app-misc/B-0"],
-            ), )
+            ResolverPlaygroundTestCase(["app-misc/A:1"],
+                                       success=True,
+                                       options={"--onlydeps": True},
+                                       mergelist=["app-misc/B-0"],
+                                       ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, debug=False)
         try:

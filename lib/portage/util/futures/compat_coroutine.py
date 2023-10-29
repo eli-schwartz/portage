@@ -5,10 +5,7 @@ import functools
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.util.futures:asyncio",
-)
+portage.proxy.lazyimport.lazyimport(globals(), "portage.util.futures:asyncio", )
 
 # A marker for iscoroutinefunction.
 _is_coroutine = object()

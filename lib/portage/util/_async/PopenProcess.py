@@ -5,10 +5,7 @@ from _emerge.SubProcess import SubProcess
 
 
 class PopenProcess(SubProcess):
-    __slots__ = (
-        "pipe_reader",
-        "proc",
-    )
+    __slots__ = ("pipe_reader", "proc", )
 
     def _start(self):
         self.pid = self.proc.pid

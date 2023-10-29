@@ -199,11 +199,9 @@ class database:
         if self.has_key is database.has_key:
             # prevent a possible recursive loop
             raise NotImplementedError
-        warnings.warn(
-            "portage.cache.template.database.has_key() is "
-            "deprecated, override __contains__ instead",
-            DeprecationWarning,
-        )
+        warnings.warn("portage.cache.template.database.has_key() is "
+                      "deprecated, override __contains__ instead", DeprecationWarning,
+                      )
         return self.has_key(cpv)
 
     def __iter__(self):
@@ -318,10 +316,7 @@ def _md5_deserializer(md5):
     return md5
 
 
-_chf_deserializers = {
-    "md5": _md5_deserializer,
-    "mtime": int,
-}
+_chf_deserializers = {"md5": _md5_deserializer, "mtime": int, }
 
 
 def reconstruct_eclasses(cpv, eclass_string, chf_type="mtime", paths=True):

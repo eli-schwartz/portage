@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class SlotCollisionTestCase(TestCase):
@@ -194,135 +191,91 @@ class SlotCollisionTestCase(TestCase):
 
         test_cases = (
             # A qt-*[qt3support] like mess.
+            ResolverPlaygroundTestCase(["dev-libs/A", "dev-libs/B", "dev-libs/C", "dev-libs/D"],
+                                       options={"--autounmask": "n"},
+                                       success=False,
+                                       mergelist=["dev-libs/A-1", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
+                                       ignore_mergelist_order=True,
+                                       slot_collision_solutions=[{
+                                           "dev-libs/A-1": {
+                                               "foo": True
+                                           },
+                                           "dev-libs/D-1": {
+                                               "foo": True
+                                           }
+                                       }],
+                                       ),
             ResolverPlaygroundTestCase(
-                ["dev-libs/A", "dev-libs/B", "dev-libs/C", "dev-libs/D"],
-                options={"--autounmask": "n"},
-                success=False,
-                mergelist=[
-                    "dev-libs/A-1",
-                    "dev-libs/B-1",
-                    "dev-libs/C-1",
-                    "dev-libs/D-1",
-                ],
-                ignore_mergelist_order=True,
-                slot_collision_solutions=[{
-                    "dev-libs/A-1": {
-                        "foo": True
-                    },
-                    "dev-libs/D-1": {
-                        "foo": True
-                    }
-                }],
-            ),
-            ResolverPlaygroundTestCase(
-                [
-                    "sys-libs/A",
-                    "sys-libs/B",
-                    "sys-libs/C",
-                    "sys-libs/D",
-                    "sys-libs/E",
-                    "sys-libs/F",
-                ],
+                ["sys-libs/A", "sys-libs/B", "sys-libs/C", "sys-libs/D", "sys-libs/E", "sys-libs/F", ],
                 options={"--autounmask": "n"},
                 success=False,
                 ignore_mergelist_order=True,
                 slot_collision_solutions=[],
                 mergelist=[
-                    "sys-libs/J-2",
-                    "sys-libs/J-1",
-                    "sys-libs/A-1",
-                    "sys-libs/B-1",
-                    "sys-libs/C-1",
-                    "sys-libs/D-1",
-                    "sys-libs/E-1",
-                    "sys-libs/F-1",
+                    "sys-libs/J-2", "sys-libs/J-1", "sys-libs/A-1", "sys-libs/B-1", "sys-libs/C-1", "sys-libs/D-1",
+                    "sys-libs/E-1", "sys-libs/F-1",
                 ],
             ),
             # A version based conflicts, nothing we can do.
-            ResolverPlaygroundTestCase(
-                ["=app-misc/X-1", "=app-misc/Y-1"],
-                success=False,
-                mergelist=[
-                    "app-misc/Z-1",
-                    "app-misc/Z-2",
-                    "app-misc/X-1",
-                    "app-misc/Y-1",
-                ],
-                ignore_mergelist_order=True,
-                slot_collision_solutions=[],
-            ),
-            ResolverPlaygroundTestCase(
-                ["=app-misc/X-2", "=app-misc/Y-2"],
-                success=False,
-                mergelist=[
-                    "app-misc/Z-1",
-                    "app-misc/Z-2",
-                    "app-misc/X-2",
-                    "app-misc/Y-2",
-                ],
-                ignore_mergelist_order=True,
-                slot_collision_solutions=[],
-            ),
-            ResolverPlaygroundTestCase(
-                ["=app-misc/E-1", "=app-misc/F-1"],
-                success=False,
-                mergelist=[
-                    "dev-libs/E-1",
-                    "dev-libs/E-2",
-                    "app-misc/E-1",
-                    "app-misc/F-1",
-                ],
-                ignore_mergelist_order=True,
-                slot_collision_solutions=[],
-            ),
+            ResolverPlaygroundTestCase(["=app-misc/X-1", "=app-misc/Y-1"],
+                                       success=False,
+                                       mergelist=["app-misc/Z-1", "app-misc/Z-2", "app-misc/X-1", "app-misc/Y-1", ],
+                                       ignore_mergelist_order=True,
+                                       slot_collision_solutions=[],
+                                       ),
+            ResolverPlaygroundTestCase(["=app-misc/X-2", "=app-misc/Y-2"],
+                                       success=False,
+                                       mergelist=["app-misc/Z-1", "app-misc/Z-2", "app-misc/X-2", "app-misc/Y-2", ],
+                                       ignore_mergelist_order=True,
+                                       slot_collision_solutions=[],
+                                       ),
+            ResolverPlaygroundTestCase(["=app-misc/E-1", "=app-misc/F-1"],
+                                       success=False,
+                                       mergelist=["dev-libs/E-1", "dev-libs/E-2", "app-misc/E-1", "app-misc/F-1", ],
+                                       ignore_mergelist_order=True,
+                                       slot_collision_solutions=[],
+                                       ),
             # sub-slot
-            ResolverPlaygroundTestCase(
-                [
-                    "dev-lang/perl:0/5.12",
-                    "dev-lang/perl:0/5.16",
-                    "=dev-lang/perl-5.12*",
-                ],
-                success=False,
-                mergelist=["dev-lang/perl-5.12", "dev-lang/perl-5.16"],
-                ignore_mergelist_order=True,
-                slot_collision_solutions=[],
-            ),
+            ResolverPlaygroundTestCase(["dev-lang/perl:0/5.12", "dev-lang/perl:0/5.16", "=dev-lang/perl-5.12*", ],
+                                       success=False,
+                                       mergelist=["dev-lang/perl-5.12", "dev-lang/perl-5.16"],
+                                       ignore_mergelist_order=True,
+                                       slot_collision_solutions=[],
+                                       ),
             # Simple cases.
-            ResolverPlaygroundTestCase(
-                ["sci-libs/L", "sci-libs/M"],
-                success=False,
-                mergelist=["sci-libs/L-1", "sci-libs/M-1", "sci-libs/K-1"],
-                ignore_mergelist_order=True,
-                slot_collision_solutions=[{
-                    "sci-libs/K-1": {
-                        "foo": False
-                    },
-                    "sci-libs/M-1": {
-                        "foo": False
-                    }
-                }],
-            ),
+            ResolverPlaygroundTestCase(["sci-libs/L", "sci-libs/M"],
+                                       success=False,
+                                       mergelist=["sci-libs/L-1", "sci-libs/M-1", "sci-libs/K-1"],
+                                       ignore_mergelist_order=True,
+                                       slot_collision_solutions=[{
+                                           "sci-libs/K-1": {
+                                               "foo": False
+                                           },
+                                           "sci-libs/M-1": {
+                                               "foo": False
+                                           }
+                                       }],
+                                       ),
             # Avoid duplicates.
-            ResolverPlaygroundTestCase(
-                ["sci-libs/P", "sci-libs/Q:2"],
-                success=False,
-                options={
-                    "--update": True,
-                    "--complete-graph": True,
-                    "--autounmask": "n",
-                },
-                mergelist=["sci-libs/P-1", "sci-libs/Q-1"],
-                ignore_mergelist_order=True,
-                all_permutations=True,
-                slot_collision_solutions=[{
-                    "sci-libs/Q-1": {
-                        "foo": True
-                    },
-                    "sci-libs/P-1": {
-                        "foo": True
-                    }
-                }],
-            ),
+            ResolverPlaygroundTestCase(["sci-libs/P", "sci-libs/Q:2"],
+                                       success=False,
+                                       options={
+                                           "--update": True,
+                                           "--complete-graph": True,
+                                           "--autounmask": "n",
+                                       },
+                                       mergelist=["sci-libs/P-1", "sci-libs/Q-1"],
+                                       ignore_mergelist_order=True,
+                                       all_permutations=True,
+                                       slot_collision_solutions=[{
+                                           "sci-libs/Q-1": {
+                                               "foo": True
+                                           },
+                                           "sci-libs/P-1": {
+                                               "foo": True
+                                           }
+                                       }],
+                                       ),
         )
         # NOTE: For this test case, ResolverPlaygroundTestCase attributes
         # vary randomly between runs, so it's expected to fail randomly.
@@ -371,18 +324,15 @@ class SlotCollisionTestCase(TestCase):
             },
         }
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["dev-libs/A", "dev-libs/B"],
-            all_permutations=True,
-            options={"--backtrack": 0},
-            success=True,
-            ambiguous_merge_order=True,
-            mergelist=[
-                "dev-libs/Y-1",
-                "dev-libs/X-1",
-                ("dev-libs/A-1", "dev-libs/B-1"),
-            ],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A", "dev-libs/B"],
+                                                 all_permutations=True,
+                                                 options={"--backtrack": 0},
+                                                 success=True,
+                                                 ambiguous_merge_order=True,
+                                                 mergelist=[
+                                                     "dev-libs/Y-1", "dev-libs/X-1", ("dev-libs/A-1", "dev-libs/B-1"),
+                                                 ],
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)
         try:
@@ -424,20 +374,16 @@ class SlotCollisionTestCase(TestCase):
             },
         }
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["dev-libs/A", "dev-libs/B"],
-            all_permutations=True,
-            options={"--backtrack": 0},
-            success=True,
-            ignore_mergelist_order=True,
-            mergelist=[
-                "dev-libs/Y-1",
-                "dev-libs/X-1",
-                "dev-libs/K-1",
-                "dev-libs/A-1",
-                "dev-libs/B-1",
-            ],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A", "dev-libs/B"],
+                                                 all_permutations=True,
+                                                 options={"--backtrack": 0},
+                                                 success=True,
+                                                 ignore_mergelist_order=True,
+                                                 mergelist=[
+                                                     "dev-libs/Y-1", "dev-libs/X-1", "dev-libs/K-1", "dev-libs/A-1",
+                                                     "dev-libs/B-1",
+                                                 ],
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)
         try:
@@ -465,13 +411,12 @@ class SlotCollisionTestCase(TestCase):
             },
         }
 
-        test_cases = (ResolverPlaygroundTestCase(
-            ["dev-libs/A", "dev-libs/B"],
-            all_permutations=True,
-            success=True,
-            ignore_mergelist_order=True,
-            mergelist=["dev-libs/X-1", "dev-libs/A-1", "dev-libs/B-1"],
-        ), )
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A", "dev-libs/B"],
+                                                 all_permutations=True,
+                                                 success=True,
+                                                 ignore_mergelist_order=True,
+                                                 mergelist=["dev-libs/X-1", "dev-libs/A-1", "dev-libs/B-1"],
+                                                 ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)
         try:

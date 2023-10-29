@@ -14,14 +14,7 @@ class NeededEntry:
     None if the corresponding field is either empty or missing.
     """
 
-    __slots__ = (
-        "arch",
-        "filename",
-        "multilib_category",
-        "needed",
-        "runpaths",
-        "soname",
-    )
+    __slots__ = ("arch", "filename", "multilib_category", "needed", "runpaths", "soname", )
 
     _MIN_FIELDS = 5
     _MULTILIB_CAT_INDEX = 5
@@ -68,10 +61,6 @@ class NeededEntry:
         Format this entry for writing to a NEEDED.ELF.2 file.
         """
         return (";".join([
-            self.arch,
-            self.filename,
-            self.soname,
-            ":".join(self.runpaths),
-            ",".join(self.needed),
+            self.arch, self.filename, self.soname, ":".join(self.runpaths), ",".join(self.needed),
             (self.multilib_category if self.multilib_category is not None else ""),
         ]) + "\n")

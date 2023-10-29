@@ -52,16 +52,10 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
         except (SystemExit, KeyboardInterrupt):
             raise
         except Exception as e:
-            if isinstance(e, EnvironmentError) and getattr(e, "errno", None) in (
-                    errno.ENOENT,
-                    errno.EACCES,
-            ):
+            if isinstance(e, EnvironmentError) and getattr(e, "errno", None) in (errno.ENOENT, errno.EACCES, ):
                 pass
             else:
-                writemsg(
-                    f"!!! Error loading '{self._cache_filename}': {str(e)}\n",
-                    noiselevel=-1,
-                )
+                writemsg(f"!!! Error loading '{self._cache_filename}': {str(e)}\n", noiselevel=-1, )
             del e
 
         cache_valid = (self._cache_data and isinstance(self._cache_data, dict)
@@ -149,10 +143,7 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
         @param blocker_data: An object with counter and atoms attributes.
         @type blocker_data: BlockerData
         """
-        self._cache_data["blockers"][str(cpv)] = (
-            blocker_data.counter,
-            tuple(str(x) for x in blocker_data.atoms),
-        )
+        self._cache_data["blockers"][str(cpv)] = (blocker_data.counter, tuple(str(x) for x in blocker_data.atoms), )
         self._modified.add(cpv)
 
     def __iter__(self):

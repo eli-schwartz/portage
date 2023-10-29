@@ -30,15 +30,13 @@ class PopenPipeTestCase(TestCase):
         read from the pipe.
         """
 
-        producer = PopenProcess(
-            proc=subprocess.Popen(
-                ["bash", "-c", self._echo_cmd % test_string],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            ),
-            pipe_reader=PipeReader(),
-            scheduler=global_event_loop(),
-        )
+        producer = PopenProcess(proc=subprocess.Popen(["bash", "-c", self._echo_cmd % test_string],
+                                                      stdout=subprocess.PIPE,
+                                                      stderr=subprocess.STDOUT,
+                                                      ),
+                                pipe_reader=PipeReader(),
+                                scheduler=global_event_loop(),
+                                )
 
         consumer = producer.pipe_reader
         consumer.input_files = {"producer": producer.proc.stdout}
@@ -52,22 +50,16 @@ class PopenPipeTestCase(TestCase):
         return consumer.getvalue().decode("ascii", "replace")
 
     def _testPipeLogger(self, test_string):
-        producer = PopenProcess(
-            proc=subprocess.Popen(
-                ["bash", "-c", self._echo_cmd % test_string],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            ),
-            scheduler=global_event_loop(),
-        )
+        producer = PopenProcess(proc=subprocess.Popen(["bash", "-c", self._echo_cmd % test_string],
+                                                      stdout=subprocess.PIPE,
+                                                      stderr=subprocess.STDOUT,
+                                                      ),
+                                scheduler=global_event_loop(),
+                                )
 
         fd, log_file_path = tempfile.mkstemp()
         try:
-            consumer = PipeLogger(
-                background=True,
-                input_fd=producer.proc.stdout,
-                log_file_path=log_file_path,
-            )
+            consumer = PipeLogger(background=True, input_fd=producer.proc.stdout, log_file_path=log_file_path, )
 
             producer.pipe_reader = consumer
 

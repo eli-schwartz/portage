@@ -3,44 +3,27 @@
 
 from portage import os, _encodings
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.util import ensure_dirs
 
 
 class ProfilePackageSetTestCase(TestCase):
 
     def testProfilePackageSet(self):
-        repo_configs = {
-            "test_repo": {
-                "layout.conf": ("profile-formats = profile-set", ),
-            }
-        }
+        repo_configs = {"test_repo": {"layout.conf": ("profile-formats = profile-set", ), }}
 
-        profiles = (
-            (
-                "default/linux",
-                {
-                    "eapi": ("5", ),
-                    "packages": (
-                        "*sys-libs/A",
-                        "app-misc/A",
-                        "app-misc/B",
-                        "app-misc/C",
-                    ),
-                },
-            ),
-            (
-                "default/linux/x86",
-                {
-                    "eapi": ("5", ),
-                    "packages": ("-app-misc/B", ),
-                    "parent": ("..", )
-                },
-            ),
-        )
+        profiles = (("default/linux", {
+            "eapi": ("5", ),
+            "packages": ("*sys-libs/A", "app-misc/A", "app-misc/B", "app-misc/C",
+                         ),
+        },
+                     ), ("default/linux/x86", {
+                         "eapi": ("5", ),
+                         "packages": ("-app-misc/B", ),
+                         "parent": ("..", )
+                     },
+                         ),
+                    )
 
         ebuilds = {
             "sys-libs/A-1": {
@@ -72,23 +55,20 @@ class ProfilePackageSetTestCase(TestCase):
             },
         }
 
-        test_cases = (
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--update": True,
-                    "--deep": True
-                },
-                mergelist=[],
-                success=True,
-            ),
-            ResolverPlaygroundTestCase(
-                [],
-                options={"--depclean": True},
-                success=True,
-                cleanlist=["app-misc/B-1"],
-            ),
-        )
+        test_cases = (ResolverPlaygroundTestCase(["@world"],
+                                                 options={
+                                                     "--update": True,
+                                                     "--deep": True
+                                                 },
+                                                 mergelist=[],
+                                                 success=True,
+                                                 ),
+                      ResolverPlaygroundTestCase([],
+                                                 options={"--depclean": True},
+                                                 success=True,
+                                                 cleanlist=["app-misc/B-1"],
+                                                 ),
+                      )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, repo_configs=repo_configs)
         try:
@@ -99,11 +79,7 @@ class ProfilePackageSetTestCase(TestCase):
                 prof_path = os.path.join(profile_root, p)
                 ensure_dirs(prof_path)
                 for k, v in data.items():
-                    with open(
-                            os.path.join(prof_path, k),
-                            mode="w",
-                            encoding=_encodings["repo.content"],
-                    ) as f:
+                    with open(os.path.join(prof_path, k), mode="w", encoding=_encodings["repo.content"], ) as f:
                         for line in v:
                             f.write(f"{line}\n")
 

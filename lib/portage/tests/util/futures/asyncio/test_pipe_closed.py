@@ -11,10 +11,7 @@ import tempfile
 from portage.tests import TestCase
 from portage.util._eventloop.global_event_loop import global_event_loop
 from portage.util.futures import asyncio
-from portage.util.futures.unix_events import (
-    DefaultEventLoopPolicy,
-    _set_nonblocking,
-)
+from portage.util.futures.unix_events import (DefaultEventLoopPolicy, _set_nonblocking, )
 
 
 class _PipeClosedTestCase:
@@ -39,10 +36,9 @@ class _PipeClosedTestCase:
         try:
             fifo_path = os.path.join(tempdir, "fifo")
             os.mkfifo(fifo_path)
-            self._do_test(
-                os.open(fifo_path, os.O_NONBLOCK | os.O_RDONLY),
-                os.open(fifo_path, os.O_NONBLOCK | os.O_WRONLY),
-            )
+            self._do_test(os.open(fifo_path, os.O_NONBLOCK | os.O_RDONLY),
+                          os.open(fifo_path, os.O_NONBLOCK | os.O_WRONLY),
+                          )
         finally:
             shutil.rmtree(tempdir)
 

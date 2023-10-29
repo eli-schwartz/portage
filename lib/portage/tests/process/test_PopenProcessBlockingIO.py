@@ -30,15 +30,13 @@ class PopenPipeBlockingIOTestCase(TestCase):
         read from the pipe.
         """
 
-        producer = PopenProcess(
-            proc=subprocess.Popen(
-                ["bash", "-c", self._echo_cmd % test_string],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            ),
-            pipe_reader=PipeReaderBlockingIO(),
-            scheduler=global_event_loop(),
-        )
+        producer = PopenProcess(proc=subprocess.Popen(["bash", "-c", self._echo_cmd % test_string],
+                                                      stdout=subprocess.PIPE,
+                                                      stderr=subprocess.STDOUT,
+                                                      ),
+                                pipe_reader=PipeReaderBlockingIO(),
+                                scheduler=global_event_loop(),
+                                )
 
         consumer = producer.pipe_reader
         consumer.input_files = {"producer": producer.proc.stdout}

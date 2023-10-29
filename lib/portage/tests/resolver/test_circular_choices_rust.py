@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class CircularRustTestCase(TestCase):
@@ -53,46 +50,36 @@ class CircularRustTestCase(TestCase):
             # This needs to be tested with and without --update, since
             # that affects package selection logic significantly,
             # expecially for packages given as arguments.
-            ResolverPlaygroundTestCase(
-                ["=dev-lang/rust-1.46*"],
-                mergelist=["dev-lang/rust-1.46.0"],
-                success=True,
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-lang/rust-1.46*"],
-                options={"--update": True},
-                mergelist=[],
-                success=True,
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-lang/rust-1.46*"],
-                options={
-                    "--deep": True,
-                    "--update": True
-                },
-                mergelist=[],
-                success=True,
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-lang/rust"],
-                mergelist=["dev-lang/rust-1.47.0-r2"],
-                success=True,
-            ),
-            ResolverPlaygroundTestCase(
-                ["dev-lang/rust"],
-                options={"--update": True},
-                mergelist=["dev-lang/rust-1.47.0-r2"],
-                success=True,
-            ),
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--deep": True,
-                    "--update": True
-                },
-                mergelist=["dev-lang/rust-1.47.0-r2"],
-                success=True,
-            ),
+            ResolverPlaygroundTestCase(["=dev-lang/rust-1.46*"], mergelist=["dev-lang/rust-1.46.0"], success=True,
+                                       ),
+            ResolverPlaygroundTestCase(["=dev-lang/rust-1.46*"],
+                                       options={"--update": True},
+                                       mergelist=[],
+                                       success=True,
+                                       ),
+            ResolverPlaygroundTestCase(["=dev-lang/rust-1.46*"],
+                                       options={
+                                           "--deep": True,
+                                           "--update": True
+                                       },
+                                       mergelist=[],
+                                       success=True,
+                                       ),
+            ResolverPlaygroundTestCase(["dev-lang/rust"], mergelist=["dev-lang/rust-1.47.0-r2"], success=True,
+                                       ),
+            ResolverPlaygroundTestCase(["dev-lang/rust"],
+                                       options={"--update": True},
+                                       mergelist=["dev-lang/rust-1.47.0-r2"],
+                                       success=True,
+                                       ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--deep": True,
+                                           "--update": True
+                                       },
+                                       mergelist=["dev-lang/rust-1.47.0-r2"],
+                                       success=True,
+                                       ),
         )
 
         world = ["dev-lang/rust"]

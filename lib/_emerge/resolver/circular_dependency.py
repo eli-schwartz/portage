@@ -8,12 +8,7 @@ from _emerge.Package import Package
 
 from itertools import chain, product
 
-from portage.dep import (
-    use_reduce,
-    extract_affecting_use,
-    check_required_use,
-    get_required_use_flags,
-)
+from portage.dep import (use_reduce, extract_affecting_use, check_required_use, get_required_use_flags, )
 from portage.exception import InvalidDependString
 from portage.output import colorize
 from portage.util import writemsg_level
@@ -203,12 +198,7 @@ class circular_dependency_handler:
                     # Make sure it doesn't conflict with REQUIRED_USE.
                     required_use = parent._metadata.get("REQUIRED_USE", "")
 
-                    if check_required_use(
-                            required_use,
-                            current_use,
-                            parent.iuse.is_valid_flag,
-                            eapi=parent.eapi,
-                    ):
+                    if check_required_use(required_use, current_use, parent.iuse.is_valid_flag, eapi=parent.eapi, ):
                         use = self.depgraph._pkg_use_enabled(parent)
                         solution = set()
                         for flag, state in zip(affecting_use, use_state):

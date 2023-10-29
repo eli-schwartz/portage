@@ -5,10 +5,7 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 from portage.output import colorize
 
 
@@ -48,45 +45,42 @@ class SonameUnsatisfiedTestCase(TestCase):
         test_cases = (
             # Demonstrate bug #439694, where a broken
             # soname dependency needs to trigger a reinstall.
-            ResolverPlaygroundTestCase(
-                ["@world"],
-                options={
-                    "--deep": True,
-                    "--ignore-soname-deps": "n",
-                    "--update": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=["[binary]app-misc/B-0"],
-            ),
+            ResolverPlaygroundTestCase(["@world"],
+                                       options={
+                                           "--deep": True,
+                                           "--ignore-soname-deps": "n",
+                                           "--update": True,
+                                           "--usepkgonly": True,
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]app-misc/B-0"],
+                                       ),
             # This doesn't trigger a reinstall, since there's no version
             # change to trigger complete graph mode, and initially
             # unsatisfied deps are ignored in complete graph mode anyway.
-            ResolverPlaygroundTestCase(
-                ["app-misc/A"],
-                options={
-                    "--ignore-soname-deps": "n",
-                    "--oneshot": True,
-                    "--usepkgonly": True,
-                },
-                success=True,
-                mergelist=["[binary]app-misc/A-2"],
-            ),
+            ResolverPlaygroundTestCase(["app-misc/A"],
+                                       options={
+                                           "--ignore-soname-deps": "n",
+                                           "--oneshot": True,
+                                           "--usepkgonly": True,
+                                       },
+                                       success=True,
+                                       mergelist=["[binary]app-misc/A-2"],
+                                       ),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
-                playground = ResolverPlayground(
-                    binpkgs=binpkgs,
-                    debug=False,
-                    installed=installed,
-                    world=world,
-                    user_config={
-                        "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
-                    },
-                )
+                playground = ResolverPlayground(binpkgs=binpkgs,
+                                                debug=False,
+                                                installed=installed,
+                                                world=world,
+                                                user_config={
+                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                },
+                                                )
 
                 try:
                     for test_case in test_cases:

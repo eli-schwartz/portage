@@ -13,9 +13,7 @@ class DepGetCPV(TestCase):
         prefix_ops = ["<", ">", "=", "~", "<=", ">=", "!=", "!<", "!>", "!~"]
 
         bad_prefix_ops = [">~", "<~", "~>", "~<"]
-        postfix_ops = [
-            ("=", "*"),
-        ]
+        postfix_ops = [("=", "*"), ]
 
         cpvs = ["sys-apps/portage-2.1", "sys-apps/portage-2.1", "sys-apps/portage-2.1"]
         slots = [None, ":foo", ":2"]

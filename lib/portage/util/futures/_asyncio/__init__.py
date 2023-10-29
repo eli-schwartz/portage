@@ -1,24 +1,10 @@
 # Copyright 2018-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-__all__ = (
-    "ALL_COMPLETED",
-    "FIRST_COMPLETED",
-    "FIRST_EXCEPTION",
-    "ensure_future",
-    "CancelledError",
-    "Future",
-    "InvalidStateError",
-    "TimeoutError",
-    "get_child_watcher",
-    "get_event_loop",
-    "set_child_watcher",
-    "get_event_loop_policy",
-    "set_event_loop_policy",
-    "sleep",
-    "Task",
-    "wait",
-)
+__all__ = ("ALL_COMPLETED", "FIRST_COMPLETED", "FIRST_EXCEPTION", "ensure_future", "CancelledError", "Future",
+           "InvalidStateError", "TimeoutError", "get_child_watcher", "get_event_loop", "set_child_watcher",
+           "get_event_loop_policy", "set_event_loop_policy", "sleep", "Task", "wait",
+           )
 
 import types
 import weakref
@@ -26,27 +12,18 @@ import weakref
 import asyncio as _real_asyncio
 
 # pylint: disable=redefined-builtin
-from asyncio import (
-    ALL_COMPLETED,
-    CancelledError,
-    FIRST_COMPLETED,
-    FIRST_EXCEPTION,
-    Future,
-    InvalidStateError,
-    TimeoutError,
-)
+from asyncio import (ALL_COMPLETED, CancelledError, FIRST_COMPLETED, FIRST_EXCEPTION, Future, InvalidStateError,
+                     TimeoutError,
+                     )
 
 import threading
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(
-    globals(),
-    "portage.util.futures.unix_events:_PortageEventLoopPolicy",
-    "portage.util.futures:compat_coroutine@_compat_coroutine",
-)
-from portage.util._eventloop.asyncio_event_loop import (
-    AsyncioEventLoop as _AsyncioEventLoop, )
+portage.proxy.lazyimport.lazyimport(globals(), "portage.util.futures.unix_events:_PortageEventLoopPolicy",
+                                    "portage.util.futures:compat_coroutine@_compat_coroutine",
+                                    )
+from portage.util._eventloop.asyncio_event_loop import (AsyncioEventLoop as _AsyncioEventLoop, )
 
 _lock = threading.Lock()
 _policy = None

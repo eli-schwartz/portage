@@ -2,10 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (
-    ResolverPlayground,
-    ResolverPlaygroundTestCase,
-)
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
 
 
 class UnnecessarySlotrUpgradeTestCase(TestCase):
@@ -26,25 +23,16 @@ class UnnecessarySlotrUpgradeTestCase(TestCase):
             },
         }
 
-        installed = {
-            "dev-lang/python-3.9": {
-                "SLOT": "3.9"
-            },
-        }
+        installed = {"dev-lang/python-3.9": {"SLOT": "3.9"}, }
 
         test_cases = (
             # Test bug 828136, where an unnecessary python slot upgrade
             # was triggered.
-            ResolverPlaygroundTestCase(
-                [
-                    "app-misc/a",
-                ],
-                success=True,
-                mergelist=(
-                    "dev-lang/python-3.10",
-                    "app-misc/a-1",
-                ),
-            ), )
+            ResolverPlaygroundTestCase(["app-misc/a", ],
+                                       success=True,
+                                       mergelist=("dev-lang/python-3.10", "app-misc/a-1",
+                                                  ),
+                                       ), )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed)
 

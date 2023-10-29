@@ -91,14 +91,12 @@ def async_iter_completed(futures, max_jobs=None, max_load=None, loop=None):
         # scheduler should ensure that future_map is non-empty until
         # task_generator is exhausted
         while future_map:
-            wait_result = asyncio.ensure_future(
-                asyncio.wait(
-                    list(future_map.values()),
-                    return_when=asyncio.FIRST_COMPLETED,
-                    loop=loop,
-                ),
-                loop=loop,
-            )
+            wait_result = asyncio.ensure_future(asyncio.wait(list(future_map.values()),
+                                                             return_when=asyncio.FIRST_COMPLETED,
+                                                             loop=loop,
+                                                             ),
+                                                loop=loop,
+                                                )
             future_done_set = loop.create_future()
             future_done_set.add_done_callback(functools.partial(cancel_callback, wait_result))
             wait_result.add_done_callback(functools.partial(done_callback, future_done_set))
@@ -139,12 +137,7 @@ def iter_gather(futures, max_jobs=None, max_load=None, loop=None):
             futures_list.append(future)
             yield future
 
-    completed_iter = async_iter_completed(
-        future_generator(),
-        max_jobs=max_jobs,
-        max_load=max_load,
-        loop=loop,
-    )
+    completed_iter = async_iter_completed(future_generator(), max_jobs=max_jobs, max_load=max_load, loop=loop, )
 
     def handle_result(future_done_set):
         if result.cancelled():

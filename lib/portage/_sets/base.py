@@ -126,11 +126,7 @@ class PackageSet:
             if atom.cp == pkg.cp:
                 rev_transform[atom] = atom
             else:
-                rev_transform[Atom(
-                    atom.replace(atom.cp, pkg.cp, 1),
-                    allow_wildcard=True,
-                    allow_repo=True,
-                )] = atom
+                rev_transform[Atom(atom.replace(atom.cp, pkg.cp, 1), allow_wildcard=True, allow_repo=True, )] = atom
         best_match = best_match_to_list(pkg, iter(rev_transform))
         if best_match:
             return rev_transform[best_match]
