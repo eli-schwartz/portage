@@ -95,6 +95,8 @@ def old_tree_timestamp_warn(portdir, settings):
         if have_english_locale():
             out.ewarn(f"Last emerge --sync was {whenago(unixtime - lastsync)} ago.")
         else:
-            out.ewarn(_("Last emerge --sync was %s.") % _unicode_decode(time.strftime("%c", time.localtime(lastsync))))
+            out.ewarn(
+                _("Last emerge --sync was %s.") %
+                _unicode_decode(time.strftime("%c", time.localtime(lastsync))))
         return True
     return False

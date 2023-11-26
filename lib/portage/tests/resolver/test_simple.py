@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -33,8 +35,12 @@ class SimpleResolverTestCase(TestCase):
         binpkgs = {"dev-libs/B-1.2": {}, }
         installed = {"dev-libs/A-1": {}, "dev-libs/B-1.1": {}, }
 
-        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A"], success=True, mergelist=["dev-libs/A-1"]),
-                      ResolverPlaygroundTestCase(["=dev-libs/A-2"], options={"--autounmask": "n"}, success=False),
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A"],
+                                                 success=True,
+                                                 mergelist=["dev-libs/A-1"]),
+                      ResolverPlaygroundTestCase(["=dev-libs/A-2"],
+                                                 options={"--autounmask": "n"},
+                                                 success=False),
                       ResolverPlaygroundTestCase(["dev-libs/A"],
                                                  options={"--noreplace": True},
                                                  success=True,
@@ -69,7 +75,8 @@ class SimpleResolverTestCase(TestCase):
                       ResolverPlaygroundTestCase(["app-misc/Z"],
                                                  success=True,
                                                  ambiguous_merge_order=True,
-                                                 mergelist=[("app-misc/W-1", "app-misc/X-1"), "app-misc/Z-1"],
+                                                 mergelist=[("app-misc/W-1", "app-misc/X-1"),
+                                                            "app-misc/Z-1"],
                                                  ),
                       )
 
@@ -81,7 +88,8 @@ class SimpleResolverTestCase(TestCase):
                                                 binpkgs=binpkgs,
                                                 installed=installed,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:

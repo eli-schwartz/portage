@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class AutounmaskTestCase(TestCase):
@@ -167,7 +169,9 @@ class AutounmaskTestCase(TestCase):
         test_cases = (
             # Test USE changes.
             # The simple case.
-            ResolverPlaygroundTestCase(["dev-libs/A:1"], options={"--autounmask": "n"}, success=False),
+            ResolverPlaygroundTestCase(["dev-libs/A:1"],
+                                       options={"--autounmask": "n"},
+                                       success=False),
             ResolverPlaygroundTestCase(["dev-libs/A:1"],
                                        options={"--autounmask": True},
                                        success=False,
@@ -193,7 +197,9 @@ class AutounmaskTestCase(TestCase):
                                        }},
                                        ),
             # Explicitly disable --autounmask-use
-            ResolverPlaygroundTestCase(["dev-libs/A:1"], success=False, options={"--autounmask-use": "n"}),
+            ResolverPlaygroundTestCase(["dev-libs/A:1"],
+                                       success=False,
+                                       options={"--autounmask-use": "n"}),
             # Make sure we restart if needed.
             ResolverPlaygroundTestCase(["dev-libs/A:1", "dev-libs/B"],
                                        options={
@@ -234,8 +240,8 @@ class AutounmaskTestCase(TestCase):
                                        all_permutations=True,
                                        success=False,
                                        mergelist=[
-                                           "dev-libs/D-1", "dev-libs/C-1", "dev-libs/B-1", "dev-libs/A-1",
-                                           "dev-libs/A-2",
+                                           "dev-libs/D-1", "dev-libs/C-1", "dev-libs/B-1",
+                                           "dev-libs/A-1", "dev-libs/A-2",
                                        ],
                                        ignore_mergelist_order=True,
                                        use_changes={"dev-libs/B-1": {
@@ -273,7 +279,8 @@ class AutounmaskTestCase(TestCase):
             # the redundant instance.
             # Test keywording.
             # The simple case.
-            ResolverPlaygroundTestCase(["app-misc/Z"], options={"--autounmask": "n"}, success=False),
+            ResolverPlaygroundTestCase(["app-misc/Z"], options={"--autounmask": "n"},
+                                       success=False),
             ResolverPlaygroundTestCase(["app-misc/Z"],
                                        options={"--autounmask": True},
                                        success=False,
@@ -527,7 +534,9 @@ class AutounmaskTestCase(TestCase):
 
         test_cases = (
             # --autounmask=n negates default --autounmask-license
-            ResolverPlaygroundTestCase(["=dev-libs/A-1"], options={"--autounmask": "n"}, success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1"],
+                                       options={"--autounmask": "n"},
+                                       success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-1"],
                                        options={"--autounmask-license": "y"},
                                        success=False,
@@ -560,7 +569,9 @@ class AutounmaskTestCase(TestCase):
                                        },
                                        success=False,
                                        ),
-            ResolverPlaygroundTestCase(["=dev-libs/A-1"], options={"--autounmask-license": "n"}, success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1"],
+                                       options={"--autounmask-license": "n"},
+                                       success=False),
             # Test license+keyword+use change at once.
             ResolverPlaygroundTestCase(["=dev-libs/C-1"],
                                        options={"--autounmask": True},
@@ -628,7 +639,10 @@ class AutounmaskTestCase(TestCase):
             ResolverPlaygroundTestCase(["dev-libs/B", "dev-libs/C", "dev-libs/D"],
                                        all_permutations=True,
                                        options={"--autounmask": "y"},
-                                       mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
+                                       mergelist=[
+                                           "dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1",
+                                           "dev-libs/D-1",
+                                       ],
                                        ignore_mergelist_order=True,
                                        unstable_keywords=["dev-libs/A-2"],
                                        success=False,
@@ -636,7 +650,10 @@ class AutounmaskTestCase(TestCase):
             ResolverPlaygroundTestCase(["@test-set"],
                                        all_permutations=True,
                                        options={"--autounmask": "y"},
-                                       mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
+                                       mergelist=[
+                                           "dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1",
+                                           "dev-libs/D-1",
+                                       ],
                                        ignore_mergelist_order=True,
                                        unstable_keywords=["dev-libs/A-2"],
                                        success=False,
@@ -644,7 +661,10 @@ class AutounmaskTestCase(TestCase):
             ResolverPlaygroundTestCase(["@world"],
                                        all_permutations=True,
                                        options={"--autounmask": "y"},
-                                       mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
+                                       mergelist=[
+                                           "dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1",
+                                           "dev-libs/D-1",
+                                       ],
                                        ignore_mergelist_order=True,
                                        unstable_keywords=["dev-libs/A-2"],
                                        success=False,

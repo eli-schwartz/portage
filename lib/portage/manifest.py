@@ -12,21 +12,22 @@ import portage
 
 portage.proxy.lazyimport.lazyimport(
     globals(), "portage.checksum:get_valid_checksum_keys,perform_multiple_checksums," +
-    "verify_all,_apply_hash_filter,_filter_unaccelarated_hashes", "portage.repository.config:_find_invalid_path_char",
-    "portage.util:write_atomic,writemsg_level",
+    "verify_all,_apply_hash_filter,_filter_unaccelarated_hashes",
+    "portage.repository.config:_find_invalid_path_char", "portage.util:write_atomic,writemsg_level",
 )
 
 from portage import os
 from portage import _encodings
 from portage import _unicode_decode
 from portage import _unicode_encode
-from portage.exception import (DigestException, FileNotFound, InvalidDataType, MissingParameter, PermissionDenied,
-                               PortageException, PortagePackageException,
+from portage.exception import (DigestException, FileNotFound, InvalidDataType, MissingParameter,
+                               PermissionDenied, PortageException, PortagePackageException,
                                )
 from portage.const import MANIFEST2_HASH_DEFAULTS, MANIFEST2_IDENTIFIERS
 from portage.localization import _
 
-_manifest_re = re.compile(r"^(" + "|".join(MANIFEST2_IDENTIFIERS) + r") (\S+)( \d+( \S+ \S+)+)$", re.UNICODE)
+_manifest_re = re.compile(r"^(" + "|".join(MANIFEST2_IDENTIFIERS) + r") (\S+)( \d+( \S+ \S+)+)$",
+                          re.UNICODE)
 
 
 class FileNotInManifestException(PortageException):
@@ -101,8 +102,8 @@ class Manifest2Entry(ManifestEntry):
 
     def __eq__(self, other):
         return isinstance(
-            other,
-            Manifest2Entry) and self.type == other.type and self.name == other.name and self.hashes == other.hashes
+            other, Manifest2Entry
+        ) and self.type == other.type and self.name == other.name and self.hashes == other.hashes
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -257,19 +258,22 @@ class Manifest:
             myfiles = sorted(self.fhashdict[mytype])
             for myfile in myfiles:
                 remainings = set(self.fhashdict[mytype][myfile]).intersection(valid_hashes)
-                yield Manifest2Entry(
-                    type=mytype,
-                    name=myfile,
-                    hashes={remaining: self.fhashdict[mytype][myfile][remaining]
-                            for remaining in remainings},
-                )
+                yield Manifest2Entry(type=mytype,
+                                     name=myfile,
+                                     hashes={
+                                         remaining: self.fhashdict[mytype][myfile][remaining]
+                                         for remaining in remainings
+                                     },
+                                     )
 
     def checkIntegrity(self):
-        manifest_data = ((self.required_hashes.difference(set(self.fhashdict[mytype][myfile])), mytype, myfile,
+        manifest_data = ((self.required_hashes.difference(set(self.fhashdict[mytype][myfile])),
+                          mytype, myfile,
                           ) for mytype in self.fhashdict for myfile in self.fhashdict[mytype])
         for needed_hashes, its_type, its_file in manifest_data:
             if needed_hashes:
-                raise MissingParameter(_(f"Missing {' '.join(needed_hashes)} checksum(s): {its_type} {its_file}"))
+                raise MissingParameter(
+                    _(f"Missing {' '.join(needed_hashes)} checksum(s): {its_type} {its_file}"))
 
     def write(self, sign=False, force=False):
         """Write Manifest instance to disk, optionally signing it. Returns
@@ -285,7 +289,9 @@ class Manifest:
             preserved_stats = {self.pkgdir.rstrip(os.sep): os.stat(self.pkgdir)}
             if myentries and not force:
                 try:
-                    with open(_unicode_encode(self.getFullname(), encoding=_encodings["fs"], errors="strict",
+                    with open(_unicode_encode(self.getFullname(),
+                                              encoding=_encodings["fs"],
+                                              errors="strict",
                                               ),
                               encoding=_encodings["repo.content"],
                               errors="replace",
@@ -310,7 +316,9 @@ class Manifest:
                     # when thin or allow_missing is enabled. Except for
                     # thin manifests with no DIST entries, myentries is
                     # non-empty for all currently known use cases.
-                    write_atomic(self.getFullname(), "".join(f"{myentry}\n" for myentry in myentries), )
+                    write_atomic(self.getFullname(),
+                                 "".join(f"{myentry}\n" for myentry in myentries),
+                                 )
                     self._apply_max_mtime(preserved_stats, myentries)
                     rval = True
                 else:
@@ -383,7 +391,9 @@ class Manifest:
             # self.pkgdir is already included via preserved_stats.
             for parent_dir, dirs, files in os.walk(self.pkgdir.rstrip(os.sep)):
                 try:
-                    parent_dir = _unicode_decode(parent_dir, encoding=_encodings["fs"], errors="strict")
+                    parent_dir = _unicode_decode(parent_dir,
+                                                 encoding=_encodings["fs"],
+                                                 errors="strict")
                 except UnicodeDecodeError:
                     # If an absolute path cannot be decoded, then it is
                     # always excluded from the manifest (repoman will
@@ -430,7 +440,9 @@ class Manifest:
         if hashdict is not None:
             self.fhashdict[ftype][fname].update(hashdict)
         if self.required_hashes.difference(set(self.fhashdict[ftype][fname])):
-            self.updateAllFileHashes(ftype, [fname], checkExisting=False, ignoreMissing=ignoreMissing)
+            self.updateAllFileHashes(ftype, [fname],
+                                     checkExisting=False,
+                                     ignoreMissing=ignoreMissing)
 
     def removeFile(self, ftype, fname):
         """Remove given entry from Manifest"""
@@ -483,7 +495,8 @@ class Manifest:
         if self.thin:
             update_pkgdir = self._update_thin_pkgdir
 
-        cpvlist = update_pkgdir(self._pkgdir_category(), os.path.basename(self.pkgdir.rstrip(os.path.sep)), self.pkgdir,
+        cpvlist = update_pkgdir(self._pkgdir_category(),
+                                os.path.basename(self.pkgdir.rstrip(os.path.sep)), self.pkgdir,
                                 )
         distlist = {distfile for cpv in cpvlist for distfile in self._getCpvDistfiles(cpv)}
 
@@ -504,9 +517,10 @@ class Manifest:
             except OSError:
                 pass
             if f in distfilehashes and not required_hash_types.difference(distfilehashes[f]) and (
-                (assumeDistHashesSometimes and mystat is None) or (assumeDistHashesAlways and mystat is None) or
-                (assumeDistHashesAlways and mystat is not None and set(distfilehashes[f]) == set(self.hashes)
-                 and distfilehashes[f]["size"] == mystat.st_size)):
+                (assumeDistHashesSometimes and mystat is None) or
+                (assumeDistHashesAlways and mystat is None) or
+                (assumeDistHashesAlways and mystat is not None and set(distfilehashes[f]) == set(
+                    self.hashes) and distfilehashes[f]["size"] == mystat.st_size)):
                 self.fhashdict["DIST"][f] = distfilehashes[f]
             else:
                 try:
@@ -579,8 +593,8 @@ class Manifest:
         for f in recursive_files:
             if self._find_invalid_path_char(f) != -1 or not manifest2AuxfileFilter(f):
                 continue
-            self.fhashdict["AUX"][f] = perform_multiple_checksums(os.path.join(self.pkgdir, "files", f.lstrip(os.sep)),
-                                                                  self.hashes)
+            self.fhashdict["AUX"][f] = perform_multiple_checksums(
+                os.path.join(self.pkgdir, "files", f.lstrip(os.sep)), self.hashes)
         return cpvlist
 
     def _pkgdir_category(self):
@@ -601,7 +615,10 @@ class Manifest:
 
     def checkTypeHashes(self, idtype, ignoreMissingFiles=False, hash_filter=None):
         for f in self.fhashdict[idtype]:
-            self.checkFileHashes(idtype, f, ignoreMissing=ignoreMissingFiles, hash_filter=hash_filter)
+            self.checkFileHashes(idtype,
+                                 f,
+                                 ignoreMissing=ignoreMissingFiles,
+                                 hash_filter=hash_filter)
 
     def checkFileHashes(self, ftype, fname, ignoreMissing=False, hash_filter=None):
         digests = _filter_unaccelarated_hashes(self.fhashdict[ftype][fname])
@@ -638,7 +655,12 @@ class Manifest:
         total_bytes = sum(int(self.fhashdict["DIST"][f]["size"]) for f in fetchlist)
         return total_bytes
 
-    def updateAllFileHashes(self, ftype, fnames, checkExisting=True, ignoreMissing=True, reuseExisting=False):
+    def updateAllFileHashes(self,
+                            ftype,
+                            fnames,
+                            checkExisting=True,
+                            ignoreMissing=True,
+                            reuseExisting=False):
         """Regenerate hashes from a list of files"""
         for fname in fnames:
             if checkExisting:
@@ -656,7 +678,9 @@ class Manifest:
     def updateAllTypeHashes(self, idtypes, checkExisting=False, ignoreMissingFiles=True):
         """Regenerate all hashes for all files from a list of types"""
         for idtype in idtypes:
-            self.updateAllFileHashes(ftype=idtype, fnames=self.fhashdict[idtype], checkExisting=checkExisting)
+            self.updateAllFileHashes(ftype=idtype,
+                                     fnames=self.fhashdict[idtype],
+                                     checkExisting=checkExisting)
 
     def updateAllHashes(self, checkExisting=False, ignoreMissingFiles=True):
         """Regenerate all hashes for all files in this Manifest."""
@@ -707,8 +731,8 @@ class Manifest:
                   ) as myfile:
             line_splits = (line.split() for line in myfile.readlines())
             validation = (True for line_split in line_splits
-                          if len(line_split) > 4 and line_split[0] in MANIFEST2_IDENTIFIERS and (len(line_split) - 3) %
-                          2 == 0)
+                          if len(line_split) > 4 and line_split[0] in MANIFEST2_IDENTIFIERS and
+                          (len(line_split) - 3) % 2 == 0)
             if any(validation):
                 return [2]
         return []

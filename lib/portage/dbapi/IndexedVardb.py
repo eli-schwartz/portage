@@ -100,7 +100,8 @@ class IndexedVardb:
 
     def aux_get(self, cpv, attrs, myrepo=None):
         pkg_data = self._vardb._aux_cache["packages"].get(cpv)
-        if not isinstance(pkg_data, tuple) or len(pkg_data) != 2 or not isinstance(pkg_data[1], dict):
+        if not isinstance(pkg_data, tuple) or len(pkg_data) != 2 or not isinstance(
+                pkg_data[1], dict):
             pkg_data = None
         if pkg_data is None:
             # It may be missing from _aux_cache due to

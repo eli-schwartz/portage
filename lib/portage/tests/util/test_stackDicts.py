@@ -38,7 +38,14 @@ class StackDictsTestCase(TestCase):
             self.assertEqual(result, test[1])
 
     def testStackDictsFail(self):
-        tests = [([None, {}], None, False, [], True), ([{"a": "b"}, {"a": "c"}], {"a": "b c"}, False, [], False), ]
+        tests = [([None, {}], None, False, [], True),
+                 ([{
+                     "a": "b"
+                 }, {
+                     "a": "c"
+                 }], {
+                     "a": "b c"
+                 }, False, [], False), ]
         for test in tests:
             result = stack_dicts(test[0], test[2], test[3], test[4])
             self.assertNotEqual(result, test[1])

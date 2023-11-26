@@ -20,7 +20,8 @@ portage._internal_caller = True
 
 def parse_args(argv):
     prog_name = os.path.basename(argv[0])
-    usage = (prog_name + " [options] " + "<src_pkg_dir> <snapshot_dir> <snapshot_uri> <binhost_dir>")
+    usage = (prog_name + " [options] " +
+             "<src_pkg_dir> <snapshot_dir> <snapshot_uri> <binhost_dir>")
 
     prog_desc = ("This program will copy src_pkg_dir to snapshot_dir " +
                  "and inside binhost_dir it will create a Packages index file " +
@@ -35,7 +36,8 @@ def parse_args(argv):
     usage += "Required Arguments:\n\n"
     usage += "  src_pkg_dir  - the source ${PKGDIR}\n"
     usage += "  snapshot_dir - destination snapshot " + "directory (must not exist)\n"
-    usage += ("  snapshot_uri - URI which refers to " + "snapshot_dir from the\n" + "                 client side\n")
+    usage += ("  snapshot_uri - URI which refers to " + "snapshot_dir from the\n" +
+              "                 client side\n")
     usage += ("  binhost_dir  - directory in which to " + "write Packages index with\n" +
               "                 snapshot_uri")
 
@@ -93,13 +95,17 @@ def main(argv):
     else:
         cp_opts += "l"
 
-    cp_cmd = "cp -{} {} {}".format(cp_opts, portage._shell_quote(src_pkg_dir), portage._shell_quote(snapshot_dir), )
+    cp_cmd = "cp -{} {} {}".format(cp_opts, portage._shell_quote(src_pkg_dir),
+                                   portage._shell_quote(snapshot_dir),
+                                   )
 
     ret = os.system(cp_cmd)
     if not (os.WIFEXITED(ret) and os.WEXITSTATUS(ret) == os.EX_OK):
         return 1
 
-    infile = open(portage._unicode_encode(src_pkgs_index, encoding=portage._encodings["fs"], errors="strict"),
+    infile = open(portage._unicode_encode(src_pkgs_index,
+                                          encoding=portage._encodings["fs"],
+                                          errors="strict"),
                   encoding=portage._encodings["repo.content"],
                   errors="strict",
                   )

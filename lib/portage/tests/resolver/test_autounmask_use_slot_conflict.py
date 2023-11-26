@@ -4,7 +4,9 @@
 import pytest
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class AutounmaskUseSlotConflictTestCase(TestCase):

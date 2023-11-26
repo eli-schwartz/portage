@@ -31,7 +31,10 @@ def iter_completed(futures, max_jobs=None, max_load=None, loop=None):
     """
     loop = asyncio._wrap_loop(loop)
 
-    for future_done_set in async_iter_completed(futures, max_jobs=max_jobs, max_load=max_load, loop=loop):
+    for future_done_set in async_iter_completed(futures,
+                                                max_jobs=max_jobs,
+                                                max_load=max_load,
+                                                loop=loop):
         yield from loop.run_until_complete(future_done_set)
 
 
@@ -69,7 +72,10 @@ def async_iter_completed(futures, max_jobs=None, max_load=None, loop=None):
             future_map[id(future)] = future
             yield AsyncTaskFuture(future=future)
 
-    scheduler = TaskScheduler(task_generator(), max_jobs=max_jobs, max_load=max_load, event_loop=loop)
+    scheduler = TaskScheduler(task_generator(),
+                              max_jobs=max_jobs,
+                              max_load=max_load,
+                              event_loop=loop)
 
     def done_callback(future_done_set, wait_result):
         """Propagate results from wait_result to future_done_set."""
@@ -137,14 +143,19 @@ def iter_gather(futures, max_jobs=None, max_load=None, loop=None):
             futures_list.append(future)
             yield future
 
-    completed_iter = async_iter_completed(future_generator(), max_jobs=max_jobs, max_load=max_load, loop=loop, )
+    completed_iter = async_iter_completed(future_generator(),
+                                          max_jobs=max_jobs,
+                                          max_load=max_load,
+                                          loop=loop,
+                                          )
 
     def handle_result(future_done_set):
         if result.cancelled():
             if not future_done_set.cancelled():
                 # All exceptions must be consumed from future_done_set, in order
                 # to avoid triggering the event loop's exception handler.
-                list(future.exception() for future in future_done_set.result() if not future.cancelled())
+                list(future.exception() for future in future_done_set.result()
+                     if not future.cancelled())
             return
 
         try:
@@ -163,7 +174,8 @@ def iter_gather(futures, max_jobs=None, max_load=None, loop=None):
         handle_result.current_task.add_done_callback(handle_result)
 
     def cancel_callback(result):
-        if result.cancelled() and handle_result.current_task is not None and not handle_result.current_task.done():
+        if result.cancelled(
+        ) and handle_result.current_task is not None and not handle_result.current_task.done():
             handle_result.current_task.cancel()
 
     result.add_done_callback(cancel_callback)

@@ -18,7 +18,9 @@ def display_preserved_libs(vardb, verbose=False):
     try:
         linkmap.rebuild()
     except portage.exception.CommandNotFound as e:
-        portage.util.writemsg_level(f"!!! Command Not Found: {e}\n", level=logging.ERROR, noiselevel=-1)
+        portage.util.writemsg_level(f"!!! Command Not Found: {e}\n",
+                                    level=logging.ERROR,
+                                    noiselevel=-1)
     else:
         search_for_owners = set()
         for cpv in plibdata:
@@ -91,4 +93,6 @@ def display_preserved_libs(vardb, verbose=False):
                     owners_desc = ", ".join(x.mycpv for x in owners.get(c, []))
                 print(colorize("WARN", " * ") + f"     used by {c} ({owners_desc})")
             if not verbose and len(consumers) > max_display:
-                print(colorize("WARN", " * ") + "     used by %d other files" % (len(consumers) - max_display))
+                print(
+                    colorize("WARN", " * ") + "     used by %d other files" %
+                    (len(consumers) - max_display))

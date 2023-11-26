@@ -153,7 +153,8 @@ def rewrite_lafile(contents):
                     new_dep_libs.append(dep_libs_entry)
 
         else:
-            raise InvalidData("Error: Unexpected entry '%s' in 'dependency_libs'" % _unicode_decode(dep_libs_entry))
+            raise InvalidData("Error: Unexpected entry '%s' in 'dependency_libs'" %
+                              _unicode_decode(dep_libs_entry))
 
     # What should 'dependency_libs' and 'inherited_linker_flags' look like?
     expected_dep_libs = b""

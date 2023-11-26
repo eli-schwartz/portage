@@ -108,15 +108,18 @@ _generate_hash_function("MD5", hashlib.md5, origin="hashlib")
 _generate_hash_function("SHA1", hashlib.sha1, origin="hashlib")
 _generate_hash_function("SHA256", hashlib.sha256, origin="hashlib")
 _generate_hash_function("SHA512", hashlib.sha512, origin="hashlib")
-for local_name, hash_name in (("RMD160", "ripemd160"), ("WHIRLPOOL", "whirlpool"), ("BLAKE2B", "blake2b"),
-                              ("BLAKE2S", "blake2s"), ("SHA3_256", "sha3_256"), ("SHA3_512", "sha3_512"),
+for local_name, hash_name in (("RMD160", "ripemd160"), ("WHIRLPOOL", "whirlpool"),
+                              ("BLAKE2B", "blake2b"), ("BLAKE2S", "blake2s"),
+                              ("SHA3_256", "sha3_256"), ("SHA3_512", "sha3_512"),
                               ):
     try:
         hashlib.new(hash_name)
     except ValueError:
         pass
     else:
-        _generate_hash_function(local_name, functools.partial(hashlib.new, hash_name), origin="hashlib")
+        _generate_hash_function(local_name,
+                                functools.partial(hashlib.new, hash_name),
+                                origin="hashlib")
 
 # Use pycrypto when available, prefer it over the internal fallbacks
 # Check for 'new' attributes, since they can be missing if the module
@@ -139,7 +142,8 @@ if "RMD160" not in hashfunc_map:
             for local_name, hash_name in (("RMD160", "RIPEMD160"), ):
                 if local_name not in hashfunc_map and hasattr(mhash, f"MHASH_{hash_name}"):
                     _generate_hash_function(local_name,
-                                            functools.partial(mhash.MHASH, getattr(mhash, f"MHASH_{hash_name}")),
+                                            functools.partial(mhash.MHASH,
+                                                              getattr(mhash, f"MHASH_{hash_name}")),
                                             origin="mhash",
                                             )
         except ImportError:
@@ -187,8 +191,8 @@ if os.path.exists(PRELINK_BINARY):
 def is_prelinkable_elf(filename):
     with _open_file(filename) as f:
         magic = f.read(17)
-    return len(magic) == 17 and magic.startswith(b"\x7fELF") and magic[16:17] in (b"\x02", b"\x03"
-                                                                                  )  # 2=ET_EXEC, 3=ET_DYN
+    return len(magic) == 17 and magic.startswith(b"\x7fELF") and magic[16:17] in (
+        b"\x02", b"\x03")  # 2=ET_EXEC, 3=ET_DYN
 
 
 def perform_md5(x, calc_prelink=0):
@@ -343,7 +347,8 @@ def verify_all(filename, mydict, calc_prelink=0, strict=0):
             myhash = perform_checksum(filename, x, calc_prelink=calc_prelink)[0]
             if mydict[x] != myhash:
                 if strict:
-                    raise portage.exception.DigestException(f"Failed to verify '{filename}' on checksum type '{x}'")
+                    raise portage.exception.DigestException(
+                        f"Failed to verify '{filename}' on checksum type '{x}'")
                 else:
                     file_is_ok = False
                     reason = (f"Failed on {x} verification", myhash, mydict[x])
@@ -381,7 +386,8 @@ def perform_checksum(filename, hashname="MD5", calc_prelink=0):
             try:
                 tmpfile_fd, prelink_tmpfile = tempfile.mkstemp()
                 try:
-                    retval = portage.process.spawn([PRELINK_BINARY, "--verify", filename], fd_pipes={1: tmpfile_fd})
+                    retval = portage.process.spawn([PRELINK_BINARY, "--verify", filename],
+                                                   fd_pipes={1: tmpfile_fd})
                 finally:
                     os.close(tmpfile_fd)
                 if retval == os.EX_OK:
@@ -429,7 +435,8 @@ def perform_multiple_checksums(filename, hashes=["MD5"], calc_prelink=0):
     rVal = {}
     for x in hashes:
         if x not in hashfunc_keys:
-            raise portage.exception.DigestException(f"{x} hash function not available (needs dev-python/pycrypto)")
+            raise portage.exception.DigestException(
+                f"{x} hash function not available (needs dev-python/pycrypto)")
         rVal[x] = perform_checksum(filename, x, calc_prelink)[0]
     return rVal
 
@@ -446,5 +453,6 @@ def checksum_str(data, hashname="MD5"):
     @return: The hash (hex-digest) of the data
     """
     if hashname not in hashfunc_keys:
-        raise portage.exception.DigestException(f"{hashname} hash function not available (needs dev-python/pycrypto)")
+        raise portage.exception.DigestException(
+            f"{hashname} hash function not available (needs dev-python/pycrypto)")
     return hashfunc_map[hashname].checksum_str(data)

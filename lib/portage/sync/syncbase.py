@@ -109,7 +109,8 @@ class SyncBase:
         """
         if self._repo_storage is None:
             storage_cls = portage.load_mod(self._select_storage_module())
-            self._repo_storage = _sync_methods(storage_cls(self.repo, self.spawn_kwargs), loop=global_event_loop())
+            self._repo_storage = _sync_methods(storage_cls(self.repo, self.spawn_kwargs),
+                                               loop=global_event_loop())
         return self._repo_storage
 
     @property
@@ -183,13 +184,15 @@ class SyncBase:
             retry_overall_timeout = None
         else:
             try:
-                retry_overall_timeout = float(self.repo.sync_openpgp_key_refresh_retry_overall_timeout)
+                retry_overall_timeout = float(
+                    self.repo.sync_openpgp_key_refresh_retry_overall_timeout)
             except Exception as e:
                 errors.append(f"sync-openpgp-key-refresh-retry-overall-timeout: {e}")
             else:
                 if retry_overall_timeout < 0:
                     errors.append("sync-openpgp-key-refresh-retry-overall-timeout: "
-                                  "value must be greater than or equal to zero: {}".format(retry_overall_timeout))
+                                  "value must be greater than or equal to zero: {}".format(
+                                      retry_overall_timeout))
                 elif retry_overall_timeout == 0:
                     retry_overall_timeout = None
 
@@ -209,7 +212,8 @@ class SyncBase:
             retry_delay_exp_base = None
         else:
             try:
-                retry_delay_exp_base = float(self.repo.sync_openpgp_key_refresh_retry_delay_exp_base)
+                retry_delay_exp_base = float(
+                    self.repo.sync_openpgp_key_refresh_retry_delay_exp_base)
             except Exception as e:
                 errors.append(f"sync-openpgp-key-refresh-retry-delay-exp: {e}")
             else:
@@ -262,8 +266,9 @@ class SyncBase:
             return
         out.eend(1)
 
-        out.ebegin("Refreshing keys from keyserver{}".format("" if self.repo.sync_openpgp_keyserver is None else " " +
-                                                             self.repo.sync_openpgp_keyserver))
+        out.ebegin("Refreshing keys from keyserver{}".format(
+            "" if self.repo.sync_openpgp_keyserver is None else " " +
+            self.repo.sync_openpgp_keyserver))
         retry_decorator = self._key_refresh_retry_decorator()
         if retry_decorator is None:
             openpgp_env.refresh_keys_keyserver(keyserver=self.repo.sync_openpgp_keyserver)
@@ -286,7 +291,8 @@ class SyncBase:
             # order to enforce timeouts.
             loop = global_event_loop()
             with ForkExecutor(loop=loop) as executor:
-                func_coroutine = functools.partial(loop.run_in_executor, executor, noisy_refresh_keys)
+                func_coroutine = functools.partial(loop.run_in_executor, executor,
+                                                   noisy_refresh_keys)
                 decorated_func = retry_decorator(func_coroutine, loop=loop)
                 loop.run_until_complete(decorated_func())
         out.eend(0)

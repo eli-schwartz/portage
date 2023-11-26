@@ -8,21 +8,22 @@ import sys
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(globals(), "logging", "portage.dep:Atom", "portage.util:writemsg_level", "textwrap",
-                                    "_emerge.actions:load_emerge_config,run_action," + "validate_ebuild_environment",
-                                    "_emerge.help:emerge_help",
-                                    "_emerge.is_valid_package_atom:insert_category_into_atom",
-                                    )
+portage.proxy.lazyimport.lazyimport(
+    globals(), "logging", "portage.dep:Atom", "portage.util:writemsg_level", "textwrap",
+    "_emerge.actions:load_emerge_config,run_action," + "validate_ebuild_environment",
+    "_emerge.help:emerge_help", "_emerge.is_valid_package_atom:insert_category_into_atom",
+)
 from portage import os
 from portage.sync import _SUBMODULE_PATH_MAP
 
 from typing import Optional
 
 options = [
-    "--alphabetical", "--ask-enter-invalid", "--buildpkgonly", "--changed-use", "--columns", "--debug", "--digest",
-    "--emptytree", "--verbose-conflicts", "--fetchonly", "--fetch-all-uri", "--ignore-default-opts", "--noconfmem",
-    "--newrepo", "--newuse", "--nodeps", "--noreplace", "--nospinner", "--oneshot", "--onlydeps", "--pretend",
-    "--quiet-repo-display", "--quiet-unmerge-warn", "--resume", "--searchdesc", "--skipfirst", "--tree",
+    "--alphabetical", "--ask-enter-invalid", "--buildpkgonly", "--changed-use", "--columns",
+    "--debug", "--digest", "--emptytree", "--verbose-conflicts", "--fetchonly", "--fetch-all-uri",
+    "--ignore-default-opts", "--noconfmem", "--newrepo", "--newuse", "--nodeps", "--noreplace",
+    "--nospinner", "--oneshot", "--onlydeps", "--pretend", "--quiet-repo-display",
+    "--quiet-unmerge-warn", "--resume", "--searchdesc", "--skipfirst", "--tree",
     "--unordered-display", "--update", "--update-if-installed",
 ]
 
@@ -283,8 +284,8 @@ def parse_opts(tmpcmdline, silent=False):
     myopts = {}
 
     actions = frozenset([
-        "clean", "check-news", "config", "depclean", "help", "info", "list-sets", "metadata", "moo", "prune",
-        "rage-clean", "regen", "search", "sync", "unmerge", "version",
+        "clean", "check-news", "config", "depclean", "help", "info", "list-sets", "metadata", "moo",
+        "prune", "rage-clean", "regen", "search", "sync", "unmerge", "version",
     ])
 
     longopt_aliases = {"--cols": "--columns", "--skip-first": "--skipfirst"}
@@ -401,7 +402,8 @@ def parse_opts(tmpcmdline, silent=False):
             "choices": true_y_or_n,
         },
         "--complete-graph-if-new-use": {
-            "help": "trigger --complete-graph behavior if USE or IUSE will change for an installed package",
+            "help":
+            "trigger --complete-graph behavior if USE or IUSE will change for an installed package",
             "choices": y_or_n,
         },
         "--complete-graph-if-new-ver": {
@@ -415,7 +417,8 @@ def parse_opts(tmpcmdline, silent=False):
             "help":
             "Specifies how deep to recurse into dependencies " +
             "of packages given as arguments. If no argument is given, " +
-            "depth is unlimited. Default behavior is to skip " + "dependencies of installed packages.",
+            "depth is unlimited. Default behavior is to skip " +
+            "dependencies of installed packages.",
             "action":
             "store",
         },
@@ -429,7 +432,8 @@ def parse_opts(tmpcmdline, silent=False):
             "choices": true_y_or_n,
         },
         "--dynamic-deps": {
-            "help": "substitute the dependencies of installed packages with the dependencies of unbuilt ebuilds",
+            "help":
+            "substitute the dependencies of installed packages with the dependencies of unbuilt ebuilds",
             "choices": y_or_n,
         },
         "--exclude": {
@@ -437,7 +441,8 @@ def parse_opts(tmpcmdline, silent=False):
             "-X",
             "help":
             "A space separated list of package names or slot atoms. " +
-            "Emerge won't  install any ebuild or binary package that " + "matches any of the given package atoms.",
+            "Emerge won't  install any ebuild or binary package that " +
+            "matches any of the given package atoms.",
             "action":
             "append",
         },
@@ -493,7 +498,8 @@ def parse_opts(tmpcmdline, silent=False):
             "-l",
             "help":
             "Specifies that no new builds should be started " +
-            "if there are other builds running and the load average " + "is at least LOAD (a floating-point number).",
+            "if there are other builds running and the load average " +
+            "is at least LOAD (a floating-point number).",
             "action":
             "store",
         },
@@ -538,8 +544,8 @@ def parse_opts(tmpcmdline, silent=False):
             "choices": true_y_or_n,
         },
         "--usepkg-exclude": {
-            "help":
-            "A space separated list of package names or slot atoms. " + "Emerge will ignore matching binary packages. ",
+            "help": "A space separated list of package names or slot atoms. " +
+            "Emerge will ignore matching binary packages. ",
             "action": "append",
         },
         "--onlydeps-with-ideps": {
@@ -560,7 +566,8 @@ def parse_opts(tmpcmdline, silent=False):
         "--rebuild-ignore": {
             "help":
             "A space separated list of package names or slot atoms. " +
-            "Emerge will not rebuild packages that depend on matching " + "packages due to the --rebuild flag. ",
+            "Emerge will not rebuild packages that depend on matching " +
+            "packages due to the --rebuild flag. ",
             "action":
             "append",
         },
@@ -611,20 +618,24 @@ def parse_opts(tmpcmdline, silent=False):
         },
         "--rebuild-if-new-rev": {
             "help":
-            "Rebuild packages when dependencies that are " + "used at both build-time and run-time are built, " +
+            "Rebuild packages when dependencies that are " +
+            "used at both build-time and run-time are built, " +
             "if the dependency is not already installed with the " + "same version and revision.",
             "choices":
             true_y_or_n,
         },
         "--rebuild-if-new-ver": {
             "help":
-            "Rebuild packages when dependencies that are " + "used at both build-time and run-time are built, " +
-            "if the dependency is not already installed with the " + "same version. Revision numbers are ignored.",
+            "Rebuild packages when dependencies that are " +
+            "used at both build-time and run-time are built, " +
+            "if the dependency is not already installed with the " +
+            "same version. Revision numbers are ignored.",
             "choices":
             true_y_or_n,
         },
         "--rebuild-if-unbuilt": {
-            "help": "Rebuild packages when dependencies that are " + "used at both build-time and run-time are built.",
+            "help": "Rebuild packages when dependencies that are " +
+            "used at both build-time and run-time are built.",
             "choices": true_y_or_n,
         },
         "--rebuilt-binaries": {
@@ -632,7 +643,8 @@ def parse_opts(tmpcmdline, silent=False):
             "choices": true_y_or_n,
         },
         "--rebuilt-binaries-timestamp": {
-            "help": "use only binaries that are newer than this " + "timestamp for --rebuilt-binaries",
+            "help":
+            "use only binaries that are newer than this " + "timestamp for --rebuilt-binaries",
             "action": "store",
         },
         "--regex-search-auto": {
@@ -655,7 +667,8 @@ def parse_opts(tmpcmdline, silent=False):
         "--search-similarity": {
             "help": ("Set minimum similarity percentage for fuzzy seach "
                      "(a floating-point number between 0 and 100)"),
-            "action": "store",
+            "action":
+            "store",
         },
         "--select": {
             "shortopt": "-w",
@@ -717,9 +730,17 @@ def parse_opts(tmpcmdline, silent=False):
     parser = argparse.ArgumentParser(add_help=False)
 
     for action_opt in actions:
-        parser.add_argument(f"--{action_opt}", action="store_true", dest=action_opt.replace("-", "_"), default=False, )
+        parser.add_argument(f"--{action_opt}",
+                            action="store_true",
+                            dest=action_opt.replace("-", "_"),
+                            default=False,
+                            )
     for myopt in options:
-        parser.add_argument(myopt, action="store_true", dest=myopt.lstrip("--").replace("-", "_"), default=False, )
+        parser.add_argument(myopt,
+                            action="store_true",
+                            dest=myopt.lstrip("--").replace("-", "_"),
+                            default=False,
+                            )
     for shortopt, longopt in shortmapping.items():
         parser.add_argument(f"-{shortopt}",
                             action="store_true",
@@ -727,7 +748,11 @@ def parse_opts(tmpcmdline, silent=False):
                             default=False,
                             )
     for myalias, myopt in longopt_aliases.items():
-        parser.add_argument(myalias, action="store_true", dest=myopt.lstrip("--").replace("-", "_"), default=False, )
+        parser.add_argument(myalias,
+                            action="store_true",
+                            dest=myopt.lstrip("--").replace("-", "_"),
+                            default=False,
+                            )
 
     for myopt, kwargs in argument_options.items():
         shortopt = kwargs.pop("shortopt", None)
@@ -829,10 +854,12 @@ def parse_opts(tmpcmdline, silent=False):
     if myoptions.depclean_lib_check in true_y:
         myoptions.depclean_lib_check = True
 
-    candidate_bad_options = ((myoptions.exclude, "exclude"), (myoptions.reinstall_atoms, "reinstall-atoms"),
-                             (myoptions.rebuild_exclude, "rebuild-exclude"),
-                             (myoptions.rebuild_ignore, "rebuild-ignore"), (myoptions.usepkg_exclude, "usepkg-exclude"),
-                             (myoptions.useoldpkg_atoms, "useoldpkg-atoms"),
+    candidate_bad_options = ((myoptions.exclude, "exclude"), (myoptions.reinstall_atoms,
+                                                              "reinstall-atoms"),
+                             (myoptions.rebuild_exclude,
+                              "rebuild-exclude"), (myoptions.rebuild_ignore, "rebuild-ignore"),
+                             (myoptions.usepkg_exclude,
+                              "usepkg-exclude"), (myoptions.useoldpkg_atoms, "useoldpkg-atoms"),
                              )
     bad_options = ((_find_bad_atoms(atoms), flag) for atoms, flag in candidate_bad_options if atoms)
 
@@ -995,7 +1022,8 @@ def parse_opts(tmpcmdline, silent=False):
             rebuilt_binaries_timestamp = 0
             if not silent:
                 parser.error(
-                    f"Invalid --rebuilt-binaries-timestamp parameter: '{myoptions.rebuilt_binaries_timestamp}'\n")
+                    f"Invalid --rebuilt-binaries-timestamp parameter: '{myoptions.rebuilt_binaries_timestamp}'\n"
+                )
 
         myoptions.rebuilt_binaries_timestamp = rebuilt_binaries_timestamp
 
@@ -1003,11 +1031,14 @@ def parse_opts(tmpcmdline, silent=False):
         try:
             search_similarity = float(myoptions.search_similarity)
         except ValueError:
-            parser.error(f"Invalid --search-similarity parameter (not a number): '{myoptions.search_similarity}'\n")
+            parser.error(
+                f"Invalid --search-similarity parameter (not a number): '{myoptions.search_similarity}'\n"
+            )
 
         if search_similarity < 0 or search_similarity > 100:
             parser.error(
-                f"Invalid --search-similarity parameter (not between 0 and 100): '{myoptions.search_similarity}'\n")
+                f"Invalid --search-similarity parameter (not between 0 and 100): '{myoptions.search_similarity}'\n"
+            )
 
         myoptions.search_similarity = search_similarity
 
@@ -1073,12 +1104,16 @@ def profile_check(trees, myaction):
     if myaction in ("help", "info", "search", "sync", "version"):
         return os.EX_OK
     for root_trees in trees.values():
-        if root_trees["root_config"].settings.profiles and "ARCH" in root_trees["root_config"].settings:
+        if root_trees["root_config"].settings.profiles and "ARCH" in root_trees[
+                "root_config"].settings:
             continue
         # generate some profile related warning messages
         validate_ebuild_environment(trees)
         msg = "Your current profile is invalid. If you have just changed " "your profile configuration, you should revert back to the " "previous configuration. Allowed actions are limited to " "--help, --info, --search, --sync, and --version."
-        writemsg_level("".join(f"!!! {l}\n" for l in textwrap.wrap(msg, 70)), level=logging.ERROR, noiselevel=-1, )
+        writemsg_level("".join(f"!!! {l}\n" for l in textwrap.wrap(msg, 70)),
+                       level=logging.ERROR,
+                       noiselevel=-1,
+                       )
         return 1
     return os.EX_OK
 
@@ -1145,11 +1180,12 @@ def emerge_main(args: Optional[list[str]] = None):
     # filter for obviously broken /dev/s.
     try:
         if os.stat(os.devnull).st_rdev == 0:
-            writemsg_level("Failed to validate a sane '/dev'.\n"
-                           "'/dev/null' is not a device file.\n",
-                           level=logging.ERROR,
-                           noiselevel=-1,
-                           )
+            writemsg_level(
+                "Failed to validate a sane '/dev'.\n"
+                "'/dev/null' is not a device file.\n",
+                level=logging.ERROR,
+                noiselevel=-1,
+            )
             return 1
     except OSError:
         writemsg_level("Failed to validate a sane '/dev'.\n"
@@ -1179,9 +1215,9 @@ def emerge_main(args: Optional[list[str]] = None):
     emerge_config = load_emerge_config(action=myaction, args=myfiles, opts=myopts)
 
     # Make locale variables from configuration files (make.defaults, make.conf) affect locale of emerge process.
-    for locale_var_name in ("LANGUAGE", "LC_ALL", "LC_ADDRESS", "LC_COLLATE", "LC_CTYPE", "LC_IDENTIFICATION",
-                            "LC_MEASUREMENT", "LC_MESSAGES", "LC_MONETARY", "LC_NAME", "LC_NUMERIC", "LC_PAPER",
-                            "LC_TELEPHONE", "LC_TIME", "LANG",
+    for locale_var_name in ("LANGUAGE", "LC_ALL", "LC_ADDRESS", "LC_COLLATE", "LC_CTYPE",
+                            "LC_IDENTIFICATION", "LC_MEASUREMENT", "LC_MESSAGES", "LC_MONETARY",
+                            "LC_NAME", "LC_NUMERIC", "LC_PAPER", "LC_TELEPHONE", "LC_TIME", "LANG",
                             ):
         locale_var_value = emerge_config.running_config.settings.get(locale_var_name)
         if locale_var_value is not None:
@@ -1193,7 +1229,9 @@ def emerge_main(args: Optional[list[str]] = None):
 
     tmpcmdline = []
     if "--ignore-default-opts" not in myopts:
-        tmpcmdline.extend(portage.util.shlex_split(emerge_config.target_config.settings.get("EMERGE_DEFAULT_OPTS", "")))
+        tmpcmdline.extend(
+            portage.util.shlex_split(
+                emerge_config.target_config.settings.get("EMERGE_DEFAULT_OPTS", "")))
     tmpcmdline.extend(args)
     emerge_config.action, emerge_config.opts, emerge_config.args = parse_opts(tmpcmdline)
 

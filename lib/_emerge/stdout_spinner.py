@@ -14,10 +14,11 @@ class stdout_spinner:
         "Are you actually trying to read this?", "How many times have you stared at this?",
         "We are generating the cache right now", "You are paying too much attention.",
         "A theory is better than its explanation.", "Phasers locked on target, Captain.",
-        "Thrashing is just virtual crashing.", "To be is to program.", "Real Users hate Real Programmers.",
-        "When all else fails, read the instructions.", "Functionality breeds Contempt.", "The future lies ahead.",
-        "3.1415926535897932384626433832795028841971694", "Sometimes insanity is the only alternative.",
-        "Inaccuracy saves a world of explanation.",
+        "Thrashing is just virtual crashing.", "To be is to program.",
+        "Real Users hate Real Programmers.", "When all else fails, read the instructions.",
+        "Functionality breeds Contempt.", "The future lies ahead.",
+        "3.1415926535897932384626433832795028841971694",
+        "Sometimes insanity is the only alternative.", "Inaccuracy saves a world of explanation.",
     ]
 
     twirl_sequence = "/-\\|/-\\|/-\\|/-\\|\\-/|\\-/|\\-/|\\-/|"
@@ -59,8 +60,9 @@ class stdout_spinner:
             return True
         if self.spinpos >= len(self.scroll_sequence):
             sys.stdout.write(
-                darkgreen(" \b\b\b" + self.scroll_sequence[len(self.scroll_sequence) - 1 -
-                                                           (self.spinpos % len(self.scroll_sequence))]))
+                darkgreen(" \b\b\b" +
+                          self.scroll_sequence[len(self.scroll_sequence) - 1 -
+                                               (self.spinpos % len(self.scroll_sequence))]))
         else:
             sys.stdout.write(green("\b " + self.scroll_sequence[self.spinpos]))
         sys.stdout.flush()

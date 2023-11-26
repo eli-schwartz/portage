@@ -6,7 +6,9 @@ import sys
 from portage.cache.mappings import slot_dict_class
 import portage
 
-portage.proxy.lazyimport.lazyimport(globals(), "portage.package.ebuild._metadata_invalid:eapi_invalid", )
+portage.proxy.lazyimport.lazyimport(globals(),
+                                    "portage.package.ebuild._metadata_invalid:eapi_invalid",
+                                    )
 from portage import os
 from portage import _encodings
 from portage import _unicode_decode
@@ -21,8 +23,8 @@ class EbuildMetadataPhase(SubProcess):
     used to extract metadata from the ebuild.
     """
 
-    __slots__ = ("cpv", "eapi_supported", "ebuild_hash", "fd_pipes", "metadata", "portdb", "repo_path", "settings",
-                 "write_auxdb",
+    __slots__ = ("cpv", "eapi_supported", "ebuild_hash", "fd_pipes", "metadata", "portdb",
+                 "repo_path", "settings", "write_auxdb",
                  ) + ("_eapi", "_eapi_lineno", "_raw_metadata",
                       )
 
@@ -87,7 +89,9 @@ class EbuildMetadataPhase(SubProcess):
 
         master_fd, slave_fd = os.pipe()
 
-        fcntl.fcntl(master_fd, fcntl.F_SETFL, fcntl.fcntl(master_fd, fcntl.F_GETFL) | os.O_NONBLOCK, )
+        fcntl.fcntl(master_fd, fcntl.F_SETFL,
+                    fcntl.fcntl(master_fd, fcntl.F_GETFL) | os.O_NONBLOCK,
+                    )
 
         fd_pipes[slave_fd] = slave_fd
         settings["PORTAGE_PIPE_FD"] = str(slave_fd)
@@ -166,7 +170,8 @@ class EbuildMetadataPhase(SubProcess):
                 if parsed_eapi is None:
                     parsed_eapi = "0"
                 self.eapi_supported = portage.eapi_is_supported(metadata["EAPI"])
-                if (not metadata["EAPI"] or self.eapi_supported) and metadata["EAPI"] != parsed_eapi:
+                if (not metadata["EAPI"]
+                        or self.eapi_supported) and metadata["EAPI"] != parsed_eapi:
                     self._eapi_invalid(metadata)
                     metadata_valid = False
 
@@ -185,7 +190,8 @@ class EbuildMetadataPhase(SubProcess):
                     # If called by egencache, this cache write is
                     # undesirable when metadata-transfer is disabled.
                     if self.write_auxdb is not False:
-                        self.portdb._write_cache(self.cpv, self.repo_path, metadata, self.ebuild_hash)
+                        self.portdb._write_cache(self.cpv, self.repo_path, metadata,
+                                                 self.ebuild_hash)
                 else:
                     metadata = {"EAPI": metadata["EAPI"]}
                 self.metadata = metadata
@@ -198,4 +204,6 @@ class EbuildMetadataPhase(SubProcess):
             eapi_var = metadata["EAPI"]
         else:
             eapi_var = None
-        eapi_invalid(self, self.cpv, repo_name, self.settings, eapi_var, self._eapi, self._eapi_lineno, )
+        eapi_invalid(self, self.cpv, repo_name, self.settings, eapi_var, self._eapi,
+                     self._eapi_lineno,
+                     )

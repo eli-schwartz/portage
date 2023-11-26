@@ -4,7 +4,8 @@
 from _emerge.AbstractEbuildProcess import AbstractEbuildProcess
 import portage
 
-portage.proxy.lazyimport.lazyimport(globals(), "portage.package.ebuild.doebuild:_doebuild_spawn,_spawn_actionmap")
+portage.proxy.lazyimport.lazyimport(
+    globals(), "portage.package.ebuild.doebuild:_doebuild_spawn,_spawn_actionmap")
 
 
 class EbuildProcess(AbstractEbuildProcess):

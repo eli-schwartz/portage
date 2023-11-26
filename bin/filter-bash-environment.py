@@ -70,7 +70,8 @@ def filter_bash_environment(pattern, file_in, file_out):
                 # to ensure that the start quote is not misidentified as the
                 # end quote (happens if there is a newline immediately after
                 # the start quote).
-                if quote is not None and not have_end_quote(quote, line[var_assign_match.end(2) + 2:]):
+                if quote is not None and not have_end_quote(quote,
+                                                            line[var_assign_match.end(2) + 2:]):
                     multi_line_quote = quote
                     multi_line_quote_filter = filter_this
                 if not filter_this:
@@ -116,7 +117,8 @@ def filter_bash_environment(pattern, file_in, file_out):
 
 
 if __name__ == "__main__":
-    description = ("Filter out variable assignments for variable " + "names matching a given PATTERN " +
+    description = ("Filter out variable assignments for variable " +
+                   "names matching a given PATTERN " +
                    "while leaving bash function definitions and here-documents " +
                    "intact. The PATTERN is a space separated list of variable names" +
                    " and it supports python regular expression syntax.")

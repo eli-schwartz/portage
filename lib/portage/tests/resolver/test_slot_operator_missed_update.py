@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class BacktrackMissedUpdateTestCase(TestCase):
@@ -100,12 +102,16 @@ class BacktrackMissedUpdateTestCase(TestCase):
                                        },
                                        success=True,
                                        mergelist=[
-                                           "dev-python/pypy3-7.3.2_rc2_p37-r1", "dev-python/setuptools-46.4.0-r2",
+                                           "dev-python/pypy3-7.3.2_rc2_p37-r1",
+                                           "dev-python/setuptools-46.4.0-r2",
                                            "dev-vcs/mercurial-5.5.1",
                                        ],
                                        ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

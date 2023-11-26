@@ -99,7 +99,8 @@ def dump_xattrs(pathnames, file_out):
         for attr in attrs:
             attr = unicode_encode(attr)
             value = xattr.get(pathname, attr)
-            file_out.write(b'%s="%s"\n' % (quote(attr, b"=" + quote_chars), quote(value, b'\0"' + quote_chars)))
+            file_out.write(b'%s="%s"\n' %
+                           (quote(attr, b"=" + quote_chars), quote(value, b'\0"' + quote_chars)))
 
 
 def restore_xattrs(file_in):

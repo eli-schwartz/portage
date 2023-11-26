@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -24,16 +26,17 @@ class BinaryPkgEbuildVisibilityTestCase(TestCase):
             # Test bug #612960, where --use-ebuild-visibility failed
             # to reject binary packages for which ebuilds were not
             # available.
-            ResolverPlaygroundTestCase(["@world"],
-                                       options={
-                                           "--update": True,
-                                           "--deep": True,
-                                           "--use-ebuild-visibility": "y",
-                                           "--usepkgonly": True,
-                                       },
-                                       success=True,
-                                       mergelist=["[binary]app-misc/foo-2", ],
-                                       ),
+            ResolverPlaygroundTestCase(
+                ["@world"],
+                options={
+                    "--update": True,
+                    "--deep": True,
+                    "--use-ebuild-visibility": "y",
+                    "--usepkgonly": True,
+                },
+                success=True,
+                mergelist=["[binary]app-misc/foo-2", ],
+            ),
             ResolverPlaygroundTestCase(["@world"],
                                        options={
                                            "--update": True,
@@ -105,7 +108,8 @@ class BinaryPkgEbuildVisibilityTestCase(TestCase):
                                                 installed=installed,
                                                 world=world,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:

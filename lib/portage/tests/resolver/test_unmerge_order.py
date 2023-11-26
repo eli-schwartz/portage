@@ -90,17 +90,19 @@ class UnmergeOrderTestCase(TestCase):
             # Three cpv atoms belonging to the same cp. The pkgmap should contain an
             # entry for each cpv, in the same order. Since there are no other instances
             # of the cp, the omitted section of each entry should be empty.
-            _TestData(["c/z-4", "c/z-5", "c/z-6"], [(["c/z-4"], []), (["c/z-5"], []), (["c/z-6"], [])],
-                      ), _TestData(["c/z-6", "c/z-5", "c/z-4"], [(["c/z-6"], []), (["c/z-5"], []), (["c/z-4"], [])],
-                                   ),
+            _TestData(["c/z-4", "c/z-5", "c/z-6"], [(["c/z-4"], []), (["c/z-5"], []),
+                                                    (["c/z-6"], [])],
+                      ),
+            _TestData(["c/z-6", "c/z-5", "c/z-4"], [(["c/z-6"], []), (["c/z-5"], []),
+                                                    (["c/z-4"], [])],
+                      ),
             # First a cp atom, then a cpv atom that is an instance of the cp. The
             # pkgmap should contain an entry containing all installed cpv's that the cp
             # expands to, in sorted order. It should then contain an empty entry
             # representing the input cpv that is already covered by the expansion of
             # the cp.
-            _TestData(["c/z", "c/z-4"],
-                      [(["c/z-4", "c/z-5", "c/z-6"], []),
-                       ([], [])]), _TestData(["c/z", "c/z-6"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], [])]),
+            _TestData(["c/z", "c/z-4"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], [])]),
+            _TestData(["c/z", "c/z-6"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], [])]),
             # First a cpv atom, then the cp to which the cpv belongs. The pkgmap
             # should contain an entry for the first cpv, then an entry containing
             # the remaining cpv's to which the cp expands.
@@ -109,42 +111,56 @@ class UnmergeOrderTestCase(TestCase):
             # More mixed cp/cpv's. The cp should expand to all cpv's except those
             # covered by a preceding cpv. The cpv's after the cp should result in empty
             # entries, since they are already covered by the expansion of the cp.
-            _TestData(["c/z", "c/z-4", "c/z-5"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], []), ([], [])],
-                      ), _TestData(["c/z", "c/z-5", "c/z-4"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], []), ([], [])],
-                                   ),
-            _TestData(["c/z-4", "c/z", "c/z-5"], [(["c/z-4"], []), (["c/z-5", "c/z-6"], []), ([], [])],
-                      ), _TestData(["c/z-5", "c/z", "c/z-4"], [(["c/z-5"], []), (["c/z-4", "c/z-6"], []), ([], [])],
-                                   ),
-            _TestData(["c/z-4", "c/z-5", "c/z"], [(["c/z-4"], []), (["c/z-5"], []), (["c/z-6"], [])],
-                      ), _TestData(["c/z-5", "c/z-4", "c/z"], [(["c/z-5"], []), (["c/z-4"], []), (["c/z-6"], [])],
-                                   ),
-            _TestData(["c/z", "c/z-4", "c/z-5", "c/z-6"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], []), ([], []),
+            _TestData(["c/z", "c/z-4", "c/z-5"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], []),
+                                                  ([], [])],
+                      ),
+            _TestData(["c/z", "c/z-5", "c/z-4"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], []),
+                                                  ([], [])],
+                      ),
+            _TestData(["c/z-4", "c/z", "c/z-5"], [(["c/z-4"], []), (["c/z-5", "c/z-6"], []),
+                                                  ([], [])],
+                      ),
+            _TestData(["c/z-5", "c/z", "c/z-4"], [(["c/z-5"], []), (["c/z-4", "c/z-6"], []),
+                                                  ([], [])],
+                      ),
+            _TestData(["c/z-4", "c/z-5", "c/z"], [(["c/z-4"], []), (["c/z-5"], []),
+                                                  (["c/z-6"], [])],
+                      ),
+            _TestData(["c/z-5", "c/z-4", "c/z"], [(["c/z-5"], []), (["c/z-4"], []),
+                                                  (["c/z-6"], [])],
+                      ),
+            _TestData(["c/z", "c/z-4", "c/z-5", "c/z-6"], [(["c/z-4", "c/z-5", "c/z-6"], []),
+                                                           ([], []), ([], []), ([], [])],
+                      ),
+            _TestData(["c/z", "c/z-6", "c/z-5", "c/z-4"], [(["c/z-4", "c/z-5", "c/z-6"], []),
+                                                           ([], []), ([], []), ([], [])],
+                      ),
+            _TestData(["c/z-4", "c/z", "c/z-5", "c/z-6"], [(["c/z-4"], []),
+                                                           (["c/z-5", "c/z-6"], []), ([], []),
                                                            ([], [])],
                       ),
-            _TestData(["c/z", "c/z-6", "c/z-5", "c/z-4"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], []), ([], []),
+            _TestData(["c/z-6", "c/z", "c/z-5", "c/z-4"], [(["c/z-6"], []),
+                                                           (["c/z-4", "c/z-5"], []), ([], []),
                                                            ([], [])],
                       ),
-            _TestData(["c/z-4", "c/z", "c/z-5", "c/z-6"], [(["c/z-4"], []), (["c/z-5", "c/z-6"], []), ([], []),
-                                                           ([], [])],
+            _TestData(["c/z-4", "c/z-5", "c/z", "c/z-6"], [(["c/z-4"], []), (["c/z-5"], []),
+                                                           (["c/z-6"], []), ([], [])],
                       ),
-            _TestData(["c/z-6", "c/z", "c/z-5", "c/z-4"], [(["c/z-6"], []), (["c/z-4", "c/z-5"], []), ([], []),
-                                                           ([], [])],
+            _TestData(["c/z-6", "c/z-5", "c/z", "c/z-4"], [(["c/z-6"], []), (["c/z-5"], []),
+                                                           (["c/z-4"], []), ([], [])],
                       ),
-            _TestData(["c/z-4", "c/z-5", "c/z", "c/z-6"], [(["c/z-4"], []), (["c/z-5"], []), (["c/z-6"], []), ([], [])],
+            _TestData(["c/z-4", "c/z-5", "c/z-6", "c/z"], [(["c/z-4"], []), (["c/z-5"], []),
+                                                           (["c/z-6"], []), ([], [])],
                       ),
-            _TestData(["c/z-6", "c/z-5", "c/z", "c/z-4"], [(["c/z-6"], []), (["c/z-5"], []), (["c/z-4"], []), ([], [])],
-                      ),
-            _TestData(["c/z-4", "c/z-5", "c/z-6", "c/z"], [(["c/z-4"], []), (["c/z-5"], []), (["c/z-6"], []), ([], [])],
-                      ),
-            _TestData(["c/z-6", "c/z-5", "c/z-4", "c/z"], [(["c/z-6"], []), (["c/z-5"], []), (["c/z-4"], []), ([], [])],
+            _TestData(["c/z-6", "c/z-5", "c/z-4", "c/z"], [(["c/z-6"], []), (["c/z-5"], []),
+                                                           (["c/z-4"], []), ([], [])],
                       ),
             # Two cpv that do not belong to the same cp. The pkgmap should contain an
             # entry for each cpv, in the same order. If there are other installed
             # instances of the cp to which the cpv belongs, they should be listed
             # in the omitted section.
-            _TestData(["c/x-1", "c/y-2"],
-                      [(["c/x-1"], []),
-                       (["c/y-2"], [])]), _TestData(["c/y-2", "c/x-1"], [(["c/y-2"], []), (["c/x-1"], [])]),
+            _TestData(["c/x-1", "c/y-2"], [(["c/x-1"], []), (["c/y-2"], [])]),
+            _TestData(["c/y-2", "c/x-1"], [(["c/y-2"], []), (["c/x-1"], [])]),
             _TestData(["c/x-1", "c/z-4"], [(["c/x-1"], []), (["c/z-4"], ["c/z-5", "c/z-6"])]),
             _TestData(["c/z-4", "c/x-1"], [(["c/z-4"], ["c/z-5", "c/z-6"]), (["c/x-1"], [])]),
             # cpv's/cp where some cpv's are not instances of the cp. The pkgmap should
@@ -152,19 +168,25 @@ class UnmergeOrderTestCase(TestCase):
             # to all installed instances.
             _TestData(["c/x-1", "c/z"], [(["c/x-1"], []), (["c/z-4", "c/z-5", "c/z-6"], [])]),
             _TestData(["c/z", "c/x-1"], [(["c/z-4", "c/z-5", "c/z-6"], []), (["c/x-1"], [])]),
-            _TestData(["c/x-1", "c/z-4", "c/z"], [(["c/x-1"], []), (["c/z-4"], []), (["c/z-5", "c/z-6"], [])],
+            _TestData(["c/x-1", "c/z-4", "c/z"], [(["c/x-1"], []), (["c/z-4"], []),
+                                                  (["c/z-5", "c/z-6"], [])],
                       ),
-            _TestData(["c/z-4", "c/z", "c/x-1"], [(["c/z-4"], []), (["c/z-5", "c/z-6"], []), (["c/x-1"], [])],
+            _TestData(["c/z-4", "c/z", "c/x-1"], [(["c/z-4"], []), (["c/z-5", "c/z-6"], []),
+                                                  (["c/x-1"], [])],
                       ),
-            _TestData(["c/x-1", "c/z", "c/z-4"], [(["c/x-1"], []), (["c/z-4", "c/z-5", "c/z-6"], []), ([], [])],
+            _TestData(["c/x-1", "c/z", "c/z-4"], [(["c/x-1"], []),
+                                                  (["c/z-4", "c/z-5", "c/z-6"], []), ([], [])],
                       ),
-            _TestData(["c/z", "c/z-4", "c/x-1"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], []), (["c/x-1"], [])],
+            _TestData(["c/z", "c/z-4", "c/x-1"], [(["c/z-4", "c/z-5", "c/z-6"], []), ([], []),
+                                                  (["c/x-1"], [])],
                       ),
             # Two different cp's. The pkglist should contain an entry for each cp,
             # in the same order, containing all cpv's that the cp's expands to.
-            _TestData(["c/z", "c/zz"], [(["c/z-4", "c/z-5", "c/z-6"], []), (["c/zz-4", "c/zz-5", "c/zz-6"], []), ],
+            _TestData(["c/z", "c/zz"], [(["c/z-4", "c/z-5", "c/z-6"], []),
+                                        (["c/zz-4", "c/zz-5", "c/zz-6"], []), ],
                       ),
-            _TestData(["c/zz", "c/z"], [(["c/zz-4", "c/zz-5", "c/zz-6"], []), (["c/z-4", "c/z-5", "c/z-6"], []), ],
+            _TestData(["c/zz", "c/z"], [(["c/zz-4", "c/zz-5", "c/zz-6"], []),
+                                        (["c/z-4", "c/z-5", "c/z-6"], []), ],
                       ),
         )
 
@@ -175,7 +197,10 @@ class UnmergeOrderTestCase(TestCase):
                 eroot = playground.settings["EROOT"]
                 root_config = playground.trees[eroot]["root_config"]
 
-                res, pkgmap = _unmerge_display(root_config, [], "unmerge", test_case.unmerge_files, ordered=True)
+                res, pkgmap = _unmerge_display(root_config, [],
+                                               "unmerge",
+                                               test_case.unmerge_files,
+                                               ordered=True)
 
                 self.assertEqual(res, os.EX_OK)
                 self.assertEqual(pkgmap, test_case.expected_pkgmap)

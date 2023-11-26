@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -65,7 +67,8 @@ class SonameOrChoicesTestCase(TestCase):
                                        },
                                        success=True,
                                        mergelist=[
-                                           "[binary]dev-lang/ocaml-4.02.1", "[binary]dev-ml/labltk-8.06.0",
+                                           "[binary]dev-lang/ocaml-4.02.1",
+                                           "[binary]dev-ml/labltk-8.06.0",
                                            "[binary]dev-ml/lablgl-1.05",
                                        ],
                                        ), )
@@ -79,7 +82,8 @@ class SonameOrChoicesTestCase(TestCase):
                                                 installed=installed,
                                                 world=world,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:

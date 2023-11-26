@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class SlotOperatorReverseDepsTestCase(TestCase):
@@ -79,11 +81,16 @@ class SlotOperatorReverseDepsTestCase(TestCase):
                                            "--ignore-built-slot-operator-deps": "y",
                                        },
                                        success=True,
-                                       mergelist=["sys-devel/llvm-3.8.0-r2", "sys-devel/clang-3.8.0-r100", ],
+                                       mergelist=[
+                                           "sys-devel/llvm-3.8.0-r2", "sys-devel/clang-3.8.0-r100",
+                                       ],
                                        ),
         )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -128,7 +135,8 @@ class SlotOperatorReverseDepsLibGit2TestCase(TestCase):
             "dev-vcs/gitg-3.32.1-r1": {
                 "EAPI": "7",
                 "SLOT": "0",
-                "RDEPEND": "dev-libs/libgit2:= >=dev-libs/libgit2-glib-0.27 <dev-libs/libgit2-glib-1",
+                "RDEPEND":
+                "dev-libs/libgit2:= >=dev-libs/libgit2-glib-0.27 <dev-libs/libgit2-glib-1",
             },
         }
 
@@ -143,9 +151,12 @@ class SlotOperatorReverseDepsLibGit2TestCase(TestCase):
                 "RDEPEND": "<dev-libs/libgit2-1:0/0.99= >=dev-libs/libgit2-0.26.0",
             },
             "dev-vcs/gitg-3.32.1-r1": {
-                "EAPI": "7",
-                "SLOT": "0",
-                "RDEPEND": "dev-libs/libgit2:0/0.99= >=dev-libs/libgit2-glib-0.27 <dev-libs/libgit2-glib-1",
+                "EAPI":
+                "7",
+                "SLOT":
+                "0",
+                "RDEPEND":
+                "dev-libs/libgit2:0/0.99= >=dev-libs/libgit2-glib-0.27 <dev-libs/libgit2-glib-1",
             },
         }
 
@@ -163,7 +174,10 @@ class SlotOperatorReverseDepsLibGit2TestCase(TestCase):
                 mergelist=[],
             ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -243,13 +257,17 @@ class SlotOperatorReverseDepsVirtualTestCase(TestCase):
                                                  },
                                                  success=True,
                                                  mergelist=[
-                                                     "sys-kernel/gentoo-kernel-5.10.6", "virtual/dist-kernel-5.10.6",
+                                                     "sys-kernel/gentoo-kernel-5.10.6",
+                                                     "virtual/dist-kernel-5.10.6",
                                                      "app-emulation/virtualbox-modules-6.1.16-r1",
                                                      "x11-drivers/nvidia-drivers-460.32.03",
                                                  ],
                                                  ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

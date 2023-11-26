@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class MultSlotTestCase(TestCase):
@@ -38,9 +40,13 @@ class MultSlotTestCase(TestCase):
         options = {"--update": True, "--deep": True, "--selective": True}
 
         test_cases = (
-            ResolverPlaygroundTestCase(["sys-devel/gcc:4.4"], options=options, mergelist=[], success=True),
+            ResolverPlaygroundTestCase(["sys-devel/gcc:4.4"],
+                                       options=options,
+                                       mergelist=[],
+                                       success=True),
             # depclean test for bug #382823
-            ResolverPlaygroundTestCase([], options={"--depclean": True}, success=True, cleanlist=[]),
+            ResolverPlaygroundTestCase([], options={"--depclean": True}, success=True,
+                                       cleanlist=[]),
         )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)

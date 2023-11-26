@@ -24,9 +24,9 @@ magic_line_count = 22
 
 class database(flat_hash.database):
     complete_eclass_entries = False
-    auxdbkey_order = ("DEPEND", "RDEPEND", "SLOT", "SRC_URI", "RESTRICT", "HOMEPAGE", "LICENSE", "DESCRIPTION",
-                      "KEYWORDS", "IDEPEND", "INHERITED", "IUSE", "REQUIRED_USE", "PDEPEND", "BDEPEND", "EAPI",
-                      "PROPERTIES", "DEFINED_PHASES",
+    auxdbkey_order = ("DEPEND", "RDEPEND", "SLOT", "SRC_URI", "RESTRICT", "HOMEPAGE", "LICENSE",
+                      "DESCRIPTION", "KEYWORDS", "IDEPEND", "INHERITED", "IUSE", "REQUIRED_USE",
+                      "PDEPEND", "BDEPEND", "EAPI", "PROPERTIES", "DEFINED_PHASES",
                       )
 
     autocommits = True
@@ -91,7 +91,9 @@ class database(flat_hash.database):
         for i in range(magic_line_count - len(self.auxdbkey_order)):
             new_content.append("\n")
         new_content = "".join(new_content)
-        new_content = _unicode_encode(new_content, _encodings["repo.content"], errors="backslashreplace")
+        new_content = _unicode_encode(new_content,
+                                      _encodings["repo.content"],
+                                      errors="backslashreplace")
 
         new_fp = os.path.join(self.location, cpv)
         try:
@@ -114,7 +116,8 @@ class database(flat_hash.database):
 
                 if self.raise_stat_collision and values["_mtime_"] == existing_mtime and len(
                         new_content) == existing_st.st_size:
-                    raise cache_errors.StatCollision(cpv, new_fp, existing_mtime, existing_st.st_size)
+                    raise cache_errors.StatCollision(cpv, new_fp, existing_mtime,
+                                                     existing_st.st_size)
 
         s = cpv.rfind("/")
         fp = os.path.join(self.location, cpv[:s], ".update.%i.%s" % (portage.getpid(), cpv[s + 1:]))
@@ -124,7 +127,9 @@ class database(flat_hash.database):
             if errno.ENOENT == e.errno:
                 try:
                     self._ensure_dirs(cpv)
-                    myf = open(_unicode_encode(fp, encoding=_encodings["fs"], errors="strict"), "wb", )
+                    myf = open(_unicode_encode(fp, encoding=_encodings["fs"], errors="strict"),
+                               "wb",
+                               )
                 except OSError as e:
                     raise cache_errors.CacheCorruption(cpv, e)
             else:

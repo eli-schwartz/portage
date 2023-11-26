@@ -117,7 +117,9 @@ class Modules:
         # The importables list cannot be a generator.
         # If it was a generator, it would be consumed by self.parents.extend()
         # and the following for loop wouldn't have anything to iterate with.
-        importables = [entry for entry in names if not entry.startswith("__") and _a_real_module(entry)]
+        importables = [
+            entry for entry in names if not entry.startswith("__") and _a_real_module(entry)
+        ]
         self.parents.extend(importables)
 
         kids = {}

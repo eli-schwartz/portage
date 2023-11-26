@@ -17,7 +17,9 @@ def test_spawnE2big(capsys, tmp_path):
     logfile = tmp_path / "logfile"
     echo_output = "Should never appear"
     with capsys.disabled():
-        retval = portage.process.spawn([BASH_BINARY, "-c", "echo", echo_output], env=env, logfile=logfile)
+        retval = portage.process.spawn([BASH_BINARY, "-c", "echo", echo_output],
+                                       env=env,
+                                       logfile=logfile)
 
     with open(logfile) as f:
         logfile_content = f.read()

@@ -66,7 +66,8 @@ class database:
                 else:
                     break
             else:
-                raise cache_errors.CacheCorruption(cpv, "entry does not contain a recognized chf_type")
+                raise cache_errors.CacheCorruption(cpv,
+                                                   "entry does not contain a recognized chf_type")
 
         elif "_eclasses_" not in d:
             d["_eclasses_"] = {}
@@ -87,7 +88,8 @@ class database:
             try:
                 mtime = int(mtime)
             except ValueError:
-                raise cache_errors.CacheCorruption(cpv, f"_mtime_ conversion to int failed: {mtime}")
+                raise cache_errors.CacheCorruption(cpv,
+                                                   f"_mtime_ conversion to int failed: {mtime}")
             d["_mtime_"] = mtime
         return d
 
@@ -133,7 +135,8 @@ class database:
                                                      self.validation_chf,
                                                      paths=self.store_eclass_paths)
             else:
-                d["_eclasses_"] = self._internal_eclasses(d["_eclasses_"], self.validation_chf, self.store_eclass_paths)
+                d["_eclasses_"] = self._internal_eclasses(d["_eclasses_"], self.validation_chf,
+                                                          self.store_eclass_paths)
         elif d is None:
             d = values
         self._setitem(cpv, d)
@@ -199,9 +202,10 @@ class database:
         if self.has_key is database.has_key:
             # prevent a possible recursive loop
             raise NotImplementedError
-        warnings.warn("portage.cache.template.database.has_key() is "
-                      "deprecated, override __contains__ instead", DeprecationWarning,
-                      )
+        warnings.warn(
+            "portage.cache.template.database.has_key() is "
+            "deprecated, override __contains__ instead", DeprecationWarning,
+        )
         return self.has_key(cpv)
 
     def __iter__(self):
@@ -241,7 +245,8 @@ class database:
         else:
             if entry_hash != getattr(ebuild_hash, chf_type):
                 return False
-        update = eclass_db.validate_and_rewrite_cache(entry["_eclasses_"], chf_type, self.store_eclass_paths)
+        update = eclass_db.validate_and_rewrite_cache(entry["_eclasses_"], chf_type,
+                                                      self.store_eclass_paths)
         if update is None:
             return False
         if update:
@@ -301,7 +306,8 @@ def serialize_eclasses(eclass_dict, chf_type="mtime", paths=True):
         return ""
     getter = operator.attrgetter(chf_type)
     if paths:
-        return "\t".join(f"{k}\t{v.eclass_dir}\t{getter(v)}" for k, v in sorted(eclass_dict.items(), key=_keysorter))
+        return "\t".join(f"{k}\t{v.eclass_dir}\t{getter(v)}"
+                         for k, v in sorted(eclass_dict.items(), key=_keysorter))
     return "\t".join(f"{k}\t{getter(v)}" for k, v in sorted(eclass_dict.items(), key=_keysorter))
 
 
@@ -330,7 +336,8 @@ def reconstruct_eclasses(cpv, eclass_string, chf_type="mtime", paths=True):
 
     if paths:
         if len(eclasses) % 3 != 0:
-            raise cache_errors.CacheCorruption(cpv, f"_eclasses_ was of invalid len {len(eclasses)}")
+            raise cache_errors.CacheCorruption(cpv,
+                                               f"_eclasses_ was of invalid len {len(eclasses)}")
     elif len(eclasses) % 2 != 0:
         raise cache_errors.CacheCorruption(cpv, f"_eclasses_ was of invalid len {len(eclasses)}")
     d = {}

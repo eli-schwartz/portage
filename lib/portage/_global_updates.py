@@ -83,13 +83,16 @@ def _do_global_updates(trees, prev_mtimes, quiet=False, if_mtime_changed=True):
                     update_notice_printed = True
                     writemsg_stdout("\n")
                     writemsg_stdout(colorize("GOOD", "Performing Global Updates\n"))
-                    writemsg_stdout(_("(Could take a couple of minutes if you have a lot of binary packages.)\n"))
+                    writemsg_stdout(
+                        _("(Could take a couple of minutes if you have a lot of binary packages.)\n"
+                          ))
                     if not quiet:
                         writemsg_stdout("  ".join(
                             ("", f"{bold('.')}='update pass'", f"{bold('*')}='binary update'",
                              f"{bold('#')}='/var/db update'", f"{bold('@')}='/var/db move'\n",
                              f"{bold('s')}='/var/db SLOT move'", f"{bold('%')}='binary move'",
-                             f"{bold('S')}='binary SLOT move'\n", f"{bold('p')}='update /etc/portage/package.*'\n",
+                             f"{bold('S')}='binary SLOT move'\n",
+                             f"{bold('p')}='update /etc/portage/package.*'\n",
                              )))
                 valid_updates, errors = parse_updates(mycontent)
                 myupd.extend(valid_updates)
@@ -127,7 +130,8 @@ def _do_global_updates(trees, prev_mtimes, quiet=False, if_mtime_changed=True):
             continue
 
         def repo_match(repository):
-            return repository == repo_name or (repo_name == master_repo and repository not in repo_map)
+            return repository == repo_name or (repo_name == master_repo
+                                               and repository not in repo_map)
 
         def _world_repo_match(atoma, atomb):
             """
@@ -194,7 +198,8 @@ def _do_global_updates(trees, prev_mtimes, quiet=False, if_mtime_changed=True):
                 if not matches:
                     return False
             repository = vardb.aux_get(best(matches), ["repository"])[0]
-            return repository == repo_name or (repo_name == master_repo and repository not in repo_map)
+            return repository == repo_name or (repo_name == master_repo
+                                               and repository not in repo_map)
 
         update_config_files(root,
                             shlex_split(mysettings.get("CONFIG_PROTECT", "")),

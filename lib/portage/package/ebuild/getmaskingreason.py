@@ -14,7 +14,12 @@ from portage.util import grablines
 from portage.versions import catpkgsplit, _pkg_str
 
 
-def getmaskingreason(mycpv, metadata=None, settings=None, portdb=None, return_location=False, myrepo=None):
+def getmaskingreason(mycpv,
+                     metadata=None,
+                     settings=None,
+                     portdb=None,
+                     return_location=False,
+                     myrepo=None):
     """
     If specified, the myrepo argument is assumed to be valid. This
     should be a safe assumption since portdbapi methods always
@@ -76,7 +81,9 @@ def getmaskingreason(mycpv, metadata=None, settings=None, portdb=None, return_lo
     for profile in locations:
         pmask_filename = os.path.join(profile, "package.mask")
         node = None
-        for l, recursive_filename in grablines(pmask_filename, recursive=1, remember_source_file=True):
+        for l, recursive_filename in grablines(pmask_filename,
+                                               recursive=1,
+                                               remember_source_file=True):
             if node is None or node[0] != recursive_filename:
                 node = (recursive_filename, [])
                 pmasklists.append(node)

@@ -2,13 +2,21 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class BacktrackingTestCase(TestCase):
 
     def testBacktracking(self):
-        ebuilds = {"dev-libs/A-1": {}, "dev-libs/A-2": {}, "dev-libs/B-1": {"DEPEND": "dev-libs/A"}, }
+        ebuilds = {
+            "dev-libs/A-1": {},
+            "dev-libs/A-2": {},
+            "dev-libs/B-1": {
+                "DEPEND": "dev-libs/A"
+            },
+        }
 
         test_cases = (ResolverPlaygroundTestCase(["=dev-libs/A-1", "dev-libs/B"],
                                                  all_permutations=True,
@@ -43,7 +51,8 @@ class BacktrackingTestCase(TestCase):
                                                  all_permutations=True,
                                                  options={"--backtrack": 1},
                                                  mergelist=[
-                                                     "dev-libs/A-1", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1",
+                                                     "dev-libs/A-1", "dev-libs/B-1", "dev-libs/C-1",
+                                                     "dev-libs/D-1",
                                                  ],
                                                  ignore_mergelist_order=True,
                                                  success=True,
@@ -78,7 +87,9 @@ class BacktrackingTestCase(TestCase):
 
         test_cases = (ResolverPlaygroundTestCase(["dev-libs/B", "dev-libs/A"],
                                                  all_permutations=True,
-                                                 mergelist=["dev-libs/Z-2", "dev-libs/B-1", "dev-libs/A-1", ],
+                                                 mergelist=[
+                                                     "dev-libs/Z-2", "dev-libs/B-1", "dev-libs/A-1",
+                                                 ],
                                                  ignore_mergelist_order=True,
                                                  success=True,
                                                  ), )
@@ -97,9 +108,23 @@ class BacktrackingTestCase(TestCase):
         An update is missed due to a dependency on an older version.
         """
 
-        ebuilds = {"dev-libs/A-1": {}, "dev-libs/A-2": {}, "dev-libs/B-1": {"RDEPEND": "<=dev-libs/A-1"}, }
+        ebuilds = {
+            "dev-libs/A-1": {},
+            "dev-libs/A-2": {},
+            "dev-libs/B-1": {
+                "RDEPEND": "<=dev-libs/A-1"
+            },
+        }
 
-        installed = {"dev-libs/A-1": {"USE": ""}, "dev-libs/B-1": {"USE": "", "RDEPEND": "<=dev-libs/A-1"}, }
+        installed = {
+            "dev-libs/A-1": {
+                "USE": ""
+            },
+            "dev-libs/B-1": {
+                "USE": "",
+                "RDEPEND": "<=dev-libs/A-1"
+            },
+        }
 
         options = {"--update": True, "--deep": True, "--selective": True}
 
@@ -154,7 +179,10 @@ class BacktrackingTestCase(TestCase):
 
         options = {"--backtrack": 6, "--deep": True, "--selective": True, "--update": True, }
 
-        test_cases = (ResolverPlaygroundTestCase(["@world"], options=options, mergelist=[], success=True), )
+        test_cases = (ResolverPlaygroundTestCase(["@world"],
+                                                 options=options,
+                                                 mergelist=[],
+                                                 success=True), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world)
 

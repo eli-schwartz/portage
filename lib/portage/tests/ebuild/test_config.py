@@ -10,7 +10,9 @@ from portage.dep import Atom
 from portage.package.ebuild.config import config
 from portage.package.ebuild._config.LicenseManager import LicenseManager
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.util import normalize_path
 
 
@@ -27,7 +29,8 @@ class ConfigTestCase(TestCase):
         try:
             settings = config(clone=playground.settings)
             result = playground.run(["=dev-libs/A-1"])
-            pkg, existing_node = result.depgraph._select_package(playground.eroot, Atom("=dev-libs/A-1"))
+            pkg, existing_node = result.depgraph._select_package(playground.eroot,
+                                                                 Atom("=dev-libs/A-1"))
             settings.setcpv(pkg)
 
             # clone after setcpv tests deepcopy of LazyItemsDict
@@ -78,8 +81,8 @@ class ConfigTestCase(TestCase):
 
     def testLicenseManager(self):
         user_config = {
-            "package.license": ("dev-libs/* TEST", "dev-libs/A -TEST2", "=dev-libs/A-2 TEST3 @TEST", "*/* @EULA TEST2",
-                                "=dev-libs/C-1 *", "=dev-libs/C-2 -*",
+            "package.license": ("dev-libs/* TEST", "dev-libs/A -TEST2", "=dev-libs/A-2 TEST3 @TEST",
+                                "*/* @EULA TEST2", "=dev-libs/C-1 *", "=dev-libs/C-2 -*",
                                 ),
         }
 
@@ -87,8 +90,8 @@ class ConfigTestCase(TestCase):
         try:
             portage.util.noiselimit = -2
 
-            license_group_locations = (os.path.join(playground.settings.repositories["test_repo"].location,
-                                                    "profiles"), )
+            license_group_locations = (os.path.join(
+                playground.settings.repositories["test_repo"].location, "profiles"), )
             pkg_license = os.path.join(playground.eroot, "etc", "portage")
 
             lic_man = LicenseManager(license_group_locations, pkg_license)
@@ -102,7 +105,9 @@ class ConfigTestCase(TestCase):
             self.assertEqual(lic_man.extract_global_changes(), "")
 
             lic_man.set_accept_license_str("TEST TEST2")
-            self.assertEqual(lic_man._getPkgAcceptLicense("dev-libs/B-1", "0", None), ["TEST", "TEST2", "TEST"], )
+            self.assertEqual(lic_man._getPkgAcceptLicense("dev-libs/B-1", "0", None),
+                             ["TEST", "TEST2", "TEST"],
+                             )
             self.assertEqual(lic_man._getPkgAcceptLicense("dev-libs/A-1", "0", None),
                              ["TEST", "TEST2", "TEST", "-TEST2"],
                              )
@@ -110,30 +115,51 @@ class ConfigTestCase(TestCase):
                              ["TEST", "TEST2", "TEST", "-TEST2", "TEST3", "@TEST"],
                              )
 
-            self.assertEqual(lic_man.get_prunned_accept_license("dev-libs/B-1", [], "TEST", "0", None), "TEST", )
-            self.assertEqual(lic_man.get_prunned_accept_license("dev-libs/A-1", [], "-TEST2", "0", None), "", )
-            self.assertEqual(lic_man.get_prunned_accept_license("dev-libs/A-2", [], "|| ( TEST TEST2 )", "0", None),
-                             "TEST",
-                             )
-            self.assertEqual(lic_man.get_prunned_accept_license("dev-libs/C-1", [], "TEST5", "0", None), "TEST5", )
-            self.assertEqual(lic_man.get_prunned_accept_license("dev-libs/C-2", [], "TEST2", "0", None), "", )
+            self.assertEqual(
+                lic_man.get_prunned_accept_license("dev-libs/B-1", [], "TEST", "0", None), "TEST",
+            )
+            self.assertEqual(
+                lic_man.get_prunned_accept_license("dev-libs/A-1", [], "-TEST2", "0", None), "",
+            )
+            self.assertEqual(
+                lic_man.get_prunned_accept_license("dev-libs/A-2", [], "|| ( TEST TEST2 )", "0",
+                                                   None), "TEST",
+            )
+            self.assertEqual(
+                lic_man.get_prunned_accept_license("dev-libs/C-1", [], "TEST5", "0", None), "TEST5",
+            )
+            self.assertEqual(
+                lic_man.get_prunned_accept_license("dev-libs/C-2", [], "TEST2", "0", None), "",
+            )
 
             self.assertEqual(lic_man.getMissingLicenses("dev-libs/B-1", [], "TEST", "0", None), [])
-            self.assertEqual(lic_man.getMissingLicenses("dev-libs/A-1", [], "-TEST2", "0", None), ["-TEST2"], )
-            self.assertEqual(lic_man.getMissingLicenses("dev-libs/A-2", [], "|| ( TEST TEST2 )", "0", None), [], )
+            self.assertEqual(lic_man.getMissingLicenses("dev-libs/A-1", [], "-TEST2", "0", None),
+                             ["-TEST2"],
+                             )
             self.assertEqual(
-                lic_man.getMissingLicenses("dev-libs/A-3", [], "|| ( TEST2 || ( TEST3 TEST4 ) )", "0", None),
-                ["TEST2", "TEST3", "TEST4"],
+                lic_man.getMissingLicenses("dev-libs/A-2", [], "|| ( TEST TEST2 )", "0", None), [],
+            )
+            self.assertEqual(
+                lic_man.getMissingLicenses("dev-libs/A-3", [], "|| ( TEST2 || ( TEST3 TEST4 ) )",
+                                           "0", None), ["TEST2", "TEST3", "TEST4"],
             )
             self.assertEqual(lic_man.getMissingLicenses("dev-libs/C-1", [], "TEST5", "0", None), [])
-            self.assertEqual(lic_man.getMissingLicenses("dev-libs/C-2", [], "TEST2", "0", None), ["TEST2"], )
+            self.assertEqual(lic_man.getMissingLicenses("dev-libs/C-2", [], "TEST2", "0", None),
+                             ["TEST2"],
+                             )
             self.assertEqual(lic_man.getMissingLicenses("dev-libs/D-1", [], "", "0", None), [])
         finally:
             portage.util.noiselimit = 0
             playground.cleanup()
 
     def testPackageMaskOrder(self):
-        ebuilds = {"dev-libs/A-1": {}, "dev-libs/B-1": {}, "dev-libs/C-1": {}, "dev-libs/D-1": {}, "dev-libs/E-1": {}, }
+        ebuilds = {
+            "dev-libs/A-1": {},
+            "dev-libs/B-1": {},
+            "dev-libs/C-1": {},
+            "dev-libs/D-1": {},
+            "dev-libs/E-1": {},
+        }
 
         repo_configs = {"test_repo": {"package.mask": ("dev-libs/A", "dev-libs/C", ), }}
 
@@ -141,11 +167,21 @@ class ConfigTestCase(TestCase):
 
         user_config = {"package.mask": ("-dev-libs/C", "-dev-libs/D", "dev-libs/E", ), }
 
-        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A"], options={"--autounmask": "n"}, success=False),
-                      ResolverPlaygroundTestCase(["dev-libs/B"], success=True, mergelist=["dev-libs/B-1"]),
-                      ResolverPlaygroundTestCase(["dev-libs/C"], success=True, mergelist=["dev-libs/C-1"]),
-                      ResolverPlaygroundTestCase(["dev-libs/D"], success=True, mergelist=["dev-libs/D-1"]),
-                      ResolverPlaygroundTestCase(["dev-libs/E"], options={"--autounmask": "n"}, success=False),
+        test_cases = (ResolverPlaygroundTestCase(["dev-libs/A"],
+                                                 options={"--autounmask": "n"},
+                                                 success=False),
+                      ResolverPlaygroundTestCase(["dev-libs/B"],
+                                                 success=True,
+                                                 mergelist=["dev-libs/B-1"]),
+                      ResolverPlaygroundTestCase(["dev-libs/C"],
+                                                 success=True,
+                                                 mergelist=["dev-libs/C-1"]),
+                      ResolverPlaygroundTestCase(["dev-libs/D"],
+                                                 success=True,
+                                                 mergelist=["dev-libs/D-1"]),
+                      ResolverPlaygroundTestCase(["dev-libs/E"],
+                                                 options={"--autounmask": "n"},
+                                                 success=False),
                       )
 
         playground = ResolverPlayground(ebuilds=ebuilds,
@@ -180,27 +216,35 @@ class ConfigTestCase(TestCase):
 
         repo_configs = {
             "new_repo": {
-                "layout.conf":
-                ("profile-formats = pms", "thin-manifests = true", "manifest-hashes = SHA256 SHA512 WHIRLPOOL",
-                 "manifest-required-hashes = SHA512", "# use implicit masters",
-                 ),
+                "layout.conf": ("profile-formats = pms", "thin-manifests = true",
+                                "manifest-hashes = SHA256 SHA512 WHIRLPOOL",
+                                "manifest-required-hashes = SHA512", "# use implicit masters",
+                                ),
             }
         }
 
-        test_cases = (ResolverPlaygroundTestCase(["=dev-libs/A-1"], mergelist=["dev-libs/A-1"], success=True),
-                      ResolverPlaygroundTestCase(["=dev-libs/A-2"], mergelist=["dev-libs/A-2"], success=True),
+        test_cases = (ResolverPlaygroundTestCase(["=dev-libs/A-1"],
+                                                 mergelist=["dev-libs/A-1"],
+                                                 success=True),
+                      ResolverPlaygroundTestCase(["=dev-libs/A-2"],
+                                                 mergelist=["dev-libs/A-2"],
+                                                 success=True),
                       )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, repo_configs=repo_configs, distfiles=distfiles)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        repo_configs=repo_configs,
+                                        distfiles=distfiles)
         settings = playground.settings
 
         new_repo_config = settings.repositories["new_repo"]
         old_repo_config = settings.repositories["old_repo"]
         self.assertTrue(len(new_repo_config.masters) > 0, "new_repo has no default master")
-        self.assertEqual(new_repo_config.masters[0].location, playground.settings.repositories["test_repo"].location,
+        self.assertEqual(new_repo_config.masters[0].location,
+                         playground.settings.repositories["test_repo"].location,
                          "new_repo default master is not test_repo",
                          )
-        self.assertEqual(new_repo_config.thin_manifest, True, "new_repo_config.thin_manifest != True")
+        self.assertEqual(new_repo_config.thin_manifest, True,
+                         "new_repo_config.thin_manifest != True")
 
         new_manifest_file = os.path.join(new_repo_config.location, "dev-libs", "A", "Manifest")
         self.assertNotExists(new_manifest_file)
@@ -232,7 +276,14 @@ class ConfigTestCase(TestCase):
         Test the clone via constructor.
         """
 
-        ebuilds = {"dev-libs/A-1": {"IUSE": "static-libs"}, "dev-libs/B-1": {"IUSE": "static-libs"}, }
+        ebuilds = {
+            "dev-libs/A-1": {
+                "IUSE": "static-libs"
+            },
+            "dev-libs/B-1": {
+                "IUSE": "static-libs"
+            },
+        }
 
         env_files = {"A": ('USE="static-libs"', )}
 
@@ -244,7 +295,10 @@ class ConfigTestCase(TestCase):
             user_config_dir = os.path.join(eprefix, USER_CONFIG_PATH)
             os.makedirs(user_config_dir)
 
-            with open(os.path.join(user_config_dir, "package.env"), mode="w", encoding=_encodings["content"], ) as f:
+            with open(os.path.join(user_config_dir, "package.env"),
+                      mode="w",
+                      encoding=_encodings["content"],
+                      ) as f:
                 for line in package_env:
                     f.write(line + "\n")
 
@@ -259,13 +313,15 @@ class ConfigTestCase(TestCase):
             settings = config(clone=playground.settings)
 
             result = playground.run(["=dev-libs/A-1"])
-            pkg, existing_node = result.depgraph._select_package(playground.eroot, Atom("=dev-libs/A-1"))
+            pkg, existing_node = result.depgraph._select_package(playground.eroot,
+                                                                 Atom("=dev-libs/A-1"))
             settings.setcpv(pkg)
             self.assertTrue("static-libs" in settings["PORTAGE_USE"].split())
 
             # Test bug #522362, where a USE=static-libs package.env
             # setting leaked from one setcpv call to the next.
-            pkg, existing_node = result.depgraph._select_package(playground.eroot, Atom("=dev-libs/B-1"))
+            pkg, existing_node = result.depgraph._select_package(playground.eroot,
+                                                                 Atom("=dev-libs/B-1"))
             settings.setcpv(pkg)
             self.assertTrue("static-libs" not in settings["PORTAGE_USE"].split())
 

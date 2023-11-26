@@ -28,7 +28,8 @@ class CheckGitConfig(CheckSyncConfig):
             try:
                 d = int(d)
             except ValueError:
-                writemsg_level("!!! %s\n" % _("%s value is not a number: '%s'") % (attr.replace("_", "-"), d),
+                writemsg_level("!!! %s\n" % _("%s value is not a number: '%s'") %
+                               (attr.replace("_", "-"), d),
                                level=self.logger.ERROR,
                                noiselevel=-1,
                                )
@@ -36,7 +37,8 @@ class CheckGitConfig(CheckSyncConfig):
                 setattr(self.repo, attr, d)
 
     def check_verify_commit_signature(self):
-        v = self.repo.module_specific_options.get("sync-git-verify-commit-signature", "false").lower()
+        v = self.repo.module_specific_options.get("sync-git-verify-commit-signature",
+                                                  "false").lower()
 
         if v not in ("yes", "no", "true", "false"):
             writemsg_level("!!! %s\n" % _("sync-git-verify-commit-signature not one of: %s") %
@@ -63,7 +65,8 @@ module_spec = {
             "func_desc": {
                 "sync": "Performs a git pull on the repository",
                 "new": "Creates the new repository at the specified location",
-                "exists": "Returns a boolean of whether the specified dir " + "exists and is a valid Git repository",
+                "exists": "Returns a boolean of whether the specified dir " +
+                "exists and is a valid Git repository",
                 "retrieve_head": "Returns the head commit hash",
             },
             "validate_config":

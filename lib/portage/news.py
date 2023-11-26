@@ -3,8 +3,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 __all__ = [
-    "NewsManager", "NewsItem", "DisplayRestriction", "DisplayProfileRestriction", "DisplayKeywordRestriction",
-    "DisplayInstalledRestriction", "count_unread_news", "display_news_notifications",
+    "NewsManager", "NewsItem", "DisplayRestriction", "DisplayProfileRestriction",
+    "DisplayKeywordRestriction", "DisplayInstalledRestriction", "count_unread_news",
+    "display_news_notifications",
 ]
 
 from collections import OrderedDict
@@ -24,15 +25,17 @@ from portage import _encodings
 from portage import _unicode_decode
 from portage import _unicode_encode
 from portage.const import NEWS_LIB_PATH
-from portage.util import (apply_secpass_permissions, ensure_dirs, grabfile, normalize_path, write_atomic,
-                          writemsg_level,
+from portage.util import (apply_secpass_permissions, ensure_dirs, grabfile, normalize_path,
+                          write_atomic, writemsg_level,
                           )
 from portage.data import portage_gid
 from portage.dep import isvalidatom
 from portage.localization import _
 from portage.locks import lockfile, unlockfile
 from portage.output import colorize
-from portage.exception import (InvalidLocation, OperationNotPermitted, PermissionDenied, ReadOnlyFileSystem, )
+from portage.exception import (InvalidLocation, OperationNotPermitted, PermissionDenied,
+                               ReadOnlyFileSystem,
+                               )
 
 
 class NewsManager:
@@ -105,7 +108,12 @@ class NewsManager:
         # Ensure that the unread path exists and is writable.
 
         try:
-            ensure_dirs(self.unread_path, uid=self._uid, gid=self._gid, mode=self._dir_mode, mask=self._mode_mask, )
+            ensure_dirs(self.unread_path,
+                        uid=self._uid,
+                        gid=self._gid,
+                        mode=self._dir_mode,
+                        mask=self._mode_mask,
+                        )
         except (OperationNotPermitted, PermissionDenied):
             return
 
@@ -114,7 +122,8 @@ class NewsManager:
 
         news_dir: str = self._news_dir(repoid)
         try:
-            news: list[str] = _os.listdir(_unicode_encode(news_dir, encoding=_encodings["fs"], errors="strict"))
+            news: list[str] = _os.listdir(
+                _unicode_encode(news_dir, encoding=_encodings["fs"], errors="strict"))
         except OSError:
             return
 
@@ -228,8 +237,8 @@ class NewsItem:
         self._parsed = False
         self._valid = True
 
-    def isRelevant(self, vardb: "portage.dbapi.vartree.vardbapi", config: "portage.package.ebuild.config.config",
-                   profile: Optional[str],
+    def isRelevant(self, vardb: "portage.dbapi.vartree.vardbapi",
+                   config: "portage.package.ebuild.config.config", profile: Optional[str],
                    ) -> bool:
         """
         This function takes a dict of keyword arguments; one should pass in any
@@ -315,7 +324,8 @@ class NewsItem:
         if invalids:
             self._valid = False
             msg = [
-                _(f"Invalid news item: {self.path}"), *(_(f"  line {lineno}: {line}") for lineno, line in invalids),
+                _(f"Invalid news item: {self.path}"),
+                *(_(f"  line {lineno}: {line}") for lineno, line in invalids),
             ]
             writemsg_level("".join(f"!!! {x}\n" for x in msg), level=logging.ERROR, noiselevel=-1)
 
@@ -349,8 +359,9 @@ class DisplayProfileRestriction(DisplayRestriction):
         self.format = news_format
 
     def isValid(self) -> bool:
-        return not fnmatch.fnmatch(self.format, "1.*") or "*" not in self.profile and not fnmatch.fnmatch(
-            self.format, "2.*") or _valid_profile_RE.match(self.profile)
+        return not fnmatch.fnmatch(self.format,
+                                   "1.*") or "*" not in self.profile and not fnmatch.fnmatch(
+                                       self.format, "2.*") or _valid_profile_RE.match(self.profile)
 
     def checkRestriction(self, **kwargs) -> bool:
         if fnmatch.fnmatch(self.format, "2.*") and self.profile.endswith("/*"):

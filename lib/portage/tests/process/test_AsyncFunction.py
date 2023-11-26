@@ -75,11 +75,11 @@ class AsyncFunctionTestCase(TestCase):
         Test portage.getpid() with multiprocessing spawn start method.
         """
         loop = asyncio._wrap_loop()
-        proc = AsyncFunction(
-            scheduler=loop,
-            target=self._test_getpid_fork,
-            kwargs=dict(preexec_fn=functools.partial(multiprocessing.set_start_method, "spawn", force=True)),
-        )
+        proc = AsyncFunction(scheduler=loop,
+                             target=self._test_getpid_fork,
+                             kwargs=dict(preexec_fn=functools.partial(
+                                 multiprocessing.set_start_method, "spawn", force=True)),
+                             )
         proc.start()
         self.assertEqual(proc.wait(), 0)
         self.assertTrue(proc.result)

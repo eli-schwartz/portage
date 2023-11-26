@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class MergelistOutputTestCase(TestCase):
@@ -67,7 +69,8 @@ class MergelistOutputTestCase(TestCase):
 
         option_cobos = ((), ("verbose", ), ("tree", ), ("tree", "unordered-display",
                                                         ), ("verbose", ), ("verbose", "tree",
-                                                                           ), ("verbose", "tree", "unordered-display",
+                                                                           ), ("verbose", "tree",
+                                                                               "unordered-display",
                                                                                ),
                         )
 
@@ -83,8 +86,8 @@ class MergelistOutputTestCase(TestCase):
                                            success=True,
                                            ignore_mergelist_order=True,
                                            mergelist=[
-                                               "dev-libs/D-1", "dev-libs/E-1", "dev-libs/C-1", "dev-libs/B-1",
-                                               "dev-libs/A-1",
+                                               "dev-libs/D-1", "dev-libs/E-1", "dev-libs/C-1",
+                                               "dev-libs/B-1", "dev-libs/A-1",
                                            ],
                                            ))
 

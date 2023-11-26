@@ -17,7 +17,10 @@ class CompatCoroutineTestCase(TestCase):
             coroutine_return("success")
 
         loop = asyncio.get_event_loop()
-        self.assertEqual("success", asyncio.get_event_loop().run_until_complete(returning_coroutine(loop=loop)), )
+        self.assertEqual(
+            "success",
+            asyncio.get_event_loop().run_until_complete(returning_coroutine(loop=loop)),
+        )
 
     def test_raising_coroutine(self):
 
@@ -104,7 +107,8 @@ class CompatCoroutineTestCase(TestCase):
                 yield future
 
         loop = asyncio.get_event_loop()
-        future = loop.run_until_complete(asyncio.wait([cancelled_future_coroutine(loop=loop)], loop=loop))[0].pop()
+        future = loop.run_until_complete(
+            asyncio.wait([cancelled_future_coroutine(loop=loop)], loop=loop))[0].pop()
         self.assertTrue(future.cancelled())
 
     def test_yield_expression_result(self):

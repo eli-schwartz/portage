@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class InstallKernelTestCase(TestCase):
@@ -18,18 +20,26 @@ class InstallKernelTestCase(TestCase):
                 "RDEPEND": "!sys-kernel/installkernel-systemd-boot",
             },
             "sys-kernel/gentoo-kernel-5.15.23": {
-                "EAPI": "8",
-                "PDEPEND": ">=virtual/dist-kernel-5.15.23",
-                "RDEPEND": "|| ( sys-kernel/installkernel-gentoo sys-kernel/installkernel-systemd-boot )",
+                "EAPI":
+                "8",
+                "PDEPEND":
+                ">=virtual/dist-kernel-5.15.23",
+                "RDEPEND":
+                "|| ( sys-kernel/installkernel-gentoo sys-kernel/installkernel-systemd-boot )",
             },
             "sys-kernel/gentoo-kernel-bin-5.15.23": {
-                "EAPI": "8",
-                "PDEPEND": ">=virtual/dist-kernel-5.15.23",
-                "RDEPEND": "|| ( sys-kernel/installkernel-gentoo sys-kernel/installkernel-systemd-boot )",
+                "EAPI":
+                "8",
+                "PDEPEND":
+                ">=virtual/dist-kernel-5.15.23",
+                "RDEPEND":
+                "|| ( sys-kernel/installkernel-gentoo sys-kernel/installkernel-systemd-boot )",
             },
             "virtual/dist-kernel-5.15.23": {
-                "EAPI": "8",
-                "PDEPEND": "|| ( ~sys-kernel/gentoo-kernel-5.15.23 ~sys-kernel/gentoo-kernel-bin-5.15.23 )",
+                "EAPI":
+                "8",
+                "PDEPEND":
+                "|| ( ~sys-kernel/gentoo-kernel-5.15.23 ~sys-kernel/gentoo-kernel-bin-5.15.23 )",
             },
         }
 
@@ -54,18 +64,18 @@ class InstallKernelTestCase(TestCase):
                                        ),
             # Test bug 833014, where the calculation failed unless
             # --update and --deep are specified.
-            ResolverPlaygroundTestCase(["sys-kernel/installkernel-systemd-boot", "sys-kernel/gentoo-kernel-bin", ],
-                                       ambiguous_merge_order=True,
-                                       success=True,
-                                       mergelist=[
-                                           "virtual/dist-kernel-5.15.23", "sys-kernel/installkernel-systemd-boot-1",
-                                           "sys-kernel/gentoo-kernel-bin-5.15.23",
-                                           "[uninstall]sys-kernel/installkernel-gentoo-3",
-                                           ("!sys-kernel/installkernel-systemd-boot",
-                                            "!sys-kernel/installkernel-gentoo",
-                                            ),
-                                       ],
-                                       ),
+            ResolverPlaygroundTestCase(
+                ["sys-kernel/installkernel-systemd-boot", "sys-kernel/gentoo-kernel-bin", ],
+                ambiguous_merge_order=True,
+                success=True,
+                mergelist=[
+                    "virtual/dist-kernel-5.15.23", "sys-kernel/installkernel-systemd-boot-1",
+                    "sys-kernel/gentoo-kernel-bin-5.15.23",
+                    "[uninstall]sys-kernel/installkernel-gentoo-3",
+                    ("!sys-kernel/installkernel-systemd-boot", "!sys-kernel/installkernel-gentoo",
+                     ),
+                ],
+            ),
         )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed)

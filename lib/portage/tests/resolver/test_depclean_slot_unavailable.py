@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class DepcleanUnavailableSlotTestCase(TestCase):
@@ -35,7 +37,10 @@ class DepcleanUnavailableSlotTestCase(TestCase):
                                                  cleanlist=["sys-kernel/gentoo-sources-3.2.21"],
                                                  ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -45,7 +50,12 @@ class DepcleanUnavailableSlotTestCase(TestCase):
 
         # Now make the newer version availale and verify that
         # the lower version is depcleaned.
-        ebuilds.update({"sys-kernel/gentoo-sources-3.2.21": {"SLOT": "3.2.21", "KEYWORDS": "x86", }, })
+        ebuilds.update({
+            "sys-kernel/gentoo-sources-3.2.21": {
+                "SLOT": "3.2.21",
+                "KEYWORDS": "x86",
+            },
+        })
 
         test_cases = (ResolverPlaygroundTestCase([],
                                                  options={"--depclean": True},
@@ -53,7 +63,10 @@ class DepcleanUnavailableSlotTestCase(TestCase):
                                                  cleanlist=["sys-kernel/gentoo-sources-3.0.53"],
                                                  ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

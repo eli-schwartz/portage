@@ -52,7 +52,9 @@ class PackageUninstall(CompositeTask):
             pass
 
         self._builddir_lock = EbuildBuildDir(scheduler=self.scheduler, settings=self.settings)
-        self._start_task(AsyncTaskFuture(future=self._builddir_lock.async_lock()), self._start_unmerge, )
+        self._start_task(AsyncTaskFuture(future=self._builddir_lock.async_lock()),
+                         self._start_unmerge,
+                         )
 
     def _start_unmerge(self, lock_task):
         self._assert_current(lock_task)

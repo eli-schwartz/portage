@@ -3,7 +3,9 @@
 
 from portage import os, _encodings
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.util import ensure_dirs
 
 
@@ -70,7 +72,10 @@ class ProfilePackageSetTestCase(TestCase):
                                                  ),
                       )
 
-        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, repo_configs=repo_configs)
+        playground = ResolverPlayground(debug=False,
+                                        ebuilds=ebuilds,
+                                        installed=installed,
+                                        repo_configs=repo_configs)
         try:
             repo_dir = playground.settings.repositories.get_location_for_name("test_repo")
             profile_root = os.path.join(repo_dir, "profiles")
@@ -79,7 +84,10 @@ class ProfilePackageSetTestCase(TestCase):
                 prof_path = os.path.join(profile_root, p)
                 ensure_dirs(prof_path)
                 for k, v in data.items():
-                    with open(os.path.join(prof_path, k), mode="w", encoding=_encodings["repo.content"], ) as f:
+                    with open(os.path.join(prof_path, k),
+                              mode="w",
+                              encoding=_encodings["repo.content"],
+                              ) as f:
                         for line in v:
                             f.write(f"{line}\n")
 

@@ -18,9 +18,9 @@ class MergeListItem(CompositeTask):
     execution support (start, poll, and wait methods).
     """
 
-    __slots__ = ("args_set", "binpkg_opts", "build_opts", "config_pool", "emerge_opts", "find_blockers", "logger",
-                 "mtimedb", "pkg", "pkg_count", "pkg_to_replace", "prefetcher", "settings", "statusMessage",
-                 "world_atom",
+    __slots__ = ("args_set", "binpkg_opts", "build_opts", "config_pool", "emerge_opts",
+                 "find_blockers", "logger", "mtimedb", "pkg", "pkg_count", "pkg_to_replace",
+                 "prefetcher", "settings", "statusMessage", "world_atom",
                  ) + ("_install_task", )
 
     def _start(self):
@@ -53,7 +53,8 @@ class MergeListItem(CompositeTask):
         if build_opts.fetchonly:
             action_desc = "Fetching"
 
-        msg = "{} ({} of {}) {}".format(action_desc, colorize("MERGE_LIST_PROGRESS", str(pkg_count.curval)),
+        msg = "{} ({} of {}) {}".format(action_desc,
+                                        colorize("MERGE_LIST_PROGRESS", str(pkg_count.curval)),
                                         colorize("MERGE_LIST_PROGRESS", str(pkg_count.maxval)),
                                         colorize(pkg_color, pkg.cpv + _repo_separator + pkg.repo),
                                         )

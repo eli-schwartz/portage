@@ -13,10 +13,12 @@ from pathlib import Path
 from portage import eclass_cache, os
 from portage.checksum import get_valid_checksum_keys
 from portage.const import PORTAGE_BASE_PATH, REPO_NAME_LOC, USER_CONFIG_PATH
-from portage.eapi import (eapi_allows_directories_on_profile_level_and_repository_level, eapi_has_repo_deps, )
+from portage.eapi import (eapi_allows_directories_on_profile_level_and_repository_level,
+                          eapi_has_repo_deps,
+                          )
 from portage.env.loaders import KeyValuePairFileLoader
-from portage.util import (normalize_path, read_corresponding_eapi_file, shlex_split, stack_lists, writemsg,
-                          writemsg_level, _recursive_file_list,
+from portage.util import (normalize_path, read_corresponding_eapi_file, shlex_split, stack_lists,
+                          writemsg, writemsg_level, _recursive_file_list,
                           )
 from portage.util.configparser import SafeConfigParser, ConfigParserError, read_configs
 from portage.util._path import isdir_raise_eaccess
@@ -28,18 +30,18 @@ from portage import _encodings
 from portage import manifest
 import portage.sync
 
-_profile_node = collections.namedtuple("_profile_node",
-                                       ("location", "portage1_directories", "user_config", "profile_formats", "eapi",
-                                        "allow_build_id", "show_deprecated_warning",
-                                        ),
-                                       )
+_profile_node = collections.namedtuple(
+    "_profile_node", ("location", "portage1_directories", "user_config", "profile_formats", "eapi",
+                      "allow_build_id", "show_deprecated_warning",
+                      ),
+)
 
 # Characters prohibited by repoman's file.name check.
 _invalid_path_char_re = re.compile(r"[^a-zA-Z0-9._\-+/]")
 
 _valid_profile_formats = frozenset([
-    "pms", "portage-1", "portage-2", "profile-bashrcs", "profile-set", "profile-default-eapi", "build-id",
-    "profile-repo-deps",
+    "pms", "portage-1", "portage-2", "profile-bashrcs", "profile-set", "profile-default-eapi",
+    "build-id", "profile-repo-deps",
 ])
 
 _portage1_profiles_allow_directories = frozenset(["portage-1-compat", "portage-1", "portage-2"])
@@ -79,20 +81,24 @@ def _find_invalid_path_char(path, pos=0, endpos=None):
 class RepoConfig:
     """Stores config of one repository"""
 
-    __slots__ = ("aliases", "allow_missing_manifest", "allow_provide_virtual", "auto_sync", "cache_formats",
-                 "clone_depth", "create_manifest", "disable_manifest", "eapi", "eclass_db", "eclass_locations",
-                 "eclass_overrides", "find_invalid_path_char", "force", "format", "local_config", "location",
-                 "main_repo", "manifest_hashes", "manifest_required_hashes", "masters", "missing_repo_name",
-                 "module_specific_options", "name", "portage1_profiles", "portage1_profiles_compat", "priority",
-                 "profile_formats", "properties_allowed", "restrict_allowed", "sign_commit", "sign_manifest",
-                 "strict_misc_digests", "sync_allow_hardlinks", "sync_depth", "sync_hooks_only_on_change",
-                 "sync_openpgp_keyserver", "sync_openpgp_key_path", "sync_openpgp_key_refresh",
-                 "sync_openpgp_key_refresh_retry_count", "sync_openpgp_key_refresh_retry_delay_exp_base",
-                 "sync_openpgp_key_refresh_retry_delay_max", "sync_openpgp_key_refresh_retry_delay_mult",
-                 "sync_openpgp_key_refresh_retry_overall_timeout", "sync_rcu", "sync_rcu_spare_snapshots",
-                 "sync_rcu_store_dir", "sync_rcu_ttl_days", "sync_type", "sync_umask", "sync_uri", "sync_user",
-                 "thin_manifest", "update_changelog", "user_location", "volatile", "_eapis_banned", "_eapis_deprecated",
-                 "_masters_orig",
+    __slots__ = ("aliases", "allow_missing_manifest", "allow_provide_virtual", "auto_sync",
+                 "cache_formats", "clone_depth", "create_manifest", "disable_manifest", "eapi",
+                 "eclass_db", "eclass_locations", "eclass_overrides", "find_invalid_path_char",
+                 "force", "format", "local_config", "location", "main_repo", "manifest_hashes",
+                 "manifest_required_hashes", "masters", "missing_repo_name",
+                 "module_specific_options", "name", "portage1_profiles", "portage1_profiles_compat",
+                 "priority", "profile_formats", "properties_allowed", "restrict_allowed",
+                 "sign_commit", "sign_manifest", "strict_misc_digests", "sync_allow_hardlinks",
+                 "sync_depth", "sync_hooks_only_on_change", "sync_openpgp_keyserver",
+                 "sync_openpgp_key_path", "sync_openpgp_key_refresh",
+                 "sync_openpgp_key_refresh_retry_count",
+                 "sync_openpgp_key_refresh_retry_delay_exp_base",
+                 "sync_openpgp_key_refresh_retry_delay_max",
+                 "sync_openpgp_key_refresh_retry_delay_mult",
+                 "sync_openpgp_key_refresh_retry_overall_timeout", "sync_rcu",
+                 "sync_rcu_spare_snapshots", "sync_rcu_store_dir", "sync_rcu_ttl_days", "sync_type",
+                 "sync_umask", "sync_uri", "sync_user", "thin_manifest", "update_changelog",
+                 "user_location", "volatile", "_eapis_banned", "_eapis_deprecated", "_masters_orig",
                  )
 
     def __init__(self, name, repo_opts, local_config=True):
@@ -179,20 +185,27 @@ class RepoConfig:
         self.clone_depth = repo_opts.get("clone-depth")
         self.sync_depth = repo_opts.get("sync-depth")
 
-        self.sync_hooks_only_on_change = repo_opts.get("sync-hooks-only-on-change", "false").lower() in ("true", "yes")
+        self.sync_hooks_only_on_change = repo_opts.get("sync-hooks-only-on-change",
+                                                       "false").lower() in ("true", "yes")
 
-        self.strict_misc_digests = repo_opts.get("strict-misc-digests", "true").lower() in ("true", "yes")
+        self.strict_misc_digests = repo_opts.get("strict-misc-digests",
+                                                 "true").lower() in ("true", "yes")
 
-        self.sync_allow_hardlinks = repo_opts.get("sync-allow-hardlinks", "true").lower() in ("true", "yes")
+        self.sync_allow_hardlinks = repo_opts.get("sync-allow-hardlinks",
+                                                  "true").lower() in ("true", "yes")
 
-        self.sync_openpgp_keyserver = repo_opts.get("sync-openpgp-keyserver", "").strip().lower() or None
+        self.sync_openpgp_keyserver = repo_opts.get("sync-openpgp-keyserver",
+                                                    "").strip().lower() or None
 
         self.sync_openpgp_key_path = repo_opts.get("sync-openpgp-key-path", None)
 
-        self.sync_openpgp_key_refresh = repo_opts.get("sync-openpgp-key-refresh", "true").lower() in ("true", "yes")
+        self.sync_openpgp_key_refresh = repo_opts.get("sync-openpgp-key-refresh",
+                                                      "true").lower() in ("true", "yes")
 
-        for k in ("sync_openpgp_key_refresh_retry_count", "sync_openpgp_key_refresh_retry_delay_exp_base",
-                  "sync_openpgp_key_refresh_retry_delay_max", "sync_openpgp_key_refresh_retry_delay_mult",
+        for k in ("sync_openpgp_key_refresh_retry_count",
+                  "sync_openpgp_key_refresh_retry_delay_exp_base",
+                  "sync_openpgp_key_refresh_retry_delay_max",
+                  "sync_openpgp_key_refresh_retry_delay_mult",
                   "sync_openpgp_key_refresh_retry_overall_timeout",
                   ):
             setattr(self, k, repo_opts.get(k.replace("_", "-"), None))
@@ -208,7 +221,8 @@ class RepoConfig:
                     v = int(v)
                 except (OverflowError, ValueError):
                     writemsg(_("!!! Invalid %s setting for repo"
-                               " %s: %s\n") % (k, name, v), noiselevel=-1,
+                               " %s: %s\n") % (k, name, v),
+                             noiselevel=-1,
                              )
                     v = None
             setattr(self, k.replace("-", "_"), v)
@@ -330,9 +344,10 @@ class RepoConfig:
                 self.name = layout_data["repo-name"]
                 self.missing_repo_name = False
 
-            for value in ("allow-missing-manifest", "cache-formats", "create-manifest", "disable-manifest",
-                          "manifest-hashes", "manifest-required-hashes", "profile-formats", "properties-allowed",
-                          "restrict-allowed", "sign-commit", "sign-manifest", "thin-manifest", "update-changelog",
+            for value in ("allow-missing-manifest", "cache-formats", "create-manifest",
+                          "disable-manifest", "manifest-hashes", "manifest-required-hashes",
+                          "profile-formats", "properties-allowed", "restrict-allowed",
+                          "sign-commit", "sign-manifest", "thin-manifest", "update-changelog",
                           ):
                 setattr(self, value.lower().replace("-", "_"), layout_data[value])
 
@@ -341,10 +356,12 @@ class RepoConfig:
             # by PMS.
             self.eapi = layout_data.get("profile_eapi_when_unspecified", "0")
 
-            eapi = read_corresponding_eapi_file(os.path.join(self.location, REPO_NAME_LOC), default=self.eapi)
+            eapi = read_corresponding_eapi_file(os.path.join(self.location, REPO_NAME_LOC),
+                                                default=self.eapi)
 
-            self.portage1_profiles = eapi_allows_directories_on_profile_level_and_repository_level(eapi) or any(
-                x in _portage1_profiles_allow_directories for x in layout_data["profile-formats"])
+            self.portage1_profiles = eapi_allows_directories_on_profile_level_and_repository_level(
+                eapi) or any(x in _portage1_profiles_allow_directories
+                             for x in layout_data["profile-formats"])
             self.portage1_profiles_compat = not eapi_allows_directories_on_profile_level_and_repository_level(
                 eapi) and layout_data["profile-formats"] == ("portage-1-compat", )
 
@@ -397,7 +414,8 @@ class RepoConfig:
         iter_pregenerated_caches(), or None if no cache is available or none
         of the available formats are supported.
         """
-        return next(self.iter_pregenerated_caches(auxdbkeys, readonly=readonly, force=force), None, )
+        return next(self.iter_pregenerated_caches(auxdbkeys, readonly=readonly, force=force), None,
+                    )
 
     def load_manifest(self, *args, **kwds):
         kwds["thin"] = self.thin_manifest
@@ -526,7 +544,8 @@ class RepoConfigLoader:
     """Loads and store config of several repositories, loaded from PORTDIR_OVERLAY or repos.conf"""
 
     @staticmethod
-    def _add_repositories(portdir, portdir_overlay, prepos, ignored_map, local_config, default_portdir):
+    def _add_repositories(portdir, portdir_overlay, prepos, ignored_map, local_config,
+                          default_portdir):
         """Add overlays in PORTDIR_OVERLAY as repositories"""
         overlays = []
         portdir_orig = None
@@ -540,7 +559,8 @@ class RepoConfigLoader:
             # File "/usr/lib/python3.2/shlex.py", line 168, in read_token
             # 	raise ValueError("No closing quotation")
             writemsg(_("!!! Invalid PORTDIR_OVERLAY:"
-                       " %s: %s\n") % (e, portdir_overlay), noiselevel=-1,
+                       " %s: %s\n") % (e, portdir_overlay),
+                     noiselevel=-1,
                      )
             port_ov = []
         overlays.extend(port_ov)
@@ -576,17 +596,19 @@ class RepoConfigLoader:
                     if repos_conf_opts is not None:
                         # Selectively copy only the attributes which
                         # repos.conf is allowed to override.
-                        for k in ("aliases", "auto_sync", "clone_depth", "eclass_overrides", "force", "masters",
-                                  "module_specific_options", "priority", "strict_misc_digests", "sync_allow_hardlinks",
-                                  "sync_depth", "sync_hooks_only_on_change", "sync_openpgp_keyserver",
+                        for k in ("aliases", "auto_sync", "clone_depth", "eclass_overrides",
+                                  "force", "masters", "module_specific_options", "priority",
+                                  "strict_misc_digests", "sync_allow_hardlinks", "sync_depth",
+                                  "sync_hooks_only_on_change", "sync_openpgp_keyserver",
                                   "sync_openpgp_key_path", "sync_openpgp_key_refresh",
                                   "sync_openpgp_key_refresh_retry_count",
                                   "sync_openpgp_key_refresh_retry_delay_exp_base",
                                   "sync_openpgp_key_refresh_retry_delay_max",
                                   "sync_openpgp_key_refresh_retry_delay_mult",
                                   "sync_openpgp_key_refresh_retry_overall_timeout", "sync_rcu",
-                                  "sync_rcu_spare_snapshots", "sync_rcu_store_dir", "sync_rcu_ttl_days", "sync_type",
-                                  "sync_umask", "sync_uri", "sync_user", "volatile",
+                                  "sync_rcu_spare_snapshots", "sync_rcu_store_dir",
+                                  "sync_rcu_ttl_days", "sync_type", "sync_umask", "sync_uri",
+                                  "sync_user", "volatile",
                                   ):
                             v = getattr(repos_conf_opts, k, None)
 
@@ -622,7 +644,9 @@ class RepoConfigLoader:
                     prepos[repo.name] = repo
                 else:
                     if not portage._sync_mode:
-                        writemsg(_("!!! Invalid PORTDIR_OVERLAY (not a dir): '%s'\n") % ov, noiselevel=-1, )
+                        writemsg(_("!!! Invalid PORTDIR_OVERLAY (not a dir): '%s'\n") % ov,
+                                 noiselevel=-1,
+                                 )
 
         return portdir
 
@@ -701,14 +725,15 @@ class RepoConfigLoader:
 
         repo_locations = frozenset(repo.location for repo in prepos.values())
         for repo_location in ("var/db/repos/gentoo", "usr/portage"):
-            default_portdir = os.path.join(os.sep, settings["EPREFIX"].lstrip(os.sep), repo_location)
+            default_portdir = os.path.join(os.sep, settings["EPREFIX"].lstrip(os.sep),
+                                           repo_location)
             if default_portdir in repo_locations:
                 break
 
         # If PORTDIR_OVERLAY contains a repo with the same repo_name as
         # PORTDIR, then PORTDIR is overridden.
-        portdir = self._add_repositories(portdir, portdir_overlay, prepos, ignored_map, settings.local_config,
-                                         default_portdir,
+        portdir = self._add_repositories(portdir, portdir_overlay, prepos, ignored_map,
+                                         settings.local_config, default_portdir,
                                          )
         if portdir and portdir.strip():
             portdir = os.path.realpath(portdir)
@@ -725,18 +750,22 @@ class RepoConfigLoader:
                 if repo_name != "DEFAULT":
                     # Skip this warning for repoman (bug #474578).
                     if settings.local_config and paths:
-                        writemsg_level("!!! %s\n" % _("Section '%s' in repos.conf is missing location attribute") %
-                                       repo.name,
-                                       level=logging.ERROR,
-                                       noiselevel=-1,
-                                       )
+                        writemsg_level(
+                            "!!! %s\n" %
+                            _("Section '%s' in repos.conf is missing location attribute") %
+                            repo.name,
+                            level=logging.ERROR,
+                            noiselevel=-1,
+                        )
                     del prepos[repo_name]
                     continue
             else:
                 if not portage._sync_mode:
                     if not isdir_raise_eaccess(repo.location):
-                        writemsg_level("!!! %s\n" % _("Section '%s' in repos.conf has location attribute set "
-                                                      "to nonexistent directory: '%s'") % (repo_name, repo.location),
+                        writemsg_level("!!! %s\n" %
+                                       _("Section '%s' in repos.conf has location attribute set "
+                                         "to nonexistent directory: '%s'") %
+                                       (repo_name, repo.location),
                                        level=logging.ERROR,
                                        noiselevel=-1,
                                        )
@@ -750,8 +779,9 @@ class RepoConfigLoader:
                     # After removing support for PORTDIR_OVERLAY, the following check can be:
                     # if repo.missing_repo_name:
                     if repo.missing_repo_name and repo.name != repo_name:
-                        writemsg_level("!!! %s\n" % _("Section '%s' in repos.conf refers to repository "
-                                                      "without repository name set in '%s'") %
+                        writemsg_level("!!! %s\n" %
+                                       _("Section '%s' in repos.conf refers to repository "
+                                         "without repository name set in '%s'") %
                                        (repo_name, os.path.join(repo.location, REPO_NAME_LOC)),
                                        level=logging.ERROR,
                                        noiselevel=-1,
@@ -760,8 +790,9 @@ class RepoConfigLoader:
                         continue
 
                     if repo.name != repo_name:
-                        writemsg_level("!!! %s\n" % _("Section '%s' in repos.conf has name different "
-                                                      "from repository name '%s' set inside repository") %
+                        writemsg_level("!!! %s\n" %
+                                       _("Section '%s' in repos.conf has name different "
+                                         "from repository name '%s' set inside repository") %
                                        (repo_name, repo.name),
                                        level=logging.ERROR,
                                        noiselevel=-1,
@@ -785,7 +816,8 @@ class RepoConfigLoader:
                     if name == repo_name:
                         # unaliased names already handled earlier
                         continue
-                    writemsg_level(_("!!! Repository name or alias '%s', " + "defined for repository '%s', overrides " +
+                    writemsg_level(_("!!! Repository name or alias '%s', " +
+                                     "defined for repository '%s', overrides " +
                                      "existing alias or repository.\n") % (name, repo_name),
                                    level=logging.WARNING,
                                    noiselevel=-1,
@@ -810,7 +842,9 @@ class RepoConfigLoader:
             else:
                 prepos["DEFAULT"].main_repo = None
                 if portdir and not portage._sync_mode:
-                    writemsg(_("!!! main-repo not set in DEFAULT and PORTDIR is empty.\n"), noiselevel=-1, )
+                    writemsg(_("!!! main-repo not set in DEFAULT and PORTDIR is empty.\n"),
+                             noiselevel=-1,
+                             )
 
         if main_repo is not None and prepos[main_repo].priority is None:
             # This happens if main-repo has been set in repos.conf.
@@ -864,7 +898,8 @@ class RepoConfigLoader:
                     if master_name not in prepos:
                         layout_filename = os.path.join(repo.location, "metadata", "layout.conf")
                         writemsg_level(_("Unavailable repository '%s' "
-                                         "referenced by masters entry in '%s'\n") % (master_name, layout_filename),
+                                         "referenced by masters entry in '%s'\n") %
+                                       (master_name, layout_filename),
                                        level=logging.ERROR,
                                        noiselevel=-1,
                                        )
@@ -927,7 +962,8 @@ class RepoConfigLoader:
                     "!!! %s\n" % _("Repository '%s' is missing masters attribute in '%s'") %
                     (repo.name, os.path.join(repo.location, "metadata", "layout.conf"),
                      ) +
-                    "!!! %s\n" % _("Set 'masters = %s' in this file for future compatibility") % self.mainRepo().name,
+                    "!!! %s\n" % _("Set 'masters = %s' in this file for future compatibility") %
+                    self.mainRepo().name,
                     level=logging.WARNING,
                     noiselevel=-1,
                 )
@@ -1026,15 +1062,18 @@ class RepoConfigLoader:
         return repo_name in self.prepos
 
     def config_string(self):
-        bool_keys = ("strict_misc_digests", "sync_allow_hardlinks", "sync_openpgp_key_refresh", "sync_rcu", "volatile",
+        bool_keys = ("strict_misc_digests", "sync_allow_hardlinks", "sync_openpgp_key_refresh",
+                     "sync_rcu", "volatile",
                      )
-        str_or_int_keys = ("auto_sync", "clone_depth", "format", "location", "main_repo", "priority", "sync_depth",
-                           "sync_openpgp_keyserver", "sync_openpgp_key_path", "sync_openpgp_key_refresh_retry_count",
-                           "sync_openpgp_key_refresh_retry_delay_exp_base", "sync_openpgp_key_refresh_retry_delay_max",
+        str_or_int_keys = ("auto_sync", "clone_depth", "format", "location", "main_repo",
+                           "priority", "sync_depth", "sync_openpgp_keyserver",
+                           "sync_openpgp_key_path", "sync_openpgp_key_refresh_retry_count",
+                           "sync_openpgp_key_refresh_retry_delay_exp_base",
+                           "sync_openpgp_key_refresh_retry_delay_max",
                            "sync_openpgp_key_refresh_retry_delay_mult",
-                           "sync_openpgp_key_refresh_retry_overall_timeout", "sync_rcu_spare_snapshots",
-                           "sync_rcu_store_dir", "sync_rcu_ttl_days", "sync_type", "sync_umask", "sync_uri",
-                           "sync_user",
+                           "sync_openpgp_key_refresh_retry_overall_timeout",
+                           "sync_rcu_spare_snapshots", "sync_rcu_store_dir", "sync_rcu_ttl_days",
+                           "sync_type", "sync_umask", "sync_uri", "sync_user",
                            )
         str_tuple_keys = ("aliases", "eclass_overrides", "force", )
         repo_config_tuple_keys = ("masters", )
@@ -1049,17 +1088,21 @@ class RepoConfigLoader:
                     continue
                 if getattr(repo, key) is not None:
                     if key in bool_keys:
-                        config_string += "{} = {}\n".format(key.replace("_", "-"),
-                                                            "true" if getattr(repo, key) else "false",
-                                                            )
+                        config_string += "{} = {}\n".format(
+                            key.replace("_", "-"), "true" if getattr(repo, key) else "false",
+                        )
                     elif key in str_or_int_keys:
-                        config_string += "{} = {}\n".format(key.replace("_", "-"), getattr(repo, key), )
-                    elif key in str_tuple_keys:
-                        config_string += "{} = {}\n".format(key.replace("_", "-"), " ".join(getattr(repo, key)), )
-                    elif key in repo_config_tuple_keys:
                         config_string += "{} = {}\n".format(key.replace("_", "-"),
-                                                            " ".join(x.name for x in getattr(repo, key)),
+                                                            getattr(repo, key),
                                                             )
+                    elif key in str_tuple_keys:
+                        config_string += "{} = {}\n".format(key.replace("_", "-"),
+                                                            " ".join(getattr(repo, key)),
+                                                            )
+                    elif key in repo_config_tuple_keys:
+                        config_string += "{} = {}\n".format(
+                            key.replace("_", "-"), " ".join(x.name for x in getattr(repo, key)),
+                        )
             for o, v in repo.module_specific_options.items():
                 config_string += f"{o} = {v}\n"
         return config_string.lstrip("\n")
@@ -1084,7 +1127,8 @@ def load_repository_config(settings, extra_files=None):
             repoconfigpaths.append(os.path.join(PORTAGE_BASE_PATH, "cnf", "repos.conf"))
         else:
             repoconfigpaths.append(os.path.join(settings.global_config_path, "repos.conf"))
-        repoconfigpaths.append(os.path.join(settings["PORTAGE_CONFIGROOT"], USER_CONFIG_PATH, "repos.conf"))
+        repoconfigpaths.append(
+            os.path.join(settings["PORTAGE_CONFIGROOT"], USER_CONFIG_PATH, "repos.conf"))
     if extra_files:
         repoconfigpaths.extend(extra_files)
     return RepoConfigLoader(repoconfigpaths, settings)
@@ -1230,14 +1274,14 @@ def parse_layout_conf(repo_location, repo_name=None):
         unknown = raw_formats.difference(_valid_profile_formats)
         if unknown:
             repo_name = _get_repo_name(repo_location, cached=repo_name)
-            warnings.warn(
-                (_("Repository named '%(repo_name)s' has unsupported "
-                   "profiles in use ('profile-formats = %(unknown_fmts)s' setting in "
-                   "'%(layout_filename)s; please upgrade portage.") % dict(repo_name=repo_name or "unspecified",
-                                                                           layout_filename=layout_filename,
-                                                                           unknown_fmts=" ".join(unknown),
-                                                                           )), DeprecationWarning,
-            )
+            warnings.warn((_("Repository named '%(repo_name)s' has unsupported "
+                             "profiles in use ('profile-formats = %(unknown_fmts)s' setting in "
+                             "'%(layout_filename)s; please upgrade portage.") %
+                           dict(repo_name=repo_name or "unspecified",
+                                layout_filename=layout_filename,
+                                unknown_fmts=" ".join(unknown),
+                                )), DeprecationWarning,
+                          )
         raw_formats = tuple(raw_formats.intersection(_valid_profile_formats))
     data["profile-formats"] = raw_formats
 
@@ -1247,19 +1291,22 @@ def parse_layout_conf(repo_location, repo_name=None):
         pass
     else:
         if "profile-default-eapi" not in raw_formats:
-            warnings.warn((_("Repository named '%(repo_name)s' has "
-                             "profile_eapi_when_unspecified setting in "
-                             "'%(layout_filename)s', but 'profile-default-eapi' is "
-                             "not listed in the profile-formats field. Please "
-                             "report this issue to the repository maintainer.") %
-                           dict(repo_name=repo_name or "unspecified", layout_filename=layout_filename,
-                                )), SyntaxWarning,
-                          )
+            warnings.warn(
+                (_("Repository named '%(repo_name)s' has "
+                   "profile_eapi_when_unspecified setting in "
+                   "'%(layout_filename)s', but 'profile-default-eapi' is "
+                   "not listed in the profile-formats field. Please "
+                   "report this issue to the repository maintainer.") %
+                 dict(repo_name=repo_name or "unspecified", layout_filename=layout_filename,
+                      )), SyntaxWarning,
+            )
         elif not portage.eapi_is_supported(eapi):
             warnings.warn((_("Repository named '%(repo_name)s' has "
                              "unsupported EAPI '%(eapi)s' setting in "
                              "'%(layout_filename)s'; please upgrade portage.") %
-                           dict(repo_name=repo_name or "unspecified", eapi=eapi, layout_filename=layout_filename,
+                           dict(repo_name=repo_name or "unspecified",
+                                eapi=eapi,
+                                layout_filename=layout_filename,
                                 )), SyntaxWarning,
                           )
         else:

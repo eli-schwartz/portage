@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class CircularRustTestCase(TestCase):
@@ -50,7 +52,9 @@ class CircularRustTestCase(TestCase):
             # This needs to be tested with and without --update, since
             # that affects package selection logic significantly,
             # expecially for packages given as arguments.
-            ResolverPlaygroundTestCase(["=dev-lang/rust-1.46*"], mergelist=["dev-lang/rust-1.46.0"], success=True,
+            ResolverPlaygroundTestCase(["=dev-lang/rust-1.46*"],
+                                       mergelist=["dev-lang/rust-1.46.0"],
+                                       success=True,
                                        ),
             ResolverPlaygroundTestCase(["=dev-lang/rust-1.46*"],
                                        options={"--update": True},
@@ -65,7 +69,9 @@ class CircularRustTestCase(TestCase):
                                        mergelist=[],
                                        success=True,
                                        ),
-            ResolverPlaygroundTestCase(["dev-lang/rust"], mergelist=["dev-lang/rust-1.47.0-r2"], success=True,
+            ResolverPlaygroundTestCase(["dev-lang/rust"],
+                                       mergelist=["dev-lang/rust-1.47.0-r2"],
+                                       success=True,
                                        ),
             ResolverPlaygroundTestCase(["dev-lang/rust"],
                                        options={"--update": True},
@@ -84,7 +90,10 @@ class CircularRustTestCase(TestCase):
 
         world = ["dev-lang/rust"]
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

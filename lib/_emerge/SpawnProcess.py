@@ -22,12 +22,14 @@ class SpawnProcess(SubProcess):
     spawn() argument.
     """
 
-    _spawn_kwarg_names = ("env", "opt_name", "fd_pipes", "uid", "gid", "groups", "umask", "logfile", "path_lookup",
-                          "pre_exec", "close_fds", "unshare_ipc", "unshare_mount", "unshare_pid", "unshare_net",
+    _spawn_kwarg_names = ("env", "opt_name", "fd_pipes", "uid", "gid", "groups", "umask", "logfile",
+                          "path_lookup", "pre_exec", "close_fds", "unshare_ipc", "unshare_mount",
+                          "unshare_pid", "unshare_net",
                           )
 
-    __slots__ = (("args", "log_filter_file") + _spawn_kwarg_names + ("_main_task", "_main_task_cancel", "_selinux_type",
-                                                                     ))
+    __slots__ = (("args", "log_filter_file") + _spawn_kwarg_names +
+                 ("_main_task", "_main_task_cancel", "_selinux_type",
+                  ))
 
     # Max number of attempts to kill the processes listed in cgroup.procs,
     # given that processes may fork before they can be killed.
@@ -150,7 +152,9 @@ class SpawnProcess(SubProcess):
         pipe_logger.start()
 
         self._main_task_cancel = functools.partial(self._main_cancel, build_logger, pipe_logger)
-        self._main_task = asyncio.ensure_future(self._main(build_logger, pipe_logger, loop=self.scheduler),
+        self._main_task = asyncio.ensure_future(self._main(build_logger,
+                                                           pipe_logger,
+                                                           loop=self.scheduler),
                                                 loop=self.scheduler,
                                                 )
         self._main_task.add_done_callback(self._main_exit)

@@ -128,10 +128,11 @@ def listdir(mypath,
             fpaths.append(file_path)
             ftype.append(file_type)
             if file_type == 1:
-                subdir_list, subdir_types = cacheddir(os.path.join(mypath, file_path), ignorecvs, ignorelist,
-                                                      EmptyOnError, followSymlinks,
+                subdir_list, subdir_types = cacheddir(os.path.join(mypath, file_path), ignorecvs,
+                                                      ignorelist, EmptyOnError, followSymlinks,
                                                       )
-                stack.extend((os.path.join(file_path, x), x_type) for x, x_type in zip(subdir_list, subdir_types))
+                stack.extend((os.path.join(file_path, x), x_type)
+                             for x, x_type in zip(subdir_list, subdir_types))
 
     if filesonly:
         fpaths = [x for x, x_type in zip(fpaths, ftype) if x_type == 0]

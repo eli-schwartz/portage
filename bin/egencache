@@ -43,14 +43,17 @@ try:
 
     from os import path as osp
 
-    if osp.isfile(osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")):
+    if osp.isfile(
+            osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), ".portage_not_installed")):
         sys.path.insert(0, osp.join(osp.dirname(osp.dirname(osp.realpath(__file__))), "lib"))
     import portage
 
     portage._internal_caller = True
     from portage import os, _encodings, _unicode_encode, _unicode_decode
     from portage.cache.cache_errors import CacheError, StatCollision
-    from portage.cache.index.pkg_desc_index import (pkg_desc_index_line_format, pkg_desc_index_line_read, )
+    from portage.cache.index.pkg_desc_index import (pkg_desc_index_line_format,
+                                                    pkg_desc_index_line_read,
+                                                    )
     from portage.const import TIMESTAMP_FORMAT
     from portage.dep import _repo_separator
     from portage.output import colorize, EOutput
@@ -96,18 +99,28 @@ try:
                              action="store_true",
                              help="update the ChangeLog files from SCM logs",
                              )
-        actions.add_argument("--update-pkg-desc-index", action="store_true", help="update package description index", )
+        actions.add_argument("--update-pkg-desc-index",
+                             action="store_true",
+                             help="update package description index",
+                             )
         actions.add_argument("--update-manifests", action="store_true", help="update manifests")
 
         common = parser.add_argument_group("Common options")
         common.add_argument("--repo", action="store", help="name of repo to operate on")
-        common.add_argument("--config-root", help="location of portage config files", dest="portage_configroot", )
+        common.add_argument("--config-root",
+                            help="location of portage config files",
+                            dest="portage_configroot",
+                            )
         common.add_argument("--external-cache-only",
                             action="store_true",
                             help="Output only to the external cache (not the repository itself)",
                             )
-        common.add_argument("--gpg-dir", help="override the PORTAGE_GPG_DIR variable", dest="gpg_dir")
-        common.add_argument("--gpg-key", help="override the PORTAGE_GPG_KEY variable", dest="gpg_key")
+        common.add_argument("--gpg-dir",
+                            help="override the PORTAGE_GPG_DIR variable",
+                            dest="gpg_dir")
+        common.add_argument("--gpg-key",
+                            help="override the PORTAGE_GPG_KEY variable",
+                            dest="gpg_key")
         common.add_argument("--repositories-configuration",
                             help="override configuration of repositories (in format of repos.conf)",
                             dest="repositories_configuration",
@@ -127,7 +140,10 @@ try:
                             metavar="<y|n>",
                             help="manually override layout.conf thin-manifests setting",
                             )
-        common.add_argument("--tolerant", action="store_true", help="exit successfully if only minor errors occurred", )
+        common.add_argument("--tolerant",
+                            action="store_true",
+                            help="exit successfully if only minor errors occurred",
+                            )
         common.add_argument("--ignore-default-opts",
                             action="store_true",
                             help="do not use the EGENCACHE_DEFAULT_OPTS environment variable",
@@ -140,7 +156,12 @@ try:
 
         update = parser.add_argument_group("--update options")
         update.add_argument("--cache-dir", help="location of the metadata cache", dest="cache_dir")
-        update.add_argument("-j", "--jobs", type=int, action="store", help="max ebuild processes to spawn", )
+        update.add_argument("-j",
+                            "--jobs",
+                            type=int,
+                            action="store",
+                            help="max ebuild processes to spawn",
+                            )
         update.add_argument("--load-average",
                             type=float,
                             action="store",
@@ -149,7 +170,8 @@ try:
                             )
         update.add_argument("--rsync",
                             action="store_true",
-                            help="enable rsync stat collision workaround " + "for bug 139134 (use with --update)",
+                            help="enable rsync stat collision workaround " +
+                            "for bug 139134 (use with --update)",
                             )
 
         uld = parser.add_argument_group("--update-use-local-desc options")
@@ -275,9 +297,11 @@ try:
             if external_cache_only:
                 self._trg_caches = ()
             else:
-                self._trg_caches = tuple(conf.iter_pregenerated_caches(self._auxdbkeys, force=True, readonly=False))
+                self._trg_caches = tuple(
+                    conf.iter_pregenerated_caches(self._auxdbkeys, force=True, readonly=False))
                 if not self._trg_caches:
-                    raise Exception(f"cache formats '{' '.join(conf.cache_formats)}' aren't supported")
+                    raise Exception(
+                        f"cache formats '{' '.join(conf.cache_formats)}' aren't supported")
 
             if rsync:
                 for trg_cache in self._trg_caches:
@@ -286,7 +310,8 @@ try:
                         # Make _metadata_callback write this cache first, in case
                         # it raises a StatCollision and triggers mtime
                         # modification.
-                        self._trg_caches = tuple([trg_cache] + [x for x in self._trg_caches if x is not trg_cache])
+                        self._trg_caches = tuple(
+                            [trg_cache] + [x for x in self._trg_caches if x is not trg_cache])
 
             self._existing_nodes = set()
 
@@ -350,7 +375,10 @@ try:
                         os.utime(ebuild_hash.location, (max_mtime, max_mtime))
                     except OSError as e:
                         self.returncode |= 1
-                        writemsg_level(f"{cpv} writing target: {e}\n", level=logging.ERROR, noiselevel=-1, )
+                        writemsg_level(f"{cpv} writing target: {e}\n",
+                                       level=logging.ERROR,
+                                       noiselevel=-1,
+                                       )
                     else:
                         ebuild_hash.mtime = max_mtime
                         metadata["_mtime_"] = max_mtime
@@ -359,7 +387,10 @@ try:
 
             except CacheError as ce:
                 self.returncode |= 1
-                writemsg_level(f"{cpv} writing target: {ce}\n", level=logging.ERROR, noiselevel=-1, )
+                writemsg_level(f"{cpv} writing target: {ce}\n",
+                               level=logging.ERROR,
+                               noiselevel=-1,
+                               )
 
         def run(self):
             signum = run_main_scheduler(self._regen)
@@ -380,7 +411,10 @@ try:
                         cp = cpv_getkey(cpv)
                         if cp is None:
                             self.returncode |= 1
-                            writemsg_level(f"Unable to parse cp for '{cpv}'\n", level=logging.ERROR, noiselevel=-1, )
+                            writemsg_level(f"Unable to parse cp for '{cpv}'\n",
+                                           level=logging.ERROR,
+                                           noiselevel=-1,
+                                           )
                         else:
                             dead_nodes.add(cpv)
                 except CacheError as ce:
@@ -398,7 +432,10 @@ try:
                         cp = cpv_getkey(cpv)
                         if cp is None:
                             self.returncode |= 1
-                            writemsg_level(f"Unable to parse cp for '{cpv}'\n", level=logging.ERROR, noiselevel=-1, )
+                            writemsg_level(f"Unable to parse cp for '{cpv}'\n",
+                                           level=logging.ERROR,
+                                           noiselevel=-1,
+                                           )
                         else:
                             cp_missing.discard(cp)
                             if cp in cp_set:
@@ -428,14 +465,20 @@ try:
                         pass
                     except CacheError as ce:
                         self.returncode |= 1
-                        writemsg_level(f"{k} deleting stale cache: {ce}\n", level=logging.ERROR, noiselevel=-1, )
+                        writemsg_level(f"{k} deleting stale cache: {ce}\n",
+                                       level=logging.ERROR,
+                                       noiselevel=-1,
+                                       )
 
             if not trg_cache.autocommits:
                 try:
                     trg_cache.commit()
                 except CacheError as ce:
                     self.returncode |= 1
-                    writemsg_level(f"committing target: {ce}\n", level=logging.ERROR, noiselevel=-1, )
+                    writemsg_level(f"committing target: {ce}\n",
+                                   level=logging.ERROR,
+                                   noiselevel=-1,
+                                   )
 
             if hasattr(trg_cache, "_prune_empty_dirs"):
                 trg_cache._prune_empty_dirs()
@@ -487,9 +530,10 @@ try:
                 haspkgs = False
                 for pkg_desc in items:
                     masked = False
-                    version = self._portdb.xmatch("bestmatch-visible",
-                                                  Atom(f"{pkg_desc.cp}{_repo_separator}{self._repo_config.name}"),
-                                                  )
+                    version = self._portdb.xmatch(
+                        "bestmatch-visible",
+                        Atom(f"{pkg_desc.cp}{_repo_separator}{self._repo_config.name}"),
+                    )
                     if not version:
                         version = pkg_desc.cpv_list[-1]
                         masked = True
@@ -551,9 +595,14 @@ try:
                     if self._preserve_comments:
                         # Probe in binary mode, in order to avoid
                         # potential character encoding issues.
-                        output = open(_unicode_encode(desc_path, encoding=_encodings["fs"], errors="strict"), "r+b", )
+                        output = open(
+                            _unicode_encode(desc_path, encoding=_encodings["fs"], errors="strict"),
+                            "r+b",
+                        )
                     else:
-                        output = open(_unicode_encode(desc_path, encoding=_encodings["fs"], errors="strict"),
+                        output = open(_unicode_encode(desc_path,
+                                                      encoding=_encodings["fs"],
+                                                      errors="strict"),
                                       mode="w",
                                       encoding=_encodings["repo.content"],
                                       errors="backslashreplace",
@@ -577,7 +626,9 @@ try:
                                    )
                     self._preserve_comments = False
                     try:
-                        output = open(_unicode_encode(desc_path, encoding=_encodings["fs"], errors="strict"),
+                        output = open(_unicode_encode(desc_path,
+                                                      encoding=_encodings["fs"],
+                                                      errors="strict"),
                                       mode="w",
                                       encoding=_encodings["repo.content"],
                                       errors="backslashreplace",
@@ -603,7 +654,8 @@ try:
 
                 # Finished probing comments in binary mode, now append
                 # in text mode.
-                output = open(_unicode_encode(desc_path, encoding=_encodings["fs"], errors="strict"),
+                output = open(_unicode_encode(desc_path, encoding=_encodings["fs"],
+                                              errors="strict"),
                               mode="a",
                               encoding=_encodings["repo.content"],
                               errors="backslashreplace",
@@ -645,11 +697,10 @@ try:
             for cp in self._portdb.cp_all():
                 metadata_path = os.path.join(repo_path, cp, "metadata.xml")
                 try:
-                    metadata = ElementTree.parse(_unicode_encode(metadata_path,
-                                                                 encoding=_encodings["fs"],
-                                                                 errors="strict"),
-                                                 parser=ElementTree.XMLParser(target=_MetadataTreeBuilder()),
-                                                 )
+                    metadata = ElementTree.parse(
+                        _unicode_encode(metadata_path, encoding=_encodings["fs"], errors="strict"),
+                        parser=ElementTree.XMLParser(target=_MetadataTreeBuilder()),
+                    )
                 except OSError:
                     pass
                 except (ExpatError, OSError) as e:
@@ -682,7 +733,9 @@ try:
                                     return vercmp(atoma.version, atomb.version)
                                 # Versions match, let's fallback to operator matching
                                 else:
-                                    return cmp_func(ops.get(atoma.operator, -1), ops.get(atomb.operator, -1), )
+                                    return cmp_func(ops.get(atoma.operator, -1),
+                                                    ops.get(atomb.operator, -1),
+                                                    )
 
                             def _Atom(key):
                                 if key is not None:
@@ -696,10 +749,11 @@ try:
                                 try:
                                     reskeys = {_Atom(k): k for k in resdict}
                                 except portage.exception.InvalidAtom as e:
-                                    writemsg_level(f"ERROR: failed parsing {cp}/metadata.xml: {e}\n",
-                                                   level=logging.ERROR,
-                                                   noiselevel=-1,
-                                                   )
+                                    writemsg_level(
+                                        f"ERROR: failed parsing {cp}/metadata.xml: {e}\n",
+                                        level=logging.ERROR,
+                                        noiselevel=-1,
+                                    )
                                     self.returncode |= 1
                                     resdesc = next(iter(resdict.items()))[1]
                                 else:
@@ -721,10 +775,18 @@ try:
 
     class GenChangeLogs:
 
-        def __init__(self, portdb, changelog_output, changelog_reversed, max_jobs=None, max_load=None, ):
+        def __init__(self,
+                     portdb,
+                     changelog_output,
+                     changelog_reversed,
+                     max_jobs=None,
+                     max_load=None,
+                     ):
             self.returncode = os.EX_OK
             self._portdb = portdb
-            self._wrapper = textwrap.TextWrapper(width=78, initial_indent="  ", subsequent_indent="  ")
+            self._wrapper = textwrap.TextWrapper(width=78,
+                                                 initial_indent="  ",
+                                                 subsequent_indent="  ")
             self._changelog_output = changelog_output
             self._changelog_reversed = changelog_reversed
             self._max_jobs = max_jobs
@@ -743,7 +805,9 @@ try:
         @staticmethod
         def grab(cmd):
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-            return _unicode_decode(p.communicate()[0], encoding=_encodings["stdio"], errors="strict")
+            return _unicode_decode(p.communicate()[0],
+                                   encoding=_encodings["stdio"],
+                                   errors="strict")
 
         def generate_changelog(self, cp):
             os.chdir(os.path.join(self._repo_path, cp))
@@ -773,7 +837,10 @@ try:
                               errors="backslashreplace",
                               )
             except OSError as e:
-                writemsg_level(f"ERROR: failed to open ChangeLog for {cp}: {e}\n", level=logging.ERROR, noiselevel=-1, )
+                writemsg_level(f"ERROR: failed to open ChangeLog for {cp}: {e}\n",
+                               level=logging.ERROR,
+                               noiselevel=-1,
+                               )
                 self.returncode |= 2
                 return
 
@@ -803,8 +870,8 @@ try:
                 # then the commit-id and path.
 
                 cinfo = (self.grab([
-                    "git", self._work_tree, "diff-tree", "--name-status", "--no-renames", "--format=%ct %cN <%cE>%n%B",
-                    "--root", f"--relative={cp}", "-r", c, "--", ".",
+                    "git", self._work_tree, "diff-tree", "--name-status", "--no-renames",
+                    "--format=%ct %cN <%cE>%n%B", "--root", f"--relative={cp}", "-r", c, "--", ".",
                 ]).rstrip("\n").split("\n"))
 
                 # Expected output:
@@ -867,7 +934,8 @@ try:
                 if body[-1].startswith("git-svn-id:") and not body[-2]:
                     body = body[:-2]
                 # strip the repoman version/manifest note
-                if (body[-1] == " (Signed Manifest commit)" or body[-1] == " (Unsigned Manifest commit)"):
+                if (body[-1] == " (Signed Manifest commit)"
+                        or body[-1] == " (Unsigned Manifest commit)"):
                     body = body[:-1]
                 if body[-1].startswith("(Portage version:") and body[-1].endswith(")"):
                     body = body[:-1]
@@ -944,8 +1012,8 @@ try:
 
             settings = portage.config(config_root=config_root, local_config=False, env=env)
 
-        if not (options.update or options.update_use_local_desc or options.update_changelogs or options.update_manifests
-                or options.update_pkg_desc_index):
+        if not (options.update or options.update_use_local_desc or options.update_changelogs
+                or options.update_manifests or options.update_pkg_desc_index):
             parser.error("No action specified")
             return 1
 
@@ -975,7 +1043,8 @@ try:
         if options.update and "metadata-transfer" not in settings.features:
             # Forcibly enable metadata-transfer if portdbapi has a pregenerated
             # cache that does not support eclass validation.
-            cache = repo_config.get_pregenerated_cache(portage.dbapi.dbapi._known_keys, readonly=True)
+            cache = repo_config.get_pregenerated_cache(portage.dbapi.dbapi._known_keys,
+                                                       readonly=True)
             if cache is not None and not cache.complete_eclass_entries:
                 settings.features.add("metadata-transfer")
             cache = None
@@ -997,7 +1066,8 @@ try:
                 # we don't use the cache in the "volatile" mode which is
                 # undesirable for egencache.
                 if not os.access(settings["PORTAGE_DEPCACHEDIR"], os.W_OK):
-                    writemsg_level("ecachegen: error: " + f"write access denied: {settings['PORTAGE_DEPCACHEDIR']}\n",
+                    writemsg_level("ecachegen: error: " +
+                                   f"write access denied: {settings['PORTAGE_DEPCACHEDIR']}\n",
                                    level=logging.ERROR,
                                    noiselevel=-1,
                                    )
@@ -1101,7 +1171,8 @@ try:
             if not options.external_cache_only and repo_config.writable:
                 writable_location = repo_config.location
             else:
-                writable_location = os.path.join(portdb.depcachedir, repo_config.location.lstrip(os.sep))
+                writable_location = os.path.join(portdb.depcachedir,
+                                                 repo_config.location.lstrip(os.sep))
                 if not options.external_cache_only:
                     msg = [
                         f"WARNING: Repository is not writable: {repo_config.location}",
@@ -1112,14 +1183,18 @@ try:
 
             gen_index = GenPkgDescIndex(repo_config,
                                         portdb,
-                                        os.path.join(writable_location, "metadata", "pkg_desc_index"),
+                                        os.path.join(writable_location, "metadata",
+                                                     "pkg_desc_index"),
                                         verbose=options.verbose,
                                         )
             gen_index.run()
             ret.append(gen_index.returncode)
 
         if options.update_use_local_desc:
-            gen_desc = GenUseLocalDesc(portdb, output=options.uld_output, preserve_comments=options.preserve_comments, )
+            gen_desc = GenUseLocalDesc(portdb,
+                                       output=options.uld_output,
+                                       preserve_comments=options.preserve_comments,
+                                       )
             gen_desc.run()
             ret.append(gen_desc.returncode)
 
@@ -1163,7 +1238,9 @@ try:
         if options.write_timestamp:
             timestamp_path = os.path.join(repo_path, "metadata", "timestamp.chk")
             try:
-                portage.util.write_atomic(timestamp_path, time.strftime(f"{TIMESTAMP_FORMAT}\n", time.gmtime()), )
+                portage.util.write_atomic(timestamp_path,
+                                          time.strftime(f"{TIMESTAMP_FORMAT}\n", time.gmtime()),
+                                          )
             except (OSError, portage.exception.PortageException):
                 ret.append(os.EX_IOERR)
             else:

@@ -5,8 +5,9 @@ import copy
 
 
 class BacktrackParameter:
-    __slots__ = ("circular_dependency", "needed_unstable_keywords", "runtime_pkg_mask", "needed_use_config_changes",
-                 "needed_license_changes", "prune_rebuilds", "rebuild_list", "reinstall_list", "needed_p_mask_changes",
+    __slots__ = ("circular_dependency", "needed_unstable_keywords", "runtime_pkg_mask",
+                 "needed_use_config_changes", "needed_license_changes", "prune_rebuilds",
+                 "rebuild_list", "reinstall_list", "needed_p_mask_changes",
                  "slot_operator_mask_built", "slot_operator_replace_installed",
                  )
 
@@ -149,7 +150,8 @@ class Backtracker:
             new_node.mask_steps += 1
             new_node.terminal = False
             for pkg, parent_atoms in similar_pkgs:
-                new_node.parameter.runtime_pkg_mask.setdefault(pkg, {})["slot conflict"] = parent_atoms
+                new_node.parameter.runtime_pkg_mask.setdefault(pkg,
+                                                               {})["slot conflict"] = parent_atoms
             self._add(new_node)
 
     def _feedback_missing_dep(self, dep):
@@ -158,8 +160,9 @@ class Backtracker:
         new_node.mask_steps += 1
         new_node.terminal = False
 
-        new_node.parameter.runtime_pkg_mask.setdefault(dep.parent,
-                                                       {})["missing dependency"] = {(dep.parent, dep.root, dep.atom)}
+        new_node.parameter.runtime_pkg_mask.setdefault(dep.parent, {})["missing dependency"] = {
+            (dep.parent, dep.root, dep.atom)
+        }
 
         self._add(new_node)
 

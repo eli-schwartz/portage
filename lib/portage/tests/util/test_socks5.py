@@ -59,7 +59,8 @@ class AsyncHTTPServer:
         self._httpd = None
 
     def __enter__(self):
-        httpd = self._httpd = HTTPServer((self._host, 0), functools.partial(_Handler, self._content))
+        httpd = self._httpd = HTTPServer((self._host, 0),
+                                         functools.partial(_Handler, self._content))
         self.server_port = httpd.server_port
         self._loop.add_reader(httpd.socket.fileno(), self._httpd._handle_request_noblock)
         return self
@@ -77,7 +78,8 @@ class AsyncHTTPServerTestCase(TestCase):
     def _fetch_directly(host, port, path):
         # NOTE: python2.7 does not have context manager support here
         try:
-            f = urlopen("http://{host}:{port}{path}".format(host=host, port=port, path=path))  # nosec
+            f = urlopen("http://{host}:{port}{path}".format(host=host, port=port,
+                                                            path=path))  # nosec
             return f.read()
         finally:
             if f is not None:
@@ -92,7 +94,8 @@ class AsyncHTTPServerTestCase(TestCase):
             with AsyncHTTPServer(host, {path: content}, loop) as server:
                 for j in range(2):
                     result = loop.run_until_complete(
-                        loop.run_in_executor(None, self._fetch_directly, host, server.server_port, path))
+                        loop.run_in_executor(None, self._fetch_directly, host, server.server_port,
+                                             path))
                     self.assertEqual(result, content)
 
 
@@ -147,8 +150,8 @@ def socks5_http_get_ipv4(proxy, host, port, path):
         if reply != (0x05, 0x00, 0x00):
             raise AssertionError(repr(reply))
         struct.unpack("!B4sH", s.recv(7))  # contains proxied address info
-        s.send("GET {} HTTP/1.1\r\nHost: {}:{}\r\nAccept: */*\r\nConnection: close\r\n\r\n".format(path, host,
-                                                                                                   port).encode())
+        s.send("GET {} HTTP/1.1\r\nHost: {}:{}\r\nAccept: */*\r\nConnection: close\r\n\r\n".format(
+            path, host, port).encode())
         headers = []
         while True:
             headers.append(f.readline())
@@ -183,7 +186,8 @@ class Socks5ServerTestCase(TestCase):
                 loop.run_until_complete(socks5.proxy.ready())
 
                 result = loop.run_until_complete(
-                    loop.run_in_executor(None, self._fetch_via_proxy, proxy, host, server.server_port, path,
+                    loop.run_in_executor(None, self._fetch_via_proxy, proxy, host,
+                                         server.server_port, path,
                                          ))
 
                 self.assertEqual(result, content)

@@ -114,7 +114,9 @@ def update_dbentries(update_iter, mydata, eapi=None, parent=None):
         k_unicode = _unicode_decode(k, encoding=_encodings["repo.content"], errors="replace")
         if k_unicode not in ignored_dbentries:
             orig_content = mycontent
-            mycontent = _unicode_decode(mycontent, encoding=_encodings["repo.content"], errors="replace")
+            mycontent = _unicode_decode(mycontent,
+                                        encoding=_encodings["repo.content"],
+                                        errors="replace")
             is_encoded = mycontent is not orig_content
             orig_content = mycontent
             for update_cmd in update_iter:
@@ -264,7 +266,13 @@ def parse_updates(mycontent):
     return myupd, errors
 
 
-def update_config_files(config_root, protect, protect_mask, update_iter, match_callback=None, case_insensitive=False, ):
+def update_config_files(config_root,
+                        protect,
+                        protect_mask,
+                        update_iter,
+                        match_callback=None,
+                        case_insensitive=False,
+                        ):
     """Perform global updates on /etc/portage/package.*, /etc/portage/profile/package.*,
     /etc/portage/profile/packages and /etc/portage/sets.
     config_root - location of files to update
@@ -288,14 +296,15 @@ def update_config_files(config_root, protect, protect_mask, update_iter, match_c
     update_files = {}
     file_contents = {}
     myxfiles = [
-        "package.accept_keywords", "package.env", "package.keywords", "package.license", "package.mask",
-        "package.properties", "package.unmask", "package.use", "sets",
+        "package.accept_keywords", "package.env", "package.keywords", "package.license",
+        "package.mask", "package.properties", "package.unmask", "package.use", "sets",
     ]
     myxfiles += [
-        os.path.join("profile", x) for x in ("packages", "package.accept_keywords", "package.keywords", "package.mask",
-                                             "package.unmask", "package.use", "package.use.force", "package.use.mask",
-                                             "package.use.stable.force", "package.use.stable.mask",
-                                             )
+        os.path.join("profile", x)
+        for x in ("packages", "package.accept_keywords", "package.keywords", "package.mask",
+                  "package.unmask", "package.use", "package.use.force", "package.use.mask",
+                  "package.use.stable.force", "package.use.stable.mask",
+                  )
     ]
     abs_user_config = os.path.join(config_root, USER_CONFIG_PATH)
     recursivefiles = []
@@ -329,7 +338,9 @@ def update_config_files(config_root, protect, protect_mask, update_iter, match_c
     for x in myxfiles:
         f = None
         try:
-            f = open(_unicode_encode(os.path.join(abs_user_config, x), encoding=_encodings["fs"], errors="strict",
+            f = open(_unicode_encode(os.path.join(abs_user_config, x),
+                                     encoding=_encodings["fs"],
+                                     errors="strict",
                                      ),
                      encoding=_encodings["content"],
                      errors="replace",
@@ -379,7 +390,10 @@ def update_config_files(config_root, protect, protect_mask, update_iter, match_c
                             sys.stdout.write("p")
                             sys.stdout.flush()
 
-    protect_obj = ConfigProtect(config_root, protect, protect_mask, case_insensitive=case_insensitive)
+    protect_obj = ConfigProtect(config_root,
+                                protect,
+                                protect_mask,
+                                case_insensitive=case_insensitive)
     for x in update_files:
         updating_file = os.path.join(abs_user_config, x)
         if protect_obj.isprotected(updating_file):
@@ -388,7 +402,8 @@ def update_config_files(config_root, protect, protect_mask, update_iter, match_c
             write_atomic(updating_file, "".join(file_contents[x]))
         except PortageException as e:
             writemsg(f"\n!!! {str(e)}\n", noiselevel=-1)
-            writemsg(_("!!! An error occurred while updating a config file:") + f" '{updating_file}'\n",
+            writemsg(_("!!! An error occurred while updating a config file:") +
+                     f" '{updating_file}'\n",
                      noiselevel=-1,
                      )
             continue

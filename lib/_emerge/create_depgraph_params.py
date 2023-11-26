@@ -58,7 +58,8 @@ def create_depgraph_params(myopts, myaction):
 
     autounmask = myopts.get("--autounmask")
     autounmask_license = myopts.get("--autounmask-license", "y" if autounmask is True else "n")
-    autounmask_use = "n" if myparams.get("binpkg_respect_use") == "y" else myopts.get("--autounmask-use")
+    autounmask_use = "n" if myparams.get("binpkg_respect_use") == "y" else myopts.get(
+        "--autounmask-use")
     if autounmask == "n":
         autounmask = False
     else:
@@ -80,13 +81,15 @@ def create_depgraph_params(myopts, myaction):
     myparams["autounmask"] = autounmask
     myparams["autounmask_keep_use"] = True if autounmask_use == "n" else False
     myparams["autounmask_keep_license"] = False if autounmask_license == "y" else True
-    myparams["autounmask_keep_keywords"] = False if autounmask_keep_keywords in (None, "n") else True
+    myparams["autounmask_keep_keywords"] = False if autounmask_keep_keywords in (None,
+                                                                                 "n") else True
     myparams["autounmask_keep_masks"] = False if autounmask_keep_masks in (None, "n") else True
 
     bdeps = myopts.get("--with-bdeps")
     if bdeps is not None:
         myparams["bdeps"] = bdeps
-    elif myaction == "remove" or (myopts.get("--with-bdeps-auto") != "n" and "--usepkg" not in myopts):
+    elif myaction == "remove" or (myopts.get("--with-bdeps-auto") != "n"
+                                  and "--usepkg" not in myopts):
         myparams["bdeps"] = "auto"
 
     ignore_built_slot_operator_deps = myopts.get("--ignore-built-slot-operator-deps")

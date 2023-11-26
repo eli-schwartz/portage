@@ -54,7 +54,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--allow-unsigned",
         action="store_true",
-        help="Allow signing from unsigned packages when binpkg-request-signature is enabled (default: false)",
+        help=
+        "Allow signing from unsigned packages when binpkg-request-signature is enabled (default: false)",
     )
     parser.add_argument("--skip-signed",
                         action="store_true",

@@ -50,7 +50,8 @@ class DoebuildSpawnTestCase(TestCase):
             portdb = root_config.trees["porttree"].dbapi
             settings = config(clone=playground.settings)
             if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
-                settings["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
+                settings["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ[
+                    "__PORTAGE_TEST_HARDLINK_LOCKS"]
                 settings.backup_changes("__PORTAGE_TEST_HARDLINK_LOCKS")
 
             cpv = "sys-apps/portage-2.1"
@@ -82,17 +83,20 @@ class DoebuildSpawnTestCase(TestCase):
                 # returnpid=False. This case is no longer used by portage
                 # internals since EbuildPhase is used instead and that passes
                 # returnpid=True to doebuild.spawn().
-                rval = doebuild_spawn(
-                    "%s %s" %
-                    (_shell_quote(os.path.join(settings["PORTAGE_BIN_PATH"], os.path.basename(EBUILD_SH_BINARY),
-                                               )), phase,
-                     ),
-                    settings,
-                    free=1,
-                )
+                rval = doebuild_spawn("%s %s" % (_shell_quote(
+                    os.path.join(settings["PORTAGE_BIN_PATH"], os.path.basename(EBUILD_SH_BINARY),
+                                 )), phase,
+                                                 ),
+                                      settings,
+                                      free=1,
+                                      )
                 self.assertEqual(rval, os.EX_OK)
 
-                ebuild_phase = EbuildPhase(background=False, phase=phase, scheduler=scheduler, settings=settings, )
+                ebuild_phase = EbuildPhase(background=False,
+                                           phase=phase,
+                                           scheduler=scheduler,
+                                           settings=settings,
+                                           )
                 ebuild_phase.start()
                 ebuild_phase.wait()
                 self.assertEqual(ebuild_phase.returncode, os.EX_OK)

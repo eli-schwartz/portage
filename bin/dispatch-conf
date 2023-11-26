@@ -110,7 +110,8 @@ class dispatch:
         if "log-file" in self.options:
             if os.path.isfile(self.options["log-file"]):
                 shutil.copy(self.options["log-file"], self.options["log-file"] + ".old")
-            if os.path.isfile(self.options["log-file"]) or not os.path.exists(self.options["log-file"]):
+            if os.path.isfile(
+                    self.options["log-file"]) or not os.path.exists(self.options["log-file"]):
                 old_umask = os.umask(0o077)
                 open(self.options["log-file"], "w").close()  # Truncate it
                 os.umask(old_umask)
@@ -153,11 +154,14 @@ class dispatch:
                 find_opts += ["-iname"]
             else:
                 find_opts += ["-name"]
-            find_opts += [f"._cfg????_{basename}", "!", "-name", ".*~", "!", "-iname", ".*.bak", "-print", ]
+            find_opts += [
+                f"._cfg????_{basename}", "!", "-name", ".*~", "!", "-iname", ".*.bak", "-print",
+            ]
 
             try:
                 # Find existing configs
-                path_list = _unicode_decode(subprocess.check_output(["find", path] + find_opts), errors="strict",
+                path_list = _unicode_decode(subprocess.check_output(["find", path] + find_opts),
+                                            errors="strict",
                                             ).splitlines()
             except subprocess.CalledProcessError:
                 pass
@@ -176,12 +180,12 @@ class dispatch:
         # config file freezing support
         frozen_files = set(self.options.get("frozen-files", "").split())
         auto_zapped = []
-        protect_obj = portage.util.ConfigProtect(config_root,
-                                                 config_paths,
-                                                 portage.util.shlex_split(
-                                                     portage.settings.get("CONFIG_PROTECT_MASK", "")),
-                                                 case_insensitive=("case-insensitive-fs" in portage.settings.features),
-                                                 )
+        protect_obj = portage.util.ConfigProtect(
+            config_root,
+            config_paths,
+            portage.util.shlex_split(portage.settings.get("CONFIG_PROTECT_MASK", "")),
+            case_insensitive=("case-insensitive-fs" in portage.settings.features),
+        )
 
         #
         # Remove new configs identical to current
@@ -195,9 +199,11 @@ class dispatch:
             mrgconf = re.sub(r"\._cfg", "._mrg", conf["new"])
             archive = os.path.join(self.options["archive-dir"], conf["current"].lstrip("/"))
             if self.options["use-rcs"] == "yes":
-                mrgfail = portage.dispatch_conf.rcs_archive(archive, conf["current"], conf["new"], mrgconf)
+                mrgfail = portage.dispatch_conf.rcs_archive(archive, conf["current"], conf["new"],
+                                                            mrgconf)
             else:
-                mrgfail = portage.dispatch_conf.file_archive(archive, conf["current"], conf["new"], mrgconf)
+                mrgfail = portage.dispatch_conf.file_archive(archive, conf["current"], conf["new"],
+                                                             mrgconf)
             if os.path.lexists(archive + ".dist"):
                 unmodified = len(diff(conf["current"], archive + ".dist")[1]) == 0
             else:
@@ -212,7 +218,8 @@ class dispatch:
                 newconf = conf["new"]
 
             if (newconf == mrgconf and self.options.get("ignore-previously-merged") != "yes"
-                    and os.path.lexists(archive + ".dist") and len(diff(archive + ".dist", conf["new"])[1]) == 0):
+                    and os.path.lexists(archive + ".dist")
+                    and len(diff(archive + ".dist", conf["new"])[1]) == 0):
                 # The current update is identical to the archived .dist
                 # version that has previously been merged.
                 os.unlink(mrgconf)
@@ -264,7 +271,8 @@ class dispatch:
                 except OSError:
                     pass
                 return False
-            elif (unmodified or same_cvs or same_wsc or not protect_obj.isprotected(conf["current"])):
+            elif (unmodified or same_cvs or same_wsc
+                  or not protect_obj.isprotected(conf["current"])):
                 self.replace(newconf, conf["current"])
                 self.post_process(conf["current"])
                 if newconf == mrgconf:
@@ -308,7 +316,9 @@ class dispatch:
                     diff_pager(conf["current"], newconf)
 
                 print()
-                writemsg_stdout(f">> ({count} of {len(confs)}) -- {conf['current']}\n", noiselevel=-1, )
+                writemsg_stdout(f">> ({count} of {len(confs)}) -- {conf['current']}\n",
+                                noiselevel=-1,
+                                )
                 print(
                     ">> q quit, h help, n next, e edit-new, z zap-new, u use-new\n   m merge, t toggle-merge, l look-merge: ",
                     end=" ",
@@ -403,14 +413,18 @@ class dispatch:
             if e.errno == errno.ENOTSUP:
                 # Filesystem does not support xattrs
                 return
-            writemsg(f"dispatch-conf: Failed getting SELinux label on {curconf}; ignoring...\n", noiselevel=-1, )
+            writemsg(f"dispatch-conf: Failed getting SELinux label on {curconf}; ignoring...\n",
+                     noiselevel=-1,
+                     )
             return
 
         if label:
             try:
                 os.setxattr(newconf, "security.selinux", label)
             except OSError:
-                writemsg(f"dispatch-conf: Failed setting SELinux label on {newconf}; ignoring...\n", noiselevel=-1, )
+                writemsg(f"dispatch-conf: Failed setting SELinux label on {newconf}; ignoring...\n",
+                         noiselevel=-1,
+                         )
 
     def replace(self, newconf, curconf):
         """Replace current config with the new/merged version.  Also logs
@@ -425,7 +439,9 @@ class dispatch:
         try:
             os.rename(newconf, curconf)
         except (OSError, os.error) as why:
-            writemsg(f"dispatch-conf: Error renaming {newconf} to {curconf}: {str(why)}; fatal\n", noiselevel=-1, )
+            writemsg(f"dispatch-conf: Error renaming {newconf} to {curconf}: {str(why)}; fatal\n",
+                     noiselevel=-1,
+                     )
             return
 
         perform_conf_update_hooks("post-update", curconf)

@@ -85,7 +85,10 @@ class SubprocessExecTestCase(TestCase):
 
         def test(loop):
             proc = loop.run_until_complete(
-                create_subprocess_exec(cat_binary, stdin=subprocess.PIPE, stdout=subprocess.PIPE, loop=loop))
+                create_subprocess_exec(cat_binary,
+                                       stdin=subprocess.PIPE,
+                                       stdout=subprocess.PIPE,
+                                       loop=loop))
 
             out, err = loop.run_until_complete(proc.communicate(input=stdin_data))
 

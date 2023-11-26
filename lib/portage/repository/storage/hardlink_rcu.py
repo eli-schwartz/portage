@@ -69,15 +69,17 @@ class HardlinkRcuRepoStorage(RepoStorageInterface):
         self._spawn_kwargs = spawn_kwargs
 
         if not repo.sync_allow_hardlinks:
-            raise RepoStorageException("repos.conf sync-rcu setting"
-                                       " for repo '%s' requires that sync-allow-hardlinks be enabled" % repo.name)
+            raise RepoStorageException(
+                "repos.conf sync-rcu setting"
+                " for repo '%s' requires that sync-allow-hardlinks be enabled" % repo.name)
 
         # Raise an exception if repo.sync_rcu_store_dir is unset, since the
         # user needs to be aware of this location for bind mount and chroot
         # scenarios
         if not repo.sync_rcu_store_dir:
             raise RepoStorageException("repos.conf sync-rcu setting"
-                                       " for repo '%s' requires that sync-rcu-store-dir be set" % repo.name)
+                                       " for repo '%s' requires that sync-rcu-store-dir be set" %
+                                       repo.name)
 
         self._storage_location = repo.sync_rcu_store_dir
         if repo.sync_rcu_spare_snapshots is None or repo.sync_rcu_spare_snapshots < 0:
@@ -114,7 +116,8 @@ class HardlinkRcuRepoStorage(RepoStorageInterface):
         p = SpawnProcess(args=cmd, scheduler=asyncio.get_event_loop(), **kwargs)
         p.start()
         if await p.async_wait() != os.EX_OK:
-            raise RepoStorageException(f"command exited with status {p.returncode}: {' '.join(cmd)}")
+            raise RepoStorageException(
+                f"command exited with status {p.returncode}: {' '.join(cmd)}")
 
     async def init_update(self):
         update_location = os.path.join(self._storage_location, "update")
@@ -153,7 +156,8 @@ class HardlinkRcuRepoStorage(RepoStorageInterface):
             portage.util.ensure_dirs(update_location)
             portage.util.apply_stat_permissions(update_location, os.stat(self._user_location))
             # It's probably on a different device, so copy it.
-            await self._check_call(["rsync", "-a", self._user_location + "/", update_location + "/"])
+            await self._check_call(
+                ["rsync", "-a", self._user_location + "/", update_location + "/"])
 
             # Remove the old copy so that symlink can be created. Run with
             # maximum privileges, since removal requires write access to
@@ -179,7 +183,8 @@ class HardlinkRcuRepoStorage(RepoStorageInterface):
         except OSError:
             snapshots = []
             portage.util.ensure_dirs(self._snapshots_dir)
-            portage.util.apply_stat_permissions(self._snapshots_dir, os.stat(self._storage_location))
+            portage.util.apply_stat_permissions(self._snapshots_dir,
+                                                os.stat(self._storage_location))
         if snapshots:
             new_id = max(snapshots) + 1
         else:

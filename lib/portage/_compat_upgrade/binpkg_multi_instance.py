@@ -23,8 +23,10 @@ def main():
     }
     """
     if "binpkg-multi-instance" not in portage.settings.features:
-        portage.output.EOutput().einfo(f"Setting make.globals default {COMPAT_FEATURES} for backward compatibility")
-        config_path = os.path.join(os.environ["ED"], GLOBAL_CONFIG_PATH.lstrip(os.sep), "make.globals")
+        portage.output.EOutput().einfo(
+            f"Setting make.globals default {COMPAT_FEATURES} for backward compatibility")
+        config_path = os.path.join(os.environ["ED"], GLOBAL_CONFIG_PATH.lstrip(os.sep),
+                                   "make.globals")
         with open(config_path, "a") as f:
             f.write(f"{COMPAT_FEATURES}\n")
 

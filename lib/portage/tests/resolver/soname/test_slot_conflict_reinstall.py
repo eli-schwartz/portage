@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -70,17 +72,18 @@ class SonameSlotConflictReinstallTestCase(TestCase):
         test_cases = (
             # Test bug #439688, where a slot conflict prevents an
             # upgrade and we don't want to trigger unnecessary rebuilds.
-            ResolverPlaygroundTestCase(["@world"],
-                                       options={
-                                           "--deep": True,
-                                           "--ignore-soname-deps": "n",
-                                           "--update": True,
-                                           "--usepkgonly": True,
-                                           "--backtrack": 10,
-                                       },
-                                       success=True,
-                                       mergelist=["[binary]app-misc/D-2", "[binary]app-misc/E-0"],
-                                       ), )
+            ResolverPlaygroundTestCase(
+                ["@world"],
+                options={
+                    "--deep": True,
+                    "--ignore-soname-deps": "n",
+                    "--update": True,
+                    "--usepkgonly": True,
+                    "--backtrack": 10,
+                },
+                success=True,
+                mergelist=["[binary]app-misc/D-2", "[binary]app-misc/E-0"],
+            ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -91,7 +94,8 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                                                 world=world,
                                                 debug=False,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:
@@ -172,7 +176,8 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                                                 world=world,
                                                 debug=False,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
 
@@ -230,21 +235,24 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                                                      "--usepkgonly": True,
                                                  },
                                                  success=True,
-                                                 mergelist=["[binary]app-misc/B-2", "[binary]app-misc/A-2", ],
-                                                 ),
-                      ResolverPlaygroundTestCase(["@world"],
-                                                 options={
-                                                     "--ignore-soname-deps": "n",
-                                                     "--usepkgonly": True,
-                                                     "--update": True,
-                                                     "--deep": True,
-                                                 },
-                                                 success=True,
                                                  mergelist=[
-                                                     "[binary]app-misc/B-2", "[binary]app-misc/C-1",
-                                                     "[binary]app-misc/A-2",
+                                                     "[binary]app-misc/B-2", "[binary]app-misc/A-2",
                                                  ],
                                                  ),
+                      ResolverPlaygroundTestCase(
+                          ["@world"],
+                          options={
+                              "--ignore-soname-deps": "n",
+                              "--usepkgonly": True,
+                              "--update": True,
+                              "--deep": True,
+                          },
+                          success=True,
+                          mergelist=[
+                              "[binary]app-misc/B-2", "[binary]app-misc/C-1",
+                              "[binary]app-misc/A-2",
+                          ],
+                      ),
                       )
 
         world = ["app-misc/A"]
@@ -258,7 +266,8 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                                                 world=world,
                                                 debug=False,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
 
@@ -317,16 +326,17 @@ class SonameSlotConflictReinstallTestCase(TestCase):
             },
         }
 
-        test_cases = (ResolverPlaygroundTestCase(["cat/user"],
-                                                 options={
-                                                     "--deep": True,
-                                                     "--ignore-soname-deps": "n",
-                                                     "--update": True,
-                                                     "--usepkgonly": True,
-                                                 },
-                                                 success=True,
-                                                 mergelist=[],
-                                                 ), )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["cat/user"],
+            options={
+                "--deep": True,
+                "--ignore-soname-deps": "n",
+                "--update": True,
+                "--usepkgonly": True,
+            },
+            success=True,
+            mergelist=[],
+        ), )
 
         world = []
 
@@ -339,7 +349,8 @@ class SonameSlotConflictReinstallTestCase(TestCase):
                                                 world=world,
                                                 debug=False,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:

@@ -15,7 +15,13 @@ from portage.versions import _pkg_str
 
 class MaskManager:
 
-    def __init__(self, repositories, profiles, abs_user_config, user_config=True, strict_umatched_removal=False, ):
+    def __init__(self,
+                 repositories,
+                 profiles,
+                 abs_user_config,
+                 user_config=True,
+                 strict_umatched_removal=False,
+                 ):
         self._punmaskdict = ExtendedAtomDict(list)
         self._pmaskdict = ExtendedAtomDict(list)
         # Preserves atoms that are eliminated by negative
@@ -42,7 +48,8 @@ class MaskManager:
                                                     verify_eapi=True,
                                                     eapi_default=repo_config.eapi,
                                                     allow_repo=allow_profile_repo_deps(repo_config),
-                                                    allow_build_id=("build-id" in repo_config.profile_formats),
+                                                    allow_build_id=("build-id"
+                                                                    in repo_config.profile_formats),
                                                     )
                 if repo_config.portage1_profiles_compat and os.path.isdir(path):
                     warnings.warn(
@@ -89,8 +96,8 @@ class MaskManager:
                     unmatched_removals = list(unmatched_removals)
                     if len(unmatched_removals) > 3:
                         writemsg(_("--- Unmatched removal atoms in %s: %s and %s more\n") %
-                                 (source_file, ", ".join("-" + x
-                                                         for x in unmatched_removals[:3]), len(unmatched_removals) - 3,
+                                 (source_file, ", ".join("-" + x for x in unmatched_removals[:3]),
+                                  len(unmatched_removals) - 3,
                                   ),
                                  noiselevel=-1,
                                  )
@@ -109,7 +116,8 @@ class MaskManager:
                                 warn_for_unmatched_removal=not user_config,
                                 strict_warn_for_unmatched_removal=strict_umatched_removal,
                                 ))
-            repo_pkgmasklines.extend(append_repo(stack_lists(lines), repo.name, remember_source_file=True))
+            repo_pkgmasklines.extend(
+                append_repo(stack_lists(lines), repo.name, remember_source_file=True))
 
         repo_pkgunmasklines = []
         for repo in repositories.repos_with_profiles():
@@ -157,18 +165,20 @@ class MaskManager:
                                      allow_repo=allow_profile_repo_deps(x),
                                      allow_build_id=x.allow_build_id,
                                      ))
-        profile_pkgmasklines = stack_lists(profile_pkgmasklines,
-                                           incremental=1,
-                                           remember_source_file=True,
-                                           warn_for_unmatched_removal=True,
-                                           strict_warn_for_unmatched_removal=strict_umatched_removal,
-                                           )
-        profile_pkgunmasklines = stack_lists(profile_pkgunmasklines,
-                                             incremental=1,
-                                             remember_source_file=True,
-                                             warn_for_unmatched_removal=True,
-                                             strict_warn_for_unmatched_removal=strict_umatched_removal,
-                                             )
+        profile_pkgmasklines = stack_lists(
+            profile_pkgmasklines,
+            incremental=1,
+            remember_source_file=True,
+            warn_for_unmatched_removal=True,
+            strict_warn_for_unmatched_removal=strict_umatched_removal,
+        )
+        profile_pkgunmasklines = stack_lists(
+            profile_pkgunmasklines,
+            incremental=1,
+            remember_source_file=True,
+            warn_for_unmatched_removal=True,
+            strict_warn_for_unmatched_removal=strict_umatched_removal,
+        )
 
         # Read /etc/portage/package.mask. Don't stack it to allow the user to
         # remove mask atoms from everywhere with -atoms.
@@ -206,12 +216,13 @@ class MaskManager:
                                    warn_for_unmatched_removal=False,
                                    ignore_repo=True,
                                    )
-        pkgunmasklines = stack_lists([repo_pkgunmasklines, profile_pkgunmasklines, user_pkgunmasklines],
-                                     incremental=1,
-                                     remember_source_file=True,
-                                     warn_for_unmatched_removal=False,
-                                     ignore_repo=True,
-                                     )
+        pkgunmasklines = stack_lists(
+            [repo_pkgunmasklines, profile_pkgunmasklines, user_pkgunmasklines],
+            incremental=1,
+            remember_source_file=True,
+            warn_for_unmatched_removal=False,
+            ignore_repo=True,
+        )
 
         for x, source_file in raw_pkgmasklines:
             self._pmaskdict_raw.setdefault(x.cp, []).append(x)

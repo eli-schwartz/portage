@@ -61,7 +61,9 @@ class BinRepoConfigLoader(Mapping):
             repo_data["name"] = section_name
             repo = BinRepoConfig(repo_data)
             if repo.sync_uri is None:
-                writemsg(_("!!! Missing sync-uri setting for binrepo %s\n") % (repo.name, ), noiselevel=-1, )
+                writemsg(_("!!! Missing sync-uri setting for binrepo %s\n") % (repo.name, ),
+                         noiselevel=-1,
+                         )
                 continue
 
             sync_uri = self._normalize_uri(repo.sync_uri)
@@ -89,10 +91,9 @@ class BinRepoConfigLoader(Mapping):
                         "sync-uri": sync_uri,
                     }))
 
-        self._data = OrderedDict(
-            (repo.name or repo.name_fallback, repo)
-            for repo in sorted(repos, key=lambda repo: (repo.priority or 0, repo.name or repo.name_fallback),
-                               ))
+        self._data = OrderedDict((repo.name or repo.name_fallback, repo) for repo in sorted(
+            repos, key=lambda repo: (repo.priority or 0, repo.name or repo.name_fallback),
+        ))
 
     @staticmethod
     def _digest_uri(uri):

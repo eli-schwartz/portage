@@ -7,7 +7,9 @@ import warnings
 import portage
 from portage.cache.mappings import slot_dict_class
 from portage.const import EBUILD_PHASES
-from portage.dep import (Atom, check_required_use, use_reduce, paren_enclose, _slot_separator, _repo_separator, )
+from portage.dep import (Atom, check_required_use, use_reduce, paren_enclose, _slot_separator,
+                         _repo_separator,
+                         )
 from portage.dep.soname.parse import parse_soname_deps
 from portage.versions import _pkg_str, _unknown_repo
 from portage.eapi import _get_eapi_attrs
@@ -17,17 +19,18 @@ from _emerge.Task import Task
 
 class Package(Task):
     __hash__ = Task.__hash__
-    __slots__ = ("built", "cpv", "depth", "installed", "onlydeps", "operation", "root_config", "type_name", "category",
-                 "counter", "cp", "cpv_split", "inherited", "iuse", "mtime", "pf", "root", "slot", "sub_slot",
-                 "slot_atom", "version",
-                 ) + ("_invalid", "_masks", "_metadata", "_provided_cps", "_raw_metadata", "_provides", "_requires",
-                      "_use", "_validated_atoms", "_visible",
+    __slots__ = ("built", "cpv", "depth", "installed", "onlydeps", "operation", "root_config",
+                 "type_name", "category", "counter", "cp", "cpv_split", "inherited", "iuse",
+                 "mtime", "pf", "root", "slot", "sub_slot", "slot_atom", "version",
+                 ) + ("_invalid", "_masks", "_metadata", "_provided_cps", "_raw_metadata",
+                      "_provides", "_requires", "_use", "_validated_atoms", "_visible",
                       )
 
     metadata_keys = [
-        "BDEPEND", "BUILD_ID", "BUILD_TIME", "CHOST", "COUNTER", "DEFINED_PHASES", "DEPEND", "EAPI", "IDEPEND",
-        "INHERITED", "IUSE", "KEYWORDS", "LICENSE", "MD5", "PDEPEND", "PROVIDES", "RDEPEND", "repository",
-        "REQUIRED_USE", "PROPERTIES", "REQUIRES", "RESTRICT", "SIZE", "SLOT", "USE", "_mtime_",
+        "BDEPEND", "BUILD_ID", "BUILD_TIME", "CHOST", "COUNTER", "DEFINED_PHASES", "DEPEND", "EAPI",
+        "IDEPEND", "INHERITED", "IUSE", "KEYWORDS", "LICENSE", "MD5", "PDEPEND", "PROVIDES",
+        "RDEPEND", "repository", "REQUIRED_USE", "PROPERTIES", "REQUIRES", "RESTRICT", "SIZE",
+        "SLOT", "USE", "_mtime_",
     ]
 
     _dep_keys = ("BDEPEND", "DEPEND", "IDEPEND", "PDEPEND", "RDEPEND")
@@ -58,9 +61,13 @@ class Package(Task):
                 raise
             db = self.root_config.trees["porttree"].dbapi
 
-        self.cpv = _pkg_str(self.cpv, metadata=self._metadata, settings=self.root_config.settings, db=db)
+        self.cpv = _pkg_str(self.cpv,
+                            metadata=self._metadata,
+                            settings=self.root_config.settings,
+                            db=db)
         if hasattr(self.cpv, "slot_invalid"):
-            self._invalid_metadata("SLOT.invalid", f"SLOT: invalid value: '{self._metadata['SLOT']}'")
+            self._invalid_metadata("SLOT.invalid",
+                                   f"SLOT: invalid value: '{self._metadata['SLOT']}'")
         self.cpv_split = self.cpv.cpv_split
         self.category, self.pf = portage.catsplit(self.cpv)
         self.cp = self.cpv.cp
@@ -76,7 +83,9 @@ class Package(Task):
 
         if (self.iuse.enabled or self.iuse.disabled) and not eapi_attrs.iuse_defaults:
             if not self.installed:
-                self._invalid_metadata("EAPI.incompatible", "IUSE contains defaults, but EAPI doesn't allow them", )
+                self._invalid_metadata("EAPI.incompatible",
+                                       "IUSE contains defaults, but EAPI doesn't allow them",
+                                       )
         if self.inherited is None:
             self.inherited = frozenset()
 
@@ -128,7 +137,10 @@ class Package(Task):
 
     @property
     def metadata(self):
-        warnings.warn("_emerge.Package.Package.metadata is deprecated", DeprecationWarning, stacklevel=3, )
+        warnings.warn("_emerge.Package.Package.metadata is deprecated",
+                      DeprecationWarning,
+                      stacklevel=3,
+                      )
         return self._metadata
 
     # These are calculated on-demand, so that they are calculated
@@ -210,7 +222,8 @@ class Package(Task):
             raise TypeError("type_name argument is required")
         elif type_name == "ebuild":
             if repo_name is None:
-                raise AssertionError("Package._gen_hash_key() " + "called without 'repo_name' argument")
+                raise AssertionError("Package._gen_hash_key() " +
+                                     "called without 'repo_name' argument")
             elements.append(repo_name)
         elif type_name == "binary":
             # Including a variety of fingerprints in the hash makes
@@ -285,7 +298,9 @@ class Package(Task):
         v = self._metadata.get(k)
         if v and not self.built:
             if not _get_eapi_attrs(eapi).required_use:
-                self._invalid_metadata("EAPI.incompatible", f"REQUIRED_USE set, but EAPI='{eapi}' doesn't allow it", )
+                self._invalid_metadata("EAPI.incompatible",
+                                       f"REQUIRED_USE set, but EAPI='{eapi}' doesn't allow it",
+                                       )
             else:
                 try:
                     check_required_use(v, (), self.iuse.is_valid_flag, eapi=eapi)
@@ -296,7 +311,12 @@ class Package(Task):
         v = self._metadata.get(k)
         if v:
             try:
-                use_reduce(v, is_src_uri=True, eapi=eapi, matchall=True, is_valid_flag=self.iuse.is_valid_flag, )
+                use_reduce(v,
+                           is_src_uri=True,
+                           eapi=eapi,
+                           matchall=True,
+                           is_valid_flag=self.iuse.is_valid_flag,
+                           )
             except InvalidDependString as e:
                 if not self.installed:
                     self._metadata_exception(k, e)
@@ -387,8 +407,8 @@ class Package(Task):
             if "invalid" in masks:
                 return False
 
-            if not self.installed and ("CHOST" in masks or "EAPI.deprecated" in masks or "KEYWORDS" in masks
-                                       or "PROPERTIES" in masks or "RESTRICT" in masks):
+            if not self.installed and ("CHOST" in masks or "EAPI.deprecated" in masks or "KEYWORDS"
+                                       in masks or "PROPERTIES" in masks or "RESTRICT" in masks):
                 return False
 
             if "package.mask" in masks or "LICENSE" in masks:
@@ -407,7 +427,8 @@ class Package(Task):
         if "**" in missing:
             return "missing"
 
-        global_accept_keywords = frozenset(self.root_config.settings.get("ACCEPT_KEYWORDS", "").split())
+        global_accept_keywords = frozenset(
+            self.root_config.settings.get("ACCEPT_KEYWORDS", "").split())
 
         for keyword in missing:
             if keyword.lstrip("~") in global_accept_keywords:
@@ -472,8 +493,8 @@ class Package(Task):
 
         s = "({}, {}".format(
             portage.output.colorize(
-                cpv_color, self.cpv + build_id_str + _slot_separator + self.slot + "/" + self.sub_slot +
-                _repo_separator + self.repo,
+                cpv_color, self.cpv + build_id_str + _slot_separator + self.slot + "/" +
+                self.sub_slot + _repo_separator + self.repo,
             ), self.type_name,
         )
 
@@ -604,7 +625,9 @@ class Package(Task):
         return use_str
 
     class _iuse:
-        __slots__ = ("__weakref__", "_iuse_implicit_match", "_pkg", "all", "enabled", "disabled", "tokens", )
+        __slots__ = ("__weakref__", "_iuse_implicit_match", "_pkg", "all", "enabled", "disabled",
+                     "tokens",
+                     )
 
         def __init__(self, pkg, tokens, iuse_implicit_match, eapi):
             self._pkg = pkg
@@ -759,7 +782,9 @@ class _PackageMetadataWrapper(_PackageMetadataWrapperBase):
             if self._pkg.root_config.settings.local_config and "?" in v:
                 try:
                     v = paren_enclose(
-                        use_reduce(v, uselist=self._pkg.use.enabled, is_valid_flag=self._pkg.iuse.is_valid_flag,
+                        use_reduce(v,
+                                   uselist=self._pkg.use.enabled,
+                                   is_valid_flag=self._pkg.iuse.is_valid_flag,
                                    ))
                 except InvalidDependString:
                     # This error should already have been registered via

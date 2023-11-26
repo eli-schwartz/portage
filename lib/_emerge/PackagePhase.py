@@ -24,7 +24,8 @@ class PackagePhase(CompositeTask):
 
     def _start(self):
         try:
-            with open(_unicode_encode(os.path.join(self.settings["PORTAGE_BUILDDIR"], "build-info", "PKG_INSTALL_MASK",
+            with open(_unicode_encode(os.path.join(self.settings["PORTAGE_BUILDDIR"], "build-info",
+                                                   "PKG_INSTALL_MASK",
                                                    ),
                                       encoding=_encodings["fs"],
                                       errors="strict",
@@ -61,7 +62,8 @@ class PackagePhase(CompositeTask):
             self._start_task(
                 AsyncFunction(target=install_mask_dir,
                               args=(os.path.join(self._proot,
-                                                 self.settings["EPREFIX"].lstrip(os.sep)), self._pkg_install_mask,
+                                                 self.settings["EPREFIX"].lstrip(os.sep)),
+                                    self._pkg_install_mask,
                                     ),
                               ), self._pkg_install_mask_exit,
             )

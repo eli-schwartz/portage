@@ -21,7 +21,8 @@ module_spec = {
                     "long":
                     "--purge",
                     "help":
-                    "Removes the list of previously failed merges." + " WARNING: Only use this option if you plan on" +
+                    "Removes the list of previously failed merges." +
+                    " WARNING: Only use this option if you plan on" +
                     " manually fixing them or do not want them"
                     " re-installed.",
                     "status":

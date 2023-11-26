@@ -14,7 +14,8 @@ class VarExpandTestCase(TestCase):
             result = varexpand(f"${key}", varDict)
 
             self.assertFalse(result != varDict[key],
-                             msg="Got %s != %s, from varexpand(%s, %s)" % (result, varDict[key], "$%s" % key, varDict),
+                             msg="Got %s != %s, from varexpand(%s, %s)" %
+                             (result, varDict[key], "$%s" % key, varDict),
                              )
             result = varexpand("${%s}" % key, varDict)
             self.assertFalse(result != varDict[key],
@@ -33,26 +34,32 @@ class VarExpandTestCase(TestCase):
         """
 
         varDict = {}
-        tests = [("\\", "\\"), ("\\\\", "\\"), ("\\\\\\", "\\\\"), ("\\\\\\\\", "\\\\"), ("\\$", "$"), ("\\\\$", "\\$"),
-                 ("\\a", "\\a"), ("\\b", "\\b"), ("\\n", "\\n"), ("\\r", "\\r"), ("\\t", "\\t"), ("\\\n", ""),
-                 ('\\"', '\\"'), ("\\'", "\\'"), ]
+        tests = [("\\", "\\"), ("\\\\", "\\"), ("\\\\\\", "\\\\"), ("\\\\\\\\", "\\\\"),
+                 ("\\$", "$"), ("\\\\$", "\\$"), ("\\a", "\\a"), ("\\b", "\\b"), ("\\n", "\\n"),
+                 ("\\r", "\\r"), ("\\t", "\\t"), ("\\\n", ""), ('\\"', '\\"'), ("\\'", "\\'"), ]
         for test in tests:
             result = varexpand(test[0], varDict)
-            self.assertFalse(result != test[1], msg=f"Got {result} != {test[1]} from varexpand({test[0]}, {varDict})", )
+            self.assertFalse(result != test[1],
+                             msg=f"Got {result} != {test[1]} from varexpand({test[0]}, {varDict})",
+                             )
 
     def testVarExpandDoubleQuotes(self):
         varDict = {"a": "5"}
         tests = [('"${a}"', '"5"')]
         for test in tests:
             result = varexpand(test[0], varDict)
-            self.assertFalse(result != test[1], msg=f"Got {result} != {test[1]} from varexpand({test[0]}, {varDict})", )
+            self.assertFalse(result != test[1],
+                             msg=f"Got {result} != {test[1]} from varexpand({test[0]}, {varDict})",
+                             )
 
     def testVarExpandSingleQuotes(self):
         varDict = {"a": "5"}
         tests = [("'${a}'", "'${a}'")]
         for test in tests:
             result = varexpand(test[0], varDict)
-            self.assertFalse(result != test[1], msg=f"Got {result} != {test[1]} from varexpand({test[0]}, {varDict})", )
+            self.assertFalse(result != test[1],
+                             msg=f"Got {result} != {test[1]} from varexpand({test[0]}, {varDict})",
+                             )
 
     def testVarExpandFail(self):
         varDict = {"a": "5", "b": "7", "c": "15"}
@@ -62,10 +69,12 @@ class VarExpandTestCase(TestCase):
         for var in testVars:
             result = varexpand(f"${var}", varDict)
             self.assertFalse(len(result),
-                             msg="Got %s == %s, from varexpand(%s, %s)" % (result, var, "$%s" % var, varDict),
+                             msg="Got %s == %s, from varexpand(%s, %s)" %
+                             (result, var, "$%s" % var, varDict),
                              )
 
             result = varexpand("${%s}" % var, varDict)
             self.assertFalse(len(result),
-                             msg="Got %s == %s, from varexpand(%s, %s)" % (result, var, "${%s}" % var, varDict),
+                             msg="Got %s == %s, from varexpand(%s, %s)" %
+                             (result, var, "${%s}" % var, varDict),
                              )

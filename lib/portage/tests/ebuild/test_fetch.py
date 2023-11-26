@@ -20,8 +20,8 @@ from portage.util._async.SchedulerInterface import SchedulerInterface
 from portage.util._eventloop.global_event_loop import global_event_loop
 from portage.package.ebuild.config import config
 from portage.package.ebuild.digestgen import digestgen
-from portage.package.ebuild.fetch import (ContentHashLayout, DistfileName, _download_suffix, fetch, FilenameHashLayout,
-                                          FlatLayout, MirrorLayoutConfig,
+from portage.package.ebuild.fetch import (ContentHashLayout, DistfileName, _download_suffix, fetch,
+                                          FilenameHashLayout, FlatLayout, MirrorLayoutConfig,
                                           )
 from portage._emirrordist.Config import Config as EmirrordistConfig
 from _emerge.EbuildFetcher import EbuildFetcher
@@ -55,25 +55,35 @@ class EbuildFetchTestCase(TestCase):
             ebuilds_subst = {}
             for cpv, metadata in ebuilds.items():
                 metadata = metadata.copy()
-                metadata["SRC_URI"] = metadata["SRC_URI"].format(scheme=scheme, host=host, port=server.server_port)
+                metadata["SRC_URI"] = metadata["SRC_URI"].format(scheme=scheme,
+                                                                 host=host,
+                                                                 port=server.server_port)
                 ebuilds_subst[cpv] = metadata
 
             user_config_subst = user_config.copy()
             for configname, configdata in user_config.items():
                 configdata_sub = []
                 for line in configdata:
-                    configdata_sub.append(line.format(scheme=scheme, host=host, port=server.server_port))
+                    configdata_sub.append(
+                        line.format(scheme=scheme, host=host, port=server.server_port))
                 user_config_subst[configname] = tuple(configdata_sub)
 
-            playground = ResolverPlayground(ebuilds=ebuilds_subst, distfiles=distfiles, user_config=user_config_subst, )
+            playground = ResolverPlayground(ebuilds=ebuilds_subst,
+                                            distfiles=distfiles,
+                                            user_config=user_config_subst,
+                                            )
             ro_distdir = tempfile.mkdtemp()
             try:
-                self._testEbuildFetch(loop, scheme, host, distfiles, ebuilds, content, server, playground, ro_distdir, )
+                self._testEbuildFetch(loop, scheme, host, distfiles, ebuilds, content, server,
+                                      playground, ro_distdir,
+                                      )
             finally:
                 shutil.rmtree(ro_distdir)
                 playground.cleanup()
 
-    def _testEbuildFetch(self, loop, scheme, host, orig_distfiles, ebuilds, content, server, playground, ro_distdir, ):
+    def _testEbuildFetch(self, loop, scheme, host, orig_distfiles, ebuilds, content, server,
+                         playground, ro_distdir,
+                         ):
         mirror_layouts = (("[structure]", "0=filename-hash BLAKE2B 8", "1=flat",
                            ), ("[structure]", "1=filename-hash BLAKE2B 8", "0=flat",
                                ), ("[structure]", "0=content-hash SHA512 8:8:8", "1=flat",
@@ -97,7 +107,8 @@ class EbuildFetchTestCase(TestCase):
 
         def run_async(func, *args, **kwargs):
             with ForkExecutor(loop=loop) as executor:
-                return loop.run_until_complete(loop.run_in_executor(executor, functools.partial(func, *args, **kwargs)))
+                return loop.run_until_complete(
+                    loop.run_in_executor(executor, functools.partial(func, *args, **kwargs)))
 
         for layout_lines in mirror_layouts:
             settings = config(clone=playground.settings)
@@ -108,10 +119,12 @@ class EbuildFetchTestCase(TestCase):
             content["/distfiles/layout.conf"] = layout_data.encode("utf8")
             distfiles = {}
             for k, v in orig_distfiles.items():
-                filename = DistfileName(
-                    k, digests={algo: checksum_str(v, hashname=algo)
-                                for algo in MANIFEST2_HASH_DEFAULTS},
-                )
+                filename = DistfileName(k,
+                                        digests={
+                                            algo: checksum_str(v, hashname=algo)
+                                            for algo in MANIFEST2_HASH_DEFAULTS
+                                        },
+                                        )
                 distfiles[filename] = v
 
                 # mirror path
@@ -150,7 +163,8 @@ class EbuildFetchTestCase(TestCase):
                 self.assertNotEqual(f.read(), distfiles["foo"])
 
             # Use force=True to update the stale file.
-            self.assertTrue(bool(run_async(fetch, foo_uri, settings, try_mirrors=False, force=True)))
+            self.assertTrue(bool(run_async(fetch, foo_uri, settings, try_mirrors=False,
+                                           force=True)))
 
             with open(foo_path, "rb") as f:
                 self.assertEqual(f.read(), distfiles["foo"])
@@ -182,7 +196,8 @@ class EbuildFetchTestCase(TestCase):
             settings.features.remove("distlocks")
             os.chmod(settings["DISTDIR"], 0o555)
             try:
-                self.assertTrue(bool(run_async(fetch, foo_uri, settings, try_mirrors=False, force=True)))
+                self.assertTrue(
+                    bool(run_async(fetch, foo_uri, settings, try_mirrors=False, force=True)))
             finally:
                 settings["FETCHCOMMAND"] = orig_fetchcommand
                 os.chmod(settings["DISTDIR"], orig_distdir_mode)
@@ -194,10 +209,12 @@ class EbuildFetchTestCase(TestCase):
                 self.assertEqual(f.read(), distfiles["foo"])
 
             # Test emirrordist invocation.
-            emirrordist_cmd = (portage._python_interpreter, "-b", "-Wd", os.path.join(str(self.bindir), "emirrordist"),
-                               "--distfiles", settings["DISTDIR"], "--config-root",
-                               settings["EPREFIX"], "--delete", "--repositories-configuration",
-                               settings.repositories.config_string(), "--repo", "test_repo", "--mirror",
+            emirrordist_cmd = (portage._python_interpreter, "-b", "-Wd",
+                               os.path.join(str(self.bindir), "emirrordist"), "--distfiles",
+                               settings["DISTDIR"], "--config-root", settings["EPREFIX"],
+                               "--delete", "--repositories-configuration",
+                               settings.repositories.config_string(), "--repo", "test_repo",
+                               "--mirror",
                                )
 
             if content_db is not None:
@@ -214,7 +231,8 @@ class EbuildFetchTestCase(TestCase):
                 except OSError:
                     pass
 
-            proc = loop.run_until_complete(asyncio.create_subprocess_exec(*emirrordist_cmd, env=env))
+            proc = loop.run_until_complete(asyncio.create_subprocess_exec(*emirrordist_cmd,
+                                                                          env=env))
             self.assertEqual(loop.run_until_complete(proc.wait()), 0)
 
             for k in distfiles:
@@ -223,7 +241,8 @@ class EbuildFetchTestCase(TestCase):
 
             if content_db is not None:
                 loop.run_until_complete(
-                    self._test_content_db(emirrordist_cmd, env, layouts, content_db, distfiles, settings, portdb,
+                    self._test_content_db(emirrordist_cmd, env, layouts, content_db, distfiles,
+                                          settings, portdb,
                                           ))
 
             config_pool = config_pool_cls(settings)
@@ -240,7 +259,9 @@ class EbuildFetchTestCase(TestCase):
                 return fetcher.async_wait()
 
             for cpv in ebuilds:
-                metadata = dict(zip(Package.metadata_keys, portdb.aux_get(cpv, Package.metadata_keys), ))
+                metadata = dict(
+                    zip(Package.metadata_keys, portdb.aux_get(cpv, Package.metadata_keys),
+                        ))
 
                 pkg = Package(built=False,
                               cpv=cpv,
@@ -270,9 +291,12 @@ class EbuildFetchTestCase(TestCase):
                     self.assertTrue(
                         bool(
                             loop.run_until_complete(
-                                loop.run_in_executor(executor,
-                                                     functools.partial(digestgen, mysettings=settings, myportdb=portdb),
-                                                     ))))
+                                loop.run_in_executor(
+                                    executor,
+                                    functools.partial(digestgen,
+                                                      mysettings=settings,
+                                                      myportdb=portdb),
+                                ))))
                 for k in settings["AA"].split():
                     with open(os.path.join(settings["DISTDIR"], k), "rb") as f:
                         self.assertEqual(f.read(), distfiles[k])
@@ -406,7 +430,8 @@ class EbuildFetchTestCase(TestCase):
                     settings.features.remove("skiprocheck")
                     settings.features.add("distlocks")
 
-    async def _test_content_db(self, emirrordist_cmd, env, layouts, content_db, distfiles, settings, portdb):
+    async def _test_content_db(self, emirrordist_cmd, env, layouts, content_db, distfiles, settings,
+                               portdb):
         # Simulate distfile digest change for ContentDB.
         emdisopts = types.SimpleNamespace(content_db=content_db, distfiles=settings["DISTDIR"])
         with EmirrordistConfig(emdisopts, portdb, asyncio.get_event_loop()) as emdisconf:
@@ -420,9 +445,10 @@ class EbuildFetchTestCase(TestCase):
 
             content_db_state = dict(emdisconf.content_db.items())
             self.assertEqual(content_db_state, dict(emdisconf.content_db.items()))
-            self.assertEqual([k[len("filename:"):] for k in content_db_state if k.startswith("filename:")],
-                             ["bar", "foo"],
-                             )
+            self.assertEqual(
+                [k[len("filename:"):] for k in content_db_state if k.startswith("filename:")],
+                ["bar", "foo"],
+            )
             self.assertEqual(content_db_state["filename:foo"], content_db_state["filename:bar"])
             self.assertEqual(len(content_db_state["filename:foo"]), 2)
 
@@ -447,9 +473,10 @@ class EbuildFetchTestCase(TestCase):
             self.assertTrue(bool(filename.digests))
             emdisconf.content_db.remove(filename)
             # foo should still have a content revision corresponding to bar's content.
-            self.assertEqual([k[len("filename:"):] for k in emdisconf.content_db if k.startswith("filename:")],
-                             ["bar", "foo"],
-                             )
+            self.assertEqual(
+                [k[len("filename:"):] for k in emdisconf.content_db if k.startswith("filename:")],
+                ["bar", "foo"],
+            )
             self.assertEqual(len(emdisconf.content_db["filename:foo"]), 1)
             self.assertEqual(
                 len([
@@ -471,8 +498,10 @@ class EbuildFetchTestCase(TestCase):
             bar = [filename for filename in distfiles if filename == "bar"][0]
             foo_remaining = DistfileName("foo", digests=bar.digests)
             emdisconf.content_db.remove(foo_remaining)
-            self.assertEqual([k[len("filename:"):] for k in emdisconf.content_db if k.startswith("filename:")], ["bar"],
-                             )
+            self.assertEqual(
+                [k[len("filename:"):] for k in emdisconf.content_db if k.startswith("filename:")],
+                ["bar"],
+            )
             self.assertRaises(KeyError, emdisconf.content_db.__getitem__, "filename:foo")
             # bar should still have a content revision corresponding to foo's content.
             self.assertEqual(len(emdisconf.content_db["filename:bar"]), 2)
@@ -492,10 +521,14 @@ class EbuildFetchTestCase(TestCase):
         self.assertFalse(FilenameHashLayout.verify_args(("filename-hash", "SHA1", "4:8:junk")))
 
         self.assertEqual(FilenameHashLayout("SHA1", "4").get_path("foo-1.tar.gz"), "1/foo-1.tar.gz")
-        self.assertEqual(FilenameHashLayout("SHA1", "8").get_path("foo-1.tar.gz"), "19/foo-1.tar.gz")
-        self.assertEqual(FilenameHashLayout("SHA1", "8:16").get_path("foo-1.tar.gz"), "19/c3b6/foo-1.tar.gz", )
         self.assertEqual(
-            FilenameHashLayout("SHA1", "8:16:24").get_path("foo-1.tar.gz"), "19/c3b6/37a94b/foo-1.tar.gz",
+            FilenameHashLayout("SHA1", "8").get_path("foo-1.tar.gz"), "19/foo-1.tar.gz")
+        self.assertEqual(
+            FilenameHashLayout("SHA1", "8:16").get_path("foo-1.tar.gz"), "19/c3b6/foo-1.tar.gz",
+        )
+        self.assertEqual(
+            FilenameHashLayout("SHA1", "8:16:24").get_path("foo-1.tar.gz"),
+            "19/c3b6/37a94b/foo-1.tar.gz",
         )
 
     def test_content_hash_layout(self):
@@ -507,10 +540,11 @@ class EbuildFetchTestCase(TestCase):
         self.assertFalse(ContentHashLayout.verify_args(("content-hash", "SHA1", "junk")))
         self.assertFalse(ContentHashLayout.verify_args(("content-hash", "SHA1", "4:8:junk")))
 
-        filename = DistfileName("foo-1.tar.gz",
-                                digests={algo: checksum_str(b"", hashname=algo)
-                                         for algo in MANIFEST2_HASH_DEFAULTS},
-                                )
+        filename = DistfileName(
+            "foo-1.tar.gz",
+            digests={algo: checksum_str(b"", hashname=algo)
+                     for algo in MANIFEST2_HASH_DEFAULTS},
+        )
 
         # Raise KeyError for a hash algorithm SHA1 which is not in MANIFEST2_HASH_DEFAULTS.
         self.assertRaises(KeyError, ContentHashLayout("SHA1", "4").get_path, filename)
@@ -557,7 +591,9 @@ class EbuildFetchTestCase(TestCase):
         mlc.read_from_file(io.StringIO(conf))
         self.assertEqual(mlc.serialize(), (("filename-hash", "SHA1", "8:16"), ("flat", )))
         self.assertIsInstance(mlc.get_best_supported_layout(), FilenameHashLayout)
-        self.assertEqual(mlc.get_best_supported_layout().get_path("foo-1.tar.gz"), "19/c3b6/foo-1.tar.gz", )
+        self.assertEqual(mlc.get_best_supported_layout().get_path("foo-1.tar.gz"),
+                         "19/c3b6/foo-1.tar.gz",
+                         )
         serialized = mlc.serialize()
 
         # test fallback
@@ -568,18 +604,22 @@ class EbuildFetchTestCase(TestCase):
 2=flat
 """
         mlc.read_from_file(io.StringIO(conf))
-        self.assertEqual(mlc.serialize(),
-                         (("filename-hash", "INVALID-HASH", "8:16"), ("filename-hash", "SHA1", "32"), ("flat", ),
-                          ),
+        self.assertEqual(mlc.serialize(), (("filename-hash", "INVALID-HASH", "8:16"),
+                                           ("filename-hash", "SHA1", "32"), ("flat", ),
+                                           ),
                          )
         self.assertIsInstance(mlc.get_best_supported_layout(), FilenameHashLayout)
-        self.assertEqual(mlc.get_best_supported_layout().get_path("foo-1.tar.gz"), "19c3b637/foo-1.tar.gz", )
+        self.assertEqual(mlc.get_best_supported_layout().get_path("foo-1.tar.gz"),
+                         "19c3b637/foo-1.tar.gz",
+                         )
 
         # test deserialization
         mlc.deserialize(serialized)
         self.assertEqual(mlc.serialize(), (("filename-hash", "SHA1", "8:16"), ("flat", )))
         self.assertIsInstance(mlc.get_best_supported_layout(), FilenameHashLayout)
-        self.assertEqual(mlc.get_best_supported_layout().get_path("foo-1.tar.gz"), "19/c3b6/foo-1.tar.gz", )
+        self.assertEqual(mlc.get_best_supported_layout().get_path("foo-1.tar.gz"),
+                         "19/c3b6/foo-1.tar.gz",
+                         )
 
         # test erraneous input
         conf = """
@@ -590,14 +630,14 @@ class EbuildFetchTestCase(TestCase):
         self.assertRaises(ConfigParserError, mlc.read_from_file, io.StringIO(conf))
 
     def test_filename_hash_layout_get_filenames(self):
-        filename = DistfileName("foo-1.tar.gz",
-                                digests={algo: checksum_str(b"", hashname=algo)
-                                         for algo in MANIFEST2_HASH_DEFAULTS},
-                                )
+        filename = DistfileName(
+            "foo-1.tar.gz",
+            digests={algo: checksum_str(b"", hashname=algo)
+                     for algo in MANIFEST2_HASH_DEFAULTS},
+        )
         layouts = (FlatLayout(), FilenameHashLayout("SHA1", "4"), FilenameHashLayout("SHA1", "8"),
-                   FilenameHashLayout("SHA1",
-                                      "8:16"), FilenameHashLayout("SHA1",
-                                                                  "8:16:24"), ContentHashLayout("SHA512", "8:8:8"),
+                   FilenameHashLayout("SHA1", "8:16"), FilenameHashLayout("SHA1", "8:16:24"),
+                   ContentHashLayout("SHA512", "8:8:8"),
                    )
 
         for layout in layouts:

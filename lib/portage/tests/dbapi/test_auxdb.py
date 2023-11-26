@@ -50,14 +50,16 @@ class AuxdbTestCase(TestCase):
 
         eclasses = {
             "foo": ("inherit bar", ),
-            "bar": ("EXPORT_FUNCTIONS src_prepare", f'DEPEND="{eclass_depend}"', "bar_src_prepare() { default; }",
+            "bar": ("EXPORT_FUNCTIONS src_prepare", f'DEPEND="{eclass_depend}"',
+                    "bar_src_prepare() { default; }",
                     ),
         }
 
-        playground = ResolverPlayground(ebuilds=ebuilds,
-                                        eclasses=eclasses,
-                                        user_config={"modules": (f"portdbapi.auxdbmodule = {auxdbmodule}", )},
-                                        )
+        playground = ResolverPlayground(
+            ebuilds=ebuilds,
+            eclasses=eclasses,
+            user_config={"modules": (f"portdbapi.auxdbmodule = {auxdbmodule}", )},
+        )
 
         portdb = playground.trees[playground.eroot]["porttree"].dbapi
         metadata_keys = ["DEFINED_PHASES", "DEPEND", "EAPI", "INHERITED"]
@@ -66,14 +68,16 @@ class AuxdbTestCase(TestCase):
 
         results = test_func()
 
-        self._compare_results(ebuilds, eclass_defined_phases, eclass_depend, ebuild_inherited, results)
+        self._compare_results(ebuilds, eclass_defined_phases, eclass_depend, ebuild_inherited,
+                              results)
 
         loop = asyncio._wrap_loop()
         picklable_or_fork = picklable or multiprocessing.get_start_method == "fork"
         if picklable_or_fork:
             results = loop.run_until_complete(loop.run_in_executor(ForkExecutor(), test_func))
 
-            self._compare_results(ebuilds, eclass_defined_phases, eclass_depend, ebuild_inherited, results)
+            self._compare_results(ebuilds, eclass_defined_phases, eclass_depend, ebuild_inherited,
+                                  results)
 
         auxdb = portdb.auxdb[portdb.getRepositoryPath("test_repo")]
         cpv = next(iter(ebuilds))
@@ -87,7 +91,8 @@ class AuxdbTestCase(TestCase):
 
         self.assertEqual(auxdb[cpv]["RESTRICT"], "test")
 
-    def _compare_results(self, ebuilds, eclass_defined_phases, eclass_depend, ebuild_inherited, results):
+    def _compare_results(self, ebuilds, eclass_defined_phases, eclass_depend, ebuild_inherited,
+                         results):
         for cpv, metadata in ebuilds.items():
             self.assertEqual(results[cpv]["DEFINED_PHASES"], eclass_defined_phases)
             self.assertEqual(results[cpv]["DEPEND"], eclass_depend)
@@ -97,7 +102,9 @@ class AuxdbTestCase(TestCase):
     @staticmethod
     def _run_test_mod_async(ebuilds, metadata_keys, portdb):
         loop = asyncio._wrap_loop()
-        return loop.run_until_complete(AuxdbTestCase._test_mod_async(ebuilds, metadata_keys, portdb, ))
+        return loop.run_until_complete(
+            AuxdbTestCase._test_mod_async(ebuilds, metadata_keys, portdb,
+                                          ))
 
     @staticmethod
     async def _test_mod_async(ebuilds, metadata_keys, portdb):

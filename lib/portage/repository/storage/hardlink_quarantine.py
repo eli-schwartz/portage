@@ -42,7 +42,8 @@ class HardlinkQuarantineRepoStorage(RepoStorageInterface):
         p = SpawnProcess(args=cmd, scheduler=asyncio.get_event_loop(), **self._spawn_kwargs)
         p.start()
         if await p.async_wait() != os.EX_OK:
-            raise RepoStorageException(f"command exited with status {p.returncode}: {' '.join(cmd)}")
+            raise RepoStorageException(
+                f"command exited with status {p.returncode}: {' '.join(cmd)}")
 
     async def init_update(self):
         update_location = os.path.join(self._user_location, ".tmp-unverified-download-quarantine")
@@ -51,9 +52,10 @@ class HardlinkQuarantineRepoStorage(RepoStorageInterface):
         # Use  rsync --link-dest to hardlink a files into self._update_location,
         # since cp -l is not portable.
         await self._check_call([
-            "rsync", "-a", "--link-dest", self._user_location, "--exclude=/distfiles", "--exclude=/local",
-            "--exclude=/lost+found", "--exclude=/packages", "--exclude", f"/{os.path.basename(update_location)}",
-            self._user_location + "/", update_location + "/",
+            "rsync", "-a", "--link-dest", self._user_location, "--exclude=/distfiles",
+            "--exclude=/local", "--exclude=/lost+found", "--exclude=/packages", "--exclude",
+            f"/{os.path.basename(update_location)}", self._user_location + "/",
+            update_location + "/",
         ])
 
         self._update_location = update_location
@@ -70,8 +72,9 @@ class HardlinkQuarantineRepoStorage(RepoStorageInterface):
         update_location = self.current_update
         self._update_location = None
         await self._check_call([
-            "rsync", "-a", "--delete", "--exclude=/distfiles", "--exclude=/local", "--exclude=/lost+found",
-            "--exclude=/packages", "--exclude", f"/{os.path.basename(update_location)}", update_location + "/",
+            "rsync", "-a", "--delete", "--exclude=/distfiles", "--exclude=/local",
+            "--exclude=/lost+found", "--exclude=/packages", "--exclude",
+            f"/{os.path.basename(update_location)}", update_location + "/",
             self._user_location + "/",
         ])
 

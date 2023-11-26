@@ -66,7 +66,8 @@ sys.exit(os.EX_OK)
         try:
             self.assertEqual(out[:100], b"success")
         except Exception:
-            portage.writemsg("".join(f"{line}\n" for line in out.decode(errors="replace").splitlines()[:50]),
+            portage.writemsg("".join(f"{line}\n"
+                                     for line in out.decode(errors="replace").splitlines()[:50]),
                              noiselevel=-1,
                              )
             raise

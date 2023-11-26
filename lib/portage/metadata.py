@@ -22,8 +22,8 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
     portage.writemsg_stdout("\n>>> Updating Portage cache\n")
     cachedir = os.path.normpath(settings.depcachedir)
     if cachedir in [
-            "/", "/bin", "/dev", "/etc", "/home", "/lib", "/opt", "/proc", "/root", "/sbin", "/sys", "/tmp", "/usr",
-            "/var",
+            "/", "/bin", "/dev", "/etc", "/home", "/lib", "/opt", "/proc", "/root", "/sbin", "/sys",
+            "/tmp", "/usr", "/var",
     ]:
         print(("!!! PORTAGE_DEPCACHEDIR IS SET TO A PRIMARY "
                "ROOT DIRECTORY ON YOUR SYSTEM.\n"
@@ -163,7 +163,8 @@ def action_metadata(settings, portdb, myopts, porttrees=None):
                         # We don't want to skip the write unless we're really
                         # sure that the existing cache is identical, so don't
                         # trust _mtime_ and _eclasses_ alone.
-                        cache_is_identical = (True for k in auxdbkeys if dest.get(k, "") != src.get(k, ""))
+                        cache_is_identical = (True for k in auxdbkeys
+                                              if dest.get(k, "") != src.get(k, ""))
                         if any(cache_is_identical):
                             dest = None
                 if dest is not None:

@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class VirtualMinimizeChildrenTestCase(TestCase):
@@ -34,7 +36,9 @@ class VirtualMinimizeChildrenTestCase(TestCase):
             # "|| ( foo bar ) || ( bar baz )".
             ResolverPlaygroundTestCase(["app-misc/bar"],
                                        success=True,
-                                       mergelist=["app-misc/B-1", "virtual/foo-1", "app-misc/bar-1", ],
+                                       mergelist=[
+                                           "app-misc/B-1", "virtual/foo-1", "app-misc/bar-1",
+                                       ],
                                        ), )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds)
@@ -124,7 +128,8 @@ class VirtualMinimizeChildrenTestCase(TestCase):
             "sys-apps/paludis-2.6.0": {},
             "sys-apps/portage-2.3.19-r1": {},
             "virtual/package-manager-0": {
-                "RDEPEND": """
+                "RDEPEND":
+                """
 					|| (
 						sys-apps/portage
 						sys-apps/paludis
@@ -139,28 +144,30 @@ class VirtualMinimizeChildrenTestCase(TestCase):
             # packages than the ( portage portage-utils ) choice which
             # should have been preferred according to the order of
             # choices specified in the ebuild.
-            ResolverPlaygroundTestCase(["app-admin/perl-cleaner", "virtual/package-manager", ],
-                                       all_permutations=True,
-                                       success=True,
-                                       ambiguous_merge_order=True,
-                                       mergelist=(("sys-apps/portage-2.3.19-r1", "app-portage/portage-utils-0.64",
-                                                   "app-admin/perl-cleaner-2.25", "virtual/package-manager-0",
-                                                   ), ),
-                                       ),
+            ResolverPlaygroundTestCase(
+                ["app-admin/perl-cleaner", "virtual/package-manager", ],
+                all_permutations=True,
+                success=True,
+                ambiguous_merge_order=True,
+                mergelist=(("sys-apps/portage-2.3.19-r1", "app-portage/portage-utils-0.64",
+                            "app-admin/perl-cleaner-2.25", "virtual/package-manager-0",
+                            ), ),
+            ),
             # Test paludis preference. In this case, if paludis is not
             # included in the argument atoms then the result varies
             # depending on whether the app-admin/perl-cleaner or
             # virtual/package-manager dependencies are evaluated first!
             # Therefore, include paludis in the argument atoms.
-            ResolverPlaygroundTestCase(["app-admin/perl-cleaner", "virtual/package-manager", "sys-apps/paludis", ],
-                                       all_permutations=True,
-                                       success=True,
-                                       ambiguous_merge_order=True,
-                                       mergelist=("sys-apps/paludis-2.6.0", ("app-admin/perl-cleaner-2.25",
-                                                                             "virtual/package-manager-0",
-                                                                             ),
-                                                  ),
-                                       ),
+            ResolverPlaygroundTestCase(
+                ["app-admin/perl-cleaner", "virtual/package-manager", "sys-apps/paludis", ],
+                all_permutations=True,
+                success=True,
+                ambiguous_merge_order=True,
+                mergelist=("sys-apps/paludis-2.6.0", ("app-admin/perl-cleaner-2.25",
+                                                      "virtual/package-manager-0",
+                                                      ),
+                           ),
+            ),
         )
 
         playground = ResolverPlayground(debug=False, ebuilds=ebuilds)
@@ -199,7 +206,8 @@ class VirtualMinimizeChildrenTestCase(TestCase):
             # of eudev.
             ResolverPlaygroundTestCase(["virtual/dev-manager", ],
                                        success=True,
-                                       mergelist=("sys-fs/eudev-3.1.5", "virtual/udev-0", "virtual/dev-manager-0",
+                                       mergelist=("sys-fs/eudev-3.1.5", "virtual/udev-0",
+                                                  "virtual/dev-manager-0",
                                                   ),
                                        ),
             # Test static-dev preference.
@@ -239,7 +247,8 @@ class VirtualMinimizeChildrenTestCase(TestCase):
             # wine-staging to be pulled in.
             ResolverPlaygroundTestCase(["virtual/wine", ],
                                        success=True,
-                                       mergelist=("app-emulation/wine-staging-4", "virtual/wine-0-r6",
+                                       mergelist=("app-emulation/wine-staging-4",
+                                                  "virtual/wine-0-r6",
                                                   ),
                                        ), )
 

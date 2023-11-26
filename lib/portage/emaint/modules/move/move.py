@@ -65,7 +65,8 @@ class MoveHandler:
                 continue
 
             def repo_match(repository):
-                return repository == repo or (repo == self._master_repo and repository not in allupdates)
+                return repository == repo or (repo == self._master_repo
+                                              and repository not in allupdates)
 
             for i, update_cmd in enumerate(updates):
                 if update_cmd[0] == "move":
@@ -80,7 +81,8 @@ class MoveHandler:
                             if build_time is not None:
                                 # If this update has already been applied to the same
                                 # package build then silently continue.
-                                for maybe_applied in match(f"={cpv.replace(cpv.cp, str(newcp), 1)}"):
+                                for maybe_applied in match(
+                                        f"={cpv.replace(cpv.cp, str(newcp), 1)}"):
                                     if maybe_applied.build_time == build_time:
                                         break
                                 else:
@@ -151,7 +153,8 @@ class MoveHandler:
                 continue
 
             def repo_match(repository):
-                return repository == repo or (repo == self._master_repo and repository not in allupdates)
+                return repository == repo or (repo == self._master_repo
+                                              and repository not in allupdates)
 
             for i, update_cmd in enumerate(updates):
                 if update_cmd[0] == "move":

@@ -28,7 +28,11 @@ class EbuildExecuter(CompositeTask):
                 for match in vardb.match(pkg.slot_atom) + vardb.match("=" + pkg.cpv)
             })
 
-        setup_phase = EbuildPhase(background=self.background, phase="setup", scheduler=scheduler, settings=settings, )
+        setup_phase = EbuildPhase(background=self.background,
+                                  phase="setup",
+                                  scheduler=scheduler,
+                                  settings=settings,
+                                  )
 
         setup_phase.addExitListener(self._setup_exit)
         self._task_queued(setup_phase)
@@ -72,7 +76,10 @@ class EbuildExecuter(CompositeTask):
 
         for phase in phases:
             ebuild_phases.add(
-                EbuildPhase(background=self.background, phase=phase, scheduler=self.scheduler, settings=self.settings,
+                EbuildPhase(background=self.background,
+                            phase=phase,
+                            scheduler=self.scheduler,
+                            settings=self.settings,
                             ))
 
         self._start_task(ebuild_phases, self._default_final_exit)

@@ -2,7 +2,7 @@
 based_on_style = pep8
 
 # The column limit.
-column_limit=120
+column_limit=100
 
 # fixup black
 # Disable the heuristic which places each list element on a separate line

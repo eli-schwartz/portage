@@ -43,7 +43,8 @@ class ForkProcess(SpawnProcess):
         # to cpython issue 84559.
         if self.fd_pipes and not self._HAVE_SEND_HANDLE:
             raise NotImplementedError(
-                'fd_pipes only supported with HAVE_SEND_HANDLE or multiprocessing start method "fork"')
+                'fd_pipes only supported with HAVE_SEND_HANDLE or multiprocessing start method "fork"'
+            )
 
         if self.fd_pipes or self.logfile or not self.background:
             # Log via multiprocessing.Pipe if necessary.
@@ -79,7 +80,8 @@ class ForkProcess(SpawnProcess):
     @property
     def _fd_pipes_send_handle(self):
         """Returns True if we have a connection to implement fd_pipes via send_handle."""
-        return bool(self._HAVE_SEND_HANDLE and self._files and getattr(self._files, "connection", False))
+        return bool(self._HAVE_SEND_HANDLE and self._files
+                    and getattr(self._files, "connection", False))
 
     def _send_fd_pipes(self):
         """
@@ -150,7 +152,8 @@ class ForkProcess(SpawnProcess):
                 fd_pipes = None
 
             self._proc = multiprocessing.Process(target=self._bootstrap,
-                                                 args=(self._child_connection, self._HAVE_SEND_HANDLE, fd_pipes, target,
+                                                 args=(self._child_connection,
+                                                       self._HAVE_SEND_HANDLE, fd_pipes, target,
                                                        args, kwargs,
                                                        ),
                                                  )
@@ -159,7 +162,8 @@ class ForkProcess(SpawnProcess):
             if stdin_dup is not None:
                 os.close(stdin_dup)
 
-        self._proc_join_task = asyncio.ensure_future(self._proc_join(self._proc, loop=self.scheduler),
+        self._proc_join_task = asyncio.ensure_future(self._proc_join(self._proc,
+                                                                     loop=self.scheduler),
                                                      loop=self.scheduler)
         self._proc_join_task.add_done_callback(functools.partial(self._proc_join_done, self._proc))
 
@@ -181,7 +185,9 @@ class ForkProcess(SpawnProcess):
 
     async def _proc_join(self, proc, loop=None):
         sentinel_reader = self.scheduler.create_future()
-        self.scheduler.add_reader(proc.sentinel, lambda: sentinel_reader.done() or sentinel_reader.set_result(None), )
+        self.scheduler.add_reader(
+            proc.sentinel, lambda: sentinel_reader.done() or sentinel_reader.set_result(None),
+        )
         try:
             await sentinel_reader
         finally:

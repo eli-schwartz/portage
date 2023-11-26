@@ -29,12 +29,13 @@ class BinpkgFetcher(CompositeTask):
 
         binpkg_path = bintree._remotepkgs[instance_key].get("PATH")
         if not binpkg_path:
-            raise FileNotFound(f"PATH not found in the binpkg index, the binhost's portage is probably out of date.")
+            raise FileNotFound(
+                f"PATH not found in the binpkg index, the binhost's portage is probably out of date."
+            )
         binpkg_format = get_binpkg_format(binpkg_path)
 
-        self.pkg_allocated_path = pkg.root_config.trees["bintree"].getname(pkg.cpv,
-                                                                           allocate_new=True,
-                                                                           remote_binpkg_format=binpkg_format)
+        self.pkg_allocated_path = pkg.root_config.trees["bintree"].getname(
+            pkg.cpv, allocate_new=True, remote_binpkg_format=binpkg_format)
         self.pkg_path = self.pkg_allocated_path + ".partial"
 
     def _start(self):
@@ -147,7 +148,11 @@ class _BinpkgFetcherProcess(SpawnProcess):
             if not fcmd:
                 fcmd = settings.get(fcmd_prefix)
 
-        fcmd_vars = {"DISTDIR": os.path.dirname(pkg_path), "URI": uri, "FILE": os.path.basename(pkg_path), }
+        fcmd_vars = {
+            "DISTDIR": os.path.dirname(pkg_path),
+            "URI": uri,
+            "FILE": os.path.basename(pkg_path),
+        }
 
         for k in ("PORTAGE_SSH_OPTS", ):
             v = settings.get(k)
@@ -155,7 +160,9 @@ class _BinpkgFetcherProcess(SpawnProcess):
                 fcmd_vars[k] = v
 
         fetch_env = dict(settings.items())
-        fetch_args = [portage.util.varexpand(x, mydict=fcmd_vars) for x in portage.util.shlex_split(fcmd)]
+        fetch_args = [
+            portage.util.varexpand(x, mydict=fcmd_vars) for x in portage.util.shlex_split(fcmd)
+        ]
 
         if self.fd_pipes is None:
             self.fd_pipes = {}
@@ -193,7 +200,8 @@ class _BinpkgFetcherProcess(SpawnProcess):
         # the fetcher didn't already do it automatically.
         bintree = self.pkg.root_config.trees["bintree"]
         if bintree._remote_has_index:
-            remote_mtime = bintree._remotepkgs[bintree.dbapi._instance_key(self.pkg.cpv)].get("_mtime_")
+            remote_mtime = bintree._remotepkgs[bintree.dbapi._instance_key(
+                self.pkg.cpv)].get("_mtime_")
             if remote_mtime is not None:
                 try:
                     remote_mtime = int(remote_mtime)
@@ -228,7 +236,9 @@ class _BinpkgFetcherProcess(SpawnProcess):
                 self.locked = True
                 result.set_result(None)
             else:
-                result.set_exception(AssertionError(f"AsynchronousLock failed with returncode {async_lock.returncode}"))
+                result.set_exception(
+                    AssertionError(
+                        f"AsynchronousLock failed with returncode {async_lock.returncode}"))
 
         self._lock_obj = AsynchronousLock(path=self.pkg_path, scheduler=self.scheduler)
         self._lock_obj.addExitListener(acquired_lock)

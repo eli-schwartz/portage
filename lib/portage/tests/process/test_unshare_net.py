@@ -32,6 +32,8 @@ class UnshareNetTestCase(TestCase):
     def testUnshareNet(self):
         env = os.environ.copy()
         env["IPV6"] = "1" if portage.process._has_ipv6() else ""
-        self.assertEqual(portage.process.spawn([BASH_BINARY, "-c", UNSHARE_NET_TEST_SCRIPT], unshare_net=True, env=env),
-                         0,
-                         )
+        self.assertEqual(
+            portage.process.spawn([BASH_BINARY, "-c", UNSHARE_NET_TEST_SCRIPT],
+                                  unshare_net=True,
+                                  env=env), 0,
+        )

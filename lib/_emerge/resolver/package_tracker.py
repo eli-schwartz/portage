@@ -6,11 +6,12 @@ import collections
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(globals(), "portage.dep:Atom,match_from_list", "portage.util:cmp_sort_key",
-                                    "portage.versions:vercmp",
+portage.proxy.lazyimport.lazyimport(globals(), "portage.dep:Atom,match_from_list",
+                                    "portage.util:cmp_sort_key", "portage.versions:vercmp",
                                     )
 
-_PackageConflict = collections.namedtuple("_PackageConflict", ["root", "pkgs", "atom", "description"])
+_PackageConflict = collections.namedtuple("_PackageConflict",
+                                          ["root", "pkgs", "atom", "description"])
 
 
 class PackageConflict(_PackageConflict):
@@ -190,7 +191,9 @@ class PackageTracker:
         if not self._cp_pkg_map[cp_key]:
             del self._cp_pkg_map[cp_key]
         elif len(self._cp_pkg_map[cp_key]) == 1:
-            self._multi_pkgs = [other_cp_key for other_cp_key in self._multi_pkgs if other_cp_key != cp_key]
+            self._multi_pkgs = [
+                other_cp_key for other_cp_key in self._multi_pkgs if other_cp_key != cp_key
+            ]
 
         for installed in self._replacing[pkg]:
             self._replaced_by[installed].remove(pkg)
@@ -304,7 +307,8 @@ class PackageTracker:
         updated to deal with other kinds of conflicts.
         This function should be removed once all consumers are updated.
         """
-        return (conflict for conflict in self.conflicts() if conflict.description == "slot conflict")
+        return (conflict for conflict in self.conflicts()
+                if conflict.description == "slot conflict")
 
     def all_pkgs(self, root):
         """

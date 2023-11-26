@@ -51,7 +51,8 @@ def preexec_fn(uid, gid, groups, umask):
 
     # CPython >= 3 subprocess.Popen handles this internally.
     if platform.python_implementation() != "CPython":
-        for signum in (signal.SIGHUP, signal.SIGINT, signal.SIGPIPE, signal.SIGQUIT, signal.SIGTERM, ):
+        for signum in (signal.SIGHUP, signal.SIGINT, signal.SIGPIPE, signal.SIGQUIT, signal.SIGTERM,
+                       ):
             signal.signal(signum, signal.SIG_DFL)
 
 
@@ -71,15 +72,20 @@ def main(argv):
     else:
         # The current process is init (pid 1) in a child pid namespace.
         uid, gid, groups, umask, pass_fds, binary, args = (argv[1], argv[2], argv[3], argv[4],
-                                                           tuple(int(fd)
-                                                                 for fd in argv[5].split(",")), argv[6], argv[7:],
+                                                           tuple(
+                                                               int(fd)
+                                                               for fd in argv[5].split(",")),
+                                                           argv[6], argv[7:],
                                                            )
         uid = int(uid) if uid else None
         gid = int(gid) if gid else None
         groups = tuple(int(group) for group in groups.split(",")) if groups else None
         umask = int(umask) if umask else None
 
-        popen_kwargs = {"preexec_fn": functools.partial(preexec_fn, uid, gid, groups, umask), "pass_fds": pass_fds, }
+        popen_kwargs = {
+            "preexec_fn": functools.partial(preexec_fn, uid, gid, groups, umask),
+            "pass_fds": pass_fds,
+        }
 
         # Obtain the current nice value, which will be potentially be
         # used as the newly created session's autogroup nice value.
@@ -121,7 +127,8 @@ def main(argv):
         signal.signal(signum, sig_handler)
 
     # For correct operation of Ctrl+Z, forward SIGTSTP and SIGCONT.
-    sigtstp_sigcont_handler = functools.partial(forward_sigtstp_sigcont, 0 if setsid else main_child_pid)
+    sigtstp_sigcont_handler = functools.partial(forward_sigtstp_sigcont,
+                                                0 if setsid else main_child_pid)
     for signum in SIGTSTP_SIGCONT:
         signal.signal(signum, sigtstp_sigcont_handler)
 

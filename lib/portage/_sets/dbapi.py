@@ -15,7 +15,8 @@ from portage._sets import SetConfigError, get_boolean
 import portage
 
 __all__ = [
-    "CategorySet", "ChangedDepsSet", "DowngradeSet", "EverythingSet", "OwnerSet", "SubslotChangedSet", "VariableSet",
+    "CategorySet", "ChangedDepsSet", "DowngradeSet", "EverythingSet", "OwnerSet",
+    "SubslotChangedSet", "VariableSet",
 ]
 
 
@@ -76,14 +77,16 @@ class OwnerSet(PackageSet):
         eroot = vardb.settings["EROOT"]
         expanded_paths = []
         for p in paths:
-            expanded_paths.extend(expanded_p[len(eroot) - 1:]
-                                  for expanded_p in glob.iglob(os.path.join(eroot, p.lstrip(os.sep))))
+            expanded_paths.extend(
+                expanded_p[len(eroot) - 1:]
+                for expanded_p in glob.iglob(os.path.join(eroot, p.lstrip(os.sep))))
         paths = expanded_paths
 
         expanded_exclude_paths = []
         for p in exclude_paths or ():
-            expanded_exclude_paths.extend(expanded_exc_p[len(eroot) - 1:]
-                                          for expanded_exc_p in glob.iglob(os.path.join(eroot, p.lstrip(os.sep))))
+            expanded_exclude_paths.extend(
+                expanded_exc_p[len(eroot) - 1:]
+                for expanded_exc_p in glob.iglob(os.path.join(eroot, p.lstrip(os.sep))))
         exclude_paths = expanded_exclude_paths
 
         pkg_str = vardb._pkg_str
@@ -274,8 +277,9 @@ class UnavailableSet(EverythingSet):
     def singleBuilder(cls, options, settings, trees):
         metadatadb = options.get("metadata-source", "porttree")
         if not metadatadb in trees:
-            raise SetConfigError(_("invalid value '%s' for option "
-                                   "metadata-source") % (metadatadb, ))
+            raise SetConfigError(
+                _("invalid value '%s' for option "
+                  "metadata-source") % (metadatadb, ))
 
         return cls(trees["vartree"].dbapi, metadatadb=trees[metadatadb].dbapi)
 
@@ -301,8 +305,9 @@ class UnavailableBinaries(EverythingSet):
     def singleBuilder(cls, options, settings, trees):
         metadatadb = options.get("metadata-source", "bintree")
         if not metadatadb in trees:
-            raise SetConfigError(_("invalid value '%s' for option "
-                                   "metadata-source") % (metadatadb, ))
+            raise SetConfigError(
+                _("invalid value '%s' for option "
+                  "metadata-source") % (metadatadb, ))
 
         return cls(trees["vartree"].dbapi, metadatadb=trees[metadatadb].dbapi)
 
@@ -321,7 +326,9 @@ class CategorySet(PackageSet):
             s = "visible"
         else:
             s = "all"
-        self.description = "Package set containing {} packages of category {}".format(s, self._category, )
+        self.description = "Package set containing {} packages of category {}".format(
+            s, self._category,
+        )
 
     def load(self):
         myatoms = []
@@ -404,14 +411,16 @@ class AgeSet(EverythingSet):
         except (KeyError, ValueError):
             return bool(self._mode == "older")
         age = (time.time() - date) / (3600 * 24)
-        if (self._mode == "older" and age <= self._age) or (self._mode == "newer" and age >= self._age):
+        if (self._mode == "older" and age <= self._age) or (self._mode == "newer"
+                                                            and age >= self._age):
             return False
         return True
 
     def singleBuilder(cls, options, settings, trees):
         mode = options.get("mode", "older")
         if str(mode).lower() not in ["newer", "older"]:
-            raise SetConfigError(_("invalid 'mode' value %s (use either 'newer' or 'older')") % mode)
+            raise SetConfigError(
+                _("invalid 'mode' value %s (use either 'newer' or 'older')") % mode)
         try:
             age = int(options.get("age", "7"))
         except ValueError as e:
@@ -438,7 +447,8 @@ class DateSet(EverythingSet):
         except (KeyError, ValueError):
             return bool(self._mode == "older")
         # Make sure inequality is _strict_ to exclude tested package
-        if (self._mode == "older" and date < self._date) or (self._mode == "newer" and date > self._date):
+        if (self._mode == "older" and date < self._date) or (self._mode == "newer"
+                                                             and date > self._date):
             return True
         return False
 
@@ -446,7 +456,8 @@ class DateSet(EverythingSet):
         vardbapi = trees["vartree"].dbapi
         mode = options.get("mode", "older")
         if str(mode).lower() not in ["newer", "older"]:
-            raise SetConfigError(_("invalid 'mode' value %s (use either 'newer' or 'older')") % mode)
+            raise SetConfigError(
+                _("invalid 'mode' value %s (use either 'newer' or 'older')") % mode)
 
         formats = []
         if options.get("package") is not None:
@@ -459,10 +470,12 @@ class DateSet(EverythingSet):
             formats.append("date")
 
         if not formats:
-            raise SetConfigError(_("none of these options specified: 'package', 'filestamp', 'seconds', 'date'"))
+            raise SetConfigError(
+                _("none of these options specified: 'package', 'filestamp', 'seconds', 'date'"))
         elif len(formats) > 1:
             raise SetConfigError(
-                _("no more than one of these options is allowed: 'package', 'filestamp', 'seconds', 'date'"))
+                _("no more than one of these options is allowed: 'package', 'filestamp', 'seconds', 'date'"
+                  ))
 
         setformat = formats[0]
 
@@ -473,7 +486,8 @@ class DateSet(EverythingSet):
                 (date, ) = vardbapi.aux_get(cpv, ("BUILD_TIME", ))
                 date = int(date)
             except (KeyError, ValueError):
-                raise SetConfigError(_("cannot determine installation date of package %s") % package)
+                raise SetConfigError(
+                    _("cannot determine installation date of package %s") % package)
         elif setformat == "filestamp":
             filestamp = options.get("filestamp")
             try:
@@ -491,7 +505,8 @@ class DateSet(EverythingSet):
                 dateformat = options.get("dateformat", "%x %X")
                 date = int(time.mktime(time.strptime(dateopt, dateformat)))
             except ValueError:
-                raise SetConfigError(_("'date=%s' does not match 'dateformat=%s'") % (dateopt, dateformat))
+                raise SetConfigError(
+                    _("'date=%s' does not match 'dateformat=%s'") % (dateopt, dateformat))
         return DateSet(vardb=vardbapi, date=date, mode=mode)
 
     singleBuilder = classmethod(singleBuilder)
@@ -553,12 +568,18 @@ class ChangedDepsSet(PackageSet):
             # meaningful since vdb dependencies are conditional-free.
             vdbvars = [
                 strip_slots(
-                    use_reduce(installed_metadata[k], uselist=usel, eapi=installed_metadata["EAPI"], token_class=Atom,
+                    use_reduce(installed_metadata[k],
+                               uselist=usel,
+                               eapi=installed_metadata["EAPI"],
+                               token_class=Atom,
                                )) for k in depvars
             ]
             pdbvars = [
                 strip_slots(
-                    use_reduce(ebuild_metadata[k], uselist=usel, eapi=ebuild_metadata["EAPI"], token_class=Atom,
+                    use_reduce(ebuild_metadata[k],
+                               uselist=usel,
+                               eapi=ebuild_metadata["EAPI"],
+                               token_class=Atom,
                                )) for k in depvars
             ]
 

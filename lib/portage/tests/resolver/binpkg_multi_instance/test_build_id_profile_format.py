@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -25,7 +27,11 @@ class BuildIdProfileFormatTestCase(TestCase):
             "package.provided": ("sys-libs/zlib-1.2.8-r1", ),
         }
 
-        repo_configs = {"test_repo": {"layout.conf": ("profile-formats = build-id profile-repo-deps profile-set", ), }}
+        repo_configs = {
+            "test_repo": {
+                "layout.conf": ("profile-formats = build-id profile-repo-deps profile-set", ),
+            }
+        }
 
         user_config = {"make.conf": ('FEATURES="binpkg-multi-instance"', ), }
 
@@ -105,14 +111,15 @@ class BuildIdProfileFormatTestCase(TestCase):
 
         world = ()
 
-        test_cases = (ResolverPlaygroundTestCase(["@world"],
-                                                 options={
-                                                     "--emptytree": True,
-                                                     "--usepkgonly": True
-                                                 },
-                                                 success=True,
-                                                 mergelist=["[binary]dev-libs/B-1-2", "[binary]app-misc/A-1-2"],
-                                                 ), )
+        test_cases = (ResolverPlaygroundTestCase(
+            ["@world"],
+            options={
+                "--emptytree": True,
+                "--usepkgonly": True
+            },
+            success=True,
+            mergelist=["[binary]dev-libs/B-1-2", "[binary]app-misc/A-1-2"],
+        ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):

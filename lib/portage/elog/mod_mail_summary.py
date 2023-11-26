@@ -79,7 +79,11 @@ def _finalize(mysettings, items):
     for key in items:
         mybody += f"- {key}\n"
 
-    mymessage = portage.mail.create_message(myfrom, myrecipient, mysubject, mybody, attachments=list(items.values()))
+    mymessage = portage.mail.create_message(myfrom,
+                                            myrecipient,
+                                            mysubject,
+                                            mybody,
+                                            attachments=list(items.values()))
 
     # Timeout after one minute in case send_mail() blocks indefinitely.
     try:

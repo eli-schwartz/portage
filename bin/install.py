@@ -36,12 +36,18 @@ def parse_args(args):
     parser.add_argument("--owner", "-o", action="store", dest="owner")
     parser.add_argument("--group", "-g", action="store", dest="group")
     parser.add_argument("--mode", "-m", action="store", dest="mode")
-    parser.add_argument("--preserve-timestamps", "-p", action="store_true", dest="preserve_timestamps")
+    parser.add_argument("--preserve-timestamps",
+                        "-p",
+                        action="store_true",
+                        dest="preserve_timestamps")
     parser.add_argument("--strip", "-s", action="store_true", dest="strip")
     parser.add_argument("--strip-program", action="store", dest="strip_program")
     parser.add_argument("--suffix", "-S", action="store", dest="suffix")
     parser.add_argument("--target-directory", "-t", action="store", dest="target_directory")
-    parser.add_argument("--no-target-directory", "-T", action="store_true", dest="no_target_directory")
+    parser.add_argument("--no-target-directory",
+                        "-T",
+                        action="store_true",
+                        dest="no_target_directory")
     parser.add_argument("--verbose", "-v", action="store_true", dest="verbose")
     parser.add_argument("--help", action="store_true", dest="help")
     parser.add_argument("--version", action="store_true", dest="version")
@@ -133,7 +139,8 @@ def Which(filename, path=None, exclude=None):
                 # file disappeared?
                 pass
             else:
-                if stat.S_ISREG(st.st_mode) and (exclude is None or exclude != (st.st_ino, st.st_dev)):
+                if stat.S_ISREG(st.st_mode) and (exclude is None
+                                                 or exclude != (st.st_ino, st.st_dev)):
                     return p
 
     return None

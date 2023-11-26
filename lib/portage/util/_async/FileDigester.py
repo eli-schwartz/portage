@@ -18,7 +18,9 @@ class FileDigester(AsyncFunction):
     __slots__ = ("file_path", "hash_names", )
 
     def _start(self):
-        self.target = functools.partial(perform_multiple_checksums, self.file_path, hashes=self.hash_names)
+        self.target = functools.partial(perform_multiple_checksums,
+                                        self.file_path,
+                                        hashes=self.hash_names)
         super()._start()
 
     @property

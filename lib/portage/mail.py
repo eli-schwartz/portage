@@ -51,7 +51,8 @@ def create_message(sender, recipient, subject, body, attachments=None):
             elif isinstance(x, str):
                 mymessage.attach(TextMessage(x))
             else:
-                raise portage.exception.PortageException(_(f"Can't handle type of attachment: {type(x)}"))
+                raise portage.exception.PortageException(
+                    _(f"Can't handle type of attachment: {type(x)}"))
 
     mymessage.set_unixfrom(sender)
     mymessage["To"] = recipient
@@ -114,7 +115,8 @@ def send_mail(mysettings, message):
         fd.write(_force_ascii_if_necessary(message.as_string()))
         if fd.close() is not None:
             sys.stderr.write(
-                _(f"!!! {mymailhost} returned with a non-zero exit code. This generally indicates an error.\n"))
+                _(f"!!! {mymailhost} returned with a non-zero exit code. This generally indicates an error.\n"
+                  ))
     else:
         try:
             if int(mymailport) > 100000:
@@ -134,7 +136,8 @@ def send_mail(mysettings, message):
             myconn.sendmail(myfrom, myrecipient, message_str)
             myconn.quit()
         except smtplib.SMTPException as e:
-            raise portage.exception.PortageException(_(f"!!! An error occurred while trying to send logmail:\n{e}"))
+            raise portage.exception.PortageException(
+                _(f"!!! An error occurred while trying to send logmail:\n{e}"))
         except OSError as e:
             raise portage.exception.PortageException(
                 _(f"!!! A network error occurred while trying to send logmail:\n{e}\nSure you configured PORTAGE_ELOG_MAILURI correctly?"

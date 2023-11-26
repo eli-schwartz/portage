@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class AutounmaskUseBacktrackTestCase(TestCase):
@@ -63,7 +65,8 @@ class AutounmaskUseBacktrackTestCase(TestCase):
                                        },
                                        success=False,
                                        ambiguous_merge_order=True,
-                                       mergelist=[("dev-libs/C-1", "dev-libs/A-2"), "dev-libs/D-1", ],
+                                       mergelist=[("dev-libs/C-1", "dev-libs/A-2"), "dev-libs/D-1",
+                                                  ],
                                        use_changes={"dev-libs/C-1": {
                                            "y": True,
                                            "x": True

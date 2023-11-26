@@ -26,8 +26,8 @@ module_spec = {
             "func_desc": {
                 "sync": "Performs a hg pull on the repository",
                 "new": "Creates the new repository at the specified location",
-                "exists":
-                "Returns a boolean of whether the specified dir " + "exists and is a valid Mercurial repository",
+                "exists": "Returns a boolean of whether the specified dir " +
+                "exists and is a valid Mercurial repository",
                 "retrieve_head": "Returns the head commit hash",
             },
             "validate_config":

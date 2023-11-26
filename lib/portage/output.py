@@ -19,7 +19,9 @@ from portage import _encodings
 from portage import _unicode_encode
 from portage import _unicode_decode
 from portage.const import COLOR_MAP_FILE
-from portage.exception import (CommandNotFound, FileNotFound, ParseError, PermissionDenied, PortageException, )
+from portage.exception import (CommandNotFound, FileNotFound, ParseError, PermissionDenied,
+                               PortageException,
+                               )
 from portage.localization import _
 
 havecolor = 1
@@ -68,8 +70,8 @@ def color(fg, bg="default", attr=["normal"]):
 ansi_codes = [y for x in range(30, 38) for y in (f"{x}m", f"{x};01m")]
 
 rgb_ansi_colors = [
-    "0x000000", "0x555555", "0xAA0000", "0xFF5555", "0x00AA00", "0x55FF55", "0xAA5500", "0xFFFF55", "0x0000AA",
-    "0x5555FF", "0xAA00AA", "0xFF55FF", "0x00AAAA", "0x55FFFF", "0xAAAAAA", "0xFFFFFF",
+    "0x000000", "0x555555", "0xAA0000", "0xFF5555", "0x00AA00", "0x55FF55", "0xAA5500", "0xFFFF55",
+    "0x0000AA", "0x5555FF", "0xAA00AA", "0xFF55FF", "0x00AAAA", "0x55FFFF", "0xAAAAAA", "0xFFFFFF",
 ]
 
 for x in range(len(rgb_ansi_colors)):
@@ -174,7 +176,9 @@ def _parse_color_map(config_root="/", onerror=None):
 
             split_line = line.split("=")
             if len(split_line) != 2:
-                e = ParseError(_("'%s', line %s: expected exactly one occurrence of '=' operator") % (myfile, lineno))
+                e = ParseError(
+                    _("'%s', line %s: expected exactly one occurrence of '=' operator") %
+                    (myfile, lineno))
                 raise e
                 if onerror:
                     onerror(e)
@@ -273,14 +277,15 @@ def xtermTitleReset():
                 if not shell or not os.access(shell, os.EX_OK):
                     shell = find_binary("sh")
                 if shell:
-                    spawn([shell, "-c", prompt_command],
-                          env=os.environ,
-                          fd_pipes={
-                              0: portage._get_stdin().fileno(),
-                              1: sys.__stderr__.fileno(),
-                              2: sys.__stderr__.fileno(),
-                          },
-                          )
+                    spawn(
+                        [shell, "-c", prompt_command],
+                        env=os.environ,
+                        fd_pipes={
+                            0: portage._get_stdin().fileno(),
+                            1: sys.__stderr__.fileno(),
+                            2: sys.__stderr__.fileno(),
+                        },
+                    )
                 else:
                     os.system(prompt_command)
             return
@@ -289,9 +294,10 @@ def xtermTitleReset():
             home = os.environ.get("HOME", "")
             if home != "" and pwd.startswith(home):
                 pwd = "~" + pwd[len(home):]
-            default_xterm_title = "\x1b]0;{}@{}:{}\x07".format(os.environ.get("LOGNAME", ""),
-                                                               os.environ.get("HOSTNAME", "").split(".", 1)[0], pwd,
-                                                               )
+            default_xterm_title = "\x1b]0;{}@{}:{}\x07".format(
+                os.environ.get("LOGNAME", ""),
+                os.environ.get("HOSTNAME", "").split(".", 1)[0], pwd,
+            )
     xtermTitle(default_xterm_title, raw=True)
 
 
@@ -327,7 +333,8 @@ def style_to_ansi_code(style):
 
 def colormap():
     mycolors = []
-    for c in ("BAD", "BRACKET", "ERR", "GOOD", "HILITE", "INFO", "LOG", "NORMAL", "QAWARN", "WARN", ):
+    for c in ("BAD", "BRACKET", "ERR", "GOOD", "HILITE", "INFO", "LOG", "NORMAL", "QAWARN", "WARN",
+              ):
         mycolors.append(f"PORTAGE_COLOR_{c}=$'{style_to_ansi_code(c)}'")
     return "\n".join(mycolors)
 
@@ -343,8 +350,8 @@ def colorize(color_key, text):
 
 
 compat_functions_colors = [
-    "bold", "white", "teal", "turquoise", "darkteal", "fuchsia", "purple", "blue", "darkblue", "green", "darkgreen",
-    "yellow", "brown", "darkyellow", "red", "darkred",
+    "bold", "white", "teal", "turquoise", "darkteal", "fuchsia", "purple", "blue", "darkblue",
+    "green", "darkgreen", "yellow", "brown", "darkyellow", "red", "darkred",
 ]
 
 
@@ -532,9 +539,11 @@ class EOutput:
 
     def __eend(self, caller, errno, msg):
         if errno == 0:
-            status_brackets = colorize("BRACKET", "[ ") + colorize("GOOD", "ok") + colorize("BRACKET", " ]")
+            status_brackets = colorize("BRACKET", "[ ") + colorize("GOOD", "ok") + colorize(
+                "BRACKET", " ]")
         else:
-            status_brackets = colorize("BRACKET", "[ ") + colorize("BAD", "!!") + colorize("BRACKET", " ]")
+            status_brackets = colorize("BRACKET", "[ ") + colorize("BAD", "!!") + colorize(
+                "BRACKET", " ]")
             if msg:
                 if caller == "eend":
                     self.eerror(msg[0])
@@ -544,7 +553,9 @@ class EOutput:
             self.__last_e_len = 0
         if not self.quiet:
             out = sys.stdout
-            self._write(out, "%*s%s\n" % ((self.term_columns - self.__last_e_len - 7), "", status_brackets), )
+            self._write(
+                out, "%*s%s\n" % ((self.term_columns - self.__last_e_len - 7), "", status_brackets),
+            )
 
     def ebegin(self, msg):
         """
@@ -720,7 +731,9 @@ class ProgressBar:
         self._set_desc()
 
     def _set_desc(self):
-        self._desc = "{}{}".format(f"{self._title}: " if self._title else "", f"{self._label}" if self._label else "", )
+        self._desc = "{}{}".format(f"{self._title}: " if self._title else "",
+                                   f"{self._label}" if self._label else "",
+                                   )
         if len(self._desc) > self._desc_max_length:  # truncate if too long
             self._desc = f"{self._desc[:self._desc_max_length - 3]}..."
         if len(self._desc):
@@ -809,9 +822,10 @@ class TermProgressBar(ProgressBar):
                 position = 0.5
             self._position = position
             bar_width = int(offset * max_bar_width)
-            image = "{}{}{}".format(self._desc, _percent,
-                                    "[" + (bar_width * " ") + "<=>" + ((max_bar_width - bar_width) * " ") + "]",
-                                    )
+            image = "{}{}{}".format(
+                self._desc, _percent,
+                "[" + (bar_width * " ") + "<=>" + ((max_bar_width - bar_width) * " ") + "]",
+            )
             return image
 
         percentage = 100 * curval // maxval
@@ -852,7 +866,9 @@ def _init(config_root="/"):
         _styles[k] = _unicode_decode(v)
 
     try:
-        _parse_color_map(config_root=config_root, onerror=lambda e: writemsg(f"{str(e)}\n", noiselevel=-1), )
+        _parse_color_map(config_root=config_root,
+                         onerror=lambda e: writemsg(f"{str(e)}\n", noiselevel=-1),
+                         )
     except FileNotFound:
         pass
     except PermissionDenied as e:

@@ -70,7 +70,8 @@ class MtimeDB(dict):
         d = {}
         if content:
             try:
-                d = json.loads(_unicode_decode(content, encoding=_encodings["repo.content"], errors="strict"))
+                d = json.loads(
+                    _unicode_decode(content, encoding=_encodings["repo.content"], errors="strict"))
             except SystemExit:
                 raise
             except Exception as e:

@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -103,7 +105,8 @@ class SlotOperatorRebuildTestCase(TestCase):
                                                 world=world,
                                                 debug=False,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:

@@ -24,7 +24,8 @@ class BuildLogger(AsynchronousTask):
     subprocess stdout and stderr streams).
     """
 
-    __slots__ = ("env", "log_path", "log_filter_file", "_main_task", "_main_task_cancel", "_stdin", )
+    __slots__ = ("env", "log_path", "log_filter_file", "_main_task", "_main_task_cancel", "_stdin",
+                 )
 
     @property
     def stdin(self):
@@ -78,7 +79,8 @@ class BuildLogger(AsynchronousTask):
         pipe_logger.start()
 
         self._main_task_cancel = functools.partial(self._main_cancel, filter_proc, pipe_logger)
-        self._main_task = asyncio.ensure_future(self._main(filter_proc, pipe_logger), loop=self.scheduler)
+        self._main_task = asyncio.ensure_future(self._main(filter_proc, pipe_logger),
+                                                loop=self.scheduler)
         self._main_task.add_done_callback(self._main_exit)
 
     async def _main(self, filter_proc, pipe_logger):

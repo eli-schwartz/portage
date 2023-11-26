@@ -21,8 +21,8 @@ from .ManifestProcess import ManifestProcess
 
 
 class ManifestTask(CompositeTask):
-    __slots__ = ("cp", "distdir", "fetchlist_dict", "gpg_cmd", "gpg_vars", "repo_config", "force_sign_key",
-                 "_manifest_path",
+    __slots__ = ("cp", "distdir", "fetchlist_dict", "gpg_cmd", "gpg_vars", "repo_config",
+                 "force_sign_key", "_manifest_path",
                  )
 
     _PGP_HEADER = b"BEGIN PGP SIGNED MESSAGE"
@@ -41,7 +41,8 @@ class ManifestTask(CompositeTask):
                 try:
                     self.fetchlist_dict.result()
                 except InvalidDependString as e:
-                    writemsg(_("!!! %s%s%s: SRC_URI: %s\n") % (self.cp, _repo_separator, self.repo_config.name, e),
+                    writemsg(_("!!! %s%s%s: SRC_URI: %s\n") %
+                             (self.cp, _repo_separator, self.repo_config.name, e),
                              noiselevel=-1,
                              )
             self._async_wait()
@@ -123,8 +124,8 @@ class ManifestTask(CompositeTask):
         self._assert_current(proc)
 
         parsed_key = self._parse_gpg_key(proc.pipe_reader.getvalue().decode("utf_8", "replace"))
-        if parsed_key is not None and self._normalize_gpg_key(parsed_key) == self._normalize_gpg_key(
-                self.force_sign_key):
+        if parsed_key is not None and self._normalize_gpg_key(
+                parsed_key) == self._normalize_gpg_key(self.force_sign_key):
             self.returncode = os.EX_OK
             self._current_task = None
             self.wait()
@@ -165,7 +166,8 @@ class ManifestTask(CompositeTask):
         gpg_vars["FILE"] = self._manifest_path
         gpg_cmd = varexpand(self.gpg_cmd, mydict=gpg_vars)
         gpg_cmd = shlex_split(gpg_cmd)
-        gpg_proc = PopenProcess(proc=subprocess.Popen(gpg_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT))
+        gpg_proc = PopenProcess(
+            proc=subprocess.Popen(gpg_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT))
         # PipeLogger echos output and efficiently monitors for process
         # exit by listening for the stdout EOF event.
         gpg_proc.pipe_reader = PipeLogger(background=self.background,
@@ -197,7 +199,10 @@ class ManifestTask(CompositeTask):
 
     def _need_signature(self):
         try:
-            with open(_unicode_encode(self._manifest_path, encoding=_encodings["fs"], errors="strict"), "rb", ) as f:
+            with open(
+                    _unicode_encode(self._manifest_path, encoding=_encodings["fs"],
+                                    errors="strict"), "rb",
+            ) as f:
                 return self._PGP_HEADER not in f.readline()
         except OSError as e:
             if e.errno in (errno.ENOENT, errno.ESTALE):

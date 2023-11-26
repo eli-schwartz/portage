@@ -200,7 +200,8 @@ class MirrorDistTask(CompositeTask):
     def terminate(self):
         with self._term_rlock:
             if self._term_callback_handle is None:
-                self._term_callback_handle = self.scheduler.call_soon_threadsafe(self._term_callback)
+                self._term_callback_handle = self.scheduler.call_soon_threadsafe(
+                    self._term_callback)
 
     def _term_callback(self):
         if self._fetch_iterator is not None:

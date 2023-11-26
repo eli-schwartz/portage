@@ -26,7 +26,8 @@ def main():
     }
     """
     if portage.settings.get("BINPKG_COMPRESS", COMPAT_BINPKG_COMPRESS) == COMPAT_BINPKG_COMPRESS:
-        config_path = os.path.join(os.environ["ED"], GLOBAL_CONFIG_PATH.lstrip(os.sep), "make.globals")
+        config_path = os.path.join(os.environ["ED"], GLOBAL_CONFIG_PATH.lstrip(os.sep),
+                                   "make.globals")
         with open(config_path) as f:
             content = f.read()
             compat_setting = f'BINPKG_COMPRESS="{COMPAT_BINPKG_COMPRESS}"'

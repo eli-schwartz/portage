@@ -14,8 +14,9 @@ class ProfileDefaultEAPITestCase(TestCase):
     def testProfileDefaultEAPI(self):
         repo_configs = {
             "test_repo": {
-                "layout.conf": ("profile-formats = profile-default-eapi", "profile_eapi_when_unspecified = 5",
-                                ),
+                "layout.conf":
+                ("profile-formats = profile-default-eapi", "profile_eapi_when_unspecified = 5",
+                 ),
             }
         }
 
@@ -92,12 +93,17 @@ class ProfileDefaultEAPITestCase(TestCase):
             repo_dir = playground.settings.repositories.get_location_for_name("test_repo")
             profile_root = os.path.join(repo_dir, "profiles")
             profile_info = [(os.path.join(profile_root, p), data) for p, data in profiles]
-            profile_info.append((os.path.join(playground.eroot, USER_CONFIG_PATH, "profile"), user_profile, ))
+            profile_info.append((os.path.join(playground.eroot, USER_CONFIG_PATH,
+                                              "profile"), user_profile,
+                                 ))
 
             for prof_path, data in profile_info:
                 ensure_dirs(prof_path)
                 for k, v in data.items():
-                    with open(os.path.join(prof_path, k), mode="w", encoding=_encodings["repo.content"], ) as f:
+                    with open(os.path.join(prof_path, k),
+                              mode="w",
+                              encoding=_encodings["repo.content"],
+                              ) as f:
                         for line in v:
                             f.write(f"{line}\n")
 

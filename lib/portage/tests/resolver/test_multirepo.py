@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -70,7 +72,13 @@ class MultirepoTestCase(TestCase):
             "dev-libs/K-1::repo1": {},
         }
 
-        binpkgs = {"dev-libs/C-1::repo2": {}, "dev-libs/I-2::repo1": {"SLOT": "2"}, "dev-libs/K-1::repo2": {}, }
+        binpkgs = {
+            "dev-libs/C-1::repo2": {},
+            "dev-libs/I-2::repo1": {
+                "SLOT": "2"
+            },
+            "dev-libs/K-1::repo2": {},
+        }
 
         sets = {"multirepotest": ("dev-libs/A::test_repo", )}
 
@@ -269,7 +277,8 @@ class MultirepoTestCase(TestCase):
                                                 installed=installed,
                                                 sets=sets,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
 
@@ -430,9 +439,11 @@ class MultirepoTestCase(TestCase):
                                        check_repo_names=True,
                                        mergelist=["dev-libs/G-1"],
                                        ),
-            ResolverPlaygroundTestCase(["dev-libs/H"], options={"--autounmask": "n"}, success=False),
+            ResolverPlaygroundTestCase(["dev-libs/H"], options={"--autounmask": "n"},
+                                       success=False),
             # package.mask with wildcards
-            ResolverPlaygroundTestCase(["dev-libs/Z"], options={"--autounmask": "n"}, success=False),
+            ResolverPlaygroundTestCase(["dev-libs/Z"], options={"--autounmask": "n"},
+                                       success=False),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
@@ -440,7 +451,9 @@ class MultirepoTestCase(TestCase):
                 print(colorize("HILITE", binpkg_format), end=" ... ")
                 sys.stdout.flush()
                 user_config["make.conf"] = (f'BINPKG_FORMAT="{binpkg_format}"', )
-                playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, user_config=user_config)
+                playground = ResolverPlayground(ebuilds=ebuilds,
+                                                installed=installed,
+                                                user_config=user_config)
 
                 try:
                     for test_case in test_cases:

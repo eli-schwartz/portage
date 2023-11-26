@@ -57,7 +57,8 @@ def collect_ebuild_messages(path):
                     raise ValueError(msgtype)
             except ValueError:
                 writemsg(_("!!! malformed entry in "
-                           "log file: '%s': %s\n") % (filename, l), noiselevel=-1,
+                           "log file: '%s': %s\n") % (filename, l),
+                         noiselevel=-1,
                          )
                 continue
 
@@ -115,7 +116,9 @@ def _elog_base(level, msg, phase="other", key=None, color=None, out=None):
 
     # avoid potential UnicodeEncodeError
     if out in (sys.stdout, sys.stderr):
-        formatted_msg = _unicode_encode(formatted_msg, encoding=_encodings["stdio"], errors="backslashreplace")
+        formatted_msg = _unicode_encode(formatted_msg,
+                                        encoding=_encodings["stdio"],
+                                        errors="backslashreplace")
         out = out.buffer
 
     out.write(formatted_msg)

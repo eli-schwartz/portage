@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class MergeOrderTestCase(TestCase):
@@ -103,15 +105,19 @@ class MergeOrderTestCase(TestCase):
                 "RDEPEND": "app-misc/circ-smallest-c",
             },
             "app-misc/circ-smallest-f-1": {
-                "RDEPEND": "app-misc/circ-smallest-g app-misc/circ-smallest-a app-misc/circ-smallest-c",
+                "RDEPEND":
+                "app-misc/circ-smallest-g app-misc/circ-smallest-a app-misc/circ-smallest-c",
             },
             "app-misc/circ-smallest-g-1": {
                 "RDEPEND": "app-misc/circ-smallest-f",
             },
             "app-misc/installed-blocker-a-1": {
-                "EAPI": "2",
-                "DEPEND": "!app-misc/blocker-buildtime-a",
-                "RDEPEND": "!app-misc/blocker-runtime-a !app-misc/blocker-runtime-b !!app-misc/blocker-runtime-hard-a",
+                "EAPI":
+                "2",
+                "DEPEND":
+                "!app-misc/blocker-buildtime-a",
+                "RDEPEND":
+                "!app-misc/blocker-runtime-a !app-misc/blocker-runtime-b !!app-misc/blocker-runtime-hard-a",
             },
             "app-misc/installed-old-version-blocks-a-1": {
                 "RDEPEND": "!app-misc/blocker-update-order-a",
@@ -223,7 +229,8 @@ class MergeOrderTestCase(TestCase):
             "x11-base/xorg-drivers-1.20-r2": {
                 "EAPI": "7",
                 "IUSE": "+video_cards_fbdev",
-                "PDEPEND": "x11-base/xorg-server video_cards_fbdev? ( x11-drivers/xf86-video-fbdev )",
+                "PDEPEND":
+                "x11-base/xorg-server video_cards_fbdev? ( x11-drivers/xf86-video-fbdev )",
             },
             "x11-base/xorg-server-1.14.1": {
                 "EAPI": "5",
@@ -259,9 +266,12 @@ class MergeOrderTestCase(TestCase):
                 "RDEPEND": "app-misc/circ-satisfied-a",
             },
             "app-misc/installed-blocker-a-1": {
-                "EAPI": "2",
-                "DEPEND": "!app-misc/blocker-buildtime-a",
-                "RDEPEND": "!app-misc/blocker-runtime-a !app-misc/blocker-runtime-b !!app-misc/blocker-runtime-hard-a",
+                "EAPI":
+                "2",
+                "DEPEND":
+                "!app-misc/blocker-buildtime-a",
+                "RDEPEND":
+                "!app-misc/blocker-runtime-a !app-misc/blocker-runtime-b !!app-misc/blocker-runtime-hard-a",
             },
             "app-misc/installed-old-version-blocks-a-1": {
                 "RDEPEND": "!app-misc/blocker-update-order-a",
@@ -338,22 +348,25 @@ class MergeOrderTestCase(TestCase):
         }
 
         test_cases = (
-            ResolverPlaygroundTestCase(["app-misc/circ-direct-a", "app-misc/circ-direct-b"],
-                                       success=True,
-                                       all_permutations=True,
-                                       mergelist=["app-misc/circ-direct-a-1", "app-misc/circ-direct-b-1"],
-                                       ),
+            ResolverPlaygroundTestCase(
+                ["app-misc/circ-direct-a", "app-misc/circ-direct-b"],
+                success=True,
+                all_permutations=True,
+                mergelist=["app-misc/circ-direct-a-1", "app-misc/circ-direct-b-1"],
+            ),
             ResolverPlaygroundTestCase(["app-misc/some-app-a"],
                                        success=True,
                                        ambiguous_merge_order=True,
-                                       mergelist=[("app-misc/circ-runtime-a-1", "app-misc/circ-runtime-b-1",
+                                       mergelist=[("app-misc/circ-runtime-a-1",
+                                                   "app-misc/circ-runtime-b-1",
                                                    "app-misc/circ-runtime-c-1",
                                                    ), "app-misc/some-app-a-1", ],
                                        ),
             ResolverPlaygroundTestCase(["app-misc/some-app-a"],
                                        success=True,
                                        ambiguous_merge_order=True,
-                                       mergelist=[("app-misc/circ-runtime-c-1", "app-misc/circ-runtime-b-1",
+                                       mergelist=[("app-misc/circ-runtime-c-1",
+                                                   "app-misc/circ-runtime-b-1",
                                                    "app-misc/circ-runtime-a-1",
                                                    ), "app-misc/some-app-a-1", ],
                                        ),
@@ -374,8 +387,10 @@ class MergeOrderTestCase(TestCase):
                 # The following merge order assertion reflects optimal order for
                 # a circular relationship which is DEPEND in one direction and
                 # RDEPEND in the other.
-                merge_order_assertions=(("app-misc/circ-buildtime-a-1", "app-misc/circ-buildtime-c-1"), ),
-                mergelist=[("app-misc/circ-buildtime-b-1", "app-misc/circ-buildtime-c-1", "app-misc/circ-buildtime-a-1",
+                merge_order_assertions=(("app-misc/circ-buildtime-a-1",
+                                         "app-misc/circ-buildtime-c-1"), ),
+                mergelist=[("app-misc/circ-buildtime-b-1", "app-misc/circ-buildtime-c-1",
+                            "app-misc/circ-buildtime-a-1",
                             ), "app-misc/some-app-c-1", ],
             ),
             # Test optimal merge order for a circular dep that is
@@ -385,7 +400,8 @@ class MergeOrderTestCase(TestCase):
                                        ambiguous_merge_order=True,
                                        mergelist=[
                                            "app-misc/circ-post-runtime-a-1",
-                                           ("app-misc/circ-post-runtime-b-1", "app-misc/circ-post-runtime-c-1",
+                                           ("app-misc/circ-post-runtime-b-1",
+                                            "app-misc/circ-post-runtime-c-1",
                                             ), "app-misc/some-app-b-1",
                                        ],
                                        ),
@@ -395,28 +411,39 @@ class MergeOrderTestCase(TestCase):
             # the DEPEND/buildtime dep should be updated before the
             # package that depends on it, even though it's feasible
             # to update it later since it is already satisfied.
-            ResolverPlaygroundTestCase(
-                ["app-misc/circ-satisfied-a", "app-misc/circ-satisfied-b", "app-misc/circ-satisfied-c", ],
-                success=True,
-                all_permutations=True,
-                ambiguous_merge_order=True,
-                merge_order_assertions=(("app-misc/circ-satisfied-a-1", "app-misc/circ-satisfied-c-1"), ),
-                mergelist=[("app-misc/circ-satisfied-a-1", "app-misc/circ-satisfied-b-1", "app-misc/circ-satisfied-c-1",
-                            )],
-            ),
+            ResolverPlaygroundTestCase([
+                "app-misc/circ-satisfied-a", "app-misc/circ-satisfied-b",
+                "app-misc/circ-satisfied-c",
+            ],
+                                       success=True,
+                                       all_permutations=True,
+                                       ambiguous_merge_order=True,
+                                       merge_order_assertions=(("app-misc/circ-satisfied-a-1",
+                                                                "app-misc/circ-satisfied-c-1"), ),
+                                       mergelist=[("app-misc/circ-satisfied-a-1",
+                                                   "app-misc/circ-satisfied-b-1",
+                                                   "app-misc/circ-satisfied-c-1",
+                                                   )],
+                                       ),
             # In the case of multiple runtime cycles, where some cycles
             # may depend on smaller independent cycles, it's optimal
             # to merge smaller independent cycles before other cycles
             # that depend on them.
-            ResolverPlaygroundTestCase(
-                ["app-misc/circ-smallest-a", "app-misc/circ-smallest-c", "app-misc/circ-smallest-f", ],
-                success=True,
-                ambiguous_merge_order=True,
-                all_permutations=True,
-                mergelist=[("app-misc/circ-smallest-a-1", "app-misc/circ-smallest-b-1"),
-                           ("app-misc/circ-smallest-c-1", "app-misc/circ-smallest-d-1", "app-misc/circ-smallest-e-1",
-                            ), ("app-misc/circ-smallest-f-1", "app-misc/circ-smallest-g-1"), ],
-            ),
+            ResolverPlaygroundTestCase([
+                "app-misc/circ-smallest-a", "app-misc/circ-smallest-c", "app-misc/circ-smallest-f",
+            ],
+                                       success=True,
+                                       ambiguous_merge_order=True,
+                                       all_permutations=True,
+                                       mergelist=[("app-misc/circ-smallest-a-1",
+                                                   "app-misc/circ-smallest-b-1"),
+                                                  ("app-misc/circ-smallest-c-1",
+                                                   "app-misc/circ-smallest-d-1",
+                                                   "app-misc/circ-smallest-e-1",
+                                                   ),
+                                                  ("app-misc/circ-smallest-f-1",
+                                                   "app-misc/circ-smallest-g-1"), ],
+                                       ),
             # installed package has buildtime-only blocker
             # that should be ignored
             ResolverPlaygroundTestCase(["app-misc/blocker-buildtime-a"],
@@ -428,25 +455,29 @@ class MergeOrderTestCase(TestCase):
             # available to the old package. The old package should
             # be updated first, in order to solve the blocker without
             # any need for blocking packages to temporarily overlap.
-            ResolverPlaygroundTestCase(["app-misc/blocker-update-order-a", "app-misc/installed-old-version-blocks-a", ],
-                                       success=True,
-                                       all_permutations=True,
-                                       mergelist=[
-                                           "app-misc/installed-old-version-blocks-a-2",
-                                           "app-misc/blocker-update-order-a-1",
-                                       ],
-                                       ),
-            # This is the same as above but with a hard blocker. The hard
-            # blocker is solved automatically since the update makes it
-            # irrelevant.
             ResolverPlaygroundTestCase(
-                ["app-misc/blocker-update-order-hard-a", "app-misc/installed-old-version-blocks-hard-a", ],
+                ["app-misc/blocker-update-order-a", "app-misc/installed-old-version-blocks-a", ],
                 success=True,
                 all_permutations=True,
                 mergelist=[
-                    "app-misc/installed-old-version-blocks-hard-a-2", "app-misc/blocker-update-order-hard-a-1",
+                    "app-misc/installed-old-version-blocks-a-2",
+                    "app-misc/blocker-update-order-a-1",
                 ],
             ),
+            # This is the same as above but with a hard blocker. The hard
+            # blocker is solved automatically since the update makes it
+            # irrelevant.
+            ResolverPlaygroundTestCase([
+                "app-misc/blocker-update-order-hard-a",
+                "app-misc/installed-old-version-blocks-hard-a",
+            ],
+                                       success=True,
+                                       all_permutations=True,
+                                       mergelist=[
+                                           "app-misc/installed-old-version-blocks-hard-a-2",
+                                           "app-misc/blocker-update-order-hard-a-1",
+                                       ],
+                                       ),
             # This is similar to the above case except that it's unsolvable
             # due to merge order, unless bug 250286 is implemented so that
             # the installed blocker will be unmerged before installation
@@ -463,9 +494,10 @@ class MergeOrderTestCase(TestCase):
                 success=False,
                 all_permutations=True,
                 ambiguous_merge_order=True,
-                merge_order_assertions=(("app-misc/blocker-update-order-hard-unsolvable-a-1",
-                                         "app-misc/installed-old-version-blocks-hard-unsolvable-a-2",
-                                         ), ),
+                merge_order_assertions=(
+                    ("app-misc/blocker-update-order-hard-unsolvable-a-1",
+                     "app-misc/installed-old-version-blocks-hard-unsolvable-a-2",
+                     ), ),
                 mergelist=[("app-misc/blocker-update-order-hard-unsolvable-a-1",
                             "app-misc/installed-old-version-blocks-hard-unsolvable-a-2",
                             "!!app-misc/blocker-update-order-hard-unsolvable-a",
@@ -480,9 +512,11 @@ class MergeOrderTestCase(TestCase):
                                        success=True,
                                        all_permutations=True,
                                        ambiguous_merge_order=True,
-                                       mergelist=[("app-misc/blocker-runtime-a-1", "app-misc/blocker-runtime-b-1"),
+                                       mergelist=[("app-misc/blocker-runtime-a-1",
+                                                   "app-misc/blocker-runtime-b-1"),
                                                   "[uninstall]app-misc/installed-blocker-a-1",
-                                                  ("!app-misc/blocker-runtime-a", "!app-misc/blocker-runtime-b"), ],
+                                                  ("!app-misc/blocker-runtime-a",
+                                                   "!app-misc/blocker-runtime-b"), ],
                                        ),
             # We have a soft buildtime blocker against an installed
             # package that should cause it to be uninstalled. Note that with
@@ -494,7 +528,8 @@ class MergeOrderTestCase(TestCase):
                                        success=True,
                                        mergelist=[
                                            "app-misc/blocker-buildtime-unbuilt-a-1",
-                                           "[uninstall]app-misc/installed-blocker-a-1", "!app-misc/installed-blocker-a",
+                                           "[uninstall]app-misc/installed-blocker-a-1",
+                                           "!app-misc/installed-blocker-a",
                                        ],
                                        ),
             # We have a hard buildtime blocker against an installed
@@ -513,7 +548,8 @@ class MergeOrderTestCase(TestCase):
             ResolverPlaygroundTestCase(["app-misc/blocker-runtime-hard-a"],
                                        success=False,
                                        mergelist=[
-                                           "app-misc/blocker-runtime-hard-a-1", "!!app-misc/blocker-runtime-hard-a",
+                                           "app-misc/blocker-runtime-hard-a-1",
+                                           "!!app-misc/blocker-runtime-hard-a",
                                        ],
                                        ),
             # Test swapping of providers for a new-style virtual package,
@@ -524,7 +560,8 @@ class MergeOrderTestCase(TestCase):
             ResolverPlaygroundTestCase(["media-video/libav"],
                                        success=True,
                                        mergelist=[
-                                           "media-video/libav-0.7_pre20110327", "[uninstall]media-video/ffmpeg-0.7_rc1",
+                                           "media-video/libav-0.7_pre20110327",
+                                           "[uninstall]media-video/ffmpeg-0.7_rc1",
                                            "!media-video/ffmpeg",
                                        ],
                                        ),
@@ -532,44 +569,52 @@ class MergeOrderTestCase(TestCase):
             # are merged asap, in order to account for implicit
             # dependencies. See bug #303567. Optimally, satisfied deps
             # are always merged after the asap nodes that depend on them.
-            ResolverPlaygroundTestCase(
-                ["app-arch/xz-utils", "sys-kernel/linux-headers", "sys-devel/binutils", "sys-libs/glibc", ],
-                options={"--complete-graph": True},
-                success=True,
-                all_permutations=True,
-                ambiguous_merge_order=True,
-                mergelist=[
-                    "sys-kernel/linux-headers-2.6.39", "sys-devel/gcc-4.5.2", "sys-libs/glibc-2.13",
-                    ("app-arch/xz-utils-5.0.2", "sys-devel/binutils-2.20.1"),
-                ],
-            ),
+            ResolverPlaygroundTestCase([
+                "app-arch/xz-utils", "sys-kernel/linux-headers", "sys-devel/binutils",
+                "sys-libs/glibc",
+            ],
+                                       options={"--complete-graph": True},
+                                       success=True,
+                                       all_permutations=True,
+                                       ambiguous_merge_order=True,
+                                       mergelist=[
+                                           "sys-kernel/linux-headers-2.6.39", "sys-devel/gcc-4.5.2",
+                                           "sys-libs/glibc-2.13",
+                                           ("app-arch/xz-utils-5.0.2", "sys-devel/binutils-2.20.1"),
+                                       ],
+                                       ),
             # Test asap install of PDEPEND for bug #180045.
             ResolverPlaygroundTestCase(
                 ["kde-base/kmines", "kde-base/kdnssd", "kde-base/kdelibs", "app-arch/xz-utils", ],
                 success=True,
                 all_permutations=True,
                 ambiguous_merge_order=True,
-                merge_order_assertions=(("dev-util/pkgconfig-0.25-r2", "kde-misc/kdnssd-avahi-0.1.2"),
-                                        ("kde-misc/kdnssd-avahi-0.1.2", "kde-base/libkdegames-3.5.7"),
+                merge_order_assertions=(("dev-util/pkgconfig-0.25-r2",
+                                         "kde-misc/kdnssd-avahi-0.1.2"),
+                                        ("kde-misc/kdnssd-avahi-0.1.2",
+                                         "kde-base/libkdegames-3.5.7"),
                                         ("kde-misc/kdnssd-avahi-0.1.2", "kde-base/kdnssd-3.5.7"),
                                         ("kde-base/libkdegames-3.5.7", "kde-base/kmines-3.5.7"),
                                         ),
-                mergelist=[("kde-base/kdelibs-3.5.7", "dev-util/pkgconfig-0.25-r2", "kde-misc/kdnssd-avahi-0.1.2",
-                            "app-arch/xz-utils-5.0.2", "kde-base/libkdegames-3.5.7", "kde-base/kdnssd-3.5.7",
-                            "kde-base/kmines-3.5.7",
-                            )],
+                mergelist=[
+                    ("kde-base/kdelibs-3.5.7", "dev-util/pkgconfig-0.25-r2",
+                     "kde-misc/kdnssd-avahi-0.1.2", "app-arch/xz-utils-5.0.2",
+                     "kde-base/libkdegames-3.5.7", "kde-base/kdnssd-3.5.7", "kde-base/kmines-3.5.7",
+                     )
+                ],
             ),
             # Test satisfied circular DEPEND/RDEPEND with one := operator.
             # Both deps are already satisfied by installed packages, but
             # the := dep is given higher priority in merge order.
-            ResolverPlaygroundTestCase(["media-libs/mesa", "x11-drivers/xf86-video-fbdev", "x11-base/xorg-server", ],
-                                       success=True,
-                                       all_permutations=True,
-                                       mergelist=[
-                                           "x11-base/xorg-server-1.14.1", "media-libs/mesa-9.1.3",
-                                           "x11-drivers/xf86-video-fbdev-0.5.0-r1",
-                                       ],
-                                       ),
+            ResolverPlaygroundTestCase(
+                ["media-libs/mesa", "x11-drivers/xf86-video-fbdev", "x11-base/xorg-server", ],
+                success=True,
+                all_permutations=True,
+                mergelist=[
+                    "x11-base/xorg-server-1.14.1", "media-libs/mesa-9.1.3",
+                    "x11-drivers/xf86-video-fbdev-0.5.0-r1",
+                ],
+            ),
             # Test prioritization of the find_smallest_cycle function, which should
             # minimize the use of installed packages to break cycles. If installed
             # packages must be used to break cycles, then it should prefer to do this
@@ -578,21 +623,26 @@ class MergeOrderTestCase(TestCase):
             # do this before it uses an installed package to break a cycle.
             ResolverPlaygroundTestCase(
                 [
-                    "app-misc/some-app-a", "app-misc/some-app-b", "app-misc/some-app-c", "app-misc/circ-buildtime-a",
-                    "app-misc/blocker-buildtime-unbuilt-a", "media-libs/mesa", "x11-base/xorg-server",
-                    "app-misc/circ-direct-a", "app-misc/circ-direct-b", "app-misc/circ-satisfied-a",
+                    "app-misc/some-app-a", "app-misc/some-app-b", "app-misc/some-app-c",
+                    "app-misc/circ-buildtime-a", "app-misc/blocker-buildtime-unbuilt-a",
+                    "media-libs/mesa", "x11-base/xorg-server", "app-misc/circ-direct-a",
+                    "app-misc/circ-direct-b", "app-misc/circ-satisfied-a",
                     "app-misc/circ-satisfied-b", "app-misc/circ-satisfied-c",
                 ],
                 success=True,
                 mergelist=[
                     "app-misc/circ-post-runtime-a-1", "app-misc/circ-post-runtime-c-1",
-                    "app-misc/circ-post-runtime-b-1", "app-misc/some-app-b-1", "app-misc/circ-runtime-a-1",
-                    "app-misc/circ-runtime-b-1", "app-misc/circ-runtime-c-1", "app-misc/some-app-a-1",
-                    "app-misc/blocker-buildtime-unbuilt-a-1", "[uninstall]app-misc/installed-blocker-a-1",
-                    "!app-misc/installed-blocker-a", "app-misc/circ-direct-a-1", "app-misc/circ-direct-b-1",
-                    "x11-base/xorg-server-1.14.1", "media-libs/mesa-9.1.3", "app-misc/circ-buildtime-a-1",
-                    "app-misc/circ-buildtime-b-1", "app-misc/circ-buildtime-c-1", "app-misc/some-app-c-1",
-                    "app-misc/circ-satisfied-a-1", "app-misc/circ-satisfied-b-1", "app-misc/circ-satisfied-c-1",
+                    "app-misc/circ-post-runtime-b-1", "app-misc/some-app-b-1",
+                    "app-misc/circ-runtime-a-1", "app-misc/circ-runtime-b-1",
+                    "app-misc/circ-runtime-c-1", "app-misc/some-app-a-1",
+                    "app-misc/blocker-buildtime-unbuilt-a-1",
+                    "[uninstall]app-misc/installed-blocker-a-1", "!app-misc/installed-blocker-a",
+                    "app-misc/circ-direct-a-1", "app-misc/circ-direct-b-1",
+                    "x11-base/xorg-server-1.14.1", "media-libs/mesa-9.1.3",
+                    "app-misc/circ-buildtime-a-1", "app-misc/circ-buildtime-b-1",
+                    "app-misc/circ-buildtime-c-1", "app-misc/some-app-c-1",
+                    "app-misc/circ-satisfied-a-1", "app-misc/circ-satisfied-b-1",
+                    "app-misc/circ-satisfied-c-1",
                 ],
             ),
         )

@@ -85,7 +85,9 @@ class QueryCommand(IpcCommand):
         if cmd == "best_version":
             m = best(vardb.match(atom))
             return (f"{m}\n", warnings_str, 0)
-        if cmd in ("master_repositories", "repository_path", "available_eclasses", "eclass_path", "license_path", ):
+        if cmd in ("master_repositories", "repository_path", "available_eclasses", "eclass_path",
+                   "license_path",
+                   ):
             repo = _repo_name_re.match(args[0])
             if repo is None:
                 return ("", f"{cmd}: Invalid repository: {args[0]}\n", 2)
@@ -107,7 +109,10 @@ class QueryCommand(IpcCommand):
                     return ("", warnings_str, 1)
                 return (f"{eclass.location}\n", warnings_str, 0)
             if cmd == "license_path":
-                paths = reversed([os.path.join(x.location, "licenses", args[1]) for x in list(repo.masters) + [repo]])
+                paths = reversed([
+                    os.path.join(x.location, "licenses", args[1])
+                    for x in list(repo.masters) + [repo]
+                ])
                 for path in paths:
                     if os.path.exists(path):
                         return (f"{path}\n", warnings_str, 0)

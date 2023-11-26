@@ -17,9 +17,9 @@ def open_shelve(db_file, flag="r"):
         db = shelve.open(db_file, flag=flag)
     except ImportError as e:
         # ImportError has different attributes for python2 vs. python3
-        if getattr(e, "name", None) == "bsddb" or getattr(e, "message",
-                                                          None) in ("No module named bsddb", "No module named _bsddb",
-                                                                    ):
+        if getattr(e, "name", None) == "bsddb" or getattr(
+                e, "message", None) in ("No module named bsddb", "No module named _bsddb",
+                                        ):
             from bsddb3 import dbshelve
 
             db = dbshelve.open(db_file)

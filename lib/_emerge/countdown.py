@@ -9,11 +9,12 @@ from portage.output import colorize
 
 def countdown(secs=5, doing="Starting"):
     if secs:
-        print(f">>> Waiting {secs} seconds before starting...\n"
-              ">>> (Control-C to abort)...\n"
-              f"{doing} in:",
-              end="",
-              )
+        print(
+            f">>> Waiting {secs} seconds before starting...\n"
+            ">>> (Control-C to abort)...\n"
+            f"{doing} in:",
+            end="",
+        )
         for sec in range(secs, 0, -1):
             sys.stdout.write(colorize("UNMERGE_WARN", f" {sec}"))
             sys.stdout.flush()

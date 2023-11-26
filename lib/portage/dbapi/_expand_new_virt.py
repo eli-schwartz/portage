@@ -66,17 +66,18 @@ def expand_new_virt(vardb, atom):
                 valid_use.append(x)
         valid_use = frozenset(valid_use)
 
-        success, atoms = portage.dep_check(
-            rdepend,
-            None,
-            vardb.settings,
-            myuse=valid_use,
-            myroot=vardb.settings["EROOT"],
-            trees={vardb.settings["EROOT"]: {
-                       "porttree": vardb.vartree,
-                       "vartree": vardb.vartree,
-                   }},
-        )
+        success, atoms = portage.dep_check(rdepend,
+                                           None,
+                                           vardb.settings,
+                                           myuse=valid_use,
+                                           myroot=vardb.settings["EROOT"],
+                                           trees={
+                                               vardb.settings["EROOT"]: {
+                                                   "porttree": vardb.vartree,
+                                                   "vartree": vardb.vartree,
+                                               }
+                                           },
+                                           )
 
         if success:
             stack.extend(atoms)

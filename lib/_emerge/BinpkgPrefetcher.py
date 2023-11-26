@@ -39,7 +39,10 @@ class BinpkgPrefetcher(CompositeTask):
             self.wait()
             return
 
-        self._bintree.inject(self.pkg.cpv, current_pkg_path=self.pkg_path, allocated_pkg_path=self.pkg_allocated_path, )
+        self._bintree.inject(self.pkg.cpv,
+                             current_pkg_path=self.pkg_path,
+                             allocated_pkg_path=self.pkg_allocated_path,
+                             )
 
         self._current_task = None
         self.returncode = os.EX_OK

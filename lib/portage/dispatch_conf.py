@@ -48,7 +48,8 @@ def diffstatusoutput(cmd, file1, file2):
 def diff_mixed(func, file1, file2):
     tempdir = None
     try:
-        if os.path.islink(file1) and not os.path.islink(file2) and os.path.isfile(file1) and os.path.isfile(file2):
+        if os.path.islink(file1) and not os.path.islink(file2) and os.path.isfile(
+                file1) and os.path.isfile(file2):
             # If a regular file replaces a symlink to a regular
             # file, then show the diff between the regular files
             # (bug #330221).
@@ -124,7 +125,9 @@ def read_config(mandatory_opts):
             if key == "merge":
                 opts["merge"] = "sdiff --suppress-common-lines --output='%s' '%s' '%s'"
             else:
-                print(_(f'dispatch-conf: Missing option "{key}" in /etc/dispatch-conf.conf; fatal'), file=sys.stderr, )
+                print(_(f'dispatch-conf: Missing option "{key}" in /etc/dispatch-conf.conf; fatal'),
+                      file=sys.stderr,
+                      )
 
     # archive-dir supports ${EPREFIX} expansion, in order to avoid hardcoding
     variables = {"EPREFIX": eprefix}
@@ -136,7 +139,10 @@ def read_config(mandatory_opts):
         # against vulnerabilities (like bug #315603 involving rcs).
         os.chmod(opts["archive-dir"], 0o700)
     elif not os.path.isdir(opts["archive-dir"]):
-        print(_(rf"""dispatch-conf: Config archive dir [{opts["archive-dir"]}] must exist; fatal"""), file=sys.stderr, )
+        print(
+            _(rf"""dispatch-conf: Config archive dir [{opts["archive-dir"]}] must exist; fatal"""),
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     return opts
@@ -167,7 +173,9 @@ def _archive_copy(src_st, src_path, dest_path):
         else:
             shutil.copy2(src_path, dest_path)
     except OSError as e:
-        portage.util.writemsg(f"dispatch-conf: Error copying {src_path} to {dest_path}: {e}\n", noiselevel=-1, )
+        portage.util.writemsg(f"dispatch-conf: Error copying {src_path} to {dest_path}: {e}\n",
+                              noiselevel=-1,
+                              )
 
 
 def rcs_archive(archive, curconf, newconf, mrgconf):
@@ -187,7 +195,8 @@ def rcs_archive(archive, curconf, newconf, mrgconf):
     except OSError:
         curconf_st = None
 
-    if curconf_st is not None and (stat.S_ISREG(curconf_st.st_mode) or stat.S_ISLNK(curconf_st.st_mode)):
+    if curconf_st is not None and (stat.S_ISREG(curconf_st.st_mode)
+                                   or stat.S_ISLNK(curconf_st.st_mode)):
         _archive_copy(curconf_st, curconf, archive)
 
     if os.path.lexists(f"{archive},v"):
@@ -231,9 +240,8 @@ def _file_archive_rotate(archive):
 
     max_suf = 0
     try:
-        for max_suf, max_st, max_path in ((suf, os.lstat(path), path)
-                                          for suf, path in ((suf, f"{archive}.{suf}")
-                                                            for suf in range(1, _ARCHIVE_ROTATE_MAX + 1))):
+        for max_suf, max_st, max_path in ((suf, os.lstat(path), path) for suf, path in ((
+                suf, f"{archive}.{suf}") for suf in range(1, _ARCHIVE_ROTATE_MAX + 1))):
             pass
     except OSError as e:
         if e.errno not in (errno.ENOENT, errno.ESTALE):
@@ -302,7 +310,8 @@ def file_archive(archive, curconf, newconf, mrgconf):
     _file_archive_ensure_dir(os.path.dirname(archive))
 
     # Archive the current config file if it isn't already saved
-    if os.path.lexists(archive) and len(diffstatusoutput_mixed("diff -aq '%s' '%s'", curconf, archive)[1]) != 0:
+    if os.path.lexists(archive) and len(
+            diffstatusoutput_mixed("diff -aq '%s' '%s'", curconf, archive)[1]) != 0:
         _file_archive_rotate(archive)
 
     try:
@@ -310,7 +319,8 @@ def file_archive(archive, curconf, newconf, mrgconf):
     except OSError:
         curconf_st = None
 
-    if curconf_st is not None and (stat.S_ISREG(curconf_st.st_mode) or stat.S_ISLNK(curconf_st.st_mode)):
+    if curconf_st is not None and (stat.S_ISREG(curconf_st.st_mode)
+                                   or stat.S_ISLNK(curconf_st.st_mode)):
         _archive_copy(curconf_st, curconf, archive)
 
     mystat = None
@@ -328,7 +338,8 @@ def file_archive(archive, curconf, newconf, mrgconf):
         _archive_copy(mystat, newconf, newconf_archive)
 
         ret = 0
-        if mrgconf and os.path.isfile(curconf) and os.path.isfile(newconf) and os.path.isfile(f"{archive}.dist"):
+        if mrgconf and os.path.isfile(curconf) and os.path.isfile(newconf) and os.path.isfile(
+                f"{archive}.dist"):
             # This puts the results of the merge into mrgconf.
             ret = os.system(f"diff3 -mE '{curconf}' '{archive}.dist' '{newconf}' > '{mrgconf}'")
             os.chmod(mrgconf, mystat.st_mode)

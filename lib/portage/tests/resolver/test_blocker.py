@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class SlotConflictWithBlockerTestCase(TestCase):
@@ -41,7 +43,17 @@ class SlotConflictWithBlockerTestCase(TestCase):
             },
         }
 
-        installed = {"dev-libs/Y-1": {"SLOT": "1"}, "dev-libs/Y-2": {"SLOT": "2"}, "dev-libs/Y-3": {"SLOT": "3"}, }
+        installed = {
+            "dev-libs/Y-1": {
+                "SLOT": "1"
+            },
+            "dev-libs/Y-2": {
+                "SLOT": "2"
+            },
+            "dev-libs/Y-3": {
+                "SLOT": "3"
+            },
+        }
 
         test_cases = (ResolverPlaygroundTestCase(["dev-libs/A", "dev-libs/B", "dev-libs/C"],
                                                  options={"--backtrack": 0},
@@ -49,8 +61,10 @@ class SlotConflictWithBlockerTestCase(TestCase):
                                                  success=True,
                                                  ambiguous_merge_order=True,
                                                  mergelist=[
-                                                     "dev-libs/X-1", "[uninstall]dev-libs/Y-1", "!=dev-libs/Y-1",
-                                                     ("dev-libs/A-1", "dev-libs/B-1", "dev-libs/C-1"),
+                                                     "dev-libs/X-1", "[uninstall]dev-libs/Y-1",
+                                                     "!=dev-libs/Y-1",
+                                                     ("dev-libs/A-1", "dev-libs/B-1",
+                                                      "dev-libs/C-1"),
                                                  ],
                                                  ), )
 

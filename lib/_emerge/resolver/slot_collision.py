@@ -149,7 +149,8 @@ class slot_conflict_handler:
                     writemsg(f"   {pkg}\n", noiselevel=-1)
                 writemsg("\n", noiselevel=-1)
 
-            new_solutions = self._check_configuration(config, all_conflict_atoms_by_slotatom, conflict_nodes)
+            new_solutions = self._check_configuration(config, all_conflict_atoms_by_slotatom,
+                                                      conflict_nodes)
 
             if new_solutions:
                 self.solutions.extend(new_solutions)
@@ -158,7 +159,9 @@ class slot_conflict_handler:
                     # If the "all ebuild"-config gives a solution, use it.
                     # Otherwise enumerate all other solutions.
                     if self.debug:
-                        writemsg("All-ebuild configuration has a solution. Aborting search.\n", noiselevel=-1, )
+                        writemsg("All-ebuild configuration has a solution. Aborting search.\n",
+                                 noiselevel=-1,
+                                 )
                     break
             first_config = False
 
@@ -167,7 +170,9 @@ class slot_conflict_handler:
                 # To prevent excessive running times, only check the "all-ebuild" configuration,
                 # if the number of conflict packages is too large.
                 if self.debug:
-                    writemsg("\nAborting search due to excessive number of configurations.\n", noiselevel=-1, )
+                    writemsg("\nAborting search due to excessive number of configurations.\n",
+                             noiselevel=-1,
+                             )
                 break
 
         for solution in self.solutions:
@@ -241,7 +246,8 @@ class slot_conflict_handler:
         any_omitted_parents = False
         msg = self.conflict_msg
         indent = "  "
-        msg.append("\n!!! Multiple package instances within a single " + "package slot have been pulled\n")
+        msg.append("\n!!! Multiple package instances within a single " +
+                   "package slot have been pulled\n")
         msg.append("!!! into the dependency graph, resulting" + " in a slot conflict:\n\n")
 
         for root, slot_atom, pkgs in self.all_conflicts:
@@ -253,9 +259,10 @@ class slot_conflict_handler:
             for pkg in pkgs:
                 msg.append(indent)
                 msg.append(f"{pkg} " + str(
-                    pkg_use_display(
-                        pkg, self.depgraph._frozen_config.myopts, modified_use=self.depgraph._pkg_use_enabled(pkg),
-                    )))
+                    pkg_use_display(pkg,
+                                    self.depgraph._frozen_config.myopts,
+                                    modified_use=self.depgraph._pkg_use_enabled(pkg),
+                                    )))
                 parent_atoms = self.all_parents.get(pkg)
                 if parent_atoms:
                     # Create a list of collision reasons and map them to sets
@@ -271,7 +278,8 @@ class slot_conflict_handler:
                     for ppkg, atom in parent_atoms:
                         if not atom.soname:
                             atom_set = InternalPackageSet(initial_atoms=(atom, ))
-                            atom_without_use_set = InternalPackageSet(initial_atoms=(atom.without_use, ))
+                            atom_without_use_set = InternalPackageSet(
+                                initial_atoms=(atom.without_use, ))
                             atom_without_use_and_slot_set = InternalPackageSet(
                                 initial_atoms=(atom.without_use.without_slot, ))
 
@@ -304,8 +312,8 @@ class slot_conflict_handler:
                                     num_all_specific_atoms += 1
                                     collision_reasons[key] = atoms
 
-                            elif not atom_without_use_set.findAtomForPackage(other_pkg,
-                                                                             modified_use=_pkg_use_enabled(other_pkg)):
+                            elif not atom_without_use_set.findAtomForPackage(
+                                    other_pkg, modified_use=_pkg_use_enabled(other_pkg)):
                                 # The slot and/or sub_slot does not match.
                                 key = ("slot", (atom.slot, atom.sub_slot, atom.slot_operator), )
                                 atoms = collision_reasons.get(key, set())
@@ -313,8 +321,10 @@ class slot_conflict_handler:
                                 num_all_specific_atoms += 1
                                 collision_reasons[key] = atoms
 
-                            elif not atom_set.findAtomForPackage(other_pkg, modified_use=_pkg_use_enabled(other_pkg)):
-                                missing_iuse = other_pkg.iuse.get_missing_iuse(atom.unevaluated_atom.use.required)
+                            elif not atom_set.findAtomForPackage(
+                                    other_pkg, modified_use=_pkg_use_enabled(other_pkg)):
+                                missing_iuse = other_pkg.iuse.get_missing_iuse(
+                                    atom.unevaluated_atom.use.required)
                                 if missing_iuse:
                                     for flag in missing_iuse:
                                         atoms = collision_reasons.get(("use", flag), set())
@@ -323,9 +333,9 @@ class slot_conflict_handler:
                                     num_all_specific_atoms += 1
                                 else:
                                     # Use conditionals not met.
-                                    violated_atom = atom.violated_conditionals(_pkg_use_enabled(other_pkg),
-                                                                               other_pkg.iuse.is_valid_flag,
-                                                                               )
+                                    violated_atom = atom.violated_conditionals(
+                                        _pkg_use_enabled(other_pkg), other_pkg.iuse.is_valid_flag,
+                                    )
                                     if violated_atom.use is None:
                                         # Something like bug #453400 caused the
                                         # above findAtomForPackage call to
@@ -333,7 +343,8 @@ class slot_conflict_handler:
                                         msg = "\n\n!!! BUG: Detected " "USE dep match inconsistency:\n" f"\tppkg: {ppkg}\n" f"\tviolated_atom: {violated_atom}\n" f"\tatom: {atom} unevaluated: {atom.unevaluated_atom}\n" f"\tother_pkg: {other_pkg} " f"IUSE: {sorted(other_pkg.iuse.all)} " f"USE: {sorted(_pkg_use_enabled(other_pkg))}\n"
                                         writemsg(msg, noiselevel=-2)
                                         raise AssertionError("BUG: USE dep match inconsistency")
-                                    for flag in violated_atom.use.enabled.union(violated_atom.use.disabled):
+                                    for flag in violated_atom.use.enabled.union(
+                                            violated_atom.use.disabled):
                                         atoms = collision_reasons.get(("use", flag), set())
                                         atoms.add((ppkg, atom, other_pkg))
                                         collision_reasons[("use", flag)] = atoms
@@ -358,12 +369,14 @@ class slot_conflict_handler:
                             best_matches = {}
                             for ppkg, atom, other_pkg in parents:
                                 if atom.cp in best_matches:
-                                    cmp = vercmp(cpv_getversion(atom.cpv), cpv_getversion(best_matches[atom.cp][1].cpv),
+                                    cmp = vercmp(cpv_getversion(atom.cpv),
+                                                 cpv_getversion(best_matches[atom.cp][1].cpv),
                                                  )
 
-                                    if (sub_type == "ge" and cmp > 0) or (sub_type == "le"
-                                                                          and cmp < 0) or (sub_type == "eq"
-                                                                                           and cmp > 0):
+                                    if (sub_type == "ge"
+                                            and cmp > 0) or (sub_type == "le"
+                                                             and cmp < 0) or (sub_type == "eq"
+                                                                              and cmp > 0):
                                         best_matches[atom.cp] = (ppkg, atom)
                                 else:
                                     best_matches[atom.cp] = (ppkg, atom)
@@ -407,7 +420,8 @@ class slot_conflict_handler:
                             # are fewer possible solutions.
                             use = sub_type
                             for ppkg, atom, other_pkg in parents:
-                                missing_iuse = other_pkg.iuse.get_missing_iuse(atom.unevaluated_atom.use.required)
+                                missing_iuse = other_pkg.iuse.get_missing_iuse(
+                                    atom.unevaluated_atom.use.required)
                                 if missing_iuse:
                                     unconditional_use_deps.add((ppkg, atom))
                                 else:
@@ -528,8 +542,9 @@ class slot_conflict_handler:
                                     new_tokens.append(token)
                                 ii += 1 + len(token)
 
-                            atom_str = atom_str[:use_part_start] + f"[{','.join(new_tokens)}]" + atom_str[use_part_end +
-                                                                                                          1:]
+                            atom_str = atom_str[:
+                                                use_part_start] + f"[{','.join(new_tokens)}]" + atom_str[
+                                                    use_part_end + 1:]
 
                         return atom_str, colored_idx
 
@@ -543,10 +558,11 @@ class slot_conflict_handler:
                     for parent_atom in ordered_list:
                         parent, atom = parent_atom
                         if isinstance(parent, Package):
-                            use_display = pkg_use_display(parent,
-                                                          self.depgraph._frozen_config.myopts,
-                                                          modified_use=self.depgraph._pkg_use_enabled(parent),
-                                                          )
+                            use_display = pkg_use_display(
+                                parent,
+                                self.depgraph._frozen_config.myopts,
+                                modified_use=self.depgraph._pkg_use_enabled(parent),
+                            )
                         else:
                             use_display = ""
                         if atom.soname:
@@ -575,14 +591,16 @@ class slot_conflict_handler:
                                             use.append(sub_type)
                                         break
 
-                            atom_str, colored_idx = highlight_violations(atom.unevaluated_atom, version_violated, use,
-                                                                         slot_violated,
-                                                                         )
+                            atom_str, colored_idx = highlight_violations(
+                                atom.unevaluated_atom, version_violated, use, slot_violated,
+                            )
 
                             if version_violated or slot_violated:
                                 self.is_a_version_conflict = True
 
-                            cur_line = "{} required by {} {}\n".format(atom_str, parent, use_display, )
+                            cur_line = "{} required by {} {}\n".format(
+                                atom_str, parent, use_display,
+                            )
                             marker_line = ""
                             for ii in range(len(cur_line)):
                                 if ii in colored_idx:
@@ -597,7 +615,8 @@ class slot_conflict_handler:
 
                     if not selected_for_display:
                         msg.append(2 * indent)
-                        msg.append("(no parents that aren't satisfied by other packages in this slot)\n")
+                        msg.append(
+                            "(no parents that aren't satisfied by other packages in this slot)\n")
                         self.conflict_is_unspecific = True
 
                     omitted_parents = num_all_specific_atoms - len(selected_for_display)
@@ -614,13 +633,15 @@ class slot_conflict_handler:
 
         if any_omitted_parents:
             msg.append(
-                colorize("INFORM", "NOTE: Use the '--verbose-conflicts'"
-                         " option to display parents omitted above",
-                         ))
+                colorize(
+                    "INFORM", "NOTE: Use the '--verbose-conflicts'"
+                    " option to display parents omitted above",
+                ))
             msg.append("\n")
 
         if need_rebuild:
-            msg.append("\n!!! The slot conflict(s) shown above involve package(s) which may need to\n")
+            msg.append(
+                "\n!!! The slot conflict(s) shown above involve package(s) which may need to\n")
             msg.append("!!! be rebuilt in order to solve the conflict(s). However, the following\n")
             msg.append("!!! package(s) cannot be rebuilt for the reason(s) shown:\n\n")
             for ppkg, reason in need_rebuild.items():
@@ -635,7 +656,8 @@ class slot_conflict_handler:
         if self.is_a_version_conflict:
             return None
 
-        if self.conflict_is_unspecific and not ("--newuse" in self.myopts and "--update" in self.myopts):
+        if self.conflict_is_unspecific and not ("--newuse" in self.myopts
+                                                and "--update" in self.myopts):
             msg += "!!! Enabling --newuse and --update might solve this conflict.\n"
             msg += "!!! If not, it might help emerge to give a more specific suggestion.\n\n"
             return msg
@@ -701,7 +723,9 @@ class slot_conflict_handler:
                             other_pkg.iuse.all) or _pkg_use_enabled(pkg).symmetric_difference(
                                 _pkg_use_enabled(other_pkg)):
                         if self.debug:
-                            writemsg(f"{pkg} has pending USE changes. Rejecting configuration.\n", noiselevel=-1, )
+                            writemsg(f"{pkg} has pending USE changes. Rejecting configuration.\n",
+                                     noiselevel=-1,
+                                     )
                         return False
 
         # A list of dicts. Keeps one dict per slot conflict. [ { flag1: "enabled" }, { flag2: "disabled" } ]
@@ -727,28 +751,33 @@ class slot_conflict_handler:
                 if not i.findAtomForPackage(pkg, modified_use=_pkg_use_enabled(pkg)):
                     # Version range does not match.
                     if self.debug:
-                        writemsg(f"{pkg} does not satify all version "
-                                 "requirements. Rejecting configuration.\n",
-                                 noiselevel=-1,
-                                 )
+                        writemsg(
+                            f"{pkg} does not satify all version "
+                            "requirements. Rejecting configuration.\n",
+                            noiselevel=-1,
+                        )
                     return False
 
                 if not pkg.iuse.is_valid_flag(atom.unevaluated_atom.use.required):
                     # Missing IUSE.
                     # FIXME: This needs to support use dep defaults.
                     if self.debug:
-                        writemsg(f"{pkg} misses needed flags from IUSE. Rejecting configuration.\n", noiselevel=-1, )
+                        writemsg(f"{pkg} misses needed flags from IUSE. Rejecting configuration.\n",
+                                 noiselevel=-1,
+                                 )
                     return False
 
                 if not isinstance(ppkg, Package) or ppkg.installed:
                     # We cannot assume that it's possible to reinstall the package. Do not
                     # check if some of its atom has use.conditional
-                    violated_atom = atom.violated_conditionals(_pkg_use_enabled(pkg), pkg.iuse.is_valid_flag)
+                    violated_atom = atom.violated_conditionals(_pkg_use_enabled(pkg),
+                                                               pkg.iuse.is_valid_flag)
                 else:
-                    violated_atom = atom.unevaluated_atom.violated_conditionals(_pkg_use_enabled(pkg),
-                                                                                pkg.iuse.is_valid_flag,
-                                                                                parent_use=_pkg_use_enabled(ppkg),
-                                                                                )
+                    violated_atom = atom.unevaluated_atom.violated_conditionals(
+                        _pkg_use_enabled(pkg),
+                        pkg.iuse.is_valid_flag,
+                        parent_use=_pkg_use_enabled(ppkg),
+                    )
                     if violated_atom.use is None:
                         # It's possible for autounmask to change
                         # parent_use such that the unevaluated form
@@ -763,10 +792,11 @@ class slot_conflict_handler:
                     # We can't change USE of an installed package (only of an ebuild, but that is already
                     # part of the conflict, isn't it?)
                     if self.debug:
-                        writemsg(f"{pkg}: installed package would need USE changes. "
-                                 "Rejecting configuration.\n",
-                                 noiselevel=-1,
-                                 )
+                        writemsg(
+                            f"{pkg}: installed package would need USE changes. "
+                            "Rejecting configuration.\n",
+                            noiselevel=-1,
+                        )
                     return False
 
                 # Compute the required USE changes. A flag can be forced to "enabled" or "disabled",
@@ -811,7 +841,8 @@ class slot_conflict_handler:
             for flag, state in involved_flags.items():
                 if state == "contradiction":
                     if self.debug:
-                        writemsg("Contradicting requirements found for flag " + flag + ". Rejecting configuration.\n",
+                        writemsg("Contradicting requirements found for flag " + flag +
+                                 ". Rejecting configuration.\n",
                                  noiselevel=-1,
                                  )
                     return False
@@ -841,10 +872,11 @@ class slot_conflict_handler:
                 # TODO: Implement early elimination for candidates that would
                 # change forced or masked flags, and don't count them here.
                 if self.debug:
-                    writemsg("\nAborting _check_configuration due to "
-                             "excessive number of candidates.\n",
-                             noiselevel=-1,
-                             )
+                    writemsg(
+                        "\nAborting _check_configuration due to "
+                        "excessive number of candidates.\n",
+                        noiselevel=-1,
+                    )
                 break
 
         if self.debug:
@@ -1013,10 +1045,11 @@ class slot_conflict_handler:
                     # We managed to create a new problem with our changes.
                     is_valid_solution = False
                     if self.debug:
-                        writemsg(f"new conflict introduced: {pkg} does not match "
-                                 f"{new_atom} from {ppkg}\n",
-                                 noiselevel=-1,
-                                 )
+                        writemsg(
+                            f"new conflict introduced: {pkg} does not match "
+                            f"{new_atom} from {ppkg}\n",
+                            noiselevel=-1,
+                        )
                     break
 
             if not is_valid_solution:

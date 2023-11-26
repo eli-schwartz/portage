@@ -28,7 +28,8 @@ module_spec = {
                 "allrepos": {
                     "short": "-A",
                     "long": "--allrepos",
-                    "help": "(sync module only): -A, --allrepos  Sync all repos that have a sync-url defined",
+                    "help":
+                    "(sync module only): -A, --allrepos  Sync all repos that have a sync-url defined",
                     "status": "Syncing %s",
                     "action": "store_true",
                     "dest": "allrepos",

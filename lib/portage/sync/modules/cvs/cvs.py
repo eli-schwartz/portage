@@ -32,9 +32,10 @@ class CVSSync(NewBase):
         cvs_root = self.repo.sync_uri
         if (portage.process.spawn_bash(
                 "cd %s; exec cvs -z0 -d %s co -P -d %s %s" %
-            (portage._shell_quote(os.path.dirname(self.repo.location)), portage._shell_quote(cvs_root),
-             portage._shell_quote(os.path.basename(
-                 self.repo.location)), portage._shell_quote(self.repo.module_specific_options["sync-cvs-repo"]),
+            (portage._shell_quote(os.path.dirname(
+                self.repo.location)), portage._shell_quote(cvs_root),
+             portage._shell_quote(os.path.basename(self.repo.location)),
+             portage._shell_quote(self.repo.module_specific_options["sync-cvs-repo"]),
              ), **self.spawn_kwargs,
         ) != os.EX_OK):
             msg = "!!! cvs checkout error; exiting."
@@ -54,7 +55,8 @@ class CVSSync(NewBase):
 
         # cvs update
         exitcode = portage.process.spawn_bash(
-            "cd %s; exec cvs -z0 -q update -dP" % (portage._shell_quote(self.repo.location), ), **self.spawn_kwargs,
+            "cd %s; exec cvs -z0 -q update -dP" % (portage._shell_quote(self.repo.location), ),
+            **self.spawn_kwargs,
         )
         if exitcode != os.EX_OK:
             msg = "!!! cvs update error; exiting."

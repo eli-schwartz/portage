@@ -55,21 +55,23 @@ src_install() {
 
         file_collision = os.path.join(eroot, "usr/lib/file-collision")
 
-        test_commands = (emerge_cmd + ("--oneshot", "dev-libs/A",
-                                       ), (lambda: portage.util.grablines(file_collision) == ["A\n"], ),
-                         emerge_cmd + ("--oneshot", "dev-libs/B",
-                                       ), (lambda: portage.util.grablines(file_collision) == ["B\n"], ),
-                         emerge_cmd + ("--oneshot", "dev-libs/A",
-                                       ), (lambda: portage.util.grablines(file_collision) == ["A\n"], ),
-                         ({
-                             "FEATURES": "parallel-install"
-                         }, ) + emerge_cmd + ("--oneshot", "dev-libs/B",
-                                              ), (lambda: portage.util.grablines(file_collision) == ["B\n"], ),
-                         ({
-                             "FEATURES": "parallel-install"
-                         }, ) + emerge_cmd + ("-Cq", "dev-libs/B",
-                                              ), (lambda: not os.path.exists(file_collision), ),
-                         )
+        test_commands = (
+            emerge_cmd + ("--oneshot", "dev-libs/A",
+                          ), (lambda: portage.util.grablines(file_collision) == ["A\n"], ),
+            emerge_cmd + ("--oneshot", "dev-libs/B",
+                          ), (lambda: portage.util.grablines(file_collision) == ["B\n"], ),
+            emerge_cmd +
+            ("--oneshot", "dev-libs/A",
+             ), (lambda: portage.util.grablines(file_collision) == ["A\n"], ),
+            ({
+                "FEATURES": "parallel-install"
+            }, ) + emerge_cmd + ("--oneshot", "dev-libs/B",
+                                 ), (lambda: portage.util.grablines(file_collision) == ["B\n"], ),
+            ({
+                "FEATURES": "parallel-install"
+            }, ) + emerge_cmd + ("-Cq", "dev-libs/B",
+                                 ), (lambda: not os.path.exists(file_collision), ),
+        )
 
         fake_bin = os.path.join(eprefix, "bin")
         portage_tmpdir = os.path.join(eprefix, "var", "tmp", "portage")

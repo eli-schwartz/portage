@@ -75,7 +75,8 @@ def portage_group_warning():
     warn_prefix = colorize("BAD", "*** WARNING ***  ")
     mylines = ("For security reasons, only system administrators should be",
                "allowed in the portage group.  Untrusted users or processes",
-               "can potentially exploit the portage group for attacks such as", "local privilege escalation.",
+               "can potentially exploit the portage group for attacks such as",
+               "local privilege escalation.",
                )
     for x in mylines:
         writemsg(warn_prefix, noiselevel=-1)
@@ -132,7 +133,9 @@ def _get_global(k):
         else:
             # The config class has equivalent code, but we also need to
             # do it here if _disable_legacy_globals() has been called.
-            eroot_or_parent = first_existing(os.path.join(_target_root(), _target_eprefix().lstrip(os.sep)))
+            eroot_or_parent = first_existing(
+                os.path.join(_target_root(),
+                             _target_eprefix().lstrip(os.sep)))
             try:
                 eroot_st = os.stat(eroot_or_parent)
             except OSError:
@@ -164,15 +167,20 @@ def _get_global(k):
         # Suppress this error message if both PORTAGE_GRPNAME and
         # PORTAGE_USERNAME are set to "root", for things like
         # Android (see bug #454060).
-        if keyerror and not (_get_global("_portage_username") == "root" and _get_global("_portage_grpname") == "root"):
-            writemsg(colorize("BAD", _("portage: 'portage' user or group missing.")) + "\n", noiselevel=-1, )
-            writemsg(_("         For the defaults, line 1 goes into passwd, "
-                       "and 2 into group.\n"), noiselevel=-1,
-                     )
-            writemsg(colorize("GOOD", "         portage:x:250:250:portage:/var/tmp/portage:/bin/false",
-                              ) + "\n",
+        if keyerror and not (_get_global("_portage_username") == "root"
+                             and _get_global("_portage_grpname") == "root"):
+            writemsg(colorize("BAD", _("portage: 'portage' user or group missing.")) + "\n",
                      noiselevel=-1,
                      )
+            writemsg(_("         For the defaults, line 1 goes into passwd, "
+                       "and 2 into group.\n"),
+                     noiselevel=-1,
+                     )
+            writemsg(
+                colorize("GOOD", "         portage:x:250:250:portage:/var/tmp/portage:/bin/false",
+                         ) + "\n",
+                noiselevel=-1,
+            )
             writemsg(colorize("GOOD", "         portage::250:portage") + "\n", noiselevel=-1)
             portage_group_warning()
 
@@ -207,7 +215,9 @@ def _get_global(k):
                     except ValueError:
                         return None
 
-                unicode_decode = portage._unicode_decode(myoutput, encoding=encoding, errors="strict")
+                unicode_decode = portage._unicode_decode(myoutput,
+                                                         encoding=encoding,
+                                                         errors="strict")
                 checked_v = (check(x) for x in unicode_decode.split())
                 filtered_v = (x for x in checked_v if x)
                 v = sorted(set(filtered_v))
@@ -227,7 +237,9 @@ def _get_global(k):
         else:
             # The config class has equivalent code, but we also need to
             # do it here if _disable_legacy_globals() has been called.
-            eroot_or_parent = first_existing(os.path.join(_target_root(), _target_eprefix().lstrip(os.sep)))
+            eroot_or_parent = first_existing(
+                os.path.join(_target_root(),
+                             _target_eprefix().lstrip(os.sep)))
             try:
                 eroot_st = os.stat(eroot_or_parent)
             except OSError:
@@ -267,7 +279,9 @@ class _GlobalProxy(portage.proxy.objectproxy.ObjectProxy):
         return _get_global(object.__getattribute__(self, "_name"))
 
 
-for k in ("portage_gid", "portage_uid", "secpass", "userpriv_groups", "_portage_grpname", "_portage_username", ):
+for k in ("portage_gid", "portage_uid", "secpass", "userpriv_groups", "_portage_grpname",
+          "_portage_username",
+          ):
     globals()[k] = _GlobalProxy(k)
 del k
 

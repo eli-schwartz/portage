@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class VirtualSlotResolverTestCase(TestCase):
@@ -149,12 +151,14 @@ class VirtualSlotResolverTestCase(TestCase):
             "virtual/pypy-2.3.1": {
                 "EAPI": "5",
                 "SLOT": "0/2.3",
-                "RDEPEND": "|| ( >=dev-python/pypy-2.3.1:0/2.3 >=dev-python/pypy-bin-2.3.1:0/2.3 ) ",
+                "RDEPEND":
+                "|| ( >=dev-python/pypy-2.3.1:0/2.3 >=dev-python/pypy-bin-2.3.1:0/2.3 ) ",
             },
             "virtual/pypy-2.4.0": {
                 "EAPI": "5",
                 "SLOT": "0/2.4",
-                "RDEPEND": "|| ( >=dev-python/pypy-2.4.0:0/2.4 >=dev-python/pypy-bin-2.4.0:0/2.4 ) ",
+                "RDEPEND":
+                "|| ( >=dev-python/pypy-2.4.0:0/2.4 >=dev-python/pypy-bin-2.4.0:0/2.4 ) ",
             },
             "dev-python/pypy-2.3.1": {
                 "EAPI": "5",
@@ -174,7 +178,8 @@ class VirtualSlotResolverTestCase(TestCase):
             "virtual/pypy-2.3.1": {
                 "EAPI": "5",
                 "SLOT": "0/2.3",
-                "RDEPEND": "|| ( >=dev-python/pypy-2.3.1:0/2.3 >=dev-python/pypy-bin-2.3.1:0/2.3 ) ",
+                "RDEPEND":
+                "|| ( >=dev-python/pypy-2.3.1:0/2.3 >=dev-python/pypy-bin-2.3.1:0/2.3 ) ",
             },
             "dev-python/pypy-2.3.1": {
                 "EAPI": "5",
@@ -218,7 +223,10 @@ class VirtualSlotResolverTestCase(TestCase):
                                        ),
         )
 
-        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
+        playground = ResolverPlayground(debug=False,
+                                        ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -281,7 +289,8 @@ class VirtualSlotResolverTestCase(TestCase):
             # Make sure that depclean doesn't remove a new slot even though
             # it is redundant in the sense that the older slot will satisfy
             # all dependencies.
-            ResolverPlaygroundTestCase([], options={"--depclean": True}, success=True, cleanlist=[]),
+            ResolverPlaygroundTestCase([], options={"--depclean": True}, success=True,
+                                       cleanlist=[]),
             # Prune redundant lower slots, even if they are in world.
             ResolverPlaygroundTestCase([],
                                        options={"--prune": True},

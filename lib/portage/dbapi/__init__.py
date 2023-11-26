@@ -12,8 +12,8 @@ from collections.abc import Sequence
 import portage
 
 portage.proxy.lazyimport.lazyimport(globals(), "portage.dbapi.dep_expand:dep_expand@_dep_expand",
-                                    "portage.dep:Atom,match_from_list,_match_slot", "portage.output:colorize",
-                                    "portage.util:cmp_sort_key,writemsg",
+                                    "portage.dep:Atom,match_from_list,_match_slot",
+                                    "portage.output:colorize", "portage.util:cmp_sort_key,writemsg",
                                     "portage.versions:catsplit,catpkgsplit,vercmp,_pkg_str",
                                     )
 
@@ -158,7 +158,9 @@ class dbapi:
         else:
             return cpv
 
-        metadata = dict(zip(self._pkg_str_aux_keys, self.aux_get(cpv, self._pkg_str_aux_keys, myrepo=repo), ))
+        metadata = dict(
+            zip(self._pkg_str_aux_keys, self.aux_get(cpv, self._pkg_str_aux_keys, myrepo=repo),
+                ))
 
         return _pkg_str(cpv, metadata=metadata, settings=self.settings, db=self)
 
@@ -254,7 +256,8 @@ class dbapi:
 
     def _match_use(self, atom, pkg, metadata, ignore_profile=False):
         iuse_implicit_match = self._iuse_implicit_cnstr(pkg, metadata)
-        iuse = Package._iuse(None, metadata["IUSE"].split(), iuse_implicit_match, metadata["EAPI"], )
+        iuse = Package._iuse(None, metadata["IUSE"].split(), iuse_implicit_match, metadata["EAPI"],
+                             )
 
         for x in atom.unevaluated_atom.use.required:
             if iuse.get_flag(x) is None:
@@ -271,8 +274,10 @@ class dbapi:
             # with implicit IUSE, in order to avoid potential
             # inconsistencies in USE dep matching (see bug #453400).
             use = frozenset(x for x in metadata["USE"].split() if iuse.get_flag(x) is not None)
-            missing_enabled = frozenset(x for x in atom.use.missing_enabled if iuse.get_flag(x) is None)
-            missing_disabled = frozenset(x for x in atom.use.missing_disabled if iuse.get_flag(x) is None)
+            missing_enabled = frozenset(x for x in atom.use.missing_enabled
+                                        if iuse.get_flag(x) is None)
+            missing_disabled = frozenset(x for x in atom.use.missing_disabled
+                                         if iuse.get_flag(x) is None)
             enabled = frozenset((iuse.get_flag(x) or x) for x in atom.use.enabled)
             disabled = frozenset((iuse.get_flag(x) or x) for x in atom.use.disabled)
 
@@ -300,16 +305,19 @@ class dbapi:
                     return False
 
                 useforce = self.settings._getUseForce(pkg, stable=self.settings._parent_stable)
-                if any(x in useforce and x not in usemask and iuse.get_flag(x) is not None for x in atom.use.disabled):
+                if any(x in useforce and x not in usemask and iuse.get_flag(x) is not None
+                       for x in atom.use.disabled):
                     return False
 
             # Check unsatisfied use-default deps
             if atom.use.enabled:
-                missing_disabled = frozenset(x for x in atom.use.missing_disabled if iuse.get_flag(x) is None)
+                missing_disabled = frozenset(x for x in atom.use.missing_disabled
+                                             if iuse.get_flag(x) is None)
                 if any(x in atom.use.enabled for x in missing_disabled):
                     return False
             if atom.use.disabled:
-                missing_enabled = frozenset(x for x in atom.use.missing_enabled if iuse.get_flag(x) is None)
+                missing_enabled = frozenset(x for x in atom.use.missing_enabled
+                                            if iuse.get_flag(x) is None)
                 if any(x in atom.use.disabled for x in missing_enabled):
                     return False
 
@@ -415,7 +423,8 @@ class dbapi:
             if repo_match is not None and not repo_match(mycpv.repo):
                 continue
             moves += 1
-            if "/" not in newslot and mycpv.sub_slot and mycpv.sub_slot not in (mycpv.slot, newslot):
+            if "/" not in newslot and mycpv.sub_slot and mycpv.sub_slot not in (mycpv.slot,
+                                                                                newslot):
                 newslot = f"{newslot}/{mycpv.sub_slot}"
             mydata = {"SLOT": newslot + "\n"}
             self.aux_update(mycpv, mydata)

@@ -68,11 +68,15 @@ class test_gpkg_metadata_url_case(TestCase):
             gpkg_file_loc = os.path.join(tmpdir, "test.gpkg.tar")
             test_gpkg = gpkg(settings, "test", gpkg_file_loc)
 
-            meta = {"test1": b"{abcdefghijklmnopqrstuvwxyz, 1234567890}", "test2": urandom(102400), }
+            meta = {
+                "test1": b"{abcdefghijklmnopqrstuvwxyz, 1234567890}",
+                "test2": urandom(102400),
+            }
 
             test_gpkg.compress(os.path.join(tmpdir, "orig"), meta)
 
-            meta_from_url = test_gpkg.get_metadata_url("http://127.0.0.1:" + str(port) + "/test.gpkg.tar")
+            meta_from_url = test_gpkg.get_metadata_url("http://127.0.0.1:" + str(port) +
+                                                       "/test.gpkg.tar")
 
             self.assertEqual(meta, meta_from_url)
         finally:
@@ -109,7 +113,10 @@ class test_gpkg_metadata_url_case(TestCase):
             gpkg_file_loc = os.path.join(tmpdir, "test-1.gpkg.tar")
             test_gpkg = gpkg(settings, "test", gpkg_file_loc)
 
-            meta = {"test1": b"{abcdefghijklmnopqrstuvwxyz, 1234567890}", "test2": urandom(102400), }
+            meta = {
+                "test1": b"{abcdefghijklmnopqrstuvwxyz, 1234567890}",
+                "test2": urandom(102400),
+            }
 
             test_gpkg.compress(os.path.join(tmpdir, "orig"), meta)
 

@@ -13,7 +13,9 @@ class StaticFileSetTestCase(TestCase):
     """Simple Test Case for StaticFileSet"""
 
     def setUp(self):
-        fd, self.testfile = tempfile.mkstemp(suffix=".testdata", prefix=self.__class__.__name__, text=True)
+        fd, self.testfile = tempfile.mkstemp(suffix=".testdata",
+                                             prefix=self.__class__.__name__,
+                                             text=True)
         f = os.fdopen(fd, "w")
         f.write("\n".join(test_cps))
         f.close()

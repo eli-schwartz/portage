@@ -30,7 +30,8 @@ class SonameDepsProcessor:
         """
         self._provides_exclude = self._exclude_pattern(provides_exclude)
         self._requires_exclude = self._exclude_pattern(requires_exclude)
-        self._requires_map = collections.defaultdict(functools.partial(collections.defaultdict, set))
+        self._requires_map = collections.defaultdict(functools.partial(
+            collections.defaultdict, set))
         self._provides_map = {}
         self._provides_unfiltered = {}
         self._basename_map = {}
@@ -64,14 +65,16 @@ class SonameDepsProcessor:
 
         self._basename_map.setdefault(os.path.basename(entry.filename), []).append(entry)
 
-        if entry.needed and (self._requires_exclude is None
-                             or self._requires_exclude.match(entry.filename.lstrip(os.sep)) is None):
+        if entry.needed and (self._requires_exclude is None or self._requires_exclude.match(
+                entry.filename.lstrip(os.sep)) is None):
             runpaths = frozenset()
             if entry.runpaths is not None:
                 expand = {"ORIGIN": os.path.dirname(entry.filename)}
                 runpaths = frozenset(
-                    normalize_path(varexpand(x, expand, error_leader=lambda: f"{entry.filename}: DT_RUNPATH: ",
-                                             )) for x in entry.runpaths)
+                    normalize_path(
+                        varexpand(
+                            x, expand, error_leader=lambda: f"{entry.filename}: DT_RUNPATH: ",
+                        )) for x in entry.runpaths)
             for x in entry.needed:
                 if self._requires_exclude is None or self._requires_exclude.match(x) is None:
                     self._requires_map[multilib_cat][x].add(runpaths)

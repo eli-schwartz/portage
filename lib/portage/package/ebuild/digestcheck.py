@@ -21,7 +21,8 @@ def digestcheck(myfiles, mysettings, strict=False, justmanifest=None, mf=None):
     """
 
     if justmanifest is not None:
-        warnings.warn("The justmanifest parameter of the " + "portage.package.ebuild.digestcheck.digestcheck()" +
+        warnings.warn("The justmanifest parameter of the " +
+                      "portage.package.ebuild.digestcheck.digestcheck()" +
                       " function is now unused.",
                       DeprecationWarning,
                       stacklevel=2,
@@ -66,7 +67,9 @@ def digestcheck(myfiles, mysettings, strict=False, justmanifest=None, mf=None):
             eout.eend(0)
     except FileNotFound as e:
         eout.eend(1)
-        writemsg(_("\n!!! A file listed in the Manifest could not be found: %s\n") % str(e), noiselevel=-1, )
+        writemsg(_("\n!!! A file listed in the Manifest could not be found: %s\n") % str(e),
+                 noiselevel=-1,
+                 )
         return 0
     except DigestException as e:
         eout.eend(1)
@@ -86,7 +89,10 @@ def digestcheck(myfiles, mysettings, strict=False, justmanifest=None, mf=None):
         if f[-7:] == ".ebuild":
             pf = f[:-7]
         if pf is not None and not mf.hasFile("EBUILD", f):
-            writemsg(_("!!! A file is not listed in the Manifest: '%s'\n") % os.path.join(pkgdir, f), noiselevel=-1, )
+            writemsg(_("!!! A file is not listed in the Manifest: '%s'\n") %
+                     os.path.join(pkgdir, f),
+                     noiselevel=-1,
+                     )
             if strict:
                 return 0
     # epatch will just grab all the patches out of a directory, so we have to
@@ -112,7 +118,8 @@ def digestcheck(myfiles, mysettings, strict=False, justmanifest=None, mf=None):
             except UnicodeDecodeError:
                 d = _unicode_decode(d, encoding=_encodings["fs"], errors="replace")
                 writemsg(_("!!! Path contains invalid "
-                           "character(s) for encoding '%s': '%s'") % (_encodings["fs"], os.path.join(parent, d)),
+                           "character(s) for encoding '%s': '%s'") %
+                         (_encodings["fs"], os.path.join(parent, d)),
                          noiselevel=-1,
                          )
                 if strict:
@@ -141,7 +148,8 @@ def digestcheck(myfiles, mysettings, strict=False, justmanifest=None, mf=None):
             f = os.path.join(parent, f)[len(filesdir) + 1:]
             file_type = mf.findFile(f)
             if file_type != "AUX" and not f.startswith("digest-"):
-                writemsg(_("!!! A file is not listed in the Manifest: '%s'\n") % os.path.join(filesdir, f),
+                writemsg(_("!!! A file is not listed in the Manifest: '%s'\n") %
+                         os.path.join(filesdir, f),
                          noiselevel=-1,
                          )
                 if strict:

@@ -15,7 +15,8 @@ from portage.const import _ENABLE_SET_CONFIG
 from portage.exception import PackageSetNotFound
 from portage.localization import _
 from portage.util import writemsg_level
-from portage.util.configparser import (SafeConfigParser, NoOptionError, ParsingError, read_configs, )
+from portage.util.configparser import (SafeConfigParser, NoOptionError, ParsingError, read_configs,
+                                       )
 
 SETPREFIX = "@"
 
@@ -128,7 +129,9 @@ class SetConfig:
         parser.add_section("deprecated-live-rebuild")
         parser.set("deprecated-live-rebuild", "class", "portage.sets.dbapi.VariableSet")
         parser.set("deprecated-live-rebuild", "variable", "INHERITED")
-        parser.set("deprecated-live-rebuild", "includes", " ".join(sorted(portage.const.LIVE_ECLASSES)), )
+        parser.set("deprecated-live-rebuild", "includes",
+                   " ".join(sorted(portage.const.LIVE_ECLASSES)),
+                   )
 
         parser.remove_section("module-rebuild")
         parser.add_section("module-rebuild")
@@ -217,7 +220,8 @@ class SetConfig:
                     try:
                         newsets = setclass.multiBuilder(optdict, self.settings, self.trees)
                     except SetConfigError as e:
-                        self.errors.append(_("Configuration error in section '%s': %s") % (sname, str(e)))
+                        self.errors.append(
+                            _("Configuration error in section '%s': %s") % (sname, str(e)))
                         continue
                     for x in newsets:
                         if x in self.psets and not update:
@@ -225,7 +229,8 @@ class SetConfig:
                                 _("Redefinition of set '%s' (sections: '%s', '%s')") %
                                 (x, self.psets[x].creator, sname))
                         newsets[x].creator = sname
-                        if parser.has_option(sname, "world-candidate") and parser.getboolean(sname, "world-candidate"):
+                        if parser.has_option(sname, "world-candidate") and parser.getboolean(
+                                sname, "world-candidate"):
                             newsets[x].world_candidate = True
                     self.psets.update(newsets)
                 else:
@@ -247,12 +252,15 @@ class SetConfig:
                         (setname, self.psets[setname].creator, sname))
                 if hasattr(setclass, "singleBuilder"):
                     try:
-                        self.psets[setname] = setclass.singleBuilder(optdict, self.settings, self.trees)
+                        self.psets[setname] = setclass.singleBuilder(optdict, self.settings,
+                                                                     self.trees)
                         self.psets[setname].creator = sname
-                        if parser.has_option(sname, "world-candidate") and parser.getboolean(sname, "world-candidate"):
+                        if parser.has_option(sname, "world-candidate") and parser.getboolean(
+                                sname, "world-candidate"):
                             self.psets[setname].world_candidate = True
                     except SetConfigError as e:
-                        self.errors.append(_("Configuration error in section '%s': %s") % (sname, str(e)))
+                        self.errors.append(
+                            _("Configuration error in section '%s': %s") % (sname, str(e)))
                         continue
                 else:
                     self.errors.append(
@@ -307,7 +315,8 @@ def load_default_config(settings, trees):
     def _getfiles():
         sets_config_paths = [
             os.path.join(global_config_path, "sets"),
-            *(os.path.join(repo.location, "sets.conf") for repo in trees["porttree"].dbapi.repositories),
+            *(os.path.join(repo.location, "sets.conf")
+              for repo in trees["porttree"].dbapi.repositories),
             os.path.join(settings["PORTAGE_CONFIGROOT"], USER_CONFIG_PATH, "sets.conf"),
         ]
 

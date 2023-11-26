@@ -15,7 +15,8 @@ class ImportModulesTestCase(TestCase):
     def testImportModules(self):
         expected_failures = frozenset(())
 
-        iters = (self._iter_modules(os.path.join(PORTAGE_PYM_PATH, x)) for x in PORTAGE_PYM_PACKAGES)
+        iters = (self._iter_modules(os.path.join(PORTAGE_PYM_PATH, x))
+                 for x in PORTAGE_PYM_PACKAGES)
         for mod in chain(*iters):
             try:
                 __import__(mod)

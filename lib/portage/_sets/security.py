@@ -69,7 +69,11 @@ class SecuritySet(PackageSet):
 
     def singleBuilder(cls, options, settings, trees):
         least_change = not get_boolean(options, "use_emerge_resolver", False)
-        return cls(settings, trees["vartree"].dbapi, trees["porttree"].dbapi, least_change=least_change, )
+        return cls(settings,
+                   trees["vartree"].dbapi,
+                   trees["porttree"].dbapi,
+                   least_change=least_change,
+                   )
 
     singleBuilder = classmethod(singleBuilder)
 

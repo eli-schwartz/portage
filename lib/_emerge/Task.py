@@ -48,4 +48,6 @@ class Task(SlotObject):
         if self._hash_key is None:
             # triggered by python-trace
             return SlotObject.__repr__(self)
-        return "<{} ({})>".format(self.__class__.__name__, ", ".join(f"'{x}'" for x in self._hash_key), )
+        return "<{} ({})>".format(self.__class__.__name__,
+                                  ", ".join(f"'{x}'" for x in self._hash_key),
+                                  )

@@ -99,8 +99,9 @@ use_if_iuse ()
                     proc.stdout.close()
 
             diff = list(
-                difflib.unified_diff(env_out.decode("utf_8").splitlines(),
-                                     result.decode("utf_8").splitlines(),
-                                     ))
+                difflib.unified_diff(
+                    env_out.decode("utf_8").splitlines(),
+                    result.decode("utf_8").splitlines(),
+                ))
 
             self.assertEqual(diff, [])

@@ -30,8 +30,8 @@ class IndexedPortdb:
     # Match returns unordered results.
     match_unordered = True
 
-    _copy_attrs = ("cpv_exists", "findname", "getFetchMap", "_aux_cache_keys", "_cpv_sort_ascending",
-                   "_have_root_eclass_dir",
+    _copy_attrs = ("cpv_exists", "findname", "getFetchMap", "_aux_cache_keys",
+                   "_cpv_sort_ascending", "_have_root_eclass_dir",
                    )
 
     def __init__(self, portdb):
@@ -75,8 +75,10 @@ class IndexedPortdb:
                     raise FileNotFound(filename)
 
                 streams.append(
-                    iter(IndexStreamIterator(f, functools.partial(pkg_desc_index_line_read, repo=repo_name),
-                                             )))
+                    iter(
+                        IndexStreamIterator(
+                            f, functools.partial(pkg_desc_index_line_read, repo=repo_name),
+                        )))
             except FileNotFound:
                 index_missing.append(repo_path)
 

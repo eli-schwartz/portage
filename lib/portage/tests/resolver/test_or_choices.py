@@ -6,7 +6,9 @@ import itertools
 import pytest
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class OrChoicesTestCase(TestCase):
@@ -131,9 +133,15 @@ class OrChoicesTestCase(TestCase):
             # _initially_unsatisfied_deps where it is ignored, causing
             # upgrade to app-misc/A-2 (breaking a dependency of
             # app-misc/C-0).
-            ResolverPlaygroundTestCase(["app-misc/A"], options={}, success=True, mergelist=["app-misc/A-1"]), )
+            ResolverPlaygroundTestCase(["app-misc/A"],
+                                       options={},
+                                       success=True,
+                                       mergelist=["app-misc/A-1"]), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -212,7 +220,8 @@ class OrChoicesTestCase(TestCase):
                 "SLOT": "0/4.01.0",
             },
             "dev-ml/lablgl-1.05": {
-                "EAPI": "5",
+                "EAPI":
+                "5",
                 "DEPEND": (">=dev-lang/ocaml-3.10.2:0/4.01.0= "
                            "|| ( dev-ml/labltk:= <dev-lang/ocaml-4.02 )"),
                 "RDEPEND": (">=dev-lang/ocaml-3.10.2:0/4.01.0= "
@@ -232,11 +241,15 @@ class OrChoicesTestCase(TestCase):
                                        },
                                        success=True,
                                        mergelist=[
-                                           "dev-lang/ocaml-4.02.1", "dev-ml/labltk-8.06.0", "dev-ml/lablgl-1.05",
+                                           "dev-lang/ocaml-4.02.1", "dev-ml/labltk-8.06.0",
+                                           "dev-ml/lablgl-1.05",
                                        ],
                                        ), )
 
-        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
+        playground = ResolverPlayground(debug=False,
+                                        ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -302,7 +315,10 @@ class OrChoicesTestCase(TestCase):
                                                  mergelist=["dev-lang/python-3.8"],
                                                  ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -335,10 +351,16 @@ class OrChoicesTestCase(TestCase):
         test_cases = (
             # Test for bug 707108, where a new python slot was erroneously
             # removed by emerge --depclean.
-            ResolverPlaygroundTestCase([], options={"--depclean": True}, success=True, cleanlist=[],
+            ResolverPlaygroundTestCase([],
+                                       options={"--depclean": True},
+                                       success=True,
+                                       cleanlist=[],
                                        ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -399,7 +421,10 @@ class OrChoicesTestCase(TestCase):
                                        mergelist=[],
                                        ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -429,7 +454,10 @@ class OrChoicesTestCase(TestCase):
                                        mergelist=[],
                                        ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -439,13 +467,14 @@ class OrChoicesTestCase(TestCase):
             playground.cleanup()
 
         installed = dict(
-            itertools.chain(installed.items(), {
-                "virtual/w3m-0": {
-                    "EAPI": "7",
-                    "RDEPEND": "|| ( www-client/w3m www-client/w3mmee )",
-                },
-            }.items(),
-                            ))
+            itertools.chain(
+                installed.items(), {
+                    "virtual/w3m-0": {
+                        "EAPI": "7",
+                        "RDEPEND": "|| ( www-client/w3m www-client/w3mmee )",
+                    },
+                }.items(),
+            ))
 
         test_cases = (
             # Test for bug 649622, where virtual/w3m is removed by
@@ -454,13 +483,17 @@ class OrChoicesTestCase(TestCase):
             # is essentially indistinguishable from removal of
             # dev-util/cmake-bootstrap in the depclean test case for
             # bug 703440.
-            ResolverPlaygroundTestCase([],
-                                       options={"--depclean": True},
-                                       success=True,
-                                       cleanlist=["virtual/w3m-0", "www-client/w3m-0.5.3_p20190105"],
-                                       ), )
+            ResolverPlaygroundTestCase(
+                [],
+                options={"--depclean": True},
+                success=True,
+                cleanlist=["virtual/w3m-0", "www-client/w3m-0.5.3_p20190105"],
+            ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -475,12 +508,18 @@ class OrChoicesTestCase(TestCase):
             # was in the world file. Since nothing is removed here, it
             # means that we have not reproduced the behavior reported in
             # this comment.
-            ResolverPlaygroundTestCase([], options={"--depclean": True}, success=True, cleanlist=[],
+            ResolverPlaygroundTestCase([],
+                                       options={"--depclean": True},
+                                       success=True,
+                                       cleanlist=[],
                                        ), )
 
         world += ["www-client/w3m"]
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -554,7 +593,9 @@ class OrChoicesTestCase(TestCase):
             },
         }
 
-        world = ["app-misc/neofetch", "mail-client/neomutt", "www-client/lynx", "x11-base/xorg-server", ]
+        world = [
+            "app-misc/neofetch", "mail-client/neomutt", "www-client/lynx", "x11-base/xorg-server",
+        ]
 
         test_cases = (
             # Test for bug 649622 (with www-client/w3m installed via
@@ -563,23 +604,27 @@ class OrChoicesTestCase(TestCase):
             # that graph_order must be deterministic in order to achieve
             # deterministic results which are consistent between both
             # update and removal (depclean) actions.
-            ResolverPlaygroundTestCase(["@world"],
-                                       options={
-                                           "--update": True,
-                                           "--deep": True
-                                       },
-                                       success=True,
-                                       mergelist=["virtual/w3m-0"],
-                                       graph_order=[
-                                           "@world", "@profile", "@selected", "@system",
-                                           "[nomerge]app-misc/neofetch-6.1.0", "[nomerge]mail-client/neomutt-20191207",
-                                           "[nomerge]www-client/lynx-2.9.0_pre4",
-                                           "[nomerge]x11-base/xorg-server-1.20.7", "[nomerge]app-text/xmlto-0.0.28-r1",
-                                           "[nomerge]www-client/w3m-0.5.3_p20190105", "virtual/w3m-0",
-                                       ],
-                                       ), )
+            ResolverPlaygroundTestCase(
+                ["@world"],
+                options={
+                    "--update": True,
+                    "--deep": True
+                },
+                success=True,
+                mergelist=["virtual/w3m-0"],
+                graph_order=[
+                    "@world", "@profile", "@selected", "@system",
+                    "[nomerge]app-misc/neofetch-6.1.0", "[nomerge]mail-client/neomutt-20191207",
+                    "[nomerge]www-client/lynx-2.9.0_pre4", "[nomerge]x11-base/xorg-server-1.20.7",
+                    "[nomerge]app-text/xmlto-0.0.28-r1", "[nomerge]www-client/w3m-0.5.3_p20190105",
+                    "virtual/w3m-0",
+                ],
+            ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -589,13 +634,14 @@ class OrChoicesTestCase(TestCase):
             playground.cleanup()
 
         installed = dict(
-            itertools.chain(installed.items(), {
-                "virtual/w3m-0": {
-                    "EAPI": "7",
-                    "RDEPEND": "|| ( www-client/w3m www-client/w3mmee )",
-                },
-            }.items(),
-                            ))
+            itertools.chain(
+                installed.items(), {
+                    "virtual/w3m-0": {
+                        "EAPI": "7",
+                        "RDEPEND": "|| ( www-client/w3m www-client/w3mmee )",
+                    },
+                }.items(),
+            ))
 
         test_cases = (
             # Test for bug 649622, where virtual/w3m is removed by
@@ -605,21 +651,24 @@ class OrChoicesTestCase(TestCase):
             # that graph_order must be deterministic in order to achieve
             # deterministic results which are consistent between both
             # update and removal (depclean) actions.
-            ResolverPlaygroundTestCase([],
-                                       options={"--depclean": True},
-                                       success=True,
-                                       cleanlist=[],
-                                       graph_order=[
-                                           "@world", "@____depclean_protected_set____", "@profile", "@selected",
-                                           "@system", "[nomerge]app-misc/neofetch-6.1.0",
-                                           "[nomerge]mail-client/neomutt-20191207",
-                                           "[nomerge]www-client/lynx-2.9.0_pre4",
-                                           "[nomerge]x11-base/xorg-server-1.20.7", "[nomerge]app-text/xmlto-0.0.28-r1",
-                                           "[nomerge]www-client/w3m-0.5.3_p20190105", "[nomerge]virtual/w3m-0",
-                                       ],
-                                       ), )
+            ResolverPlaygroundTestCase(
+                [],
+                options={"--depclean": True},
+                success=True,
+                cleanlist=[],
+                graph_order=[
+                    "@world", "@____depclean_protected_set____", "@profile", "@selected", "@system",
+                    "[nomerge]app-misc/neofetch-6.1.0", "[nomerge]mail-client/neomutt-20191207",
+                    "[nomerge]www-client/lynx-2.9.0_pre4", "[nomerge]x11-base/xorg-server-1.20.7",
+                    "[nomerge]app-text/xmlto-0.0.28-r1", "[nomerge]www-client/w3m-0.5.3_p20190105",
+                    "[nomerge]virtual/w3m-0",
+                ],
+            ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -688,7 +737,10 @@ class OrChoicesLibpostprocTestCase(TestCase):
                                        mergelist=[],
                                        ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

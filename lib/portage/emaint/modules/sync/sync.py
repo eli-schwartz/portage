@@ -18,7 +18,8 @@ import _emerge
 from _emerge.emergelog import emergelog
 
 portage.proxy.lazyimport.lazyimport(globals(), "_emerge.actions:adjust_configs,load_emerge_config",
-                                    "_emerge.chk_updated_cfg_files:chk_updated_cfg_files", "_emerge.main:parse_opts",
+                                    "_emerge.chk_updated_cfg_files:chk_updated_cfg_files",
+                                    "_emerge.main:parse_opts",
                                     "_emerge.post_emerge:display_news_notification",
                                     )
 
@@ -48,7 +49,8 @@ class SyncRepos:
 
             # Parse EMERGE_DEFAULT_OPTS, for settings like
             # --package-moves=n.
-            cmdline = portage.util.shlex_split(emerge_config.target_config.settings.get("EMERGE_DEFAULT_OPTS", ""))
+            cmdline = portage.util.shlex_split(
+                emerge_config.target_config.settings.get("EMERGE_DEFAULT_OPTS", ""))
             emerge_config.opts = parse_opts(cmdline, silent=True)[1]
 
             if hasattr(portage, "settings"):
@@ -157,18 +159,16 @@ class SyncRepos:
             repos = [repo for repo in repos if repo.sync_type is not None]
             if match_repos is not None:
                 msgs.append(
-                    red(" * ") + "The specified repo(s) have sync disabled: %s" % " ".join(repo.name
-                                                                                           for repo in sync_disabled) +
-                    "\n   ...returning")
+                    red(" * ") + "The specified repo(s) have sync disabled: %s" %
+                    " ".join(repo.name for repo in sync_disabled) + "\n   ...returning")
                 return (False, repos, msgs)
 
         missing_sync_uri = [repo for repo in repos if repo.sync_uri is None]
         if missing_sync_uri:
             repos = [repo for repo in repos if repo.sync_uri is not None]
             msgs.append(
-                red(" * ") + "The specified repo(s) are missing sync-uri: %s" % " ".join(repo.name
-                                                                                         for repo in missing_sync_uri) +
-                "\n   ...returning")
+                red(" * ") + "The specified repo(s) are missing sync-uri: %s" %
+                " ".join(repo.name for repo in missing_sync_uri) + "\n   ...returning")
             return (False, repos, msgs)
 
         return (True, repos, msgs)
@@ -200,7 +200,8 @@ class SyncRepos:
         sync_manager = SyncManager(self.emerge_config.target_config.settings, emergelog)
 
         max_jobs = self.emerge_config.opts.get(
-            "--jobs", 1) if "parallel-fetch" in self.emerge_config.target_config.settings.features else 1
+            "--jobs",
+            1) if "parallel-fetch" in self.emerge_config.target_config.settings.features else 1
         sync_scheduler = SyncScheduler(emerge_config=self.emerge_config,
                                        selected_repos=selected_repos,
                                        sync_manager=sync_manager,
@@ -254,18 +255,20 @@ class SyncRepos:
             self._reload_config()
 
     def _check_updates(self):
-        mybestpv = self.emerge_config.target_config.trees["porttree"].dbapi.xmatch("bestmatch-visible",
-                                                                                   portage.const.PORTAGE_PACKAGE_ATOM)
+        mybestpv = self.emerge_config.target_config.trees["porttree"].dbapi.xmatch(
+            "bestmatch-visible", portage.const.PORTAGE_PACKAGE_ATOM)
         mypvs = portage.best(self.emerge_config.target_config.trees["vartree"].dbapi.match(
             portage.const.PORTAGE_PACKAGE_ATOM))
         try:
-            old_use = self.emerge_config.target_config.trees["vartree"].dbapi.aux_get(mypvs, ["USE"])[0].split()
+            old_use = self.emerge_config.target_config.trees["vartree"].dbapi.aux_get(
+                mypvs, ["USE"])[0].split()
         except KeyError:
             old_use = ()
 
         chk_updated_cfg_files(
             self.emerge_config.target_config.root,
-            portage.util.shlex_split(self.emerge_config.target_config.settings.get("CONFIG_PROTECT", "")),
+            portage.util.shlex_split(
+                self.emerge_config.target_config.settings.get("CONFIG_PROTECT", "")),
         )
 
         msgs = []
@@ -286,10 +289,14 @@ class SyncRepos:
 
         if new_python_targets == old_python_targets:
             msgs.append("")
-            msgs.append(warn(" * ") + bold("An update to portage is available.") + " It is _highly_ recommended")
-            msgs.append(warn(" * ") + "that you update portage now, before any other packages are updated.")
+            msgs.append(
+                warn(" * ") + bold("An update to portage is available.") +
+                " It is _highly_ recommended")
+            msgs.append(
+                warn(" * ") + "that you update portage now, before any other packages are updated.")
             msgs.append("")
-            msgs.append(warn(" * ") + "To update portage, run 'emerge --oneshot sys-apps/portage' now.")
+            msgs.append(
+                warn(" * ") + "To update portage, run 'emerge --oneshot sys-apps/portage' now.")
             msgs.append("")
         return msgs
 
@@ -405,7 +412,9 @@ class SyncScheduler(AsyncScheduler):
         is discovered, choose a random node to break the cycle.
         """
         if self._sync_graph and not self._leaf_nodes:
-            self._leaf_nodes = [obj for obj in self._sync_graph.leaf_nodes() if obj not in self._running_repos]
+            self._leaf_nodes = [
+                obj for obj in self._sync_graph.leaf_nodes() if obj not in self._running_repos
+            ]
 
             if not (self._leaf_nodes or self._running_repos):
                 # If there is a circular master relationship,

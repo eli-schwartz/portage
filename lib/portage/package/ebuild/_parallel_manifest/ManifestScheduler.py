@@ -12,7 +12,14 @@ from .ManifestTask import ManifestTask
 
 class ManifestScheduler(AsyncScheduler):
 
-    def __init__(self, portdb, cp_iter=None, gpg_cmd=None, gpg_vars=None, force_sign_key=None, **kwargs, ):
+    def __init__(self,
+                 portdb,
+                 cp_iter=None,
+                 gpg_cmd=None,
+                 gpg_vars=None,
+                 force_sign_key=None,
+                 **kwargs,
+                 ):
         AsyncScheduler.__init__(self, **kwargs)
 
         self._portdb = portdb

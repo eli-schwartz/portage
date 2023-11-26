@@ -20,7 +20,8 @@ class database(fs_template.FsBased):
 
     def __init__(self, *args, **config):
         super().__init__(*args, **config)
-        self.location = os.path.join(self.location, self.label.lstrip(os.path.sep).rstrip(os.path.sep))
+        self.location = os.path.join(self.location,
+                                     self.label.lstrip(os.path.sep).rstrip(os.path.sep))
         write_keys = set(self._known_keys)
         write_keys.add("_eclasses_")
         write_keys.add(f"_{self.validation_chf}_")
@@ -63,7 +64,8 @@ class database(fs_template.FsBased):
         except OSError as e:
             raise cache_errors.CacheCorruption(cpv, e)
 
-        with open(fd, mode="w", encoding=_encodings["repo.content"], errors="backslashreplace") as myf:
+        with open(fd, mode="w", encoding=_encodings["repo.content"],
+                  errors="backslashreplace") as myf:
             for k in self._write_keys:
                 v = values.get(k)
                 if not v:

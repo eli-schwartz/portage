@@ -54,10 +54,10 @@ class ContentDB:
             content_revisions = set()
 
         revision_key = tuple(
-            sorted(
-                ((algo.upper(), filename.digests[algo.upper()].lower()) for algo in filename.digests if algo != "size"),
-                key=operator.itemgetter(0),
-            ))
+            sorted(((algo.upper(), filename.digests[algo.upper()].lower())
+                    for algo in filename.digests if algo != "size"),
+                   key=operator.itemgetter(0),
+                   ))
         content_revisions.add(revision_key)
         self._shelve[distfile_key] = content_revisions
 
@@ -114,7 +114,9 @@ class ContentDB:
                     pass
 
     def get_filenames_translate(
-            self, filename: typing.Union[str, DistfileName]) -> typing.Generator[DistfileName, None, None]:
+            self,
+            filename: typing.Union[str,
+                                   DistfileName]) -> typing.Generator[DistfileName, None, None]:
         """
         Translate distfiles content digests to zero or more distfile names.
         If filename is already a distfile name, then it will pass
@@ -149,7 +151,8 @@ class ContentDB:
                     pass
                 else:
                     for revision_key in content_revisions:
-                        if digest_item in revision_key and revision_key not in matched_revisions[distfile_str]:
+                        if digest_item in revision_key and revision_key not in matched_revisions[
+                                distfile_str]:
                             matched_revisions[distfile_str].add(revision_key)
                             yield DistfileName(distfile_str, digests=dict(revision_key))
 

@@ -5,8 +5,8 @@ Portage: Lock management code
 """
 
 __all__ = [
-    "lockdir", "unlockdir", "lockfile", "unlockfile", "hardlock_name", "hardlink_is_mine", "hardlink_lockfile",
-    "unhardlink_lockfile", "hardlock_cleanup",
+    "lockdir", "unlockdir", "lockfile", "unlockfile", "hardlock_name", "hardlink_is_mine",
+    "hardlink_lockfile", "unhardlink_lockfile", "hardlock_cleanup",
 ]
 
 import errno
@@ -21,8 +21,8 @@ import warnings
 
 import portage
 from portage import os, _encodings, _unicode_decode
-from portage.exception import (DirectoryNotFound, FileNotFound, InvalidData, TryAgain, OperationNotPermitted,
-                               PermissionDenied, ReadOnlyFileSystem,
+from portage.exception import (DirectoryNotFound, FileNotFound, InvalidData, TryAgain,
+                               OperationNotPermitted, PermissionDenied, ReadOnlyFileSystem,
                                )
 from portage.util import writemsg
 from portage.util.install_mask import _raise_exc
@@ -102,7 +102,8 @@ def _test_lock_fn(lock_fn: typing.Callable[[str, int, int], typing.Callable[[], 
                     # Since file descriptors are not inherited unless the fork start
                     # method is used, the subprocess should only try to close an
                     # inherited file descriptor for the fork start method.
-                    fd if multiprocessing.get_start_method() == "fork" else None, lock_fn, lock_path,
+                    fd if multiprocessing.get_start_method() == "fork" else None, lock_fn,
+                    lock_path,
                 ),
             )
             proc.start()
@@ -241,7 +242,8 @@ def _lockfile_iteration(mypath, wantnewlockfile=False, unlinkfile=False, waiting
                 try:
                     myfd = os.open(lockfilename, os.O_CREAT | os.O_RDWR, 0o660)
                 except OSError as e:
-                    if e.errno in (errno.ENOENT, errno.ESTALE) and os.path.isdir(os.path.dirname(lockfilename)):
+                    if e.errno in (errno.ENOENT, errno.ESTALE) and os.path.isdir(
+                            os.path.dirname(lockfilename)):
                         # Retry required for NFS (see bug 636798).
                         continue
                     else:
@@ -257,9 +259,12 @@ def _lockfile_iteration(mypath, wantnewlockfile=False, unlinkfile=False, waiting
                     if e.errno in (errno.ENOENT, errno.ESTALE):
                         os.close(myfd)
                         return None
-                    writemsg("%s: chown('%s', -1, %d)\n" % (e, lockfilename, portage_gid), noiselevel=-1, )
+                    writemsg("%s: chown('%s', -1, %d)\n" % (e, lockfilename, portage_gid),
+                             noiselevel=-1,
+                             )
                     writemsg(_("Cannot chown a lockfile: '%s'\n") % lockfilename, noiselevel=-1, )
-                    writemsg(_("Group IDs of current user: %s\n") % " ".join(str(n) for n in os.getgroups()),
+                    writemsg(_("Group IDs of current user: %s\n") %
+                             " ".join(str(n) for n in os.getgroups()),
                              noiselevel=-1,
                              )
         finally:
@@ -338,10 +343,14 @@ def _lockfile_iteration(mypath, wantnewlockfile=False, unlinkfile=False, waiting
                 # to close the file descriptor because it may
                 # still be in use.
                 os.close(myfd)
-            lockfilename_path = _unicode_decode(lockfilename_path, encoding=_encodings["fs"], errors="strict")
+            lockfilename_path = _unicode_decode(lockfilename_path,
+                                                encoding=_encodings["fs"],
+                                                errors="strict")
             if not isinstance(lockfilename_path, str):
                 raise
-            link_success = hardlink_lockfile(lockfilename_path, waiting_msg=waiting_msg, flags=flags)
+            link_success = hardlink_lockfile(lockfilename_path,
+                                             waiting_msg=waiting_msg,
+                                             flags=flags)
             if not link_success:
                 raise
             lockfilename = lockfilename_path
@@ -535,8 +544,10 @@ def unlockfile(mytuple):
 
 def hardlock_name(path):
     base, tail = os.path.split(path)
-    return os.path.join(base, ".%s.hardlock-%s-%s" % (tail, portage._decode_argv([os.uname()[1]])[0], portage.getpid()),
-                        )
+    return os.path.join(
+        base,
+        ".%s.hardlock-%s-%s" % (tail, portage._decode_argv([os.uname()[1]])[0], portage.getpid()),
+    )
 
 
 def hardlink_is_mine(link, lock):
@@ -617,9 +628,12 @@ def hardlink_lockfile(lockfilename, max_wait=DeprecationWarning, waiting_msg=Non
                         os.fchown(myfd, -1, portage_gid)
             except OSError as e:
                 if e.errno not in (errno.ENOENT, errno.ESTALE):
-                    writemsg("%s: fchown('%s', -1, %d)\n" % (e, lockfilename, portage_gid), noiselevel=-1, )
+                    writemsg("%s: fchown('%s', -1, %d)\n" % (e, lockfilename, portage_gid),
+                             noiselevel=-1,
+                             )
                     writemsg(_("Cannot chown a lockfile: '%s'\n") % lockfilename, noiselevel=-1, )
-                    writemsg(_("Group IDs of current user: %s\n") % " ".join(str(n) for n in os.getgroups()),
+                    writemsg(_("Group IDs of current user: %s\n") %
+                             " ".join(str(n) for n in os.getgroups()),
                              noiselevel=-1,
                              )
                 else:
@@ -724,7 +738,8 @@ def hardlock_cleanup(path, remove_all_locks=False):
     for x in mylist:
         if myhost in mylist[x] or remove_all_locks:
             mylockname = hardlock_name(path + "/" + x)
-            if hardlink_is_mine(mylockname, path + "/" + x) or not os.path.exists(path + "/" + x) or remove_all_locks:
+            if hardlink_is_mine(mylockname, path + "/" +
+                                x) or not os.path.exists(path + "/" + x) or remove_all_locks:
                 for y in mylist[x]:
                     for z in mylist[x][y]:
                         filename = path + "/." + x + ".hardlock-" + y + "-" + z

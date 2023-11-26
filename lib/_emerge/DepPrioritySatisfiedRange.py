@@ -98,11 +98,12 @@ class DepPrioritySatisfiedRange:
     ignore_soft = _ignore_optional
 
 
-DepPrioritySatisfiedRange.ignore_priority = (None, DepPrioritySatisfiedRange._ignore_optional,
-                                             DepPrioritySatisfiedRange._ignore_satisfied_runtime_post,
-                                             DepPrioritySatisfiedRange._ignore_runtime_post,
-                                             DepPrioritySatisfiedRange._ignore_satisfied_runtime,
-                                             DepPrioritySatisfiedRange._ignore_satisfied_buildtime,
-                                             DepPrioritySatisfiedRange._ignore_satisfied_buildtime_slot_op,
-                                             DepPrioritySatisfiedRange._ignore_runtime,
-                                             )
+DepPrioritySatisfiedRange.ignore_priority = (
+    None, DepPrioritySatisfiedRange._ignore_optional,
+    DepPrioritySatisfiedRange._ignore_satisfied_runtime_post,
+    DepPrioritySatisfiedRange._ignore_runtime_post,
+    DepPrioritySatisfiedRange._ignore_satisfied_runtime,
+    DepPrioritySatisfiedRange._ignore_satisfied_buildtime,
+    DepPrioritySatisfiedRange._ignore_satisfied_buildtime_slot_op,
+    DepPrioritySatisfiedRange._ignore_runtime,
+)

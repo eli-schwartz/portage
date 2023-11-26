@@ -10,8 +10,8 @@ import stat
 import textwrap
 
 import portage
-from portage import (bsd_chflags, _encodings, _os_overrides, _selinux, _unicode_decode, _unicode_encode,
-                     _unicode_func_wrapper, _unicode_module_wrapper,
+from portage import (bsd_chflags, _encodings, _os_overrides, _selinux, _unicode_decode,
+                     _unicode_encode, _unicode_func_wrapper, _unicode_module_wrapper,
                      )
 from portage.const import MOVE_BINARY
 from portage.exception import OperationNotSupported
@@ -91,7 +91,8 @@ def _copyxattr(src, dest, exclude=None):
         if raise_exception:
             raise OperationNotSupported(
                 _("Filesystem containing file '%s' "
-                  "does not support extended attribute '%s'") % (_unicode_decode(dest), _unicode_decode(attr)))
+                  "does not support extended attribute '%s'") %
+                (_unicode_decode(dest), _unicode_decode(attr)))
 
 
 def _cmpxattr(src: bytes, dest: bytes, exclude=None) -> bool:
@@ -255,7 +256,9 @@ def movefile(src,
             os.unlink(hardlink_tmp)
         except OSError as e:
             if e.errno != errno.ENOENT:
-                writemsg(_("!!! Failed to remove hardlink temp file: %s\n") % (hardlink_tmp, ), noiselevel=-1, )
+                writemsg(_("!!! Failed to remove hardlink temp file: %s\n") % (hardlink_tmp, ),
+                         noiselevel=-1,
+                         )
                 writemsg(f"!!! {e}\n", noiselevel=-1)
                 return None
             del e
@@ -268,7 +271,9 @@ def movefile(src,
                 try:
                     os.rename(hardlink_tmp, dest)
                 except OSError as e:
-                    writemsg(_("!!! Failed to rename %s to %s\n") % (hardlink_tmp, dest), noiselevel=-1, )
+                    writemsg(_("!!! Failed to rename %s to %s\n") % (hardlink_tmp, dest),
+                             noiselevel=-1,
+                             )
                     writemsg(f"!!! {e}\n", noiselevel=-1)
                     return None
                 hardlinked = True
@@ -310,7 +315,10 @@ def movefile(src,
                 _apply_stat(sstat, dest_tmp_bytes)
                 if xattr_enabled:
                     try:
-                        _copyxattr(src_bytes, dest_tmp_bytes, exclude=mysettings.get("PORTAGE_XATTR_EXCLUDE", ""), )
+                        _copyxattr(src_bytes,
+                                   dest_tmp_bytes,
+                                   exclude=mysettings.get("PORTAGE_XATTR_EXCLUDE", ""),
+                                   )
                     except SystemExit:
                         raise
                     except:
@@ -325,7 +333,12 @@ def movefile(src,
                 _os.unlink(src_bytes)
                 success = True
             except Exception as e:
-                writemsg(f"!!! {_('copy %(src)s -> %(dest)s failed.')}\n" % {"src": src, "dest": dest}, noiselevel=-1, )
+                writemsg(f"!!! {_('copy %(src)s -> %(dest)s failed.')}\n" % {
+                    "src": src,
+                    "dest": dest
+                },
+                         noiselevel=-1,
+                         )
                 writemsg(f"!!! {e}\n", noiselevel=-1)
                 return None
             finally:

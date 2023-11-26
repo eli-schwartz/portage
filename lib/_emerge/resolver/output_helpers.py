@@ -12,7 +12,8 @@ from portage import os
 from portage._sets.base import InternalPackageSet
 from portage.exception import PackageSetNotFound
 from portage.localization import localized_size
-from portage.output import (blue, colorize, create_color_func, green, red, teal, turquoise, yellow, )
+from portage.output import (blue, colorize, create_color_func, green, red, teal, turquoise, yellow,
+                            )
 
 bad = create_color_func("BAD")
 from portage.util import writemsg
@@ -66,7 +67,8 @@ class _RepoDisplay:
             for index, repo_path in enumerate(show_repo_paths):
                 output.append(" " + teal("[" + str(index) + "]") + f" {repo_path}\n")
         if unknown_repo:
-            output.append(" " + teal("[?]") + " indicates that the source repository could not be determined\n")
+            output.append(" " + teal("[?]") +
+                          " indicates that the source repository could not be determined\n")
         return "".join(output)
 
 
@@ -133,7 +135,8 @@ class _PackageCounters:
             if self.restrict_fetch > 1:
                 myoutput.append("s")
         if self.restrict_fetch_satisfied < self.restrict_fetch:
-            myoutput.append(bad(f" ({self.restrict_fetch - self.restrict_fetch_satisfied} unsatisfied)"))
+            myoutput.append(
+                bad(f" ({self.restrict_fetch - self.restrict_fetch_satisfied} unsatisfied)"))
         if self.blocks > 0:
             myoutput.append(f"\nConflict: {self.blocks} block")
             if self.blocks > 1:
@@ -174,9 +177,10 @@ class _DisplayConfig:
                 mywidth = int(frozen_config.settings["COLUMNWIDTH"])
             except ValueError as e:
                 writemsg(f"!!! {str(e)}\n", noiselevel=-1)
-                writemsg(f"!!! Unable to parse COLUMNWIDTH='{frozen_config.settings['COLUMNWIDTH']}'\n",
-                         noiselevel=-1,
-                         )
+                writemsg(
+                    f"!!! Unable to parse COLUMNWIDTH='{frozen_config.settings['COLUMNWIDTH']}'\n",
+                    noiselevel=-1,
+                )
                 del e
         self.columnwidth = mywidth
 
@@ -192,7 +196,8 @@ class _DisplayConfig:
         self.selected_sets = {}
         for root_name, root in self.roots.items():
             try:
-                self.selected_sets[root_name] = InternalPackageSet(initial_atoms=root.setconfig.getSetAtoms("selected"))
+                self.selected_sets[root_name] = InternalPackageSet(
+                    initial_atoms=root.setconfig.getSetAtoms("selected"))
             except PackageSetNotFound:
                 # A nested set could not be resolved, so ignore nested sets.
                 self.selected_sets[root_name] = root.sets["selected"]
@@ -225,8 +230,8 @@ def _alnum_sort_key(x):
     return tuple(_convert_even_to_int(_alnum_sort_re.split(x)))
 
 
-def _create_use_string(conf, name, cur_iuse, iuse_forced, cur_use, old_iuse, old_use, is_new, feature_flags,
-                       reinst_flags,
+def _create_use_string(conf, name, cur_iuse, iuse_forced, cur_use, old_iuse, old_use, is_new,
+                       feature_flags, reinst_flags,
                        ):
     if not conf.print_use_string:
         return ""
@@ -266,7 +271,8 @@ def _create_use_string(conf, name, cur_iuse, iuse_forced, cur_use, old_iuse, old
                 removed.append(flag_str)
             continue
         else:
-            if is_new or flag in old_iuse and flag not in old_use and (conf.all_flags or reinst_flag):
+            if is_new or flag in old_iuse and flag not in old_use and (conf.all_flags
+                                                                       or reinst_flag):
                 flag_str = blue("-" + flag)
             elif flag not in old_iuse:
                 flag_str = yellow("-" + flag)
@@ -298,7 +304,10 @@ def _tree_display(conf, mylist):
     # corresponding blockers to the digraph.
     mygraph = conf.digraph.copy()
 
-    executed_uninstalls = {node for node in mylist if isinstance(node, Package) and node.operation == "unmerge"}
+    executed_uninstalls = {
+        node
+        for node in mylist if isinstance(node, Package) and node.operation == "unmerge"
+    }
 
     for uninstall in conf.blocker_uninstalls.leaf_nodes():
         uninstall_parents = conf.blocker_uninstalls.parent_nodes(uninstall)
@@ -445,7 +454,8 @@ def _prune_tree_display(display_list):
     last_merge_depth = 0
     for i in range(len(display_list) - 1, -1, -1):
         node, depth, ordered = display_list[i]
-        if not ordered and depth == 0 and i > 0 and node == display_list[i - 1][0] and display_list[i - 1][1] == 0:
+        if not ordered and depth == 0 and i > 0 and node == display_list[i - 1][0] and display_list[
+                i - 1][1] == 0:
             # An ordered node got a consecutive duplicate
             # when the tree was being filled in.
             del display_list[i]
@@ -453,7 +463,8 @@ def _prune_tree_display(display_list):
         if ordered and isinstance(node, Package) and node.operation in ("merge", "uninstall"):
             last_merge_depth = depth
             continue
-        if depth >= last_merge_depth or i < len(display_list) - 1 and depth >= display_list[i + 1][1]:
+        if depth >= last_merge_depth or i < len(display_list) - 1 and depth >= display_list[i +
+                                                                                            1][1]:
             del display_list[i]
 
 
@@ -474,9 +485,9 @@ class PkgInfo:
     information about the pkg being printed.
     """
 
-    __slots__ = ("attr_display", "built", "cp", "ebuild_path", "fetch_symbol", "merge", "oldbest", "oldbest_list",
-                 "operation", "ordered", "previous_pkg", "repo_name", "repo_path_real", "slot", "sub_slot", "system",
-                 "use", "ver", "world",
+    __slots__ = ("attr_display", "built", "cp", "ebuild_path", "fetch_symbol", "merge", "oldbest",
+                 "oldbest_list", "operation", "ordered", "previous_pkg", "repo_name",
+                 "repo_path_real", "slot", "sub_slot", "system", "use", "ver", "world",
                  )
 
     def __init__(self):
@@ -502,8 +513,8 @@ class PkgInfo:
 
 
 class PkgAttrDisplay(SlotObject):
-    __slots__ = ("downgrade", "fetch_restrict", "fetch_restrict_satisfied", "force_reinstall", "interactive", "mask",
-                 "new", "new_slot", "new_version", "replace",
+    __slots__ = ("downgrade", "fetch_restrict", "fetch_restrict_satisfied", "force_reinstall",
+                 "interactive", "mask", "new", "new_slot", "new_version", "replace",
                  )
 
     def __str__(self):

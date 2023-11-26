@@ -93,7 +93,8 @@ class features_set:
                     self._settings._unknown_features.update(unknown_features)
                     writemsg_level(colorize(
                         "BAD",
-                        _("FEATURES variable contains unknown value(s): %s") % ", ".join(sorted(unknown_features)),
+                        _("FEATURES variable contains unknown value(s): %s") %
+                        ", ".join(sorted(unknown_features)),
                     ) + "\n",
                                    level=logging.WARNING,
                                    noiselevel=-1,

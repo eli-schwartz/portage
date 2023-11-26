@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class TargetRootTestCase(TestCase):
@@ -43,25 +45,32 @@ class TargetRootTestCase(TestCase):
                                                  options={},
                                                  ambiguous_merge_order=True,
                                                  success=True,
-                                                 mergelist=[("dev-libs/B-1", "dev-libs/C-1{targetroot}"),
-                                                            "dev-libs/A-1{targetroot}", ],
+                                                 mergelist=[
+                                                     ("dev-libs/B-1", "dev-libs/C-1{targetroot}"),
+                                                     "dev-libs/A-1{targetroot}",
+                                                 ],
                                                  ),
                       ResolverPlaygroundTestCase(["dev-libs/A"],
                                                  options={"--root-deps": True},
                                                  ambiguous_merge_order=True,
                                                  success=True,
-                                                 mergelist=[("dev-libs/B-1{targetroot}", "dev-libs/C-1{targetroot}"),
+                                                 mergelist=[("dev-libs/B-1{targetroot}",
+                                                             "dev-libs/C-1{targetroot}"),
                                                             "dev-libs/A-1{targetroot}", ],
                                                  ),
                       ResolverPlaygroundTestCase(["dev-libs/A"],
                                                  options={"--root-deps": "rdeps"},
                                                  ambiguous_merge_order=True,
                                                  success=True,
-                                                 mergelist=[("dev-libs/C-1{targetroot}"), "dev-libs/A-1{targetroot}"],
+                                                 mergelist=[("dev-libs/C-1{targetroot}"),
+                                                            "dev-libs/A-1{targetroot}"],
                                                  ),
                       )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, targetroot=True, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        targetroot=True,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -75,7 +84,10 @@ class TargetRootTestCase(TestCase):
                                                  mergelist=["dev-lang/python-3.2"],
                                                  ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, targetroot=False, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        targetroot=False,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

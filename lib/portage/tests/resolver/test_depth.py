@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class ResolverDepthTestCase(TestCase):
@@ -33,8 +35,10 @@ class ResolverDepthTestCase(TestCase):
             "dev-libs/C-1": {},
             "dev-libs/C-2": {},
             "virtual/libusb-0": {
-                "EAPI": "2",
-                "SLOT": "0",
+                "EAPI":
+                "2",
+                "SLOT":
+                "0",
                 "RDEPEND":
                 "|| ( >=dev-libs/libusb-0.1.12-r1:0 dev-libs/libusb-compat >=sys-freebsd/freebsd-lib-8.0[usb] )",
             },
@@ -138,8 +142,10 @@ class ResolverDepthTestCase(TestCase):
             "dev-java/gcj-jdk-4.5": {},
             "dev-java/icedtea-6.1": {},
             "virtual/libusb-0": {
-                "EAPI": "2",
-                "SLOT": "0",
+                "EAPI":
+                "2",
+                "SLOT":
+                "0",
                 "RDEPEND":
                 "|| ( >=dev-libs/libusb-0.1.12-r1:0 dev-libs/libusb-compat >=sys-freebsd/freebsd-lib-8.0[usb] )",
             },
@@ -201,7 +207,10 @@ class ResolverDepthTestCase(TestCase):
                                        success=True,
                                        mergelist=["dev-libs/A-2"],
                                        ),
-            ResolverPlaygroundTestCase(["virtual/jre"], options={}, success=True, mergelist=["virtual/jre-1.6.0-r1"],
+            ResolverPlaygroundTestCase(["virtual/jre"],
+                                       options={},
+                                       success=True,
+                                       mergelist=["virtual/jre-1.6.0-r1"],
                                        ),
             ResolverPlaygroundTestCase(["virtual/jre"],
                                        options={"--deep": True},
@@ -230,23 +239,25 @@ class ResolverDepthTestCase(TestCase):
             # Recursively traversed virtual dependencies, and their
             # direct dependencies, are considered to have the same
             # depth as direct dependencies.
-            ResolverPlaygroundTestCase(["virtual/jre"],
-                                       options={
-                                           "--update": True,
-                                           "--deep": 1
-                                       },
-                                       success=True,
-                                       ambiguous_merge_order=True,
-                                       merge_order_assertions=(("dev-java/icedtea-6.1-r1", "virtual/jdk-1.6.0-r1"),
-                                                               ("virtual/jdk-1.6.0-r1", "virtual/jre-1.6.0-r1"),
-                                                               ("dev-java/gcj-jdk-4.5-r1", "virtual/jdk-1.5.0-r1"),
-                                                               ("virtual/jdk-1.5.0-r1", "virtual/jre-1.5.0-r1"),
-                                                               ),
-                                       mergelist=[("dev-java/icedtea-6.1-r1", "dev-java/gcj-jdk-4.5-r1",
-                                                   "virtual/jdk-1.6.0-r1", "virtual/jdk-1.5.0-r1",
-                                                   "virtual/jre-1.6.0-r1", "virtual/jre-1.5.0-r1",
-                                                   )],
-                                       ),
+            ResolverPlaygroundTestCase(
+                ["virtual/jre"],
+                options={
+                    "--update": True,
+                    "--deep": 1
+                },
+                success=True,
+                ambiguous_merge_order=True,
+                merge_order_assertions=(("dev-java/icedtea-6.1-r1", "virtual/jdk-1.6.0-r1"),
+                                        ("virtual/jdk-1.6.0-r1", "virtual/jre-1.6.0-r1"),
+                                        ("dev-java/gcj-jdk-4.5-r1", "virtual/jdk-1.5.0-r1"),
+                                        ("virtual/jdk-1.5.0-r1", "virtual/jre-1.5.0-r1"),
+                                        ),
+                mergelist=[
+                    ("dev-java/icedtea-6.1-r1", "dev-java/gcj-jdk-4.5-r1", "virtual/jdk-1.6.0-r1",
+                     "virtual/jdk-1.5.0-r1", "virtual/jre-1.6.0-r1", "virtual/jre-1.5.0-r1",
+                     )
+                ],
+            ),
             ResolverPlaygroundTestCase(["virtual/jre:1.5"],
                                        options={"--update": True},
                                        success=True,
@@ -280,7 +291,8 @@ class ResolverDepthTestCase(TestCase):
                                        },
                                        success=True,
                                        mergelist=[
-                                           "dev-java/icedtea-6.1-r1", "virtual/jdk-1.6.0-r1", "dev-java/ant-core-1.8",
+                                           "dev-java/icedtea-6.1-r1", "virtual/jdk-1.6.0-r1",
+                                           "dev-java/ant-core-1.8",
                                        ],
                                        ),
             ResolverPlaygroundTestCase(["dev-db/hsqldb"],
@@ -341,11 +353,17 @@ class ResolverDepthTestCase(TestCase):
             ResolverPlaygroundTestCase(["sys-fs/udev"],
                                        options={"--emptytree": True},
                                        success=True,
-                                       mergelist=["dev-libs/libusb-0.1.13", "virtual/libusb-0", "sys-fs/udev-164", ],
+                                       mergelist=[
+                                           "dev-libs/libusb-0.1.13", "virtual/libusb-0",
+                                           "sys-fs/udev-164",
+                                       ],
                                        ),
         )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, profile=profile, world=world)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        profile=profile,
+                                        world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

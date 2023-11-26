@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class CompleteGraphTestCase(TestCase):
@@ -64,7 +66,10 @@ class CompleteGraphTestCase(TestCase):
                                                  ),
                       )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
 
         try:
             for test_case in test_cases:
@@ -87,7 +92,12 @@ class CompleteGraphTestCase(TestCase):
             },
         }
 
-        installed = {"sys-libs/x-1": {}, "sys-apps/a-1": {"RDEPEND": ">=sys-libs/x-1 <sys-libs/x-2"}, }
+        installed = {
+            "sys-libs/x-1": {},
+            "sys-apps/a-1": {
+                "RDEPEND": ">=sys-libs/x-1 <sys-libs/x-2"
+            },
+        }
 
         world = ["sys-apps/a"]
 
@@ -131,7 +141,10 @@ class CompleteGraphTestCase(TestCase):
                                                  ),
                       )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
 
         try:
             for test_case in test_cases:

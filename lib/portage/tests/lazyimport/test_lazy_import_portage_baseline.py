@@ -16,8 +16,8 @@ class LazyImportPortageBaselineTestCase(TestCase):
     _module_re = re.compile(r"^(portage|_emerge)\.")
 
     _baseline_imports = frozenset([
-        "portage.const", "portage.installation", "portage.localization", "portage.proxy", "portage.proxy.lazyimport",
-        "portage.proxy.objectproxy", "portage._selinux",
+        "portage.const", "portage.installation", "portage.localization", "portage.proxy",
+        "portage.proxy.lazyimport", "portage.proxy.objectproxy", "portage._selinux",
     ])
 
     _baseline_import_cmd = [
@@ -56,7 +56,11 @@ sys.stdout.write(" ".join(k for k in sys.modules
         master_fd, slave_fd = os.pipe()
         master_file = os.fdopen(master_fd, "rb", 0)
         slave_file = os.fdopen(slave_fd, "wb")
-        producer = SpawnProcess(args=self._baseline_import_cmd, env=env, fd_pipes={1: slave_fd}, scheduler=scheduler, )
+        producer = SpawnProcess(args=self._baseline_import_cmd,
+                                env=env,
+                                fd_pipes={1: slave_fd},
+                                scheduler=scheduler,
+                                )
         producer.start()
         slave_file.close()
 
@@ -70,6 +74,7 @@ sys.stdout.write(" ".join(k for k in sys.modules
         output = consumer.getvalue().decode("ascii", "replace").split()
 
         unexpected_modules = " ".join(
-            sorted(x for x in output if self._module_re.match(x) is not None and x not in self._baseline_imports))
+            sorted(x for x in output
+                   if self._module_re.match(x) is not None and x not in self._baseline_imports))
 
         self.assertEqual("", unexpected_modules)

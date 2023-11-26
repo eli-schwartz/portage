@@ -48,13 +48,17 @@ class TestFakedbapi(TestCase):
         match_tests = (
             # The missing-iuse match is only intended to work for binary
             # packages with EAPIs that support IUSE_EFFECTIVE (bug 640318).
-            ("app-misc/foo[missing-iuse]", ["app-misc/foo-2"]
-             ), ("app-misc/foo[-missing-iuse]", []), ("app-misc/foo", ["app-misc/foo-1", "app-misc/foo-2"]),
-            ("sys-apps/portage:0[ipc]", ["sys-apps/portage-2.1.10"]), ("sys-apps/portage:0[-ipc]", []),
-            ("sys-apps/portage:0[doc]", []), ("sys-apps/portage:0[-doc]", ["sys-apps/portage-2.1.10"]),
-            ("sys-apps/portage:0", ["sys-apps/portage-2.1.10"]), ("sys-apps/portage:0[missing-iuse]", []),
-            ("sys-apps/portage:0[-missing-iuse]", []), ("sys-apps/portage:0::gentoo[ipc]", ["sys-apps/portage-2.1.10"]),
-            ("sys-apps/portage:0::multilib[ipc]", []), ("virtual/package-manager", ["virtual/package-manager-0"]),
+            ("app-misc/foo[missing-iuse]", ["app-misc/foo-2"]), ("app-misc/foo[-missing-iuse]", []),
+            ("app-misc/foo", ["app-misc/foo-1", "app-misc/foo-2"]), ("sys-apps/portage:0[ipc]",
+                                                                     ["sys-apps/portage-2.1.10"]),
+            ("sys-apps/portage:0[-ipc]", []), ("sys-apps/portage:0[doc]", []),
+            ("sys-apps/portage:0[-doc]", ["sys-apps/portage-2.1.10"
+                                          ]), ("sys-apps/portage:0", ["sys-apps/portage-2.1.10"]),
+            ("sys-apps/portage:0[missing-iuse]", []), ("sys-apps/portage:0[-missing-iuse]", []),
+            ("sys-apps/portage:0::gentoo[ipc]", ["sys-apps/portage-2.1.10"
+                                                 ]), ("sys-apps/portage:0::multilib[ipc]",
+                                                      []), ("virtual/package-manager",
+                                                            ["virtual/package-manager-0"]),
         )
 
         tempdir = tempfile.mkdtemp()
@@ -63,7 +67,10 @@ class TestFakedbapi(TestCase):
             os.makedirs(os.path.join(test_repo, "profiles"))
             with open(os.path.join(test_repo, "profiles", "repo_name"), "w") as f:
                 f.write("test_repo")
-            env = {"PORTAGE_REPOSITORIES": "[DEFAULT]\nmain-repo = test_repo\n[test_repo]\nlocation = %s" % test_repo}
+            env = {
+                "PORTAGE_REPOSITORIES":
+                "[DEFAULT]\nmain-repo = test_repo\n[test_repo]\nlocation = %s" % test_repo
+            }
 
             # Tests may override portage.const.EPREFIX in order to
             # simulate a prefix installation. It's reasonable to do

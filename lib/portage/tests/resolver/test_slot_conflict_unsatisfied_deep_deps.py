@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
@@ -24,7 +26,11 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
             },
         }
 
-        installed = {"dev-libs/broken-1": {"RDEPEND": "dev-libs/A dev-libs/initially-unsatisfied"}, }
+        installed = {
+            "dev-libs/broken-1": {
+                "RDEPEND": "dev-libs/A dev-libs/initially-unsatisfied"
+            },
+        }
 
         world = ("dev-libs/A", "dev-libs/B", "dev-libs/C", "dev-libs/D", "dev-libs/broken", )
 
@@ -38,7 +44,10 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
                                            "--autounmask": "y",
                                            "--complete-graph": True
                                        },
-                                       mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
+                                       mergelist=[
+                                           "dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1",
+                                           "dev-libs/D-1",
+                                       ],
                                        ignore_mergelist_order=True,
                                        unstable_keywords=["dev-libs/A-2"],
                                        unsatisfied_deps=[],
@@ -49,7 +58,10 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
                                            "--autounmask": "y",
                                            "--complete-graph": True
                                        },
-                                       mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
+                                       mergelist=[
+                                           "dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1",
+                                           "dev-libs/D-1",
+                                       ],
                                        ignore_mergelist_order=True,
                                        unstable_keywords=["dev-libs/A-2"],
                                        unsatisfied_deps=["dev-libs/broken"],
@@ -63,7 +75,10 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
                                            "--selective": True,
                                            "--deep": 0,
                                        },
-                                       mergelist=["dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1", "dev-libs/D-1", ],
+                                       mergelist=[
+                                           "dev-libs/A-2", "dev-libs/B-1", "dev-libs/C-1",
+                                           "dev-libs/D-1",
+                                       ],
                                        ignore_mergelist_order=True,
                                        unstable_keywords=["dev-libs/A-2"],
                                        unsatisfied_deps=[],
@@ -159,7 +174,10 @@ class SlotConflictUnsatisfiedDeepDepsTestCase(TestCase):
             # --autounmask-backtrack=n.
         )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

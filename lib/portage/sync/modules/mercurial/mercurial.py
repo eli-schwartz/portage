@@ -45,19 +45,28 @@ class MercurialSync(NewBase):
         hg_cmd_opts = ""
         if self.repo.module_specific_options.get("sync-mercurial-env"):
             shlexed_env = shlex_split(self.repo.module_specific_options["sync-mercurial-env"])
-            env = {k: v for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k}
+            env = {
+                k: v
+                for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k
+            }
             self.spawn_kwargs["env"].update(env)
 
         if self.repo.module_specific_options.get("sync-mercurial-clone-env"):
             shlexed_env = shlex_split(self.repo.module_specific_options["sync-mercurial-clone-env"])
-            clone_env = {k: v for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k}
+            clone_env = {
+                k: v
+                for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k
+            }
             self.spawn_kwargs["env"].update(clone_env)
 
         if self.settings.get("PORTAGE_QUIET") == "1":
             hg_cmd_opts += " --quiet"
         if self.repo.module_specific_options.get("sync-mercurial-clone-extra-opts"):
-            hg_cmd_opts += " %s" % self.repo.module_specific_options["sync-mercurial-clone-extra-opts"]
-        hg_cmd = "{} clone{} {} .".format(self.bin_command, hg_cmd_opts, portage._shell_quote(sync_uri), )
+            hg_cmd_opts += " %s" % self.repo.module_specific_options[
+                "sync-mercurial-clone-extra-opts"]
+        hg_cmd = "{} clone{} {} .".format(self.bin_command, hg_cmd_opts,
+                                          portage._shell_quote(sync_uri),
+                                          )
         writemsg_level(hg_cmd + "\n")
 
         exitcode = portage.process.spawn(shlex_split(hg_cmd),
@@ -81,23 +90,31 @@ class MercurialSync(NewBase):
         hg_cmd_opts = ""
         if self.repo.module_specific_options.get("sync-mercurial-env"):
             shlexed_env = shlex_split(self.repo.module_specific_options["sync-mercurial-env"])
-            env = {k: v for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k}
+            env = {
+                k: v
+                for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k
+            }
             self.spawn_kwargs["env"].update(env)
 
         if self.repo.module_specific_options.get("sync-mercurial-pull-env"):
             shlexed_env = shlex_split(self.repo.module_specific_options["sync-mercurial-pull-env"])
-            pull_env = {k: v for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k}
+            pull_env = {
+                k: v
+                for k, _, v in (assignment.partition("=") for assignment in shlexed_env) if k
+            }
             self.spawn_kwargs["env"].update(pull_env)
 
         if self.settings.get("PORTAGE_QUIET") == "1":
             hg_cmd_opts += " --quiet"
         if self.repo.module_specific_options.get("sync-mercurial-pull-extra-opts"):
-            hg_cmd_opts += " %s" % self.repo.module_specific_options["sync-mercurial-pull-extra-opts"]
+            hg_cmd_opts += " %s" % self.repo.module_specific_options[
+                "sync-mercurial-pull-extra-opts"]
         hg_cmd = f"{self.bin_command} pull -u{hg_cmd_opts}"
         writemsg_level(hg_cmd + "\n")
 
         rev_cmd = [self.bin_command, "id", "--id", "--rev", "tip"]
-        previous_rev = subprocess.check_output(rev_cmd, cwd=portage._unicode_encode(self.repo.location))
+        previous_rev = subprocess.check_output(rev_cmd,
+                                               cwd=portage._unicode_encode(self.repo.location))
 
         exitcode = portage.process.spawn(shlex_split(hg_cmd),
                                          cwd=portage._unicode_encode(self.repo.location),
@@ -109,7 +126,8 @@ class MercurialSync(NewBase):
             writemsg_level(msg + "\n", level=logging.ERROR, noiselevel=-1)
             return (exitcode, False)
 
-        current_rev = subprocess.check_output(rev_cmd, cwd=portage._unicode_encode(self.repo.location))
+        current_rev = subprocess.check_output(rev_cmd,
+                                              cwd=portage._unicode_encode(self.repo.location))
 
         return (os.EX_OK, current_rev != previous_rev)
 
@@ -121,7 +139,8 @@ class MercurialSync(NewBase):
         try:
             ret = (os.EX_OK,
                    portage._unicode_decode(
-                       subprocess.check_output(rev_cmd, cwd=portage._unicode_encode(self.repo.location))),
+                       subprocess.check_output(rev_cmd,
+                                               cwd=portage._unicode_encode(self.repo.location))),
                    )
         except subprocess.CalledProcessError:
             ret = (1, False)

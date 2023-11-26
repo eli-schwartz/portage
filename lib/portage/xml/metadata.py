@@ -187,7 +187,9 @@ class MetaDataXML:
         self._xml_tree = None
 
         try:
-            self._xml_tree = etree.parse(_unicode_encode(metadata_xml_path, encoding=_encodings["fs"], errors="strict"),
+            self._xml_tree = etree.parse(_unicode_encode(metadata_xml_path,
+                                                         encoding=_encodings["fs"],
+                                                         errors="strict"),
                                          parser=etree.XMLParser(target=_MetadataTreeBuilder()),
                                          )
         except ImportError:
@@ -287,7 +289,8 @@ class MetaDataXML:
             if self._xml_tree is None:
                 self._descriptions = tuple()
             else:
-                self._descriptions = tuple(e.text for e in self._xml_tree.findall("longdescription") if e.text)
+                self._descriptions = tuple(e.text for e in self._xml_tree.findall("longdescription")
+                                           if e.text)
 
         return self._descriptions
 
@@ -302,7 +305,8 @@ class MetaDataXML:
             if self._xml_tree is None:
                 self._maintainers = tuple()
             else:
-                self._maintainers = tuple(_Maintainer(node) for node in self._xml_tree.findall("maintainer"))
+                self._maintainers = tuple(
+                    _Maintainer(node) for node in self._xml_tree.findall("maintainer"))
 
         return self._maintainers
 
@@ -337,7 +341,8 @@ class MetaDataXML:
             if self._xml_tree is None:
                 self._upstream = tuple()
             else:
-                self._upstream = tuple(_Upstream(node) for node in self._xml_tree.findall("upstream"))
+                self._upstream = tuple(
+                    _Upstream(node) for node in self._xml_tree.findall("upstream"))
 
         return self._upstream
 

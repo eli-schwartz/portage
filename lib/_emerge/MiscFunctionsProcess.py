@@ -18,7 +18,8 @@ class MiscFunctionsProcess(AbstractEbuildProcess):
     def _start(self):
         settings = self.settings
         portage_bin_path = settings["PORTAGE_BIN_PATH"]
-        misc_sh_binary = os.path.join(portage_bin_path, os.path.basename(portage.const.MISC_SH_BINARY))
+        misc_sh_binary = os.path.join(portage_bin_path,
+                                      os.path.basename(portage.const.MISC_SH_BINARY))
 
         self.args = [portage._shell_quote(misc_sh_binary)] + self.commands
         if self.logfile is None and self.settings.get("PORTAGE_BACKGROUND") != "subprocess":
@@ -29,7 +30,9 @@ class MiscFunctionsProcess(AbstractEbuildProcess):
     def _spawn(self, args, **kwargs):
         # If self.ld_preload_sandbox is None, default to free=False,
         # in alignment with the spawn(free=False) default.
-        kwargs.setdefault("free", False if self.ld_preload_sandbox is None else not self.ld_preload_sandbox, )
+        kwargs.setdefault("free",
+                          False if self.ld_preload_sandbox is None else not self.ld_preload_sandbox,
+                          )
 
         if self._dummy_pipe_fd is not None:
             self.settings["PORTAGE_PIPE_FD"] = str(self._dummy_pipe_fd)

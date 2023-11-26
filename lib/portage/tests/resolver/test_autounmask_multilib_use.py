@@ -4,7 +4,9 @@
 import pytest
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class AutounmaskMultilibUseTestCase(TestCase):
@@ -64,15 +66,16 @@ class AutounmaskMultilibUseTestCase(TestCase):
             # Test autounmask solving of multilib use deps for bug #481628.
             # We would like it to suggest some USE changes, but instead it
             # currently fails with a SLOT conflict.
-            ResolverPlaygroundTestCase(["x11-proto/xextproto", "x11-libs/libXaw"],
-                                       options={
-                                           "--oneshot": True,
-                                           "--autounmask": True,
-                                           "--backtrack": 30
-                                       },
-                                       mergelist=["x11-proto/xextproto-7.2.1-r1", "x11-libs/libXaw-1.0.11-r2"],
-                                       success=True,
-                                       ), )
+            ResolverPlaygroundTestCase(
+                ["x11-proto/xextproto", "x11-libs/libXaw"],
+                options={
+                    "--oneshot": True,
+                    "--autounmask": True,
+                    "--backtrack": 30
+                },
+                mergelist=["x11-proto/xextproto-7.2.1-r1", "x11-libs/libXaw-1.0.11-r2"],
+                success=True,
+            ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds,
                                         installed=installed,

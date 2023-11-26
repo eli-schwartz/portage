@@ -31,9 +31,9 @@ def urlopen(url, if_modified_since=None, headers={}, proxies=None):
         return _urlopen(url)
 
     netloc = parse_result.netloc.rpartition("@")[-1]
-    url = urllib_parse.urlunparse(
-        (parse_result.scheme, netloc, parse_result.path, parse_result.params, parse_result.query, parse_result.fragment,
-         ))
+    url = urllib_parse.urlunparse((parse_result.scheme, netloc, parse_result.path,
+                                   parse_result.params, parse_result.query, parse_result.fragment,
+                                   ))
     password_manager = urllib_request.HTTPPasswordMgrWithDefaultRealm()
     request = urllib_request.Request(url)
     request.add_header("User-Agent", "Gentoo Portage")
@@ -99,8 +99,8 @@ class CompressedResponseProcessor(urllib_request.HTTPBasicAuthHandler):
                 decompressed = io.BytesIO(zlib.decompress(response.read(), -zlib.MAX_WBITS))
         if decompressed:
             old_response = response
-            response = urllib_request.addinfourl(decompressed, old_response.headers, old_response.url,
-                                                 old_response.code)
+            response = urllib_request.addinfourl(decompressed, old_response.headers,
+                                                 old_response.url, old_response.code)
             response.msg = old_response.msg
         return response
 

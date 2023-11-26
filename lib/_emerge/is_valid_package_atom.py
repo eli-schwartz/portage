@@ -20,4 +20,7 @@ def is_valid_package_atom(x, allow_repo=False, allow_build_id=True):
         x2 = insert_category_into_atom(x, "cat")
         if x2 is not None:
             x = x2
-    return isvalidatom(x, allow_blockers=False, allow_repo=allow_repo, allow_build_id=allow_build_id)
+    return isvalidatom(x,
+                       allow_blockers=False,
+                       allow_repo=allow_repo,
+                       allow_build_id=allow_build_id)

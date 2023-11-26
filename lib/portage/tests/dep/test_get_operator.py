@@ -21,7 +21,10 @@ class GetOperator(TestCase):
                     if slot:
                         atom += ":" + slot
                     result = get_operator(test[0] + atom)
-                    self.assertEqual(result, test[1], msg=f"get_operator({test[0] + atom}) != {test[1]}", )
+                    self.assertEqual(result,
+                                     test[1],
+                                     msg=f"get_operator({test[0] + atom}) != {test[1]}",
+                                     )
 
         result = get_operator("sys-apps/portage")
         self.assertEqual(result, None)

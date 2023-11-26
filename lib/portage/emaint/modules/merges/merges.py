@@ -187,7 +187,8 @@ class MergesHandler:
         """
         # TODO: rewrite code to use portage's APIs instead of a subprocess
         env = {"FEATURES": "-collision-protect -protect-owned", "PATH": os.environ["PATH"], }
-        emerge_cmd = (portage._python_interpreter, "-b", os.path.join(EPREFIX or "/", "usr", "bin", "emerge"),
+        emerge_cmd = (portage._python_interpreter, "-b",
+                      os.path.join(EPREFIX or "/", "usr", "bin", "emerge"),
                       "--ask=n" if yes else "--ask", "--quiet", "--oneshot", "--complete-graph=y",
                       )
         results = []
@@ -197,7 +198,11 @@ class MergesHandler:
         else:
             module_output = subprocess.PIPE
             results.append(msg)
-        proc = subprocess.Popen(emerge_cmd + tuple(pkg_atoms), env=env, stdout=module_output, stderr=sys.stderr, )
+        proc = subprocess.Popen(emerge_cmd + tuple(pkg_atoms),
+                                env=env,
+                                stdout=module_output,
+                                stderr=sys.stderr,
+                                )
         output = proc.communicate()[0]
         if output:
             results.append(output)
@@ -240,7 +245,9 @@ class MergesHandler:
             errors.append(", ".join(sorted(failed_pkgs)))
             return (False, errors)
         self._remove_failed_dirs(failed_pkgs)
-        results = self._emerge_pkg_atoms(module_output, pkg_atoms, yes=kwargs.get("options", {}).get("yes", False))
+        results = self._emerge_pkg_atoms(module_output,
+                                         pkg_atoms,
+                                         yes=kwargs.get("options", {}).get("yes", False))
         # list any new failed merges
         for pkg in sorted(self._scan()):
             results.append(f"'{pkg}' still found as a failed merge.")

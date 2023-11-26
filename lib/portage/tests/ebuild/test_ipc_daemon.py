@@ -59,12 +59,18 @@ class IpcDaemonTestCase(TestCase):
             for exitcode in (0, 1, 2):
                 exit_command = ExitCommand()
                 commands = {"exit": exit_command}
-                daemon = EbuildIpcDaemon(commands=commands, input_fifo=input_fifo, output_fifo=output_fifo)
-                proc = SpawnProcess(args=[BASH_BINARY, "-c",
-                                          '"$PORTAGE_BIN_PATH"/ebuild-ipc exit %d' % exitcode, ],
+                daemon = EbuildIpcDaemon(commands=commands,
+                                         input_fifo=input_fifo,
+                                         output_fifo=output_fifo)
+                proc = SpawnProcess(args=[
+                    BASH_BINARY, "-c",
+                    '"$PORTAGE_BIN_PATH"/ebuild-ipc exit %d' % exitcode,
+                ],
                                     env=env,
                                     )
-                task_scheduler = TaskScheduler(iter([daemon, proc]), max_jobs=2, event_loop=event_loop)
+                task_scheduler = TaskScheduler(iter([daemon, proc]),
+                                               max_jobs=2,
+                                               event_loop=event_loop)
 
                 self.received_command = False
 
@@ -78,9 +84,10 @@ class IpcDaemonTestCase(TestCase):
 
                 hardlock_cleanup(env["PORTAGE_BUILDDIR"], remove_all_locks=True)
 
-                self.assertEqual(self.received_command, True,
-                                 "command not received after %d seconds" % (time.time() - start_time, ),
-                                 )
+                self.assertEqual(
+                    self.received_command, True,
+                    "command not received after %d seconds" % (time.time() - start_time, ),
+                )
                 self.assertEqual(proc.isAlive(), False)
                 self.assertEqual(daemon.isAlive(), False)
                 self.assertEqual(exit_command.exitcode, exitcode)
@@ -94,11 +101,15 @@ class IpcDaemonTestCase(TestCase):
             for i in range(3):
                 exit_command = ExitCommand()
                 commands = {"exit": exit_command}
-                daemon = EbuildIpcDaemon(commands=commands, input_fifo=input_fifo, output_fifo=output_fifo)
+                daemon = EbuildIpcDaemon(commands=commands,
+                                         input_fifo=input_fifo,
+                                         output_fifo=output_fifo)
                 # Emulate the sleep command, in order to ensure a consistent
                 # return code when it is killed by SIGTERM (see bug #437180).
                 proc = ForkProcess(target=time.sleep, args=(sleep_time_s, ))
-                task_scheduler = TaskScheduler(iter([daemon, proc]), max_jobs=2, event_loop=event_loop)
+                task_scheduler = TaskScheduler(iter([daemon, proc]),
+                                               max_jobs=2,
+                                               event_loop=event_loop)
 
                 self.received_command = False
 

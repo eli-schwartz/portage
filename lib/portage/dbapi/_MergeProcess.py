@@ -22,9 +22,10 @@ class MergeProcess(ForkProcess):
     thread while files are moved or copied asynchronously.
     """
 
-    __slots__ = ("mycat", "mypkg", "settings", "treetype", "vartree", "blockers", "pkgloc", "infloc", "myebuild",
-                 "mydbapi", "postinst_failure", "prev_mtimes", "unmerge", "_elog_reader_fd", "_buf", "_counter",
-                 "_dblink", "_elog_keys", "_locked_vdb", "_mtime_reader",
+    __slots__ = ("mycat", "mypkg", "settings", "treetype", "vartree", "blockers", "pkgloc",
+                 "infloc", "myebuild", "mydbapi", "postinst_failure", "prev_mtimes", "unmerge",
+                 "_elog_reader_fd", "_buf", "_counter", "_dblink", "_elog_keys", "_locked_vdb",
+                 "_mtime_reader",
                  )
 
     def _start(self):
@@ -169,9 +170,9 @@ class MergeProcess(ForkProcess):
             for tree_type in ("vartree", "porttree"):
                 child_db[root][tree_type] = parent_db[root][tree_type]
 
-        self.target = functools.partial(self._target, self._counter, self._dblink, self.infloc, self.mydbapi,
-                                        self.myebuild, self.pkgloc, self.prev_mtimes, self.settings, self.unmerge,
-                                        self.vartree.dbapi, child_db,
+        self.target = functools.partial(self._target, self._counter, self._dblink, self.infloc,
+                                        self.mydbapi, self.myebuild, self.pkgloc, self.prev_mtimes,
+                                        self.settings, self.unmerge, self.vartree.dbapi, child_db,
                                         )
 
         pids = super()._spawn(args, fd_pipes, **kwargs)
@@ -192,7 +193,9 @@ class MergeProcess(ForkProcess):
         return pids
 
     @staticmethod
-    def _target(counter, mylink, infloc, mydbapi, myebuild, pkgloc, prev_mtimes, settings, unmerge, vardb, db, ):
+    def _target(counter, mylink, infloc, mydbapi, myebuild, pkgloc, prev_mtimes, settings, unmerge,
+                vardb, db,
+                ):
         if QueryCommand._db is None:
             # Initialize QueryCommand._db for AbstractEbuildProcess/EbuildIpcDaemon
             # when not using the multiprocessing fork start method.

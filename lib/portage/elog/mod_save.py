@@ -33,9 +33,11 @@ def process(mysettings, key, logentries, fulltext):
 
     cat, pf = portage.catsplit(key)
 
-    elogfilename = (pf + ":" + _unicode_decode(
-        time.strftime("%Y%m%d-%H%M%S", time.gmtime(time.time())), encoding=_encodings["content"], errors="replace",
-    ) + ".log")
+    elogfilename = (pf + ":" +
+                    _unicode_decode(time.strftime("%Y%m%d-%H%M%S", time.gmtime(time.time())),
+                                    encoding=_encodings["content"],
+                                    errors="replace",
+                                    ) + ".log")
 
     if "split-elog" in mysettings.features:
         log_subdir = os.path.join(logdir, "elog", cat)

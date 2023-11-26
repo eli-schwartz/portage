@@ -58,7 +58,8 @@ class SubProcess(AbstractPollTask):
             self._async_wait()
         elif self._waitpid_id is None:
             self._waitpid_id = self.pid
-            self.scheduler._asyncio_child_watcher.add_child_handler(self.pid, self._async_waitpid_cb)
+            self.scheduler._asyncio_child_watcher.add_child_handler(self.pid,
+                                                                    self._async_waitpid_cb)
 
     def _async_waitpid_cb(self, pid, returncode):
         if pid != self.pid:

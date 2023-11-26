@@ -4,7 +4,9 @@
 import sys
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.output import colorize
 
@@ -98,7 +100,9 @@ class BdepsTestCase(TestCase):
                                        },
                                        success=True,
                                        ambiguous_merge_order=True,
-                                       mergelist=["app-misc/D-2", ("app-misc/B-2", "app-misc/C-2"), ],
+                                       mergelist=[
+                                           "app-misc/D-2", ("app-misc/B-2", "app-misc/C-2"),
+                                       ],
                                        ),
             # Use --with-bdeps-auto=n to prevent --with-bdeps
             # from being enabled automatically.
@@ -137,10 +141,9 @@ class BdepsTestCase(TestCase):
                                        },
                                        success=True,
                                        ambiguous_merge_order=True,
-                                       mergelist=[
-                                           ("[binary]app-misc/D-2", "[binary]app-misc/B-2", "[binary]app-misc/C-2",
-                                            ),
-                                       ],
+                                       mergelist=[("[binary]app-misc/D-2", "[binary]app-misc/B-2",
+                                                   "[binary]app-misc/C-2",
+                                                   ), ],
                                        ),
             # For --depclean, do not remove build-time dependencies by
             # default. Specify --with-bdeps-auto=n, in order to
@@ -176,7 +179,8 @@ class BdepsTestCase(TestCase):
                                                 binpkgs=binpkgs,
                                                 world=world,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:

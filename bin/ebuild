@@ -46,7 +46,9 @@ from portage import _encodings
 from portage import _shell_quote
 from portage import _unicode_encode
 from portage.const import VDB_PATH
-from portage.exception import (PermissionDenied, PortageKeyError, PortagePackageException, UnsupportedAPIException, )
+from portage.exception import (PermissionDenied, PortageKeyError, PortagePackageException,
+                               UnsupportedAPIException,
+                               )
 from portage.localization import _
 import portage.util
 from portage.util._eventloop.global_event_loop import global_event_loop
@@ -106,8 +108,8 @@ def main():
     if debug and "python-trace" in portage.features:
         portage.debug.set_trace(True)
 
-    if not opts.color == "y" and (opts.color == "n" or portage.util.no_color(portage.settings)
-                                  or portage.settings.get("TERM") == "dumb" or not sys.stdout.isatty()):
+    if not opts.color == "y" and (opts.color == "n" or portage.util.no_color(
+            portage.settings) or portage.settings.get("TERM") == "dumb" or not sys.stdout.isatty()):
         portage.output.nocolor()
         portage.settings.unlock()
         portage.settings["NO_COLOR"] = "true"
@@ -201,9 +203,13 @@ def main():
             portage._doebuild_manifest_exempt_depend += 1
             pkgdir = os.path.dirname(myebuild)
             fetchlist_dict = portage.FetchlistDict(pkgdir, mysettings, mydbapi)
-            mf = mysettings.repositories.get_repo_for_location(os.path.dirname(os.path.dirname(pkgdir)))
+            mf = mysettings.repositories.get_repo_for_location(
+                os.path.dirname(os.path.dirname(pkgdir)))
             mf = mf.load_manifest(pkgdir, mysettings["DISTDIR"], fetchlist_dict=fetchlist_dict)
-            mf.create(requiredDistfiles=None, assumeDistHashesSometimes=True, assumeDistHashesAlways=True, )
+            mf.create(requiredDistfiles=None,
+                      assumeDistHashesSometimes=True,
+                      assumeDistHashesAlways=True,
+                      )
             distfiles = fetchlist_dict[cpv]
             for myfile in distfiles:
                 try:
@@ -217,7 +223,8 @@ def main():
     portage.settings.validate()  # generate warning messages if necessary
 
     build_dir_phases = {
-        "setup", "unpack", "prepare", "configure", "compile", "test", "install", "package", "rpm", "merge", "qmerge",
+        "setup", "unpack", "prepare", "configure", "compile", "test", "install", "package", "rpm",
+        "merge", "qmerge",
     }
 
     # If the current metadata is invalid then force the ebuild to be
@@ -238,7 +245,8 @@ def main():
         tmpsettings["EBUILD_SKIP_MANIFEST"] = "1"
         tmpsettings.backup_changes("EBUILD_SKIP_MANIFEST")
 
-    if (opts.skip_manifest or "digest" in tmpsettings.features or "digest" in pargs or "manifest" in pargs):
+    if (opts.skip_manifest or "digest" in tmpsettings.features or "digest" in pargs
+            or "manifest" in pargs):
         portage._doebuild_manifest_exempt_depend += 1
 
     if "test" in pargs:
@@ -269,9 +277,12 @@ def main():
 
     try:
         metadata = dict(
-            zip(Package.metadata_keys,
-                portage.db[portage.settings["EROOT"]][mytree].dbapi.aux_get(cpv, Package.metadata_keys, myrepo=myrepo),
-                ))
+            zip(
+                Package.metadata_keys,
+                portage.db[portage.settings["EROOT"]][mytree].dbapi.aux_get(cpv,
+                                                                            Package.metadata_keys,
+                                                                            myrepo=myrepo),
+            ))
     except PortageKeyError:
         # aux_get failure, message should have been shown on stderr.
         sys.exit(1)
@@ -301,8 +312,10 @@ def main():
     tmpsettings.setcpv(pkg)
 
     def stale_env_warning():
-        if ("clean" not in pargs and "noauto" not in tmpsettings.features and build_dir_phases.intersection(pargs)):
-            portage.doebuild_environment(ebuild, "setup", portage.root, tmpsettings, debug, 1, portage.portdb)
+        if ("clean" not in pargs and "noauto" not in tmpsettings.features
+                and build_dir_phases.intersection(pargs)):
+            portage.doebuild_environment(ebuild, "setup", portage.root, tmpsettings, debug, 1,
+                                         portage.portdb)
             env_filename = os.path.join(tmpsettings["T"], "environment")
             if os.path.exists(env_filename):
                 msg = (f"Existing ${{T}}/environment for '{tmpsettings['PF']}' will be sourced. "
@@ -312,7 +325,8 @@ def main():
                     portage.writemsg(f">>> {x}\n")
 
                 if ebuild_changed:
-                    open(os.path.join(tmpsettings["PORTAGE_BUILDDIR"], ".ebuild_changed"), "w", ).close()
+                    open(os.path.join(tmpsettings["PORTAGE_BUILDDIR"], ".ebuild_changed"), "w",
+                         ).close()
 
     checked_for_stale_env = False
 

@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -47,8 +49,8 @@ class DisjunctiveDependOrderTestCase(TestCase):
             ResolverPlaygroundTestCase(["dev-db/hsqldb"],
                                        success=True,
                                        mergelist=[
-                                           "dev-java/icedtea-3.6", "virtual/jdk-1.8", "virtual/jre-1.8",
-                                           "dev-db/hsqldb-1.8",
+                                           "dev-java/icedtea-3.6", "virtual/jdk-1.8",
+                                           "virtual/jre-1.8", "dev-db/hsqldb-1.8",
                                        ],
                                        ),
             # The jdk is not needed with --usepkg, so the jre should
@@ -71,7 +73,8 @@ class DisjunctiveDependOrderTestCase(TestCase):
                                                 binpkgs=binpkgs,
                                                 ebuilds=ebuilds,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
 

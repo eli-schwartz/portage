@@ -51,7 +51,8 @@ class PipeReaderTestCase(TestCase):
             tempdir = tempfile.mkdtemp()
             fifo_path = os.path.join(tempdir, "fifo")
             os.mkfifo(fifo_path)
-            return ((os.open(fifo_path, os.O_NONBLOCK | os.O_RDONLY), os.open(fifo_path, os.O_NONBLOCK | os.O_WRONLY),
+            return ((os.open(fifo_path, os.O_NONBLOCK | os.O_RDONLY),
+                     os.open(fifo_path, os.O_NONBLOCK | os.O_WRONLY),
                      ), functools.partial(shutil.rmtree, tempdir),
                     )
 
@@ -69,7 +70,10 @@ class PipeReaderTestCase(TestCase):
         master_file = os.fdopen(master_fd, "rb", 0)
         scheduler = global_event_loop()
 
-        consumer = PipeReader(input_files={"producer": master_file}, _use_array=self._use_array, scheduler=scheduler, )
+        consumer = PipeReader(input_files={"producer": master_file},
+                              _use_array=self._use_array,
+                              scheduler=scheduler,
+                              )
         consumer.start()
 
         producer = scheduler.run_until_complete(

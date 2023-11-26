@@ -10,7 +10,9 @@ import operator
 
 import portage
 from portage.dep import Atom, match_from_list, use_reduce
-from portage.dep._dnf import (dnf_convert as _dnf_convert, contains_disjunction as _contains_disjunction, )
+from portage.dep._dnf import (dnf_convert as _dnf_convert, contains_disjunction as
+                              _contains_disjunction,
+                              )
 from portage.exception import InvalidDependString, ParseError
 from portage.localization import _
 from portage.util import writemsg, writemsg_level
@@ -96,7 +98,8 @@ def _expand_new_virtuals(mysplit,
                         # Due to normalization, a conjunction must not be
                         # nested directly in another conjunction, so this
                         # must be a disjunction.
-                        assert x and x[0] == "||", f"Normalization error, nested conjunction found in {x_exp}"
+                        assert x and x[
+                            0] == "||", f"Normalization error, nested conjunction found in {x_exp}"
                         newsplit.extend(x[1:])
                     else:
                         newsplit.append(x)
@@ -187,7 +190,8 @@ def _expand_new_virtuals(mysplit,
                 virt_atom = Atom(virt_atom)
                 if parent is None:
                     if myuse is None:
-                        virt_atom = virt_atom.evaluate_conditionals(mysettings.get("PORTAGE_USE", "").split())
+                        virt_atom = virt_atom.evaluate_conditionals(
+                            mysettings.get("PORTAGE_USE", "").split())
                     else:
                         virt_atom = virt_atom.evaluate_conditionals(myuse)
                 else:
@@ -207,14 +211,26 @@ def _expand_new_virtuals(mysplit,
             pkg_kwargs = kwargs.copy()
             pkg_kwargs["myuse"] = pkg_use_enabled(pkg)
             if edebug:
-                writemsg_level(_("Virtual Parent:      %s\n") % (pkg, ), noiselevel=-1, level=logging.DEBUG, )
-                writemsg_level(_("Virtual Depstring:   %s\n") % (depstring, ), noiselevel=-1, level=logging.DEBUG, )
+                writemsg_level(_("Virtual Parent:      %s\n") % (pkg, ),
+                               noiselevel=-1,
+                               level=logging.DEBUG,
+                               )
+                writemsg_level(_("Virtual Depstring:   %s\n") % (depstring, ),
+                               noiselevel=-1,
+                               level=logging.DEBUG,
+                               )
 
             # Set EAPI used for validation in dep_check() recursion.
             mytrees["virt_parent"] = pkg
 
             try:
-                mycheck = dep_check(depstring, mydbapi, mysettings, myroot=myroot, trees=trees, **pkg_kwargs, )
+                mycheck = dep_check(depstring,
+                                    mydbapi,
+                                    mysettings,
+                                    myroot=myroot,
+                                    trees=trees,
+                                    **pkg_kwargs,
+                                    )
             finally:
                 # Restore previous EAPI after recursion.
                 if virt_parent is not None:
@@ -295,8 +311,8 @@ def dep_eval(deplist):
 
 
 class _dep_choice(SlotObject):
-    __slots__ = ("atoms", "slot_map", "cp_map", "all_available", "all_installed_slots", "new_slot_count", "want_update",
-                 "all_in_graph",
+    __slots__ = ("atoms", "slot_map", "cp_map", "all_available", "all_installed_slots",
+                 "new_slot_count", "want_update", "all_in_graph",
                  )
 
 
@@ -350,8 +366,9 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
 
     # unsat_use_* must come after preferred_non_installed
     # for correct ordering in cases like || ( foo[a] foo[b] ).
-    choice_bins = (preferred_in_graph, preferred_non_installed, unsat_use_in_graph, unsat_use_installed,
-                   unsat_use_non_installed, other_installed, other_installed_some, other_installed_any_slot, other,
+    choice_bins = (preferred_in_graph, preferred_non_installed, unsat_use_in_graph,
+                   unsat_use_installed, unsat_use_non_installed, other_installed,
+                   other_installed_some, other_installed_any_slot, other,
                    )
 
     # Alias the trees we'll be checking availability against
@@ -411,7 +428,8 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
                 continue
 
             # It's not a downgrade if parent is replacing child.
-            replacing = parent and graph_interface and graph_interface.will_replace_child(parent, myroot, atom)
+            replacing = parent and graph_interface and graph_interface.will_replace_child(
+                parent, myroot, atom)
             # Ignore USE dependencies here since we don't want USE
             # settings to adversely affect || preference evaluation.
             avail_pkg = mydbapi_match_pkgs(atom.without_use)
@@ -427,7 +445,8 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
 
             if not replacing and graph_db is not None and downgrade_probe is not None:
                 slot_matches = graph_db.match_pkgs(avail_slot)
-                if len(slot_matches) > 1 and avail_pkg < slot_matches[-1] and not downgrade_probe(avail_pkg):
+                if len(slot_matches
+                       ) > 1 and avail_pkg < slot_matches[-1] and not downgrade_probe(avail_pkg):
                     # If a downgrade is not desirable, then avoid a
                     # choice that pulls in a lower version involved
                     # in a slot conflict (bug #531656).
@@ -494,7 +513,8 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
                 if all_match_previous and not all_match_current:
                     continue
 
-            current_higher = highest_cpv is None or vercmp(avail_pkg.version, highest_cpv.version) > 0
+            current_higher = highest_cpv is None or vercmp(avail_pkg.version,
+                                                           highest_cpv.version) > 0
 
             if current_higher or (all_match_current and not all_match_previous):
                 cp_map[avail_pkg.cp] = avail_pkg
@@ -709,8 +729,8 @@ def dep_zapdeps(unreduced, reduced, myroot, use_binaries=0, trees=None, minimize
                     (has_upgrade and not has_downgrade)
                         # Prefer choices where all packages have been pulled into
                         # the graph, except for choices that eliminate upgrades.
-                        or
-                    (choice_1.all_in_graph and not choice_2.all_in_graph and not (has_downgrade and not has_upgrade))):
+                        or (choice_1.all_in_graph and not choice_2.all_in_graph
+                            and not (has_downgrade and not has_upgrade))):
                     # promote choice_1 in front of choice_2
                     choices.remove(choice_1)
                     index_2 = choices.index(choice_2)
@@ -893,7 +913,8 @@ def _overlap_dnf(dep_struct):
     result = []
     for i, x in enumerate(dep_struct):
         if isinstance(x, list):
-            assert x and x[0] == "||", f"Normalization error, nested conjunction found in {dep_struct}"
+            assert x and x[
+                0] == "||", f"Normalization error, nested conjunction found in {dep_struct}"
             order_map[id(x)] = i
             prev_cp = None
             for atom in _iter_flatten(x):
@@ -919,7 +940,8 @@ def _overlap_dnf(dep_struct):
             traversed.add(cp)
             for x in cp_map[cp]:
                 disjunctions[id(x)] = x
-            for other_cp in itertools.chain(overlap_graph.child_nodes(cp), overlap_graph.parent_nodes(cp)):
+            for other_cp in itertools.chain(overlap_graph.child_nodes(cp),
+                                            overlap_graph.parent_nodes(cp)):
                 if other_cp not in traversed:
                     stack.append(other_cp)
 
@@ -952,15 +974,19 @@ def dep_wordreduce(mydeplist, mysettings, mydbapi, mode, use_cache=1):
     for mypos, token in enumerate(deplist):
         if isinstance(deplist[mypos], list):
             # recurse
-            deplist[mypos] = dep_wordreduce(deplist[mypos], mysettings, mydbapi, mode, use_cache=use_cache)
+            deplist[mypos] = dep_wordreduce(deplist[mypos],
+                                            mysettings,
+                                            mydbapi,
+                                            mode,
+                                            use_cache=use_cache)
         elif deplist[mypos] == "||":
             pass
         elif token[:1] == "!":
             deplist[mypos] = False
         else:
             mykey = deplist[mypos].cp
-            if mysettings and mykey in mysettings.pprovideddict and match_from_list(deplist[mypos],
-                                                                                    mysettings.pprovideddict[mykey]):
+            if mysettings and mykey in mysettings.pprovideddict and match_from_list(
+                    deplist[mypos], mysettings.pprovideddict[mykey]):
                 deplist[mypos] = True
             elif mydbapi is None:
                 # Assume nothing is satisfied.  This forces dep_zapdeps to

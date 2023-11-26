@@ -24,7 +24,8 @@ class database(fs_template.FsBased):
     # equation: cache_bytes = page_bytes * page_count
     cache_bytes = 1024 * 1024 * 10
 
-    _connection_info_entry = collections.namedtuple("_connection_info_entry", ("connection", "cursor", "pid"))
+    _connection_info_entry = collections.namedtuple("_connection_info_entry",
+                                                    ("connection", "cursor", "pid"))
 
     def __init__(self, *args, **config):
         super().__init__(*args, **config)
@@ -35,7 +36,8 @@ class database(fs_template.FsBased):
         self._allowed_keys_set = frozenset(self._allowed_keys)
         self._allowed_keys = sorted(self._allowed_keys_set)
 
-        self.location = os.path.join(self.location, self.label.lstrip(os.path.sep).rstrip(os.path.sep))
+        self.location = os.path.join(self.location,
+                                     self.label.lstrip(os.path.sep).rstrip(os.path.sep))
 
         if not self.readonly and not os.path.exists(self.location):
             self._ensure_dirs()
@@ -89,12 +91,15 @@ class database(fs_template.FsBased):
         try:
             if not self.readonly:
                 self._ensure_dirs()
-            connection = self._db_module.connect(database=_unicode_decode(self._dbpath), **connection_kwargs)
+            connection = self._db_module.connect(database=_unicode_decode(self._dbpath),
+                                                 **connection_kwargs)
             cursor = connection.cursor()
-            self._db_connection_info = self._connection_info_entry(connection, cursor, portage.getpid())
+            self._db_connection_info = self._connection_info_entry(connection, cursor,
+                                                                   portage.getpid())
             self._db_cursor.execute(f"PRAGMA encoding = {self._db_escape_string('UTF-8')}")
             if not self.readonly and not self._ensure_access(self._dbpath):
-                raise cache_errors.InitializationError(self.__class__, f"can't ensure perms on {self._dbpath}")
+                raise cache_errors.InitializationError(self.__class__,
+                                                       f"can't ensure perms on {self._dbpath}")
             self._db_init_cache_size(config["cache_bytes"])
             self._db_init_synchronous(config["synchronous"])
             self._db_init_structures()
@@ -113,7 +118,8 @@ class database(fs_template.FsBased):
         create_statement.append(mytable)
         create_statement.append("(")
         table_parameters = []
-        table_parameters.append("%s INTEGER PRIMARY KEY AUTOINCREMENT" % self._db_table["packages"]["package_id"])
+        table_parameters.append("%s INTEGER PRIMARY KEY AUTOINCREMENT" %
+                                self._db_table["packages"]["package_id"])
         table_parameters.append(f"{self._db_table['packages']['package_key']} TEXT")
         for k in self._allowed_keys:
             table_parameters.append(f"{k} TEXT")
@@ -150,7 +156,8 @@ class database(fs_template.FsBased):
     def _db_table_get_create(self, table_name):
         """return true/false dependant on a tbl existing"""
         cursor = self._db_cursor
-        cursor.execute("SELECT sql FROM sqlite_master WHERE name=%s" % self._db_escape_string(table_name))
+        cursor.execute("SELECT sql FROM sqlite_master WHERE name=%s" %
+                       self._db_escape_string(table_name))
         return cursor.fetchall()[0][0]
 
     def _db_validate_create_statement(self, statement):
@@ -159,9 +166,9 @@ class database(fs_template.FsBased):
             return True, missing_keys
 
         m = re.match(
-            r"^\s*CREATE\s*TABLE\s*%s\s*\(\s*%s\s*INTEGER\s*PRIMARY\s*KEY\s*AUTOINCREMENT\s*,(.*)\)\s*$" %
-            (self._db_table["packages"]["table_name"], self._db_table["packages"]["package_id"],
-             ), statement,
+            r"^\s*CREATE\s*TABLE\s*%s\s*\(\s*%s\s*INTEGER\s*PRIMARY\s*KEY\s*AUTOINCREMENT\s*,(.*)\)\s*$"
+            % (self._db_table["packages"]["table_name"], self._db_table["packages"]["package_id"],
+               ), statement,
         )
         if m is None:
             return False, missing_keys
@@ -197,8 +204,8 @@ class database(fs_template.FsBased):
         del cursor
         if actual_cache_size != cache_size:
             raise cache_errors.InitializationError(
-                self.__class__,
-                "actual cache_size = " + actual_cache_size + " does does not match requested size of " + cache_size,
+                self.__class__, "actual cache_size = " + actual_cache_size +
+                " does does not match requested size of " + cache_size,
             )
 
     def _db_init_synchronous(self, synchronous):
@@ -209,15 +216,15 @@ class database(fs_template.FsBased):
         del cursor
         if actual_synchronous != synchronous:
             raise cache_errors.InitializationError(
-                self.__class__,
-                "actual synchronous = " + actual_synchronous + " does does not match requested value of " + synchronous,
+                self.__class__, "actual synchronous = " + actual_synchronous +
+                " does does not match requested value of " + synchronous,
             )
 
     def _getitem(self, cpv):
         cursor = self._db_cursor
         cursor.execute("select * from %s where %s=%s" %
-                       (self._db_table["packages"]["table_name"], self._db_table["packages"]["package_key"],
-                        self._db_escape_string(cpv),
+                       (self._db_table["packages"]["table_name"],
+                        self._db_table["packages"]["package_key"], self._db_escape_string(cpv),
                         ))
         result = cursor.fetchall()
         if len(result) == 1:
@@ -244,7 +251,8 @@ class database(fs_template.FsBased):
         update_statement = []
         update_statement.append(f"REPLACE INTO {self._db_table['packages']['table_name']}")
         update_statement.append("(")
-        update_statement.append(",".join([self._db_table["packages"]["package_key"]] + self._allowed_keys))
+        update_statement.append(",".join([self._db_table["packages"]["package_key"]] +
+                                         self._allowed_keys))
         update_statement.append(")")
         update_statement.append("VALUES")
         update_statement.append("(")
@@ -268,15 +276,16 @@ class database(fs_template.FsBased):
     def _delitem(self, cpv):
         cursor = self._db_cursor
         cursor.execute("DELETE FROM %s WHERE %s=%s" %
-                       (self._db_table["packages"]["table_name"], self._db_table["packages"]["package_key"],
-                        self._db_escape_string(cpv),
+                       (self._db_table["packages"]["table_name"],
+                        self._db_table["packages"]["package_key"], self._db_escape_string(cpv),
                         ))
 
     def __contains__(self, cpv):
         cursor = self._db_cursor
         cursor.execute(" ".join([
-            "SELECT %s FROM %s" % (self._db_table["packages"]["package_id"], self._db_table["packages"]["table_name"],
-                                   ),
+            "SELECT %s FROM %s" %
+            (self._db_table["packages"]["package_id"], self._db_table["packages"]["table_name"],
+             ),
             "WHERE %s=%s" % (self._db_table["packages"]["package_key"], self._db_escape_string(cpv),
                              ),
         ]))
@@ -290,9 +299,10 @@ class database(fs_template.FsBased):
     def __iter__(self):
         """generator for walking the dir struct"""
         cursor = self._db_cursor
-        cursor.execute("SELECT %s FROM %s" %
-                       (self._db_table["packages"]["package_key"], self._db_table["packages"]["table_name"],
-                        ))
+        cursor.execute(
+            "SELECT %s FROM %s" %
+            (self._db_table["packages"]["package_key"], self._db_table["packages"]["table_name"],
+             ))
         result = cursor.fetchall()
         key_list = [x[0] for x in result]
         del result

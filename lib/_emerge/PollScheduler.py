@@ -65,7 +65,8 @@ class PollScheduler:
         with self._term_rlock:
             if self._term_check_handle is None:
                 self._terminated.set()
-                self._term_check_handle = self._event_loop.call_soon_threadsafe(self._termination_check, True)
+                self._term_check_handle = self._event_loop.call_soon_threadsafe(
+                    self._termination_check, True)
 
     def _termination_check(self, retry=False):
         """
@@ -88,7 +89,8 @@ class PollScheduler:
 
             elif retry:
                 with self._term_rlock:
-                    self._term_check_handle = self._event_loop.call_soon(self._termination_check, True)
+                    self._term_check_handle = self._event_loop.call_soon(
+                        self._termination_check, True)
 
     def _terminate_tasks(self):
         """
@@ -163,7 +165,8 @@ class PollScheduler:
         if self._max_jobs is not True and self._running_job_count() >= self._max_jobs:
             return False
 
-        if max_load is not None and (max_jobs is True or max_jobs > 1) and self._running_job_count() >= 1:
+        if max_load is not None and (max_jobs is True
+                                     or max_jobs > 1) and self._running_job_count() >= 1:
             try:
                 avg1, avg5, avg15 = getloadavg()
             except OSError:

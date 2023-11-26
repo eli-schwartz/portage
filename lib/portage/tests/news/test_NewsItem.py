@@ -132,7 +132,10 @@ class NewsItemTestCase(TestCase):
 
         return FakeNewsItem(**news_args)
 
-    def _checkAndCreateNewsItem(self, news_args: dict, relevant: bool = True, reason: str = "") -> FakeNewsItem:
+    def _checkAndCreateNewsItem(self,
+                                news_args: dict,
+                                relevant: bool = True,
+                                reason: str = "") -> FakeNewsItem:
         return self._checkNewsItem(self._createNewsItem(news_args), relevant, reason)
 
     def _checkNewsItem(self, item: NewsItem, relevant: bool = True, reason: str = ""):
@@ -176,25 +179,31 @@ class NewsItemTestCase(TestCase):
             # First, just check the simple case of one profile matching ours.
             item = self._createNewsItem({"display_if_profile": [profile_prefix + self.profile]})
             self.assertTrue(item.isValid())
-            self.assertTrue(item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
+            self.assertTrue(item.isRelevant(self.vardb, self.settings,
+                                            profile_prefix + self.profile),
                             msg=f"Expected {item} to be relevant, but it was not!",
                             )
 
             # Test the negative case: what if the only profile listed
             # does *not* match ours?
-            item = self._createNewsItem({"display_if_profile": [profile_prefix + "profiles/i-do-not-exist"]})
+            item = self._createNewsItem(
+                {"display_if_profile": [profile_prefix + "profiles/i-do-not-exist"]})
             self.assertTrue(item.isValid())
-            self.assertFalse(item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
+            self.assertFalse(item.isRelevant(self.vardb, self.settings,
+                                             profile_prefix + self.profile),
                              msg=f"Expected {item} to be irrelevant, but it was relevant!",
                              )
 
             # What if several profiles are listed and we match one of them?
             item = self._createNewsItem({
-                "display_if_profile":
-                [profile_prefix + self.profile, profile_prefix + f"{self.profile_base}/amd64/2023.0", ]
+                "display_if_profile": [
+                    profile_prefix + self.profile,
+                    profile_prefix + f"{self.profile_base}/amd64/2023.0",
+                ]
             })
             self.assertTrue(item.isValid())
-            self.assertTrue(item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
+            self.assertTrue(item.isRelevant(self.vardb, self.settings,
+                                            profile_prefix + self.profile),
                             msg=f"Expected {item} to be relevant, but it was not!",
                             )
 
@@ -206,7 +215,8 @@ class NewsItemTestCase(TestCase):
                 ]
             })
             self.assertTrue(item.isValid())
-            self.assertFalse(item.isRelevant(self.vardb, self.settings, profile_prefix + self.profile),
+            self.assertFalse(item.isRelevant(self.vardb, self.settings,
+                                             profile_prefix + self.profile),
                              msg=f"Expected {item} to be irrelevant, but it was relevant!",
                              )
 
@@ -221,21 +231,28 @@ class NewsItemTestCase(TestCase):
 
         # What about several packages and we have none of them installed?
         self._checkAndCreateNewsItem(
-            {"display_if_installed": ["dev-util/pkgcheck", "dev-util/pkgdev", "sys-apps/pkgcore", ]}, False,
+            {
+                "display_if_installed":
+                ["dev-util/pkgcheck", "dev-util/pkgdev", "sys-apps/pkgcore", ]
+            }, False,
         )
 
         # What about several packages and we have one of them installed?
         self.vardb.cpv_inject("net-misc/openssh-9.2_p1", {"SLOT": "0"})
-        self._checkAndCreateNewsItem({"display_if_installed": ["net-misc/openssh", "net-misc/dropbear", ]})
+        self._checkAndCreateNewsItem(
+            {"display_if_installed": ["net-misc/openssh", "net-misc/dropbear", ]})
 
         # What about several packages and we have all of them installed?
         # Note: we already have openssh added from the above test
         self.vardb.cpv_inject("net-misc/dropbear-2022.83", {"SLOT": "0"})
-        self._checkAndCreateNewsItem({"display_if_installed": ["net-misc/openssh", "net-misc/dropbear", ]})
+        self._checkAndCreateNewsItem(
+            {"display_if_installed": ["net-misc/openssh", "net-misc/dropbear", ]})
 
         # What if we have a newer version of the listed package which
         # shouldn't match the constraint?
-        self._checkAndCreateNewsItem({"display_if_installed": ["<net-misc/openssh-9.2_p1", ]}, False, )
+        self._checkAndCreateNewsItem({"display_if_installed": ["<net-misc/openssh-9.2_p1", ]},
+                                     False,
+                                     )
 
         # What if we have a newer version of the listed package which
         # should match the constraint?

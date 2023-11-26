@@ -60,7 +60,9 @@ class PreservedLibsRegistry:
         f = None
         content = None
         try:
-            f = open(_unicode_encode(self._filename, encoding=_encodings["fs"], errors="strict"), "rb", )
+            f = open(_unicode_encode(self._filename, encoding=_encodings["fs"], errors="strict"),
+                     "rb",
+                     )
             content = f.read()
         except OSError as e:
             if not hasattr(e, "errno"):
@@ -78,7 +80,8 @@ class PreservedLibsRegistry:
         # content is empty if it's an empty lock file
         if content:
             try:
-                self._data = json.loads(_unicode_decode(content, encoding=_encodings["repo.content"], errors="strict"))
+                self._data = json.loads(
+                    _unicode_decode(content, encoding=_encodings["repo.content"], errors="strict"))
             except SystemExit:
                 raise
             except Exception as e:
@@ -157,8 +160,8 @@ class PreservedLibsRegistry:
         cp = cpv_getkey(cpv)
         cps = cp + ":" + slot
         counter = self._normalize_counter(counter)
-        if len(paths) == 0 and cps in self._data and self._data[cps][0] == cpv and self._normalize_counter(
-                self._data[cps][1]) == counter:
+        if len(paths) == 0 and cps in self._data and self._data[cps][
+                0] == cpv and self._normalize_counter(self._data[cps][1]) == counter:
             del self._data[cps]
         elif len(paths) > 0:
             if isinstance(paths, set):

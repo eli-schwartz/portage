@@ -5,7 +5,13 @@
 class DependencyArg:
     __slots__ = ("arg", "force_reinstall", "internal", "reset_depth", "root_config")
 
-    def __init__(self, arg=None, force_reinstall=False, internal=False, reset_depth=True, root_config=None, ):
+    def __init__(self,
+                 arg=None,
+                 force_reinstall=False,
+                 internal=False,
+                 reset_depth=True,
+                 root_config=None,
+                 ):
         """
         Use reset_depth=False for special arguments that should not interact
         with depth calculations (see the emerge --deep=DEPTH option).

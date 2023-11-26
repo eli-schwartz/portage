@@ -103,11 +103,12 @@ class SyncManager:
 
     def __getattr__(self, name):
         if name == "async":
-            warnings.warn("portage.sync.controller.SyncManager.async "
-                          "has been renamed to sync_async",
-                          DeprecationWarning,
-                          stacklevel=2,
-                          )
+            warnings.warn(
+                "portage.sync.controller.SyncManager.async "
+                "has been renamed to sync_async",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             return self.sync_async
         raise AttributeError(name)
 
@@ -139,7 +140,9 @@ class SyncManager:
         if repo.sync_type in self.module_names:
             tasks = [self.module_controller.get_class(repo.sync_type)]
         else:
-            msg = "\n{}: Sync module '{}' is not an installed/known type'\n".format(bad("ERROR"), repo.sync_type, )
+            msg = "\n{}: Sync module '{}' is not an installed/known type'\n".format(
+                bad("ERROR"), repo.sync_type,
+            )
             return self.exitcode, msg, self.updatecache_flg, hooks_enabled
 
         rval = self.pre_sync(repo)
@@ -243,7 +246,9 @@ class SyncManager:
                         except KeyError:
                             pw = pwd.getpwuid(int(username))
                     except (ValueError, KeyError):
-                        writemsg(f"!!! User '{username}' invalid or does not exist\n", noiselevel=-1, )
+                        writemsg(f"!!! User '{username}' invalid or does not exist\n",
+                                 noiselevel=-1,
+                                 )
                         return (logname, user, group, home)
                     user = pw.pw_uid
                     group = pw.pw_gid
@@ -258,7 +263,9 @@ class SyncManager:
                         except KeyError:
                             pw = grp.getgrgid(int(groupname))
                     except (ValueError, KeyError):
-                        writemsg(f"!!! Group '{groupname}' invalid or does not exist\n", noiselevel=-1, )
+                        writemsg(f"!!! Group '{groupname}' invalid or does not exist\n",
+                                 noiselevel=-1,
+                                 )
                         return (logname, user, group, home)
 
                     group = gp.gr_gid
@@ -292,7 +299,8 @@ class SyncManager:
             st = os.stat(repo.location)
 
         if repo.sync_user is None and "usersync" in self.settings.features and portage.data.secpass >= 2 and (
-                st.st_uid != os.getuid() and st.st_mode & 0o700 or st.st_gid != os.getgid() and st.st_mode & 0o070):
+                st.st_uid != os.getuid() and st.st_mode & 0o700
+                or st.st_gid != os.getgid() and st.st_mode & 0o070):
             try:
                 pw = pwd.getpwuid(st.st_uid)
             except KeyError:
@@ -345,7 +353,11 @@ class SyncManager:
         if updatecache_flg and os.path.exists(os.path.join(repo.location, "metadata", "md5-cache")):
             # Only update cache for repo.location since that's
             # the only one that's been synced here.
-            action_metadata(self.settings, self.portdb, self.emerge_config.opts, porttrees=[repo.location], )
+            action_metadata(self.settings,
+                            self.portdb,
+                            self.emerge_config.opts,
+                            porttrees=[repo.location],
+                            )
 
 
 class SyncRepo(CompositeTask):

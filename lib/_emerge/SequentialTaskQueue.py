@@ -33,7 +33,8 @@ class SequentialTaskQueue(SlotObject):
 
         self._scheduling = True
         try:
-            while self._task_queue and (self.max_jobs is True or len(self.running_tasks) < self.max_jobs):
+            while self._task_queue and (self.max_jobs is True
+                                        or len(self.running_tasks) < self.max_jobs):
                 task = self._task_queue.popleft()
                 cancelled = getattr(task, "cancelled", None)
                 if not cancelled:

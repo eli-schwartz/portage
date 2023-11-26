@@ -9,7 +9,8 @@ from _emerge.resolver.package_tracker import PackageTracker, PackageTrackerDbapi
 
 
 class PackageTrackerTestCase(TestCase):
-    FakePackage = collections.namedtuple("FakePackage", ["root", "cp", "cpv", "slot", "slot_atom", "version", "repo"])
+    FakePackage = collections.namedtuple(
+        "FakePackage", ["root", "cp", "cpv", "slot", "slot_atom", "version", "repo"])
 
     FakeConflict = collections.namedtuple("FakeConflict", ["description", "root", "pkgs"])
 
@@ -254,4 +255,6 @@ class PackageTrackerTestCase(TestCase):
             self.make_conflict("cpv conflict", "/", [x4, x4b]),
         ])
 
-        check_conflicts([self.make_conflict("slot conflict", "/", [x1, x3, x2]), ], slot_conflicts_only=True, )
+        check_conflicts([self.make_conflict("slot conflict", "/", [x1, x3, x2]), ],
+                        slot_conflicts_only=True,
+                        )

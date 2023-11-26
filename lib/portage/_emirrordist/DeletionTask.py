@@ -34,9 +34,12 @@ class DeletionTask(CompositeTask):
                     self._async_wait()
                     return
 
-                self._start_task(FileCopier(src_path=self.distfile_path, dest_path=recycle_path, background=False,
-                                            ), self._recycle_copier_exit,
-                                 )
+                self._start_task(
+                    FileCopier(src_path=self.distfile_path,
+                               dest_path=recycle_path,
+                               background=False,
+                               ), self._recycle_copier_exit,
+                )
                 return
 
         success = True
@@ -93,7 +96,8 @@ class DeletionTask(CompositeTask):
             if isinstance(layout, ContentHashLayout) and not self.distfile.digests:
                 logger.debug(f"_delete_links: '{self.distfile}' has no digests")
                 continue
-            distfile_path = os.path.join(self.config.options.distfiles, layout.get_path(self.distfile))
+            distfile_path = os.path.join(self.config.options.distfiles,
+                                         layout.get_path(self.distfile))
             try:
                 os.unlink(distfile_path)
             except OSError as e:

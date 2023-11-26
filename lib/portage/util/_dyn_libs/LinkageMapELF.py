@@ -286,9 +286,12 @@ class LinkageMapELF:
                         writemsg_level(f"\n{e}\n\n", level=logging.ERROR, noiselevel=-1)
                         continue
                     try:
-                        with open(_unicode_encode(entry.filename, encoding=_encodings["fs"], errors="strict",
-                                                  ), "rb",
-                                  ) as f:
+                        with open(
+                                _unicode_encode(entry.filename,
+                                                encoding=_encodings["fs"],
+                                                errors="strict",
+                                                ), "rb",
+                        ) as f:
                             elf_header = ELFHeader.read(f)
                     except OSError as e:
                         if e.errno != errno.ENOENT:
@@ -301,8 +304,9 @@ class LinkageMapELF:
                         try:
                             proc = subprocess.Popen([
                                 b"file",
-                                _unicode_encode(entry.filename, encoding=_encodings["fs"], errors="strict",
-                                                ),
+                                _unicode_encode(
+                                    entry.filename, encoding=_encodings["fs"], errors="strict",
+                                ),
                             ],
                                                     stdout=subprocess.PIPE,
                                                     )
@@ -370,7 +374,8 @@ class LinkageMapELF:
             entry.filename = normalize_path(entry.filename)
             expand = {"ORIGIN": os.path.dirname(entry.filename)}
             entry.runpaths = frozenset(
-                normalize_path(varexpand(x, expand, error_leader=lambda: f"{location}: ")) for x in entry.runpaths)
+                normalize_path(varexpand(x, expand, error_leader=lambda: f"{location}: "))
+                for x in entry.runpaths)
             entry.runpaths = frozensets.setdefault(entry.runpaths, entry.runpaths)
             owner_entries[owner].append(entry)
 
@@ -402,7 +407,8 @@ class LinkageMapELF:
                     entry.runpaths = frozenset(itertools.chain(entry.runpaths, implicit_runpaths))
                     entry.runpaths = frozensets.setdefault(entry.runpaths, entry.runpaths)
 
-        for owner, entry in ((owner, entry) for (owner, entries) in owner_entries.items() for entry in entries):
+        for owner, entry in ((owner, entry) for (owner, entries) in owner_entries.items()
+                             for entry in entries):
             arch = entry.multilib_category
             obj = entry.filename
             soname = entry.soname
@@ -538,7 +544,8 @@ class LinkageMapELF:
                 # the same name as the soname exists in obj's runpath.
                 # XXX If we catalog symlinks in LinkageMap, this could be improved.
                 for directory in path:
-                    cachedArch, cachedSoname, cachedKey, cachedExists = cache.get(os.path.join(directory, soname))
+                    cachedArch, cachedSoname, cachedKey, cachedExists = cache.get(
+                        os.path.join(directory, soname))
                     # Check that this library provides the needed soname.  Doing
                     # this, however, will cause consumers of libraries missing
                     # sonames to be unnecessarily emerged. (eg libmix.so)
@@ -548,20 +555,21 @@ class LinkageMapELF:
                             # XXX This is most often due to soname symlinks not in
                             # a library's directory.  We could catalog symlinks in
                             # LinkageMap to avoid checking for this edge case here.
-                            writemsg_level(
-                                _("Found provider outside of findProviders:") +
-                                (" %s -> %s %s\n" %
-                                 (os.path.join(directory, soname), self._obj_properties[cachedKey].alt_paths, libraries,
-                                  )),
-                                level=logging.DEBUG,
-                                noiselevel=-1,
-                            )
+                            writemsg_level(_("Found provider outside of findProviders:") +
+                                           (" %s -> %s %s\n" %
+                                            (os.path.join(directory, soname),
+                                             self._obj_properties[cachedKey].alt_paths, libraries,
+                                             )),
+                                           level=logging.DEBUG,
+                                           noiselevel=-1,
+                                           )
                         # A valid library has been found, so there is no need to
                         # continue.
                         break
                     if debug and cachedArch == arch and cachedKey in self._obj_properties:
                         writemsg_level(
-                            (_("Broken symlink or missing/bad soname: " + "%(dir_soname)s -> %(cachedKey)s " +
+                            (_("Broken symlink or missing/bad soname: " +
+                               "%(dir_soname)s -> %(cachedKey)s " +
                                "with soname %(cachedSoname)s but expecting %(soname)s") % {
                                    "dir_soname": os.path.join(directory, soname),
                                    "cachedKey": self._obj_properties[cachedKey],
@@ -644,7 +652,8 @@ class LinkageMapELF:
             raise KeyError(f"{obj_key} ({obj}) not in object list")
         basename = os.path.basename(obj)
         soname = self._obj_properties[obj_key].soname
-        return len(basename) < len(soname) and basename.endswith(".so") and soname.startswith(basename[:-3])
+        return len(basename) < len(soname) and basename.endswith(".so") and soname.startswith(
+            basename[:-3])
 
     def listLibraryObjects(self):
         """

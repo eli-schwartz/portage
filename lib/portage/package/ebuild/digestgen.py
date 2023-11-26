@@ -7,13 +7,17 @@ import errno
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(globals(), "portage.package.ebuild._spawn_nofetch:spawn_nofetch", )
+portage.proxy.lazyimport.lazyimport(globals(),
+                                    "portage.package.ebuild._spawn_nofetch:spawn_nofetch",
+                                    )
 
 from portage import os
 from portage.const import MANIFEST2_HASH_DEFAULTS
 from portage.dbapi.porttree import FetchlistDict
 from portage.dep import use_reduce
-from portage.exception import (InvalidDependString, FileNotFound, PermissionDenied, PortagePackageException, )
+from portage.exception import (InvalidDependString, FileNotFound, PermissionDenied,
+                               PortagePackageException,
+                               )
 from portage.localization import _
 from portage.output import colorize
 from portage.package.ebuild.fetch import fetch
@@ -145,14 +149,19 @@ def digestgen(myarchives=None, mysettings=None, myportdb=None):
             if not fetch({myfile: uris}, mysettings):
                 myebuild = os.path.join(mysettings["O"], catsplit(cpv)[1] + ".ebuild")
                 spawn_nofetch(myportdb, myebuild)
-                writemsg(_("!!! Fetch failed for %s, can't update Manifest\n") % myfile, noiselevel=-1, )
+                writemsg(_("!!! Fetch failed for %s, can't update Manifest\n") % myfile,
+                         noiselevel=-1,
+                         )
                 if myfile in dist_hashes and st is not None and st.st_size > 0:
                     # stat result is obtained before calling fetch(),
                     # since fetch may rename the existing file if the
                     # digest does not match.
-                    cmd = colorize("INFORM", f"ebuild --force {os.path.basename(myebuild)} manifest", )
-                    writemsg((_("!!! If you would like to forcefully replace the existing Manifest entry\n"
-                                "!!! for %s, use the following command:\n") % myfile) + f"!!!    {cmd}\n",
+                    cmd = colorize("INFORM",
+                                   f"ebuild --force {os.path.basename(myebuild)} manifest",
+                                   )
+                    writemsg((_(
+                        "!!! If you would like to forcefully replace the existing Manifest entry\n"
+                        "!!! for %s, use the following command:\n") % myfile) + f"!!!    {cmd}\n",
                              noiselevel=-1,
                              )
                 return 0
@@ -184,7 +193,9 @@ def digestgen(myarchives=None, mysettings=None, myportdb=None):
                 cp = os.path.sep.join(mysettings["O"].split(os.path.sep)[-2:])
                 pkgs = myportdb.cp_list(cp, mytree=mytree)
                 pkgs.sort()
-                writemsg_stdout("  digest.assumed" + colorize("WARN", str(len(auto_assumed)).rjust(18)) + "\n")
+                writemsg_stdout("  digest.assumed" + colorize("WARN",
+                                                              str(len(auto_assumed)).rjust(18)) +
+                                "\n")
                 for pkg_key in pkgs:
                     fetchlist = myportdb.getFetchMap(pkg_key, mytree=mytree)
                     pv = pkg_key.split("/")[1]

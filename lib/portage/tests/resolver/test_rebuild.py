@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class RebuildTestCase(TestCase):
@@ -91,7 +93,10 @@ class RebuildTestCase(TestCase):
             },
         }
 
-        world = ["sys-apps/a", "sys-apps/b", "sys-apps/c", "sys-apps/d", "sys-apps/e", "sys-apps/f", "sys-apps/g", ]
+        world = [
+            "sys-apps/a", "sys-apps/b", "sys-apps/c", "sys-apps/d", "sys-apps/e", "sys-apps/f",
+            "sys-apps/g",
+        ]
 
         test_cases = (ResolverPlaygroundTestCase(["sys-libs/x", "sys-apps/b"],
                                                  options={
@@ -99,8 +104,8 @@ class RebuildTestCase(TestCase):
                                                      "--rebuild-exclude": ["sys-apps/c"],
                                                  },
                                                  mergelist=[
-                                                     "sys-libs/x-2", "sys-apps/a-2", "sys-apps/b-2", "sys-apps/e-2",
-                                                     "sys-apps/g-2",
+                                                     "sys-libs/x-2", "sys-apps/a-2", "sys-apps/b-2",
+                                                     "sys-apps/e-2", "sys-apps/g-2",
                                                  ],
                                                  ignore_mergelist_order=True,
                                                  success=True,
@@ -108,8 +113,8 @@ class RebuildTestCase(TestCase):
                       ResolverPlaygroundTestCase(["sys-libs/x", "sys-apps/b"],
                                                  options={"--rebuild-if-unbuilt": True},
                                                  mergelist=[
-                                                     "sys-libs/x-2", "sys-apps/a-2", "sys-apps/b-2", "sys-apps/c-2",
-                                                     "sys-apps/e-2", "sys-apps/g-2",
+                                                     "sys-libs/x-2", "sys-apps/a-2", "sys-apps/b-2",
+                                                     "sys-apps/c-2", "sys-apps/e-2", "sys-apps/g-2",
                                                  ],
                                                  ignore_mergelist_order=True,
                                                  success=True,
@@ -129,8 +134,8 @@ class RebuildTestCase(TestCase):
                                                      "--rebuild-ignore": ["sys-apps/b"],
                                                  },
                                                  mergelist=[
-                                                     "sys-libs/x-2", "sys-apps/a-2", "sys-apps/b-2", "sys-apps/c-2",
-                                                     "sys-apps/e-2",
+                                                     "sys-libs/x-2", "sys-apps/a-2", "sys-apps/b-2",
+                                                     "sys-apps/c-2", "sys-apps/e-2",
                                                  ],
                                                  ignore_mergelist_order=True,
                                                  success=True,
@@ -138,8 +143,9 @@ class RebuildTestCase(TestCase):
                       ResolverPlaygroundTestCase(["=sys-libs/x-1-r1", "sys-apps/b"],
                                                  options={"--rebuild-if-unbuilt": True},
                                                  mergelist=[
-                                                     "sys-libs/x-1-r1", "sys-apps/a-2", "sys-apps/b-2", "sys-apps/c-2",
-                                                     "sys-apps/e-2", "sys-apps/g-2",
+                                                     "sys-libs/x-1-r1", "sys-apps/a-2",
+                                                     "sys-apps/b-2", "sys-apps/c-2", "sys-apps/e-2",
+                                                     "sys-apps/g-2",
                                                  ],
                                                  ignore_mergelist_order=True,
                                                  success=True,
@@ -147,8 +153,9 @@ class RebuildTestCase(TestCase):
                       ResolverPlaygroundTestCase(["=sys-libs/x-1-r1", "sys-apps/b"],
                                                  options={"--rebuild-if-new-rev": True},
                                                  mergelist=[
-                                                     "sys-libs/x-1-r1", "sys-apps/a-2", "sys-apps/b-2", "sys-apps/c-2",
-                                                     "sys-apps/e-2", "sys-apps/g-2",
+                                                     "sys-libs/x-1-r1", "sys-apps/a-2",
+                                                     "sys-apps/b-2", "sys-apps/c-2", "sys-apps/e-2",
+                                                     "sys-apps/g-2",
                                                  ],
                                                  ignore_mergelist_order=True,
                                                  success=True,
@@ -162,8 +169,8 @@ class RebuildTestCase(TestCase):
                       ResolverPlaygroundTestCase(["sys-libs/x", "sys-apps/b"],
                                                  options={"--rebuild-if-new-ver": True},
                                                  mergelist=[
-                                                     "sys-libs/x-2", "sys-apps/a-2", "sys-apps/b-2", "sys-apps/c-2",
-                                                     "sys-apps/e-2", "sys-apps/g-2",
+                                                     "sys-libs/x-2", "sys-apps/a-2", "sys-apps/b-2",
+                                                     "sys-apps/c-2", "sys-apps/e-2", "sys-apps/g-2",
                                                  ],
                                                  ignore_mergelist_order=True,
                                                  success=True,
@@ -177,8 +184,8 @@ class RebuildTestCase(TestCase):
                       ResolverPlaygroundTestCase(["=sys-libs/x-1", "=sys-apps/b-1"],
                                                  options={"--rebuild-if-unbuilt": True},
                                                  mergelist=[
-                                                     "sys-libs/x-1", "sys-apps/a-2", "sys-apps/b-1", "sys-apps/c-2",
-                                                     "sys-apps/e-2", "sys-apps/g-2",
+                                                     "sys-libs/x-1", "sys-apps/a-2", "sys-apps/b-1",
+                                                     "sys-apps/c-2", "sys-apps/e-2", "sys-apps/g-2",
                                                  ],
                                                  ignore_mergelist_order=True,
                                                  success=True,

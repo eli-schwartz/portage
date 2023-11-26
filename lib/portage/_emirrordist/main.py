@@ -109,8 +109,10 @@ common_options = ({
     "help": "comma delimited list of mirror targets to skip "
     "when fetching",
 }, {
-    "longopt": "--restrict-mirror-exemptions",
-    "help": "comma delimited list of mirror targets for which to "
+    "longopt":
+    "--restrict-mirror-exemptions",
+    "help":
+    "comma delimited list of mirror targets for which to "
     'ignore RESTRICT="mirror"',
 }, {
     "longopt": "--verify-existing-digest",
@@ -185,7 +187,10 @@ def parse_args(args):
 
     actions = parser.add_argument_group("Actions")
     actions.add_argument("--version", action="store_true", help="display portage version and exit")
-    actions.add_argument("--mirror", action="store_true", help="mirror distfiles for the selected repository", )
+    actions.add_argument("--mirror",
+                         action="store_true",
+                         help="mirror distfiles for the selected repository",
+                         )
 
     common = parser.add_argument_group("Common options")
     for opt_info in common_options:
@@ -271,7 +276,8 @@ def emirrordist_main(args):
                           "writable directory") % options.success_log)
 
     if options.scheduled_deletion_log is not None:
-        options.scheduled_deletion_log = normalize_path(os.path.abspath(options.scheduled_deletion_log))
+        options.scheduled_deletion_log = normalize_path(
+            os.path.abspath(options.scheduled_deletion_log))
 
         parent_dir = os.path.dirname(options.scheduled_deletion_log)
         if not (os.path.isdir(parent_dir) and os.access(parent_dir, os.W_OK | os.X_OK)):
@@ -300,7 +306,8 @@ def emirrordist_main(args):
     if options.distfiles is not None:
         options.distfiles = normalize_path(os.path.abspath(options.distfiles))
 
-        if not (os.path.isdir(options.distfiles) and os.access(options.distfiles, os.W_OK | os.X_OK)):
+        if not (os.path.isdir(options.distfiles)
+                and os.access(options.distfiles, os.W_OK | os.X_OK)):
             parser.error(f"--distfiles '{options.distfiles}' is not a writable directory")
     else:
         parser.error("missing required --distfiles parameter")
@@ -308,13 +315,16 @@ def emirrordist_main(args):
     if options.mirror_overrides is not None:
         options.mirror_overrides = normalize_path(os.path.abspath(options.mirror_overrides))
 
-        if not (os.access(options.mirror_overrides, os.R_OK) and os.path.isfile(options.mirror_overrides)):
-            parser.error("--mirror-overrides-file '%s' is not a readable file" % options.mirror_overrides)
+        if not (os.access(options.mirror_overrides, os.R_OK)
+                and os.path.isfile(options.mirror_overrides)):
+            parser.error("--mirror-overrides-file '%s' is not a readable file" %
+                         options.mirror_overrides)
 
     if options.distfiles_local is not None:
         options.distfiles_local = normalize_path(os.path.abspath(options.distfiles_local))
 
-        if not (os.path.isdir(options.distfiles_local) and os.access(options.distfiles_local, os.W_OK | os.X_OK)):
+        if not (os.path.isdir(options.distfiles_local)
+                and os.access(options.distfiles_local, os.W_OK | os.X_OK)):
             parser.error(("--distfiles-local '%s' is not a "
                           "writable directory") % options.distfiles_local)
 
@@ -326,7 +336,8 @@ def emirrordist_main(args):
 
     if options.recycle_dir is not None:
         options.recycle_dir = normalize_path(os.path.abspath(options.recycle_dir))
-        if not (os.path.isdir(options.recycle_dir) and os.access(options.recycle_dir, os.W_OK | os.X_OK)):
+        if not (os.path.isdir(options.recycle_dir)
+                and os.access(options.recycle_dir, os.W_OK | os.X_OK)):
             parser.error(f"--recycle-dir '{options.recycle_dir}' is not a writable directory")
 
     if options.recycle_db is not None:
@@ -341,7 +352,8 @@ def emirrordist_main(args):
     if options.fetch_log_dir is not None:
         options.fetch_log_dir = normalize_path(os.path.abspath(options.fetch_log_dir))
 
-        if not (os.path.isdir(options.fetch_log_dir) and os.access(options.fetch_log_dir, os.W_OK | os.X_OK)):
+        if not (os.path.isdir(options.fetch_log_dir)
+                and os.access(options.fetch_log_dir, os.W_OK | os.X_OK)):
             parser.error(f"--fetch-log-dir '{options.fetch_log_dir}' is not a writable directory")
 
     if options.whitelist_from:
@@ -355,7 +367,9 @@ def emirrordist_main(args):
             elif os.path.isdir(path):
                 for file in _recursive_file_list(path):
                     if not os.access(file, os.R_OK):
-                        parser.error("--whitelist-from '%s' directory contains not readable file '%s'" % (x, file))
+                        parser.error(
+                            "--whitelist-from '%s' directory contains not readable file '%s'" %
+                            (x, file))
                     normalized_paths.append(file)
             else:
                 parser.error(f"--whitelist-from '{x}' is not a regular file or a directory")

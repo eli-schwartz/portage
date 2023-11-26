@@ -60,30 +60,36 @@ def main():
         do_main_repo = False
 
     if do_distdir or do_pkgdir or do_rpmdir:
-        config_path = os.path.join(os.environ["ED"], GLOBAL_CONFIG_PATH.lstrip(os.sep), "make.globals")
+        config_path = os.path.join(os.environ["ED"], GLOBAL_CONFIG_PATH.lstrip(os.sep),
+                                   "make.globals")
         with open(config_path) as f:
             content = f.read()
             if do_distdir:
                 compat_setting = f'DISTDIR="{compat_distdir}"'
-                out.einfo("Setting make.globals default {} for backward compatibility".format(compat_setting))
+                out.einfo("Setting make.globals default {} for backward compatibility".format(
+                    compat_setting))
                 content = re.sub("^DISTDIR=.*$", compat_setting, content, flags=re.MULTILINE)
             if do_pkgdir:
                 compat_setting = f'PKGDIR="{compat_pkgdir}"'
-                out.einfo("Setting make.globals default {} for backward compatibility".format(compat_setting))
+                out.einfo("Setting make.globals default {} for backward compatibility".format(
+                    compat_setting))
                 content = re.sub("^PKGDIR=.*$", compat_setting, content, flags=re.MULTILINE)
             if do_rpmdir:
                 compat_setting = f'RPMDIR="{compat_rpmdir}"'
-                out.einfo("Setting make.globals default {} for backward compatibility".format(compat_setting))
+                out.einfo("Setting make.globals default {} for backward compatibility".format(
+                    compat_setting))
                 content = re.sub("^RPMDIR=.*$", compat_setting, content, flags=re.MULTILINE)
         with open(config_path, "w") as f:
             f.write(content)
 
     if do_main_repo:
-        config_path = os.path.join(os.environ["ED"], GLOBAL_CONFIG_PATH.lstrip(os.sep), "repos.conf")
+        config_path = os.path.join(os.environ["ED"], GLOBAL_CONFIG_PATH.lstrip(os.sep),
+                                   "repos.conf")
         with open(config_path) as f:
             content = f.read()
             compat_setting = f"location = {compat_main_repo}"
-            out.einfo("Setting repos.conf default {} for backward compatibility".format(compat_setting))
+            out.einfo(
+                "Setting repos.conf default {} for backward compatibility".format(compat_setting))
             content = re.sub("^location =.*$", compat_setting, content, flags=re.MULTILINE)
         with open(config_path, "w") as f:
             f.write(content)

@@ -20,9 +20,13 @@ module_spec = {
             "description": doc,
             "functions": ["sync", "new", "exists"],
             "func_desc": {
-                "sync": "Performs a svn up on the repository",
-                "new": "Creates the new repository at the specified location",
-                "exists": "Returns a boolean of whether the specified dir " + "exists and is a valid SVN repository",
+                "sync":
+                "Performs a svn up on the repository",
+                "new":
+                "Creates the new repository at the specified location",
+                "exists":
+                "Returns a boolean of whether the specified dir " +
+                "exists and is a valid SVN repository",
             },
             "validate_config": CheckSyncConfig,
             "module_specific_options": (),

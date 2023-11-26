@@ -23,9 +23,9 @@ from portage import _encodings
 from portage import _unicode_decode
 from portage import _unicode_encode
 from portage.binpkg import get_binpkg_format
-from portage.exception import (FileNotFound, InvalidBinaryPackageFormat, InvalidCompressionMethod, CompressorNotFound,
-                               CompressorOperationFailed, CommandNotFound, GPGException, DigestException,
-                               MissingSignature, InvalidSignature,
+from portage.exception import (FileNotFound, InvalidBinaryPackageFormat, InvalidCompressionMethod,
+                               CompressorNotFound, CompressorOperationFailed, CommandNotFound,
+                               GPGException, DigestException, MissingSignature, InvalidSignature,
                                )
 from portage.output import colorize, EOutput
 from portage.util._urlopen import urlopen
@@ -65,7 +65,15 @@ class tar_stream_writer:
     writer.close()
     """
 
-    def __init__(self, tarinfo, container, tar_format, cmd=None, checksum_helper=None, uid=None, gid=None, ):
+    def __init__(self,
+                 tarinfo,
+                 container,
+                 tar_format,
+                 cmd=None,
+                 checksum_helper=None,
+                 uid=None,
+                 gid=None,
+                 ):
         """
         tarinfo          # the file tarinfo that need to be added
         container        # the outer container tarfile object
@@ -92,7 +100,8 @@ class tar_stream_writer:
         self.file_size = 0
 
         # Write tar header without size
-        tar_header = self.tarinfo.tobuf(self.tar_format, self.container.encoding, self.container.errors)
+        tar_header = self.tarinfo.tobuf(self.tar_format, self.container.encoding,
+                                        self.container.errors)
         self.header_size = len(tar_header)
         self.container.fileobj.write(tar_header)
         self.container.fileobj.flush()
@@ -109,7 +118,9 @@ class tar_stream_writer:
                                          group=self.gid,
                                          )
 
-            self.read_thread = threading.Thread(target=self._cmd_read_thread, name="tar_stream_cmd_read", daemon=True)
+            self.read_thread = threading.Thread(target=self._cmd_read_thread,
+                                                name="tar_stream_cmd_read",
+                                                daemon=True)
             self.read_thread.start()
 
     def __del__(self):
@@ -210,7 +221,8 @@ class tar_stream_writer:
             self.container.fileobj.flush()
 
         # Update tar header
-        tar_header = self.tarinfo.tobuf(self.tar_format, self.container.encoding, self.container.errors)
+        tar_header = self.tarinfo.tobuf(self.tar_format, self.container.encoding,
+                                        self.container.errors)
         self.container.fileobj.seek(self.begin_position)
         self.container.fileobj.write(tar_header)
         self.container.fileobj.seek(0, io.SEEK_END)
@@ -272,7 +284,9 @@ class tar_stream_reader:
                                          )
             self.read_io = self.proc.stdout
             # Start stdin block writing thread
-            self.thread = threading.Thread(target=self._write_thread, name="tar_stream_stdin_writer", daemon=True)
+            self.thread = threading.Thread(target=self._write_thread,
+                                           name="tar_stream_stdin_writer",
+                                           daemon=True)
             self.thread.start()
 
     def __del__(self):
@@ -426,7 +440,8 @@ class checksum_helper:
                     "--batch --no-tty",
                 )
 
-                gpg_signing_command = shlex_split(varexpand(gpg_signing_command, mydict=self.settings))
+                gpg_signing_command = shlex_split(
+                    varexpand(gpg_signing_command, mydict=self.settings))
                 gpg_signing_command = [x for x in gpg_signing_command if x != ""]
                 try:
                     env["GPG_TTY"] = os.ttyname(sys.stdout.fileno())
@@ -452,12 +467,14 @@ class checksum_helper:
             if not gpg_verify_base_command:
                 raise CommandNotFound("GPG verify command is not set")
 
-            gpg_verify_command = gpg_verify_base_command.replace("[PORTAGE_CONFIG]", f"--homedir {gpg_home} ")
+            gpg_verify_command = gpg_verify_base_command.replace("[PORTAGE_CONFIG]",
+                                                                 f"--homedir {gpg_home} ")
 
             if detached:
                 self.sign_file_fd, self.sign_file_path = tempfile.mkstemp(".sig", "portage-sign-")
 
-                gpg_verify_command = gpg_verify_command.replace("[SIGNATURE]", f"{self.sign_file_path} -")
+                gpg_verify_command = gpg_verify_command.replace("[SIGNATURE]",
+                                                                f"{self.sign_file_path} -")
 
                 # Create signature file and allow everyone read
                 with open(self.sign_file_fd, "wb") as sign:
@@ -575,7 +592,8 @@ class tar_safe_extract:
                 member = self.tar.next()
                 if member is None:
                     break
-                if (member.name in self.file_list) or (os.path.join(".", member.name) in self.file_list):
+                if (member.name in self.file_list) or (os.path.join(".", member.name)
+                                                       in self.file_list):
                     writemsg(colorize("BAD", f"Danger: duplicate files detected: {member.name}"))
                     raise ValueError("Duplicate files detected.")
                 if member.name.startswith("/"):
@@ -679,7 +697,8 @@ class gpkg:
         with tarfile.open(self.gpkg_file, "r") as container:
             metadata_tarinfo, metadata_comp = self._get_inner_tarinfo(container, "metadata")
 
-            with tar_stream_reader(container.extractfile(metadata_tarinfo), self._get_decompression_cmd(metadata_comp),
+            with tar_stream_reader(container.extractfile(metadata_tarinfo),
+                                   self._get_decompression_cmd(metadata_comp),
                                    ) as metadata_reader:
                 metadata_tar = io.BytesIO(metadata_reader.read())
 
@@ -728,7 +747,10 @@ class gpkg:
         init_size = 51200
 
         # Load remote container
-        container_file = io.BytesIO(urlopen(url, headers={"Range": "bytes=0-" + str(init_size)}).read())
+        container_file = io.BytesIO(
+            urlopen(url, headers={
+                "Range": "bytes=0-" + str(init_size)
+            }).read())
 
         # Check gpkg and metadata
         with tarfile.open(mode="r", fileobj=container_file) as container:
@@ -747,7 +769,11 @@ class gpkg:
                 raise InvalidBinaryPackageFormat("metadata too large " + str(end_size))
             if end_size > init_size:
                 container_file.seek(0, io.SEEK_END)
-                container_file.write(urlopen(url, headers={"Range": f"bytes={init_size + 1}-{end_size}"}, ).read())
+                container_file.write(
+                    urlopen(url, headers={
+                        "Range": f"bytes={init_size + 1}-{end_size}"
+                    },
+                            ).read())
 
         container_file.seek(0)
 
@@ -769,7 +795,8 @@ class gpkg:
                     checksum_info.finish()
 
             # Load metadata
-            with tar_stream_reader(container.extractfile(metadata_tarinfo), self._get_decompression_cmd(metadata_comp),
+            with tar_stream_reader(container.extractfile(metadata_tarinfo),
+                                   self._get_decompression_cmd(metadata_comp),
                                    ) as metadata_reader:
                 metadata_file = io.BytesIO(metadata_reader.read())
 
@@ -796,10 +823,12 @@ class gpkg:
         the file contents.
         """
 
-        root_dir = normalize_path(_unicode_decode(root_dir, encoding=_encodings["fs"], errors="strict"))
+        root_dir = normalize_path(
+            _unicode_decode(root_dir, encoding=_encodings["fs"], errors="strict"))
 
         # Get pre image info
-        container_tar_format, image_tar_format = self._get_tar_format_from_stats(*self._check_pre_image_files(root_dir))
+        container_tar_format, image_tar_format = self._get_tar_format_from_stats(
+            *self._check_pre_image_files(root_dir))
 
         # Long CPV
         if len(self.basename) >= 154:
@@ -831,7 +860,8 @@ class gpkg:
         image_tarinfo.mtime = datetime.now().timestamp()
         with tar_stream_writer(image_tarinfo, container, image_tar_format, compression_cmd,
                                checksum_info) as image_writer:
-            with tarfile.open(mode="w|", fileobj=image_writer, format=image_tar_format) as image_tar:
+            with tarfile.open(mode="w|", fileobj=image_writer,
+                              format=image_tar_format) as image_tar:
                 image_tar.add(root_dir, "image", recursive=True)
 
         image_tarinfo = container.getmember(image_tarinfo.name)
@@ -853,7 +883,8 @@ class gpkg:
         """
         decompress current gpkg to decompress_dir
         """
-        decompress_dir = normalize_path(_unicode_decode(decompress_dir, encoding=_encodings["fs"], errors="strict"))
+        decompress_dir = normalize_path(
+            _unicode_decode(decompress_dir, encoding=_encodings["fs"], errors="strict"))
 
         self._verify_binpkg()
         os.makedirs(decompress_dir, mode=0o755, exist_ok=True)
@@ -861,7 +892,8 @@ class gpkg:
         with tarfile.open(self.gpkg_file, "r") as container:
             image_tarinfo, image_comp = self._get_inner_tarinfo(container, "image")
 
-            with tar_stream_reader(container.extractfile(image_tarinfo), self._get_decompression_cmd(image_comp),
+            with tar_stream_reader(container.extractfile(image_tarinfo),
+                                   self._get_decompression_cmd(image_comp),
                                    ) as image_tar:
                 with tarfile.open(mode="r|", fileobj=image_tar) as image:
                     try:
@@ -894,7 +926,8 @@ class gpkg:
 
         # container
         tmp_gpkg_file_name = f"{self.gpkg_file}.{os.getpid()}"
-        with tarfile.TarFile(name=tmp_gpkg_file_name, mode="w", format=container_tar_format) as container:
+        with tarfile.TarFile(name=tmp_gpkg_file_name, mode="w",
+                             format=container_tar_format) as container:
             # gpkg version
             gpkg_version_file = tarfile.TarInfo(os.path.join(new_basename, self.gpkg_version))
             gpkg_version_file.mtime = datetime.now().timestamp()
@@ -918,7 +951,8 @@ class gpkg:
                         continue
                     if os.path.basename(file_name_old).startswith("metadata"):
                         continue
-                    old_data_tarinfo = container_old.getmember(os.path.join(self.prefix, file_name_old))
+                    old_data_tarinfo = container_old.getmember(
+                        os.path.join(self.prefix, file_name_old))
                     new_data_tarinfo = copy(old_data_tarinfo)
                     new_file_path = list(os.path.split(new_data_tarinfo.name))
                     new_file_path[0] = new_basename
@@ -931,8 +965,9 @@ class gpkg:
             # Check if all directories are the same in the container
             prefix = os.path.commonpath(container.getnames())
             if not prefix:
-                raise InvalidBinaryPackageFormat(f"gpkg file structure mismatch in {self.gpkg_file}; files: "
-                                                 f"{container.getnames()}")
+                raise InvalidBinaryPackageFormat(
+                    f"gpkg file structure mismatch in {self.gpkg_file}; files: "
+                    f"{container.getnames()}")
 
         shutil.move(tmp_gpkg_file_name, self.gpkg_file)
 
@@ -952,7 +987,8 @@ class gpkg:
 
         # container
         tmp_gpkg_file_name = f"{self.gpkg_file}.{os.getpid()}"
-        with tarfile.TarFile(name=tmp_gpkg_file_name, mode="w", format=container_tar_format) as container:
+        with tarfile.TarFile(name=tmp_gpkg_file_name, mode="w",
+                             format=container_tar_format) as container:
             # gpkg version
             gpkg_version_file = tarfile.TarInfo(os.path.join(self.prefix, self.gpkg_version))
             gpkg_version_file.mtime = datetime.now().timestamp()
@@ -972,7 +1008,8 @@ class gpkg:
                         continue
                     if os.path.basename(file_name_old).endswith(".sig"):
                         continue
-                    old_data_tarinfo = container_old.getmember(os.path.join(self.prefix, file_name_old))
+                    old_data_tarinfo = container_old.getmember(
+                        os.path.join(self.prefix, file_name_old))
                     new_data_tarinfo = copy(old_data_tarinfo)
 
                     container.addfile(new_data_tarinfo, container_old.extractfile(old_data_tarinfo))
@@ -982,13 +1019,16 @@ class gpkg:
                     if keep_current_signature and (file_name_old + ".sig" in file_list_old):
                         old_data_sign_tarinfo = container_old.getmember(file_name_old + ".sig")
                         new_data_sign_tarinfo = copy(old_data_sign_tarinfo)
-                        container.addfile(new_data_sign_tarinfo, container_old.extractfile(old_data_sign_tarinfo), )
+                        container.addfile(new_data_sign_tarinfo,
+                                          container_old.extractfile(old_data_sign_tarinfo),
+                                          )
                         for manifest_sign in manifest_old:
                             if manifest_sign[1] == file_name_old + ".sig":
                                 self.checksums.append(manifest_sign)
                                 break
                     else:
-                        checksum_info = checksum_helper(self.settings, gpg_operation=checksum_helper.SIGNING)
+                        checksum_info = checksum_helper(self.settings,
+                                                        gpg_operation=checksum_helper.SIGNING)
                         checksum_info.update(container_old.extractfile(old_data_tarinfo).read())
                         checksum_info.finish()
                         self._add_signature(checksum_info, new_data_tarinfo, container)
@@ -998,7 +1038,8 @@ class gpkg:
             # Check if all directories are the same in the container
             prefix = os.path.commonpath(container.getnames())
             if not prefix:
-                raise InvalidBinaryPackageFormat(f"gpkg file structure mismatch in {self.gpkg_file}")
+                raise InvalidBinaryPackageFormat(
+                    f"gpkg file structure mismatch in {self.gpkg_file}")
 
         shutil.move(tmp_gpkg_file_name, self.gpkg_file)
 
@@ -1016,9 +1057,11 @@ class gpkg:
         else:
             checksum_info = checksum_helper(self.settings)
 
-        with tar_stream_writer(metadata_tarinfo, container, tarfile.USTAR_FORMAT, compression_cmd, checksum_info,
+        with tar_stream_writer(metadata_tarinfo, container, tarfile.USTAR_FORMAT, compression_cmd,
+                               checksum_info,
                                ) as metadata_writer:
-            with tarfile.open(mode="w|", fileobj=metadata_writer, format=tarfile.USTAR_FORMAT) as metadata_tar:
+            with tarfile.open(mode="w|", fileobj=metadata_writer,
+                              format=tarfile.USTAR_FORMAT) as metadata_tar:
                 for m in metadata:
                     m_info = tarfile.TarInfo(os.path.join("metadata", m))
                     m_info.mtime = datetime.now().timestamp()
@@ -1048,11 +1091,13 @@ class gpkg:
         """
         eout = EOutput()
 
-        protect_file = io.BytesIO(b"# empty file because --include-config=n when `quickpkg` was used\n")
+        protect_file = io.BytesIO(
+            b"# empty file because --include-config=n when `quickpkg` was used\n")
         protect_file.seek(0, io.SEEK_END)
         protect_file_size = protect_file.tell()
 
-        root_dir = normalize_path(_unicode_decode(root_dir, encoding=_encodings["fs"], errors="strict"))
+        root_dir = normalize_path(
+            _unicode_decode(root_dir, encoding=_encodings["fs"], errors="strict"))
 
         # Get pre image info
         container_tar_format, image_tar_format = self._get_tar_format_from_stats(
@@ -1089,7 +1134,8 @@ class gpkg:
         image_tarinfo.mtime = datetime.now().timestamp()
         with tar_stream_writer(image_tarinfo, container, image_tar_format, compression_cmd,
                                checksum_info) as image_writer:
-            with tarfile.open(mode="w|", fileobj=image_writer, format=image_tar_format) as image_tar:
+            with tarfile.open(mode="w|", fileobj=image_writer,
+                              format=image_tar_format) as image_tar:
                 if len(paths) == 0:
                     tarinfo = image_tar.tarinfo("image")
                     tarinfo.type = tarfile.DIRTYPE
@@ -1112,7 +1158,8 @@ class gpkg:
                     else:
                         raise ValueError(f"invalid root argument: '{root_dir}'")
                     live_path = path
-                    if "dir" == contents_type and not stat.S_ISDIR(lst.st_mode) and os.path.isdir(live_path):
+                    if "dir" == contents_type and not stat.S_ISDIR(
+                            lst.st_mode) and os.path.isdir(live_path):
                         # Even though this was a directory in the original ${D}, it exists
                         # as a symlink to a directory in the live filesystem.  It must be
                         # recorded as a real directory in the tar file to ensure that tar
@@ -1138,7 +1185,8 @@ class gpkg:
                     tarinfo.linkname = ""
                     if stat.S_ISREG(lst.st_mode):
                         inode = (lst.st_ino, lst.st_dev)
-                        if lst.st_nlink > 1 and inode in image_tar.inodes and arcname != image_tar.inodes[inode]:
+                        if lst.st_nlink > 1 and inode in image_tar.inodes and arcname != image_tar.inodes[
+                                inode]:
                             tarinfo.type = tarfile.LNKTYPE
                             tarinfo.linkname = image_tar.inodes[inode]
                         else:
@@ -1167,7 +1215,9 @@ class gpkg:
                             tarinfo.size = protect_file_size
                             image_tar.addfile(tarinfo, protect_file)
                         else:
-                            path_bytes = _unicode_encode(path, encoding=_encodings["fs"], errors="strict")
+                            path_bytes = _unicode_encode(path,
+                                                         encoding=_encodings["fs"],
+                                                         errors="strict")
 
                             with open(path_bytes, "rb") as f:
                                 image_tar.addfile(tarinfo, f)
@@ -1222,7 +1272,9 @@ class gpkg:
             manifest.write((" ".join(m) + "\n").encode("UTF-8"))
 
         if self.create_signature:
-            checksum_info = checksum_helper(self.settings, gpg_operation=checksum_helper.SIGNING, detached=False)
+            checksum_info = checksum_helper(self.settings,
+                                            gpg_operation=checksum_helper.SIGNING,
+                                            detached=False)
             checksum_info.update(manifest.getvalue())
             checksum_info.finish()
             manifest.seek(0)
@@ -1328,9 +1380,11 @@ class gpkg:
             # Check how many layers are in the container
             for f in container_files:
                 if f.startswith("/"):
-                    raise InvalidBinaryPackageFormat(f"gpkg file structure mismatch '{f}' in {self.gpkg_file}")
+                    raise InvalidBinaryPackageFormat(
+                        f"gpkg file structure mismatch '{f}' in {self.gpkg_file}")
                 if f.count("/") != 1:
-                    raise InvalidBinaryPackageFormat(f"gpkg file structure mismatch '{f}' in {self.gpkg_file}")
+                    raise InvalidBinaryPackageFormat(
+                        f"gpkg file structure mismatch '{f}' in {self.gpkg_file}")
 
             # Check if all directories are the same in the container
             prefix = os.path.commonpath(container_files)
@@ -1373,7 +1427,9 @@ class gpkg:
             # Check Manifest signature if needed.
             # binpkg-ignore-signature can override this.
             if self.request_signature or signature_exist:
-                checksum_info = checksum_helper(self.settings, gpg_operation=checksum_helper.VERIFY, detached=False)
+                checksum_info = checksum_helper(self.settings,
+                                                gpg_operation=checksum_helper.VERIFY,
+                                                detached=False)
 
                 try:
                     checksum_info.update(manifest_data)
@@ -1418,7 +1474,8 @@ class gpkg:
 
                 # Verify current file signature if needed
                 # binpkg-ignore-signature can override this.
-                if (self.request_signature or signature_exist) and self.verify_signature and f_signature:
+                if (self.request_signature
+                        or signature_exist) and self.verify_signature and f_signature:
                     if f_signature in unverified_files:
                         signature_file = container.extractfile(f_signature)
                         signature = signature_file.read()
@@ -1450,8 +1507,8 @@ class gpkg:
                 verified_hash_count = 0
                 for c in checksum_info.libs:
                     try:
-                        if checksum_info.libs[c].hexdigest().lower() == manifest_record[manifest_record.index(c) +
-                                                                                        1].lower():
+                        if checksum_info.libs[c].hexdigest().lower() == manifest_record[
+                                manifest_record.index(c) + 1].lower():
                             verified_hash_count += 1
                         else:
                             raise DigestException(f"{f} checksum mismatched in {self.gpkg_file}")
@@ -1472,7 +1529,8 @@ class gpkg:
 
         # Check if any file NOT IN Manifest but IN binary package
         if len(unverified_files) != 0:
-            raise DigestException(f"Unknown files exists: {str(unverified_files)} in {self.gpkg_file}")
+            raise DigestException(
+                f"Unknown files exists: {str(unverified_files)} in {self.gpkg_file}")
 
         # Save current Manifest for other operations.
         self.manifest_old = manifest.copy()
@@ -1484,7 +1542,8 @@ class gpkg:
         read all files in metadata_dir and return as dict
         """
         metadata = {}
-        metadata_dir = normalize_path(_unicode_decode(metadata_dir, encoding=_encodings["fs"], errors="strict"))
+        metadata_dir = normalize_path(
+            _unicode_decode(metadata_dir, encoding=_encodings["fs"], errors="strict"))
         for parent, dirs, files in os.walk(metadata_dir):
             for f in files:
                 try:
@@ -1506,12 +1565,14 @@ class gpkg:
         if mode not in compressor:
             raise InvalidCompressionMethod(f"{compression}: {mode}")
 
-        if mode == "compress" and (self.settings.get(f"BINPKG_COMPRESS_FLAGS_{compression.upper()}", None) is not None):
+        if mode == "compress" and (self.settings.get(f"BINPKG_COMPRESS_FLAGS_{compression.upper()}",
+                                                     None) is not None):
             compressor["compress"] = compressor["compress"].replace(
                 "${BINPKG_COMPRESS_FLAGS}", f"${{BINPKG_COMPRESS_FLAGS_{compression.upper()}}}",
             )
 
-        cmd = compressor[mode].replace("{JOBS}", str(makeopts_to_job_count(self.settings.get("MAKEOPTS", "1"))))
+        cmd = compressor[mode].replace(
+            "{JOBS}", str(makeopts_to_job_count(self.settings.get("MAKEOPTS", "1"))))
         cmd = shlex_split(varexpand(cmd, mydict=self.settings))
 
         # Filter empty elements that make Popen fail
@@ -1571,8 +1632,8 @@ class gpkg:
 
         return None
 
-    def _get_tar_format_from_stats(self, image_max_prefix_length, image_max_name_length, image_max_linkname_length,
-                                   image_max_file_size, image_total_size,
+    def _get_tar_format_from_stats(self, image_max_prefix_length, image_max_name_length,
+                                   image_max_linkname_length, image_max_file_size, image_total_size,
                                    ):
         """
         Choose the corresponding tar format according to
@@ -1612,9 +1673,10 @@ class gpkg:
         path length, largest single file size, and total files size.
         """
         image_prefix_length = len(image_prefix) + 1
-        root_dir = os.path.join(normalize_path(_unicode_decode(root_dir, encoding=_encodings["fs"], errors="strict")),
-                                "",
-                                )
+        root_dir = os.path.join(
+            normalize_path(_unicode_decode(root_dir, encoding=_encodings["fs"], errors="strict")),
+            "",
+        )
         root_dir_length = len(_unicode_encode(root_dir, encoding=_encodings["fs"], errors="strict"))
 
         image_max_prefix_length = 0
@@ -1638,12 +1700,14 @@ class gpkg:
                     raise
 
                 d = os.path.join(parent, d)
-                prefix_length = len(_unicode_encode(d, encoding=_encodings["fs"],
-                                                    errors="strict")) - root_dir_length + image_prefix_length
+                prefix_length = len(
+                    _unicode_encode(d, encoding=_encodings["fs"],
+                                    errors="strict")) - root_dir_length + image_prefix_length
 
                 if os.path.islink(d):
                     path_link = os.readlink(d)
-                    path_link_length = len(_unicode_encode(path_link, encoding=_encodings["fs"], errors="strict"))
+                    path_link_length = len(
+                        _unicode_encode(path_link, encoding=_encodings["fs"], errors="strict"))
                     image_max_link_length = max(image_max_link_length, path_link_length)
 
                 image_max_prefix_length = max(image_max_prefix_length, prefix_length)
@@ -1655,20 +1719,22 @@ class gpkg:
                     writemsg(colorize("BAD", f"\n*** {err}\n\n"), noiselevel=-1)
                     raise
 
-                filename_length = len(_unicode_encode(f, encoding=_encodings["fs"], errors="strict"))
+                filename_length = len(_unicode_encode(f, encoding=_encodings["fs"],
+                                                      errors="strict"))
                 image_max_name_length = max(image_max_name_length, filename_length)
 
                 f = os.path.join(parent, f)
-                path_length = len(_unicode_encode(f, encoding=_encodings["fs"],
-                                                  errors="strict")) - root_dir_length + image_prefix_length
+                path_length = len(
+                    _unicode_encode(f, encoding=_encodings["fs"],
+                                    errors="strict")) - root_dir_length + image_prefix_length
 
                 file_stat = os.lstat(f)
 
                 if os.path.islink(f):
                     path_link = os.readlink(f)
                     path_link_length = len(
-                        os.fsencode(path_link) if portage.
-                        utf8_mode else _unicode_encode(path_link, encoding=_encodings["fs"], errors="strict"))
+                        os.fsencode(path_link) if portage.utf8_mode else _unicode_encode(
+                            path_link, encoding=_encodings["fs"], errors="strict"))
                 elif file_stat.st_nlink > 1:
                     # Hardlink exists
                     path_link_length = path_length
@@ -1688,8 +1754,8 @@ class gpkg:
                 image_total_size += file_size
                 image_max_file_size = max(image_max_file_size, file_size)
 
-        return (image_max_prefix_length, image_max_name_length, image_max_link_length, image_max_file_size,
-                image_total_size,
+        return (image_max_prefix_length, image_max_name_length, image_max_link_length,
+                image_max_file_size, image_total_size,
                 )
 
     def _check_pre_quickpkg_files(self, contents, root, image_prefix="image", ignore_missing=False):
@@ -1698,7 +1764,9 @@ class gpkg:
         path length, largest single file size, and total files size.
         """
         image_prefix_length = len(image_prefix) + 1
-        root_dir = os.path.join(normalize_path(_unicode_decode(root, encoding=_encodings["fs"], errors="strict")), "", )
+        root_dir = os.path.join(
+            normalize_path(_unicode_decode(root, encoding=_encodings["fs"], errors="strict")), "",
+        )
         root_dir_length = len(_unicode_encode(root_dir, encoding=_encodings["fs"], errors="strict"))
 
         image_max_prefix_length = 0
@@ -1717,15 +1785,17 @@ class gpkg:
 
             d, f = os.path.split(path)
 
-            prefix_length = len(_unicode_encode(d, encoding=_encodings["fs"],
-                                                errors="strict")) - root_dir_length + image_prefix_length
+            prefix_length = len(
+                _unicode_encode(d, encoding=_encodings["fs"],
+                                errors="strict")) - root_dir_length + image_prefix_length
             image_max_prefix_length = max(image_max_prefix_length, prefix_length)
 
             filename_length = len(_unicode_encode(f, encoding=_encodings["fs"], errors="strict"))
             image_max_name_length = max(image_max_name_length, filename_length)
 
-            path_length = len(_unicode_encode(path, encoding=_encodings["fs"],
-                                              errors="strict")) - root_dir_length + image_prefix_length
+            path_length = len(
+                _unicode_encode(path, encoding=_encodings["fs"],
+                                errors="strict")) - root_dir_length + image_prefix_length
 
             if not os.path.exists(path):
                 if ignore_missing:
@@ -1737,7 +1807,8 @@ class gpkg:
 
             if os.path.islink(path):
                 path_link = os.readlink(path)
-                path_link_length = len(_unicode_encode(path_link, encoding=_encodings["fs"], errors="strict"))
+                path_link_length = len(
+                    _unicode_encode(path_link, encoding=_encodings["fs"], errors="strict"))
             elif file_stat.st_nlink > 1:
                 # Hardlink exists
                 path_link_length = path_length
@@ -1759,8 +1830,8 @@ class gpkg:
                 if file_size > image_max_file_size:
                     image_max_file_size = file_size
 
-        return (image_max_prefix_length, image_max_name_length, image_max_link_length, image_max_file_size,
-                image_total_size,
+        return (image_max_prefix_length, image_max_name_length, image_max_link_length,
+                image_max_file_size, image_total_size,
                 )
 
     def _create_tarinfo(self, file_name):

@@ -75,7 +75,8 @@ class KeywordsManager:
 
             if pkgdict and portage._internal_caller:
                 warnings.warn(
-                    _("%s is deprecated, use %s instead") % (user_kwrds_path, user_accept_kwrds_path), UserWarning,
+                    _("%s is deprecated, use %s instead") %
+                    (user_kwrds_path, user_accept_kwrds_path), UserWarning,
                 )
 
             for k, v in grabdict_package(user_accept_kwrds_path,
@@ -145,7 +146,9 @@ class KeywordsManager:
 
         return bool(self._getMissingKeywords(pkg, pgroups, set(unstable)))
 
-    def getMissingKeywords(self, cpv, slot, keywords, repo, global_accept_keywords, backuped_accept_keywords, ):
+    def getMissingKeywords(self, cpv, slot, keywords, repo, global_accept_keywords,
+                           backuped_accept_keywords,
+                           ):
         """
         Take a package and return a list of any KEYWORDS that the user may
         need to accept for the given package. If the KEYWORDS are empty
@@ -265,7 +268,8 @@ class KeywordsManager:
                 hastesting = True
             elif not gp.startswith("-"):
                 hasstable = True
-        if not match and ((hastesting and "~*" in pgroups) or (hasstable and "*" in pgroups) or "**" in pgroups):
+        if not match and ((hastesting and "~*" in pgroups) or
+                          (hasstable and "*" in pgroups) or "**" in pgroups):
             match = True
         if match:
             missing = []
@@ -304,7 +308,8 @@ class KeywordsManager:
 
         unmaskgroups = []
         if self._p_accept_keywords:
-            accept_keywords_defaults = tuple("~" + keyword for keyword in pgroups if keyword[:1] not in "~-")
+            accept_keywords_defaults = tuple("~" + keyword for keyword in pgroups
+                                             if keyword[:1] not in "~-")
             for d in self._p_accept_keywords:
                 cpdict = d.get(cp)
                 if cpdict:

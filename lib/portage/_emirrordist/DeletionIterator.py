@@ -26,13 +26,14 @@ class DeletionIterator:
         deletion_delay = self._config.options.deletion_delay
         start_time = self._config.start_time
         distfiles_set = set()
-        distfiles_set.update((filename if isinstance(filename, DistfileName) else DistfileName(filename)
-                              for filename in itertools.chain.from_iterable(
-                                  layout.get_filenames(distdir) for layout in self._config.layouts)
-                              ) if self._config.content_db is None else itertools.chain.from_iterable(
-                                  self._config.content_db.get_filenames_translate(filename)
-                                  for filename in itertools.chain.from_iterable(
-                                      layout.get_filenames(distdir) for layout in self._config.layouts)))
+        distfiles_set.update((
+            filename if isinstance(filename, DistfileName) else DistfileName(filename)
+            for filename in itertools.chain.from_iterable(
+                layout.get_filenames(distdir) for layout in self._config.layouts)
+        ) if self._config.content_db is None else itertools.chain.from_iterable(
+            self._config.content_db.get_filenames_translate(filename)
+            for filename in itertools.chain.from_iterable(
+                layout.get_filenames(distdir) for layout in self._config.layouts)))
         for filename in distfiles_set:
             # require at least one successful stat()
             exceptions = []
@@ -68,7 +69,8 @@ class DeletionIterator:
                         del deletion_db[filename]
                     except KeyError:
                         pass
-            elif distfiles_local is not None and os.path.exists(os.path.join(distfiles_local, filename)):
+            elif distfiles_local is not None and os.path.exists(
+                    os.path.join(distfiles_local, filename)):
                 if deletion_db is not None:
                     try:
                         del deletion_db[filename]
@@ -78,7 +80,11 @@ class DeletionIterator:
                 self._config.scheduled_deletion_count += 1
 
                 if deletion_db is None or deletion_delay is None:
-                    yield DeletionTask(background=True, distfile=filename, distfile_path=path, config=self._config, )
+                    yield DeletionTask(background=True,
+                                       distfile=filename,
+                                       distfile_path=path,
+                                       config=self._config,
+                                       )
 
                 else:
                     deletion_entry = deletion_db.get(filename)

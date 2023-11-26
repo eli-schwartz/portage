@@ -28,16 +28,18 @@ __version__ = "1.0.1"
 epilog = ("glsa-list can contain an arbitrary number of GLSA ids,"
           " filenames containing GLSAs or the special identifiers"
           " 'all' and 'affected'")
-parser = argparse.ArgumentParser(usage=__program__ + " <option> [glsa-id | all | new | affected]", epilog=epilog)
+parser = argparse.ArgumentParser(usage=__program__ + " <option> [glsa-id | all | new | affected]",
+                                 epilog=epilog)
 
 modes = parser.add_argument_group("Modes")
-modes.add_argument("-l",
-                   "--list",
-                   action="store_const",
-                   const="list",
-                   dest="mode",
-                   help="List a summary for the given GLSA(s) or set and whether they affect the system",
-                   )
+modes.add_argument(
+    "-l",
+    "--list",
+    action="store_const",
+    const="list",
+    dest="mode",
+    help="List a summary for the given GLSA(s) or set and whether they affect the system",
+)
 modes.add_argument("-d",
                    "--dump",
                    action="store_const",
@@ -45,14 +47,19 @@ modes.add_argument("-d",
                    dest="mode",
                    help="Show all information about the GLSA(s) or set",
                    )
-modes.add_argument("--print", action="store_const", const="dump", dest="mode", help="Alias for --dump")
-modes.add_argument("-t",
-                   "--test",
+modes.add_argument("--print",
                    action="store_const",
-                   const="test",
+                   const="dump",
                    dest="mode",
-                   help="Test if this system is affected by the GLSA(s) or set and output the GLSA ID(s)",
-                   )
+                   help="Alias for --dump")
+modes.add_argument(
+    "-t",
+    "--test",
+    action="store_const",
+    const="test",
+    dest="mode",
+    help="Test if this system is affected by the GLSA(s) or set and output the GLSA ID(s)",
+)
 modes.add_argument("-p",
                    "--pretend",
                    action="store_const",
@@ -83,14 +90,21 @@ modes.add_argument("-m",
                    dest="mode",
                    help="Send a mail with the given GLSAs to the administrator",
                    )
-parser.add_argument("-V", "--version", action="store_true", help="Show information about glsa-check")
+parser.add_argument("-V",
+                    "--version",
+                    action="store_true",
+                    help="Show information about glsa-check")
 parser.add_argument("-q",
                     "--quiet",
                     action="store_true",
                     dest="quiet",
                     help="Be less verbose and do not send empty mail",
                     )
-parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Print more messages")
+parser.add_argument("-v",
+                    "--verbose",
+                    action="store_true",
+                    dest="verbose",
+                    help="Print more messages")
 parser.add_argument("-n", "--nocolor", action="store_true", help="Removes color from output")
 parser.add_argument("-e",
                     "--emergelike",
@@ -98,8 +112,18 @@ parser.add_argument("-e",
                     dest="least_change",
                     help="Upgrade to latest version (not least-change)",
                     )
-parser.add_argument("-c", "--cve", action="store_true", dest="list_cve", help="Show CVE IDs in listing mode", )
-parser.add_argument("-r", "--reverse", action="store_true", dest="reverse", help="List GLSAs in reverse order", )
+parser.add_argument("-c",
+                    "--cve",
+                    action="store_true",
+                    dest="list_cve",
+                    help="Show CVE IDs in listing mode",
+                    )
+parser.add_argument("-r",
+                    "--reverse",
+                    action="store_true",
+                    dest="reverse",
+                    help="List GLSAs in reverse order",
+                    )
 
 options, params = parser.parse_known_args()
 
@@ -137,7 +161,9 @@ elif mode == "list" and not params:
     params.append("affected")
 
 # delay this for speed increase
-from portage.glsa import (Glsa, GlsaTypeException, GlsaFormatException, get_applied_glsas, get_glsa_list, )
+from portage.glsa import (Glsa, GlsaTypeException, GlsaFormatException, get_applied_glsas,
+                          get_glsa_list,
+                          )
 
 eroot = portage.settings["EROOT"]
 vardb = portage.db[eroot]["vartree"].dbapi
@@ -174,7 +200,8 @@ if "affected" in params:
 # remove invalid parameters
 for p in params[:]:
     if not (p in completelist or os.path.exists(p)):
-        sys.stderr.write(f"(removing {p} from parameter list as it isn't a valid GLSA specification)\n")
+        sys.stderr.write(
+            f"(removing {p} from parameter list as it isn't a valid GLSA specification)\n")
         params.remove(p)
 
 glsalist.extend([g for g in params if g not in glsalist])
@@ -217,7 +244,8 @@ def summarylist(myglsalist, fd1=sys.stdout, fd2=sys.stderr, encoding="utf-8"):
         else:
             access = ""
 
-        fd1.write(color(myglsa.nr) + " " + color(status) + " " + color(access) + myglsa.title + " (")
+        fd1.write(
+            color(myglsa.nr) + " " + color(status) + " " + color(access) + myglsa.title + " (")
         if not verbose:
             for pkg in list(myglsa.packages)[:3]:
                 fd1.write(" " + pkg + " ")
@@ -227,8 +255,10 @@ def summarylist(myglsalist, fd1=sys.stdout, fd2=sys.stderr, encoding="utf-8"):
             for cpv in myglsa.packages.keys():
                 pkg = myglsa.packages[cpv]
                 for path in pkg:
-                    v_installed = reduce(operator.add, [match(v, vardb) for v in path["vul_atoms"]], [])
-                    u_installed = reduce(operator.add, [match(u, vardb) for u in path["unaff_atoms"]], [])
+                    v_installed = reduce(operator.add, [match(v, vardb) for v in path["vul_atoms"]],
+                                         [])
+                    u_installed = reduce(operator.add,
+                                         [match(u, vardb) for u in path["unaff_atoms"]], [])
                 mylist = sorted(set(v_installed).difference(set(u_installed)))
                 if len(mylist) > 0:
                     cpv = color(" ".join(mylist))
@@ -314,7 +344,8 @@ if mode in ["dump", "fix", "inject", "pretend"]:
                 if mergedict:
                     sys.stdout.write(">>> Updates that will be performed:\n")
                     for upd, vuln in mergedict.items():
-                        sys.stdout.write("     " + green(upd) + " (vulnerable: " + red(", ".join(vuln)) + ")\n")
+                        sys.stdout.write("     " + green(upd) + " (vulnerable: " +
+                                         red(", ".join(vuln)) + ")\n")
 
                 if no_upgrades:
                     sys.stdout.write(">>> No upgrade path exists for these packages:\n")
@@ -397,7 +428,8 @@ if mode == "mail":
         myfd.close()
 
     if glsalist or not quiet:
-        mymessage = portage.mail.create_message(myfrom, myrecipient, mysubject, summary, myattachments)
+        mymessage = portage.mail.create_message(myfrom, myrecipient, mysubject, summary,
+                                                myattachments)
         portage.mail.send_mail(portage.settings, mymessage)
 
     sys.exit(0)

@@ -9,7 +9,8 @@ import fnmatch
 import operator
 
 from portage import os, _unicode_decode
-from portage.exception import (FileNotFound, IsADirectory, OperationNotPermitted, PermissionDenied, ReadOnlyFileSystem,
+from portage.exception import (FileNotFound, IsADirectory, OperationNotPermitted, PermissionDenied,
+                               ReadOnlyFileSystem,
                                )
 from portage.util import normalize_path
 
@@ -18,7 +19,10 @@ def _defaultdict_tree():
     return collections.defaultdict(_defaultdict_tree)
 
 
-_pattern = collections.namedtuple("_pattern", ("orig_index", "is_inclusive", "pattern", "leading_slash", ), )
+_pattern = collections.namedtuple("_pattern",
+                                  ("orig_index", "is_inclusive", "pattern", "leading_slash",
+                                   ),
+                                  )
 
 
 class InstallMask:
@@ -105,7 +109,8 @@ class InstallMask:
                     pattern = pattern.rstrip("/") + "/"
                 # match either exact path or one of parent dirs
                 # the latter is done via matching pattern/*
-                if fnmatch.fnmatch(path, pattern[1:]) or fnmatch.fnmatch(path, pattern[1:].rstrip("/") + "/*"):
+                if fnmatch.fnmatch(path, pattern[1:]) or fnmatch.fnmatch(
+                        path, pattern[1:].rstrip("/") + "/*"):
                     ret = is_inclusive
             # filename
             else:

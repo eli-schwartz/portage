@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class SlotOperatorExclusiveSlotsTestCase(TestCase):
@@ -73,8 +75,9 @@ class SlotOperatorExclusiveSlotsTestCase(TestCase):
                                        ambiguous_merge_order=True,
                                        mergelist=[
                                            "sys-devel/llvm-4.0.0", "media-libs/mesa-17.0.1",
-                                           ("sys-devel/clang-4.0.0", "[uninstall]sys-devel/llvm-3.9.1",
-                                            "!sys-devel/llvm:0", "[uninstall]sys-devel/clang-3.9.1-r100",
+                                           ("sys-devel/clang-4.0.0",
+                                            "[uninstall]sys-devel/llvm-3.9.1", "!sys-devel/llvm:0",
+                                            "[uninstall]sys-devel/clang-3.9.1-r100",
                                             "!sys-devel/clang:0",
                                             ),
                                        ],
@@ -107,8 +110,8 @@ class SlotOperatorExclusiveSlotsTestCase(TestCase):
                                        ambiguous_merge_order=True,
                                        mergelist=[
                                            "sys-devel/llvm-4.0.0",
-                                           ("media-libs/mesa-17.0.1", "[uninstall]sys-devel/llvm-3.9.1",
-                                            "!sys-devel/llvm:0",
+                                           ("media-libs/mesa-17.0.1",
+                                            "[uninstall]sys-devel/llvm-3.9.1", "!sys-devel/llvm:0",
                                             ),
                                        ],
                                        ), )

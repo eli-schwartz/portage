@@ -22,7 +22,13 @@ class VdbMetadataDelta:
                              encoding=_encodings["repo.content"],
                              errors="strict",
                              ) as f:
-            json.dump({"version": self._format_version, "timestamp": timestamp}, f, ensure_ascii=False, )
+            json.dump({
+                "version": self._format_version,
+                "timestamp": timestamp
+            },
+                      f,
+                      ensure_ascii=False,
+                      )
 
     def load(self):
         if not os.path.exists(self._vardb._aux_cache_filename):
@@ -31,7 +37,10 @@ class VdbMetadataDelta:
             return None
 
         try:
-            with open(self._vardb._cache_delta_filename, encoding=_encodings["repo.content"], errors="strict", ) as f:
+            with open(self._vardb._cache_delta_filename,
+                      encoding=_encodings["repo.content"],
+                      errors="strict",
+                      ) as f:
                 cache_obj = json.load(f)
         except OSError as e:
             if e.errno not in (errno.ENOENT, errno.ESTALE):
@@ -75,8 +84,8 @@ class VdbMetadataDelta:
         while tries:
             tries -= 1
             cache_delta = self.load()
-            if cache_delta is not None and cache_delta.get("timestamp") != self._vardb._aux_cache.get(
-                    "timestamp", False):
+            if cache_delta is not None and cache_delta.get(
+                    "timestamp") != self._vardb._aux_cache.get("timestamp", False):
                 self._vardb._aux_cache_obj = None
             else:
                 return cache_delta
@@ -119,7 +128,10 @@ class VdbMetadataDelta:
             filtered_list.reverse()
             deltas_obj["deltas"] = filtered_list
 
-            f = atomic_ofstream(self._vardb._cache_delta_filename, mode="w", encoding=_encodings["repo.content"], )
+            f = atomic_ofstream(self._vardb._cache_delta_filename,
+                                mode="w",
+                                encoding=_encodings["repo.content"],
+                                )
             json.dump(deltas_obj, f, ensure_ascii=False)
             f.close()
 
@@ -152,8 +164,8 @@ class VdbMetadataDelta:
 
                 removed = False
                 for cpv, delta in deltas.items():
-                    if cached_cpv.startswith(delta["package"]) and metadata.get("SLOT") == delta["slot"] and cpv_getkey(
-                            cached_cpv) == delta["package"]:
+                    if cached_cpv.startswith(delta["package"]) and metadata.get(
+                            "SLOT") == delta["slot"] and cpv_getkey(cached_cpv) == delta["package"]:
                         removed = True
                         break
 

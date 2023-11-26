@@ -68,26 +68,32 @@ class WebRsync(SyncBase):
             if self.repo.module_specific_options.get("sync-webrsync-verify-signature",
                                                      "false").lower() in ("true", "yes"):
                 if not self.repo.sync_openpgp_key_path:
-                    writemsg_level("!!! sync-openpgp-key-path is not set\n", level=logging.ERROR, noiselevel=-1, )
+                    writemsg_level("!!! sync-openpgp-key-path is not set\n",
+                                   level=logging.ERROR,
+                                   noiselevel=-1,
+                                   )
                     return (1, False)
 
                 if not os.path.isfile(self.repo.sync_openpgp_key_path):
-                    writemsg_level("!!! sync-openpgp-key-path file not found: %s\n" % self.repo.sync_openpgp_key_path,
+                    writemsg_level("!!! sync-openpgp-key-path file not found: %s\n" %
+                                   self.repo.sync_openpgp_key_path,
                                    level=logging.ERROR,
                                    noiselevel=-1,
                                    )
                     return (1, False)
 
                 if gemato is None:
-                    writemsg_level("!!! Verifying against specified key requires gemato-14.5+ installed\n",
-                                   level=logging.ERROR,
-                                   noiselevel=-1,
-                                   )
+                    writemsg_level(
+                        "!!! Verifying against specified key requires gemato-14.5+ installed\n",
+                        level=logging.ERROR,
+                        noiselevel=-1,
+                    )
                     return (1, False)
 
                 self.spawn_kwargs["env"]["PORTAGE_SYNC_WEBRSYNC_GPG"] = "1"
                 self.spawn_kwargs["env"]["PORTAGE_GPG_KEY"] = self.repo.sync_openpgp_key_path
-                self.spawn_kwargs["env"]["PORTAGE_GPG_KEY_SERVER"] = self.repo.sync_openpgp_keyserver
+                self.spawn_kwargs["env"][
+                    "PORTAGE_GPG_KEY_SERVER"] = self.repo.sync_openpgp_keyserver
 
             webrsync_cmd = [self.bin_command]
             if verbose:

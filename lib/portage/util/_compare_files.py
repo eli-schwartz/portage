@@ -35,9 +35,11 @@ def compare_files(file1, file2, skipped_types=()):
     if (file1_stat.st_dev, file1_stat.st_ino) == (file2_stat.st_dev, file2_stat.st_ino):
         return ()
 
-    if "type" not in skipped_types and stat.S_IFMT(file1_stat.st_mode) != stat.S_IFMT(file2_stat.st_mode):
+    if "type" not in skipped_types and stat.S_IFMT(file1_stat.st_mode) != stat.S_IFMT(
+            file2_stat.st_mode):
         differences.append("type")
-    if "mode" not in skipped_types and stat.S_IMODE(file1_stat.st_mode) != stat.S_IMODE(file2_stat.st_mode):
+    if "mode" not in skipped_types and stat.S_IMODE(file1_stat.st_mode) != stat.S_IMODE(
+            file2_stat.st_mode):
         differences.append("mode")
     if "owner" not in skipped_types and file1_stat.st_uid != file2_stat.st_uid:
         differences.append("owner")
@@ -46,8 +48,8 @@ def compare_files(file1, file2, skipped_types=()):
     if "device_number" not in skipped_types and file1_stat.st_rdev != file2_stat.st_rdev:
         differences.append("device_number")
 
-    if XATTRS_WORKS and "xattr" not in skipped_types and sorted(xattr.get_all(file1, nofollow=True)) != sorted(
-            xattr.get_all(file2, nofollow=True)):
+    if XATTRS_WORKS and "xattr" not in skipped_types and sorted(xattr.get_all(
+            file1, nofollow=True)) != sorted(xattr.get_all(file2, nofollow=True)):
         differences.append("xattr")
 
     if "atime" not in skipped_types and file1_stat.st_atime_ns != file2_stat.st_atime_ns:
@@ -70,12 +72,16 @@ def compare_files(file1, file2, skipped_types=()):
                 file1_stream = io.BytesIO(
                     os.readlink(_unicode_encode(file1, encoding=_encodings["fs"], errors="strict")))
             else:
-                file1_stream = open(_unicode_encode(file1, encoding=_encodings["fs"], errors="strict"), "rb", )
+                file1_stream = open(
+                    _unicode_encode(file1, encoding=_encodings["fs"], errors="strict"), "rb",
+                )
             if stat.S_ISLNK(file2_stat.st_mode):
                 file2_stream = io.BytesIO(
                     os.readlink(_unicode_encode(file2, encoding=_encodings["fs"], errors="strict")))
             else:
-                file2_stream = open(_unicode_encode(file2, encoding=_encodings["fs"], errors="strict"), "rb", )
+                file2_stream = open(
+                    _unicode_encode(file2, encoding=_encodings["fs"], errors="strict"), "rb",
+                )
             while True:
                 file1_content = file1_stream.read(4096)
                 file2_content = file2_stream.read(4096)

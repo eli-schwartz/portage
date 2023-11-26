@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class OrUpgradeInstalledTestCase(TestCase):
@@ -40,11 +42,15 @@ class OrUpgradeInstalledTestCase(TestCase):
                                        },
                                        success=True,
                                        ambiguous_merge_order=True,
-                                       mergelist=(("net-libs/libtirpc-1", "sys-libs/glibc-2.26", "net-misc/foo-1",
+                                       mergelist=(("net-libs/libtirpc-1", "sys-libs/glibc-2.26",
+                                                   "net-misc/foo-1",
                                                    ), ),
                                        ), )
 
-        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
+        playground = ResolverPlayground(debug=False,
+                                        ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world)
 
         try:
             for test_case in test_cases:
@@ -124,12 +130,16 @@ class OrUpgradeInstalledTestCase(TestCase):
                                        all_permutations=True,
                                        success=True,
                                        ambiguous_merge_order=True,
-                                       mergelist=(("dev-lang/rust-1.23.0", "dev-lang/rust-bin-1.19.0",
+                                       mergelist=(("dev-lang/rust-1.23.0",
+                                                   "dev-lang/rust-bin-1.19.0",
                                                    ), ),
                                        ),
         )
 
-        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
+        playground = ResolverPlayground(debug=False,
+                                        ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world)
 
         try:
             for test_case in test_cases:
@@ -201,7 +211,10 @@ class OrUpgradeInstalledTestCase(TestCase):
                                        mergelist=["sys-devel/llvm-9", "media-libs/mesa-19.2.8"],
                                        ), )
 
-        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
+        playground = ResolverPlayground(debug=False,
+                                        ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world)
 
         try:
             for test_case in test_cases:

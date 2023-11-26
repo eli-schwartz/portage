@@ -201,7 +201,9 @@ class MtimeDBTestCase(TestCase):
     text = b"Unit tests for MtimeDB"
 
     def test_instances_created_with_only_expected_keys(self):
-        all_fixtures = (_ONE_RESUME_LIST_JSON, _EMPTY_FILE, _PARTIAL_FILE_JSON, _TWO_RESUME_LISTS_JSON, )
+        all_fixtures = (_ONE_RESUME_LIST_JSON, _EMPTY_FILE, _PARTIAL_FILE_JSON,
+                        _TWO_RESUME_LISTS_JSON,
+                        )
         for contents in all_fixtures:
             with patch("portage.util.mtimedb.open", mock_open(read_data=contents)):
                 mtimedb = MtimeDB("/path/to/mtimedb")

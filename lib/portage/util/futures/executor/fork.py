@@ -45,8 +45,8 @@ class ForkExecutor:
         return future
 
     def _schedule(self):
-        while not self._shutdown and self._submit_queue and (self._max_workers is True
-                                                             or len(self._running_tasks) < self._max_workers):
+        while not self._shutdown and self._submit_queue and (self._max_workers is True or len(
+                self._running_tasks) < self._max_workers):
             future, proc = self._submit_queue.popleft()
             future.add_done_callback(functools.partial(self._cancel_cb, proc))
             proc.addExitListener(functools.partial(self._proc_exit, future))
@@ -81,7 +81,8 @@ class ForkExecutor:
             else:
                 # TODO: add special exception class for this, maybe
                 # distinguish between kill and crash
-                future.set_exception(Exception(f"pid {proc.pid} crashed or killed, exitcode {proc.returncode}"))
+                future.set_exception(
+                    Exception(f"pid {proc.pid} crashed or killed, exitcode {proc.returncode}"))
 
         del self._running_tasks[id(proc)]
         self._schedule()

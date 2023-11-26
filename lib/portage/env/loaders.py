@@ -28,7 +28,9 @@ class LoaderError(Exception):
         self.error_msg = error_msg
 
     def __str__(self):
-        return "Failed while loading resource: {}, error was: {}".format(self.resource, self.error_msg, )
+        return "Failed while loading resource: {}, error was: {}".format(
+            self.resource, self.error_msg,
+        )
 
 
 def RecursiveFileLoader(filename):
@@ -211,11 +213,13 @@ class ItemFileLoader(FileLoader):
             return
         split = line.split()
         if not len(split):
-            errors.setdefault(self.fname, []).append(_("Malformed data at line: %s, data: %s") % (line_num + 1, line))
+            errors.setdefault(self.fname, []).append(
+                _("Malformed data at line: %s, data: %s") % (line_num + 1, line))
             return
         key = split[0]
         if not self._validate(key):
-            errors.setdefault(self.fname, []).append(_("Validation failed at line: %s, data %s") % (line_num + 1, key))
+            errors.setdefault(self.fname, []).append(
+                _("Validation failed at line: %s, data %s") % (line_num + 1, key))
             return
         data[key] = None
 
@@ -250,17 +254,18 @@ class KeyListFileLoader(FileLoader):
             return
         split = line.split()
         if len(split) < 1:
-            errors.setdefault(self.fname, []).append(_("Malformed data at line: %s, data: %s") % (line_num + 1, line))
+            errors.setdefault(self.fname, []).append(
+                _("Malformed data at line: %s, data: %s") % (line_num + 1, line))
             return
         key = split[0]
         value = split[1:]
         if not self._validate(key):
-            errors.setdefault(self.fname,
-                              []).append(_("Key validation failed at line: %s, data %s") % (line_num + 1, key))
+            errors.setdefault(self.fname, []).append(
+                _("Key validation failed at line: %s, data %s") % (line_num + 1, key))
             return
         if not self._valueValidate(value):
-            errors.setdefault(self.fname,
-                              []).append(_("Value validation failed at line: %s, data %s") % (line_num + 1, value))
+            errors.setdefault(self.fname, []).append(
+                _("Value validation failed at line: %s, data %s") % (line_num + 1, value))
             return
         if key in data:
             data[key].append(value)
@@ -300,19 +305,21 @@ class KeyValuePairFileLoader(FileLoader):
             return
         split = line.split("=", 1)
         if len(split) < 2:
-            errors.setdefault(self.fname, []).append(_("Malformed data at line: %s, data %s") % (line_num + 1, line))
+            errors.setdefault(self.fname, []).append(
+                _("Malformed data at line: %s, data %s") % (line_num + 1, line))
             return
         key = split[0].strip()
         value = split[1].strip()
         if not key:
-            errors.setdefault(self.fname, []).append(_("Malformed key at line: %s, key %s") % (line_num + 1, key))
+            errors.setdefault(self.fname, []).append(
+                _("Malformed key at line: %s, key %s") % (line_num + 1, key))
             return
         if not self._validate(key):
-            errors.setdefault(self.fname,
-                              []).append(_("Key validation failed at line: %s, data %s") % (line_num + 1, key))
+            errors.setdefault(self.fname, []).append(
+                _("Key validation failed at line: %s, data %s") % (line_num + 1, key))
             return
         if not self._valueValidate(value):
-            errors.setdefault(self.fname,
-                              []).append(_("Value validation failed at line: %s, data %s") % (line_num + 1, value))
+            errors.setdefault(self.fname, []).append(
+                _("Value validation failed at line: %s, data %s") % (line_num + 1, value))
             return
         data[key] = value

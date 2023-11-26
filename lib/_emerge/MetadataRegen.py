@@ -63,7 +63,8 @@ class MetadataRegen(AsyncScheduler):
                     valid_pkgs.add(cpv)
                     ebuild_path, repo_path = portdb.findname2(cpv, myrepo=repo.name)
                     if ebuild_path is None:
-                        raise AssertionError(f"ebuild not found for '{cpv}{_repo_separator}{repo.name}'")
+                        raise AssertionError(
+                            f"ebuild not found for '{cpv}{_repo_separator}{repo.name}'")
                     metadata, ebuild_hash = portdb._pull_valid_cache(cpv, ebuild_path, repo_path)
                     if metadata is not None:
                         if consumer is not None:
@@ -93,7 +94,8 @@ class MetadataRegen(AsyncScheduler):
                 try:
                     dead_nodes[mytree] = set(portdb.auxdb[mytree])
                 except CacheError as e:
-                    portage.writemsg("Error listing cache entries for " + f"'{mytree}': {e}, continuing...\n",
+                    portage.writemsg("Error listing cache entries for " +
+                                     f"'{mytree}': {e}, continuing...\n",
                                      noiselevel=-1,
                                      )
                     del e
@@ -104,9 +106,13 @@ class MetadataRegen(AsyncScheduler):
             cpv_getkey = portage.cpv_getkey
             for mytree in portdb.porttrees:
                 try:
-                    dead_nodes[mytree] = {cpv for cpv in portdb.auxdb[mytree] if cpv_getkey(cpv) in cp_set}
+                    dead_nodes[mytree] = {
+                        cpv
+                        for cpv in portdb.auxdb[mytree] if cpv_getkey(cpv) in cp_set
+                    }
                 except CacheError as e:
-                    portage.writemsg("Error listing cache entries for " + f"'{mytree}': {e}, continuing...\n",
+                    portage.writemsg("Error listing cache entries for " +
+                                     f"'{mytree}': {e}, continuing...\n",
                                      noiselevel=-1,
                                      )
                     del e
@@ -133,13 +139,16 @@ class MetadataRegen(AsyncScheduler):
         if metadata_process.returncode != os.EX_OK:
             self._valid_pkgs.discard(metadata_process.cpv)
             if not self._terminated_tasks:
-                portage.writemsg(f"Error processing {metadata_process.cpv}, continuing...\n", noiselevel=-1, )
+                portage.writemsg(f"Error processing {metadata_process.cpv}, continuing...\n",
+                                 noiselevel=-1,
+                                 )
 
         if self._consumer is not None:
             # On failure, still notify the consumer (in this case the metadata
             # argument is None).
-            self._consumer(metadata_process.cpv, metadata_process.repo_path, metadata_process.metadata,
-                           metadata_process.ebuild_hash, metadata_process.eapi_supported,
+            self._consumer(metadata_process.cpv, metadata_process.repo_path,
+                           metadata_process.metadata, metadata_process.ebuild_hash,
+                           metadata_process.eapi_supported,
                            )
 
         AsyncScheduler._task_exit(self, metadata_process)

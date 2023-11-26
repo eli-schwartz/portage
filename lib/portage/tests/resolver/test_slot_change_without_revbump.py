@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -47,14 +49,15 @@ class SlotChangeWithoutRevBumpTestCase(TestCase):
         test_cases = (
             # Demonstrate bug #456208, where a sub-slot change
             # without revbump needs to trigger a rebuild.
-            ResolverPlaygroundTestCase(["kde-base/ark"],
-                                       options={
-                                           "--oneshot": True,
-                                           "--usepkg": True
-                                       },
-                                       success=True,
-                                       mergelist=["app-arch/libarchive-3.1.1", "kde-base/ark-4.10.0"],
-                                       ),
+            ResolverPlaygroundTestCase(
+                ["kde-base/ark"],
+                options={
+                    "--oneshot": True,
+                    "--usepkg": True
+                },
+                success=True,
+                mergelist=["app-arch/libarchive-3.1.1", "kde-base/ark-4.10.0"],
+            ),
             ResolverPlaygroundTestCase(["app-arch/libarchive"],
                                        options={
                                            "--noreplace": True,
@@ -69,16 +72,17 @@ class SlotChangeWithoutRevBumpTestCase(TestCase):
                                        mergelist=["[binary]app-arch/libarchive-3.1.1"],
                                        ),
             # Test --changed-slot
-            ResolverPlaygroundTestCase(["@world"],
-                                       options={
-                                           "--changed-slot": True,
-                                           "--usepkg": True,
-                                           "--update": True,
-                                           "--deep": True,
-                                       },
-                                       success=True,
-                                       mergelist=["app-arch/libarchive-3.1.1", "kde-base/ark-4.10.0"],
-                                       ),
+            ResolverPlaygroundTestCase(
+                ["@world"],
+                options={
+                    "--changed-slot": True,
+                    "--usepkg": True,
+                    "--update": True,
+                    "--deep": True,
+                },
+                success=True,
+                mergelist=["app-arch/libarchive-3.1.1", "kde-base/ark-4.10.0"],
+            ),
         )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
@@ -91,7 +95,8 @@ class SlotChangeWithoutRevBumpTestCase(TestCase):
                                                 world=world,
                                                 debug=False,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:

@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -73,8 +75,10 @@ class SlotOperatorUnsolvedTestCase(TestCase):
                                                      "--usepkg": True
                                                  },
                                                  circular_dependency_solutions={
-                                                     "dev-ruby/hoe-2.13.0": frozenset([frozenset([("test", False)])]),
-                                                     "dev-ruby/rdoc-3.12.1": frozenset([frozenset([("test", False)])]),
+                                                     "dev-ruby/hoe-2.13.0":
+                                                     frozenset([frozenset([("test", False)])]),
+                                                     "dev-ruby/rdoc-3.12.1":
+                                                     frozenset([frozenset([("test", False)])]),
                                                  },
                                                  success=False,
                                                  ), )

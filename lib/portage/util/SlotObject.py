@@ -18,18 +18,21 @@ class SlotObject:
             for myattr in slots:
                 myvalue = kwargs.pop(myattr, None)
                 if myvalue is None and getattr(self, myattr, None) is not None:
-                    raise AssertionError("class '%s' duplicates '%s' value in __slots__ of base class '%s'" %
-                                         (self.__class__.__name__, myattr, c.__name__))
+                    raise AssertionError(
+                        "class '%s' duplicates '%s' value in __slots__ of base class '%s'" %
+                        (self.__class__.__name__, myattr, c.__name__))
                 try:
                     setattr(self, myattr, myvalue)
                 except AttributeError:
                     # Allow a property to override a __slots__ value, but raise an
                     # error if the intended value is something other than None.
-                    if not (myvalue is None and isinstance(getattr(type(self), myattr, None), property)):
+                    if not (myvalue is None
+                            and isinstance(getattr(type(self), myattr, None), property)):
                         raise
 
         if kwargs:
-            raise TypeError("'%s' is an invalid keyword argument for this constructor" % (next(iter(kwargs)), ))
+            raise TypeError("'%s' is an invalid keyword argument for this constructor" %
+                            (next(iter(kwargs)), ))
 
     def copy(self):
         """

@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -60,15 +62,16 @@ class SlotOperatorAutoUnmaskTestCase(TestCase):
 
         world = ["dev-libs/libxml2"]
 
-        test_cases = (ResolverPlaygroundTestCase(["dev-libs/icu"],
-                                                 options={
-                                                     "--autounmask": True,
-                                                     "--oneshot": True
-                                                 },
-                                                 success=False,
-                                                 mergelist=["dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
-                                                 unstable_keywords=["dev-libs/libxml2-2.7.8"],
-                                                 ),
+        test_cases = (ResolverPlaygroundTestCase(
+            ["dev-libs/icu"],
+            options={
+                "--autounmask": True,
+                "--oneshot": True
+            },
+            success=False,
+            mergelist=["dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
+            unstable_keywords=["dev-libs/libxml2-2.7.8"],
+        ),
                       ResolverPlaygroundTestCase(["dev-libs/icu"],
                                                  options={
                                                      "--oneshot": True,
@@ -77,16 +80,17 @@ class SlotOperatorAutoUnmaskTestCase(TestCase):
                                                  success=True,
                                                  mergelist=["dev-libs/icu-49"],
                                                  ),
-                      ResolverPlaygroundTestCase(["dev-libs/icu"],
-                                                 options={
-                                                     "--autounmask": True,
-                                                     "--oneshot": True,
-                                                     "--usepkg": True
-                                                 },
-                                                 success=False,
-                                                 mergelist=["[binary]dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
-                                                 unstable_keywords=["dev-libs/libxml2-2.7.8"],
-                                                 ),
+                      ResolverPlaygroundTestCase(
+                          ["dev-libs/icu"],
+                          options={
+                              "--autounmask": True,
+                              "--oneshot": True,
+                              "--usepkg": True
+                          },
+                          success=False,
+                          mergelist=["[binary]dev-libs/icu-49", "dev-libs/libxml2-2.7.8"],
+                          unstable_keywords=["dev-libs/libxml2-2.7.8"],
+                      ),
                       ResolverPlaygroundTestCase(["dev-libs/icu"],
                                                  options={
                                                      "--autounmask": True,
@@ -96,15 +100,16 @@ class SlotOperatorAutoUnmaskTestCase(TestCase):
                                                  success=True,
                                                  mergelist=["[binary]dev-libs/icu-4.8"],
                                                  ),
-                      ResolverPlaygroundTestCase(["dev-libs/icu"],
-                                                 options={
-                                                     "--oneshot": True,
-                                                     "--usepkgonly": True,
-                                                     "--ignore-built-slot-operator-deps": "y",
-                                                 },
-                                                 success=True,
-                                                 mergelist=["[binary]dev-libs/icu-49"],
-                                                 ),
+                      ResolverPlaygroundTestCase(
+                          ["dev-libs/icu"],
+                          options={
+                              "--oneshot": True,
+                              "--usepkgonly": True,
+                              "--ignore-built-slot-operator-deps": "y",
+                          },
+                          success=True,
+                          mergelist=["[binary]dev-libs/icu-49"],
+                      ),
                       ResolverPlaygroundTestCase(["@world"],
                                                  options={
                                                      "--update": True,
@@ -146,7 +151,8 @@ class SlotOperatorAutoUnmaskTestCase(TestCase):
                                                 world=world,
                                                 debug=False,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:

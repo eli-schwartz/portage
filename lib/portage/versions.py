@@ -3,8 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 __all__ = [
-    "best", "catpkgsplit", "catsplit", "cpv_getkey", "cpv_getversion", "cpv_sort_key", "pkgcmp", "pkgsplit",
-    "ververify", "vercmp",
+    "best", "catpkgsplit", "catsplit", "cpv_getkey", "cpv_getversion", "cpv_sort_key", "pkgcmp",
+    "pkgsplit", "ververify", "vercmp",
 ]
 
 import re
@@ -16,7 +16,8 @@ from collections.abc import Sequence
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(globals(), "portage.repository.config:_gen_valid_repo", "portage.util:cmp_sort_key",
+portage.proxy.lazyimport.lazyimport(globals(), "portage.repository.config:_gen_valid_repo",
+                                    "portage.util:cmp_sort_key",
                                     )
 from portage import _unicode_decode
 from portage.eapi import _eapi_attrs, _get_eapi_attrs
@@ -297,7 +298,10 @@ _missing_cat = "null"
 
 
 @lru_cache(10240)
-def catpkgsplit(mydata: Union[str, "_pkg_str"], silent: int = 1, eapi: Any = None, ) -> Optional[tuple[str, ...]]:
+def catpkgsplit(mydata: Union[str, "_pkg_str"],
+                silent: int = 1,
+                eapi: Any = None,
+                ) -> Optional[tuple[str, ...]]:
     """
     Takes a Category/Package-Version-Rev and returns a list of each.
 

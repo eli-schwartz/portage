@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -52,7 +54,11 @@ class UseFlagsTestCase(TestCase):
 
         binpkgs = installed
 
-        user_config = {"package.use": ("dev-libs/A X", "dev-libs/D abi_x86_32", ), "use.force": ("Y", ), }
+        user_config = {
+            "package.use": ("dev-libs/A X", "dev-libs/D abi_x86_32",
+                            ),
+            "use.force": ("Y", ),
+        }
 
         test_cases = (
             # default: don't reinstall on use flag change

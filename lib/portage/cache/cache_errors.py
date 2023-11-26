@@ -69,7 +69,9 @@ class StatCollision(CacheError):
         self.size = size
 
     def __str__(self):
-        return "{} has stat collision with size {} and mtime {}".format(self.key, self.size, self.mtime, )
+        return "{} has stat collision with size {} and mtime {}".format(
+            self.key, self.size, self.mtime,
+        )
 
     def __repr__(self):
         return "portage.cache.cache_errors.StatCollision({})".format(

@@ -56,7 +56,8 @@ class Config:
 
         self.restrict_mirror_exemptions = None
         if getattr(options, "restrict_mirror_exemptions", None) is not None:
-            self.restrict_mirror_exemptions = frozenset(options.restrict_mirror_exemptions.split(","))
+            self.restrict_mirror_exemptions = frozenset(
+                options.restrict_mirror_exemptions.split(","))
 
         self.recycle_db = None
         if getattr(options, "recycle_db", None) is not None:
@@ -118,7 +119,8 @@ class Config:
                 db = shelve.open(db_file, flag=open_flag)
             except ImportError as e:
                 # ImportError has different attributes for python2 vs. python3
-                if getattr(e, "name", None) == "bsddb" or getattr(e, "message", None) == "No module named bsddb":
+                if getattr(e, "name", None) == "bsddb" or getattr(e, "message",
+                                                                  None) == "No module named bsddb":
                     from bsddb3 import dbshelve
 
                     db = dbshelve.open(db_file, flags=open_flag)

@@ -39,7 +39,10 @@ class UserQuery:
         printed."""
         if responses is None:
             responses = ["Yes", "No"]
-            colours = [create_color_func("PROMPT_CHOICE_DEFAULT"), create_color_func("PROMPT_CHOICE_OTHER"), ]
+            colours = [
+                create_color_func("PROMPT_CHOICE_DEFAULT"),
+                create_color_func("PROMPT_CHOICE_OTHER"),
+            ]
         elif colours is None:
             colours = [bold]
         colours = (colours * len(responses))[:len(responses)]
@@ -50,7 +53,8 @@ class UserQuery:
         try:
             while True:
                 try:
-                    response = input(f"[{'/'.join([colours[i](responses[i]) for i in range(len(responses))])}] ")
+                    response = input(
+                        f"[{'/'.join([colours[i](responses[i]) for i in range(len(responses))])}] ")
                 except UnicodeDecodeError as e:
                     response = _unicode_decode(e.object).rstrip("\n")
                 if response or not enter_invalid:

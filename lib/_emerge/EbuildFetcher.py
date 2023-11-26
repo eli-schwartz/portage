@@ -13,7 +13,9 @@ from portage import _unicode_encode
 from portage import _unicode_decode
 from portage.checksum import _hash_filter
 from portage.elog.messages import eerror
-from portage.package.ebuild.fetch import (_check_distfile, _drop_privs_userfetch, _want_userfetch, fetch, )
+from portage.package.ebuild.fetch import (_check_distfile, _drop_privs_userfetch, _want_userfetch,
+                                          fetch,
+                                          )
 from portage.util._async.AsyncTaskFuture import AsyncTaskFuture
 from portage.util._async.ForkProcess import ForkProcess
 from portage.util._pty import _create_pty_or_pipe
@@ -21,7 +23,9 @@ from _emerge.CompositeTask import CompositeTask
 
 
 class EbuildFetcher(CompositeTask):
-    __slots__ = ("config_pool", "ebuild_path", "fetchonly", "fetchall", "logfile", "pkg", "prefetch", "_fetcher_proc", )
+    __slots__ = ("config_pool", "ebuild_path", "fetchonly", "fetchall", "logfile", "pkg",
+                 "prefetch", "_fetcher_proc",
+                 )
 
     def __init__(self, **kwargs):
         CompositeTask.__init__(self, **kwargs)
@@ -40,7 +44,9 @@ class EbuildFetcher(CompositeTask):
         return self._fetcher_proc.async_already_fetched(settings)
 
     def _start(self):
-        self._start_task(AsyncTaskFuture(future=self._fetcher_proc._async_uri_map()), self._start_fetch, )
+        self._start_task(AsyncTaskFuture(future=self._fetcher_proc._async_uri_map()),
+                         self._start_fetch,
+                         )
 
     def _start_fetch(self, uri_map_task):
         self._assert_current(uri_map_task)
@@ -64,7 +70,8 @@ class EbuildFetcher(CompositeTask):
         # because some packages have an extremely large SRC_URI value).
         self._start_task(
             AsyncTaskFuture(future=self.pkg.root_config.trees["porttree"].dbapi.async_aux_get(
-                self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler)), self._start_with_metadata,
+                self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler)),
+            self._start_with_metadata,
         )
 
     def _start_with_metadata(self, aux_get_task):
@@ -78,8 +85,8 @@ class EbuildFetcher(CompositeTask):
 
 
 class _EbuildFetcherProcess(ForkProcess):
-    __slots__ = ("config_pool", "ebuild_path", "fetchonly", "fetchall", "pkg", "prefetch", "src_uri", "_digests",
-                 "_manifest", "_settings", "_uri_map",
+    __slots__ = ("config_pool", "ebuild_path", "fetchonly", "fetchall", "pkg", "prefetch",
+                 "src_uri", "_digests", "_manifest", "_settings", "_uri_map",
                  )
 
     def async_already_fetched(self, settings):
@@ -102,7 +109,8 @@ class _EbuildFetcherProcess(ForkProcess):
                 result.set_result(True)
 
         uri_map_future = self._async_uri_map()
-        result.add_done_callback(lambda result: uri_map_future.cancel() if result.cancelled() else None)
+        result.add_done_callback(lambda result: uri_map_future.cancel()
+                                 if result.cancelled() else None)
         uri_map_future.add_done_callback(uri_map_done)
         return result
 
@@ -213,8 +221,8 @@ class _EbuildFetcherProcess(ForkProcess):
 
         self._settings = settings
         self.log_filter_file = settings.get("PORTAGE_LOG_FILTER_FILE_CMD")
-        self.target = functools.partial(self._target, self._settings, self._get_manifest(), self._uri_map,
-                                        self.fetchonly,
+        self.target = functools.partial(self._target, self._settings, self._get_manifest(),
+                                        self._uri_map, self.fetchonly,
                                         )
         ForkProcess._start(self)
 
@@ -291,7 +299,10 @@ class _EbuildFetcherProcess(ForkProcess):
                 # The caller handles this when it retrieves the result.
                 pass
 
-        result = portdb.async_fetch_map(self.pkg.cpv, useflags=use, mytree=mytree, loop=self.scheduler)
+        result = portdb.async_fetch_map(self.pkg.cpv,
+                                        useflags=use,
+                                        mytree=mytree,
+                                        loop=self.scheduler)
         result.add_done_callback(cache_result)
         return result
 

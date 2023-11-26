@@ -59,7 +59,10 @@ class PopenPipeTestCase(TestCase):
 
         fd, log_file_path = tempfile.mkstemp()
         try:
-            consumer = PipeLogger(background=True, input_fd=producer.proc.stdout, log_file_path=log_file_path, )
+            consumer = PipeLogger(background=True,
+                                  input_fd=producer.proc.stdout,
+                                  log_file_path=log_file_path,
+                                  )
 
             producer.pipe_reader = consumer
 

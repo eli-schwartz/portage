@@ -45,7 +45,8 @@ def create_world_atom(pkg, args_set, root_config, before_install=False):
     if not slotted:
         # check the vdb in case this is multislot
         available_slots = {vardb._pkg_str(cpv, None).slot for cpv in vardb.match(Atom(cp))}
-        slotted = len(available_slots) > 1 or (len(available_slots) == 1 and "0" not in available_slots)
+        slotted = len(available_slots) > 1 or (len(available_slots) == 1
+                                               and "0" not in available_slots)
     if slotted and arg_atom.without_repo != cp:
         # If the user gave a specific atom, store it as a
         # slot atom in the world file.

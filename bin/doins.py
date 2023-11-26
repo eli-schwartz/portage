@@ -86,7 +86,8 @@ def _parse_mode(mode):
         return None
 
 
-def _parse_install_options(options, is_strict, helper, inprocess_runner_class, subprocess_runner_class):
+def _parse_install_options(options, is_strict, helper, inprocess_runner_class,
+                           subprocess_runner_class):
     """Parses command line arguments for `install` command.
 
     Args:
@@ -197,7 +198,8 @@ class _InsInProcessInstallRunner:
                 _set_timestamps(sstat, dest)
         except Exception:
             logger.exception("Failed to copy file: "
-                             "_parsed_options=%r, source=%r, dest_dir=%r", self._parsed_options, source, dest_dir,
+                             "_parsed_options=%r, source=%r, dest_dir=%r", self._parsed_options,
+                             source, dest_dir,
                              )
             return False
         return True
@@ -336,12 +338,13 @@ class _InstallRunner:
                 opts: namespace object containing the parsed
                         arguments for this program.
         """
-        self._ins_runner = _parse_install_options(opts.insoptions, opts.strict_option, opts.helper,
-                                                  lambda options: _InsInProcessInstallRunner(opts, options),
-                                                  _InsSubprocessInstallRunner,
-                                                  )
+        self._ins_runner = _parse_install_options(
+            opts.insoptions, opts.strict_option, opts.helper,
+            lambda options: _InsInProcessInstallRunner(opts, options), _InsSubprocessInstallRunner,
+        )
         self._dir_runner = _parse_install_options(opts.diroptions, opts.strict_option, opts.helper,
-                                                  _DirInProcessInstallRunner, _DirSubprocessInstallRunner,
+                                                  _DirInProcessInstallRunner,
+                                                  _DirSubprocessInstallRunner,
                                                   )
         self._helpers_can_die = opts.helpers_can_die
 
@@ -454,7 +457,9 @@ def _create_arg_parser():
                         "option which cannot be interpreted by this script, instead of "
                         "fallback to execute `install` command.",
                         )
-    parser.add_argument("--enable_copy_xattr", action="store_true", help="Copies xattrs, if set True")
+    parser.add_argument("--enable_copy_xattr",
+                        action="store_true",
+                        help="Copies xattrs, if set True")
     parser.add_argument("--xattr_exclude",
                         default="",
                         help="White space delimited glob pattern to exclude xattr copy."
@@ -526,7 +531,8 @@ def _install_dir(opts, install_runner, source):
             else:
                 dest = os.path.join(opts.dest, relpath)
                 install_runner.install_dir(dest)
-        relpath_list.extend(os.path.relpath(os.path.join(dirpath, filename), source_root) for filename in filenames)
+        relpath_list.extend(
+            os.path.relpath(os.path.join(dirpath, filename), source_root) for filename in filenames)
 
     if not relpath_list:
         # NOTE: Even if only an empty directory is installed here, it

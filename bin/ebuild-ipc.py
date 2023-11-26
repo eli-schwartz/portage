@@ -41,9 +41,12 @@ try:
     import time
 
     if os.path.isfile(
-            os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), ".portage_not_installed",
+            os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                         ".portage_not_installed",
                          )):
-        pym_paths = [os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")]
+        pym_paths = [
+            os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")
+        ]
         sys.path.insert(0, pym_paths[0])
     else:
         import sysconfig
@@ -129,7 +132,9 @@ try:
 
         def _daemon_is_alive(self):
             try:
-                builddir_lock = portage.locks.lockfile(self.fifo_dir, wantnewlockfile=True, flags=os.O_NONBLOCK)
+                builddir_lock = portage.locks.lockfile(self.fifo_dir,
+                                                       wantnewlockfile=True,
+                                                       flags=os.O_NONBLOCK)
             except portage.exception.TryAgain:
                 return True
             else:
@@ -149,16 +154,18 @@ try:
 
         def _timeout_retry_msg(self, start_time, when):
             time_elapsed = time.time() - start_time
-            portage.util.writemsg_level(f"ebuild-ipc timed out {when} after {time_elapsed} seconds, retrying...\n",
-                                        level=logging.ERROR,
-                                        noiselevel=-1,
-                                        )
+            portage.util.writemsg_level(
+                f"ebuild-ipc timed out {when} after {time_elapsed} seconds, retrying...\n",
+                level=logging.ERROR,
+                noiselevel=-1,
+            )
 
         def _no_daemon_msg(self):
-            portage.util.writemsg_level(portage.localization._("ebuild-ipc: daemon process not detected\n"),
-                                        level=logging.ERROR,
-                                        noiselevel=-1,
-                                        )
+            portage.util.writemsg_level(
+                portage.localization._("ebuild-ipc: daemon process not detected\n"),
+                level=logging.ERROR,
+                noiselevel=-1,
+            )
 
         def _run_writer(self, fifo_writer, msg):
             """
@@ -191,7 +198,8 @@ try:
         def _receive_reply(self, input_fd):
             start_time = time.time()
 
-            pipe_reader = PipeReader(input_files={"input_fd": input_fd}, scheduler=global_event_loop())
+            pipe_reader = PipeReader(input_files={"input_fd": input_fd},
+                                     scheduler=global_event_loop())
             pipe_reader.start()
 
             eof = pipe_reader.poll() is not None
@@ -212,10 +220,11 @@ try:
             retval = 2
 
             if not buf:
-                portage.util.writemsg_level(f"ebuild-ipc: {portage.localization._('read failed')}\n",
-                                            level=logging.ERROR,
-                                            noiselevel=-1,
-                                            )
+                portage.util.writemsg_level(
+                    f"ebuild-ipc: {portage.localization._('read failed')}\n",
+                    level=logging.ERROR,
+                    noiselevel=-1,
+                )
 
             else:
                 try:
@@ -225,7 +234,9 @@ try:
                 except Exception as e:
                     # The pickle module can raise practically
                     # any exception when given corrupt data.
-                    portage.util.writemsg_level(f"ebuild-ipc: {e}\n", level=logging.ERROR, noiselevel=-1)
+                    portage.util.writemsg_level(f"ebuild-ipc: {e}\n",
+                                                level=logging.ERROR,
+                                                noiselevel=-1)
 
                 else:
                     (out, err, retval) = reply
@@ -255,7 +266,9 @@ try:
             # from interference between timeouts and blocking IO operations.
             msg = portage.localization._("during write")
             retval = self._run_writer(
-                FifoWriter(buf=pickle.dumps(args), fifo=self.ipc_in_fifo, scheduler=global_event_loop(),
+                FifoWriter(buf=pickle.dumps(args),
+                           fifo=self.ipc_in_fifo,
+                           scheduler=global_event_loop(),
                            ), msg,
             )
 

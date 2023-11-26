@@ -55,7 +55,10 @@ class SlotAbiEmergeTestCase(TestCase):
 
         world = ["dev-libs/glib:1", "dev-libs/dbus-glib"]
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=debug)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=debug)
         settings = playground.settings
         eprefix = settings["EPREFIX"]
         eroot = settings["EROOT"]
@@ -75,15 +78,15 @@ class SlotAbiEmergeTestCase(TestCase):
 
         test_commands = (
             emerge_cmd + ("--oneshot", "dev-libs/glib",
-                          ),
-            (lambda: "dev-libs/glib:2/2.32=" in vardb.aux_get("dev-libs/dbus-glib-0.98", ["RDEPEND"])[0], ),
-            (BASH_BINARY, "-c",
-             "echo %s >> %s" % tuple(map(portage._shell_quote, (">=dev-libs/glib-2.32", package_mask_path,
-                                                                ),
-                                         )),
+                          ), (lambda: "dev-libs/glib:2/2.32=" in vardb.aux_get(
+                              "dev-libs/dbus-glib-0.98", ["RDEPEND"])[0], ),
+            (BASH_BINARY, "-c", "echo %s >> %s" %
+             tuple(map(portage._shell_quote, (">=dev-libs/glib-2.32", package_mask_path,
+                                              ),
+                       )),
              ), emerge_cmd + ("--oneshot", "dev-libs/glib",
-                              ),
-            (lambda: "dev-libs/glib:2/2.30=" in vardb.aux_get("dev-libs/dbus-glib-0.98", ["RDEPEND"])[0], ),
+                              ), (lambda: "dev-libs/glib:2/2.30=" in vardb.aux_get(
+                                  "dev-libs/dbus-glib-0.98", ["RDEPEND"])[0], ),
         )
 
         distdir = playground.distdir

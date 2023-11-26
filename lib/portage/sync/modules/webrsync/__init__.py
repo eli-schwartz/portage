@@ -44,13 +44,14 @@ module_spec = {
                 "new":
                 "Creates the new repository at the specified location",
                 "exists":
-                "Returns a boolean of whether the specified dir " + "exists and is a valid repository",
+                "Returns a boolean of whether the specified dir " +
+                "exists and is a valid repository",
             },
             "validate_config":
             CheckSyncConfig,
-            "module_specific_options":
-            ("sync-webrsync-delta", "sync-webrsync-keep-snapshots", "sync-webrsync-verify-signature",
-             ),
+            "module_specific_options": ("sync-webrsync-delta", "sync-webrsync-keep-snapshots",
+                                        "sync-webrsync-verify-signature",
+                                        ),
         },
     },
 }

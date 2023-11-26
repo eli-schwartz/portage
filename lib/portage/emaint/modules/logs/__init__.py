@@ -18,7 +18,8 @@ module_spec = {
                 "clean": {
                     "short": "-C",
                     "long": "--clean",
-                    "help": "Cleans out logs more than 7 days old (cleanlogs only)" + "   module-options: -t, -p",
+                    "help": "Cleans out logs more than 7 days old (cleanlogs only)" +
+                    "   module-options: -t, -p",
                     "status": "Cleaning %s",
                     "action": "store_true",
                     "func": "clean",

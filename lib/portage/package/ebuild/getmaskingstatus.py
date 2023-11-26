@@ -95,7 +95,8 @@ def _getmaskingstatus(mycpv, settings, portdb, myrepo=None):
         myarch = pgroups[0].lstrip("~")
 
     # NOTE: This logic is copied from KeywordsManager.getMissingKeywords().
-    unmaskgroups = settings._keywords_manager.getPKeywords(mycpv, metadata["SLOT"], metadata["repository"],
+    unmaskgroups = settings._keywords_manager.getPKeywords(mycpv, metadata["SLOT"],
+                                                           metadata["repository"],
                                                            global_accept_keywords)
     pgroups.extend(unmaskgroups)
     if unmaskgroups or egroups:
@@ -146,7 +147,9 @@ def _getmaskingstatus(mycpv, settings, portdb, myrepo=None):
             license_split = [x for x in license_split if x in allowed_tokens]
             msg = license_split[:]
             msg.append("license(s)")
-            rValue.append(_MaskReason("LICENSE", " ".join(msg), _UnmaskHint("license", set(missing_licenses)), ))
+            rValue.append(
+                _MaskReason("LICENSE", " ".join(msg), _UnmaskHint("license", set(missing_licenses)),
+                            ))
     except portage.exception.InvalidDependString as e:
         rValue.append(_MaskReason("invalid", "LICENSE: " + str(e)))
 

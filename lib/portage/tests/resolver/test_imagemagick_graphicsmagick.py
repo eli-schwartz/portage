@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class ImageMagickGraphicsMagickTestCase(TestCase):
@@ -70,10 +72,16 @@ class ImageMagickGraphicsMagickTestCase(TestCase):
                                            "--deep": True
                                        },
                                        success=True,
-                                       mergelist=["media-gfx/imagemagick-6.9.7.0", "media-gfx/inkscape-0.91-r3", ],
+                                       mergelist=[
+                                           "media-gfx/imagemagick-6.9.7.0",
+                                           "media-gfx/inkscape-0.91-r3",
+                                       ],
                                        ), )
 
-        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
+        playground = ResolverPlayground(debug=False,
+                                        ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

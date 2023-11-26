@@ -22,7 +22,12 @@ class BlockerDB:
 
         self._dep_check_trees = None
         self._fake_vartree = fake_vartree
-        self._dep_check_trees = {self._vartree.settings["EROOT"]: {"porttree": fake_vartree, "vartree": fake_vartree, }}
+        self._dep_check_trees = {
+            self._vartree.settings["EROOT"]: {
+                "porttree": fake_vartree,
+                "vartree": fake_vartree,
+            }
+        }
 
     def findInstalledBlockers(self, new_pkg):
         """
@@ -58,13 +63,15 @@ class BlockerDB:
                                                    myroot=inst_pkg.root,
                                                    )
                 if not success:
-                    pkg_location = os.path.join(inst_pkg.root, portage.VDB_PATH, inst_pkg.category, inst_pkg.pf)
+                    pkg_location = os.path.join(inst_pkg.root, portage.VDB_PATH, inst_pkg.category,
+                                                inst_pkg.pf)
                     portage.writemsg(f"!!! {pkg_location}/*DEPEND: {atoms}\n", noiselevel=-1, )
                     continue
 
                 blocker_atoms = [atom for atom in atoms if atom.startswith("!")]
                 blocker_atoms.sort()
-                blocker_cache[inst_pkg.cpv] = blocker_cache.BlockerData(inst_pkg.counter, blocker_atoms)
+                blocker_cache[inst_pkg.cpv] = blocker_cache.BlockerData(
+                    inst_pkg.counter, blocker_atoms)
         for cpv in stale_cache:
             del blocker_cache[cpv]
         blocker_cache.flush()

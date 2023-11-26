@@ -63,7 +63,8 @@ class FetchIterator:
                         return
 
                     yield _EbuildFetchTasks(fetch_tasks_future=_async_fetch_tasks(
-                        self._config, hash_filter, repo_config, digests_future, cpv, portdb._event_loop,
+                        self._config, hash_filter, repo_config, digests_future, cpv,
+                        portdb._event_loop,
                     ))
 
 
@@ -83,9 +84,12 @@ class _EbuildFetchTasks(CompositeTask):
             self._async_wait()
             return
 
-        self._start_task(TaskScheduler(iter(self.fetch_tasks_future.result()), max_jobs=1, event_loop=self.scheduler,
-                                       ), self._default_final_exit,
-                         )
+        self._start_task(
+            TaskScheduler(iter(self.fetch_tasks_future.result()),
+                          max_jobs=1,
+                          event_loop=self.scheduler,
+                          ), self._default_final_exit,
+        )
 
 
 def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, loop):
@@ -204,7 +208,8 @@ def _async_fetch_tasks(config, hash_filter, repo_config, digests_future, cpv, lo
                 # If there's an exception then raise it.
                 digests = digests_future.result()
             else:
-                digests = repo_config.load_manifest(os.path.join(repo_config.location, cpv.cp)).getTypeDigests("DIST")
+                digests = repo_config.load_manifest(os.path.join(repo_config.location,
+                                                                 cpv.cp)).getTypeDigests("DIST")
         except (OSError, PortageException) as e:
             digests_future.done() or digests_future.set_exception(e)
             for filename in new_uri_map:

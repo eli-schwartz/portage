@@ -33,12 +33,19 @@ class BashSyntaxTestCase(TestCase):
 
                 # Check for bash shebang
                 f = open(_unicode_encode(x, encoding=_encodings["fs"], errors="strict"), "rb")
-                line = _unicode_decode(f.readline(), encoding=_encodings["content"], errors="replace")
+                line = _unicode_decode(f.readline(),
+                                       encoding=_encodings["content"],
+                                       errors="replace")
                 f.close()
                 if line[:2] == "#!" and "bash" in line:
                     cmd = [BASH_BINARY, "-n", x]
-                    cmd = [_unicode_encode(x, encoding=_encodings["fs"], errors="strict") for x in cmd]
+                    cmd = [
+                        _unicode_encode(x, encoding=_encodings["fs"], errors="strict") for x in cmd
+                    ]
                     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     output = _unicode_decode(proc.communicate()[0], encoding=_encodings["fs"])
                     status = proc.wait()
-                    self.assertEqual(os.WIFEXITED(status) and os.WEXITSTATUS(status) == os.EX_OK, True, msg=output, )
+                    self.assertEqual(os.WIFEXITED(status) and os.WEXITSTATUS(status) == os.EX_OK,
+                                     True,
+                                     msg=output,
+                                     )

@@ -21,13 +21,14 @@ class StackDictListTestCase(TestCase):
             "KEYWORDS": ["alpha", "x86"]
         }, {
             "KEYWORDS": ["-*"]
-        }, True, {}), ({
-            "KEYWORDS": ["alpha", "x86"]
-        }, {
-            "KEYWORDS": ["-x86"]
-        }, True, {
-            "KEYWORDS": ["alpha"]
-        },
-                       ), ]
+        }, True, {}),
+                 ({
+                     "KEYWORDS": ["alpha", "x86"]
+                 }, {
+                     "KEYWORDS": ["-x86"]
+                 }, True, {
+                     "KEYWORDS": ["alpha"]
+                 },
+                  ), ]
         for test in tests:
             self.assertEqual(stack_dictlist([test[0], test[1]], incremental=test[2]), test[3])

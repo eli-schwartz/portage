@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class SlotOperatorCompleteGraphTestCase(TestCase):
@@ -101,12 +103,16 @@ class SlotOperatorCompleteGraphTestCase(TestCase):
                                        success=True,
                                        ambiguous_merge_order=True,
                                        mergelist=[
-                                           "dev-libs/foo-2", ("app-misc/D-1", "app-misc/C-1", "app-misc/B-2"),
+                                           "dev-libs/foo-2",
+                                           ("app-misc/D-1", "app-misc/C-1", "app-misc/B-2"),
                                            "app-misc/meta-pkg-2",
                                        ],
                                        ), )
 
-        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
+        playground = ResolverPlayground(debug=False,
+                                        ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world)
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)

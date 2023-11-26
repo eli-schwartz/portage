@@ -33,7 +33,8 @@ class AsyncioEventLoop(_AbstractEventLoop):
         self.is_running = loop.is_running
         self.is_closed = loop.is_closed
         self.close = loop.close
-        self.create_future = loop.create_future if hasattr(loop, "create_future") else self._create_future
+        self.create_future = loop.create_future if hasattr(loop,
+                                                           "create_future") else self._create_future
         self.create_task = loop.create_task
         self.add_reader = loop.add_reader
         self.remove_reader = loop.remove_reader

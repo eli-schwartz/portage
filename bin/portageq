@@ -36,9 +36,12 @@ try:
     import types
 
     if os.path.isfile(
-            os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), ".portage_not_installed",
+            os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                         ".portage_not_installed",
                          )):
-        pym_paths = [os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")]
+        pym_paths = [
+            os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")
+        ]
         sys.path.insert(0, pym_paths[0])
     else:
         import sysconfig
@@ -63,8 +66,9 @@ try:
 
     portage.proxy.lazyimport.lazyimport(
         globals(), "re", "subprocess", "_emerge.Package:Package", "_emerge.RootConfig:RootConfig",
-        "_emerge.is_valid_package_atom:insert_category_into_atom", "portage.dbapi._expand_new_virt:expand_new_virt",
-        "portage._sets.base:InternalPackageSet", "portage.util._eventloop.global_event_loop:global_event_loop",
+        "_emerge.is_valid_package_atom:insert_category_into_atom",
+        "portage.dbapi._expand_new_virt:expand_new_virt", "portage._sets.base:InternalPackageSet",
+        "portage.util._eventloop.global_event_loop:global_event_loop",
         "portage.xml.metadata:MetaDataXML",
     )
 
@@ -507,7 +511,8 @@ try:
                 for repo in repo_list:
                     try:
                         metadata = dict(
-                            zip(Package.metadata_keys, db.aux_get(cpv, Package.metadata_keys, myrepo=repo),
+                            zip(Package.metadata_keys,
+                                db.aux_get(cpv, Package.metadata_keys, myrepo=repo),
                                 ))
                     except KeyError:
                         continue
@@ -951,7 +956,9 @@ try:
             retval = 0
             for arg in argv[2:]:
                 eclass_path = ""
-                paths = reversed([os.path.join(x.location, "licenses", arg) for x in list(repo.masters) + [repo]])
+                paths = reversed([
+                    os.path.join(x.location, "licenses", arg) for x in list(repo.masters) + [repo]
+                ])
                 for path in paths:
                     if os.path.exists(path):
                         eclass_path = path
@@ -1018,7 +1025,8 @@ try:
         def _pkg(cpv, repo_name):
             try:
                 metadata = dict(
-                    zip(Package.metadata_keys, portdb.aux_get(cpv, Package.metadata_keys, myrepo=repo_name),
+                    zip(Package.metadata_keys,
+                        portdb.aux_get(cpv, Package.metadata_keys, myrepo=repo_name),
                         ))
             except KeyError:
                 raise portage.exception.PackageNotFound(cpv)
@@ -1189,54 +1197,52 @@ try:
     non_commands = frozenset([
         "elog", "eval_atom_use", "exithandler", "match_orphaned", "main", "usage", "uses_eroot",
     ])
-    commands = sorted(k for k, v in globals().items()
-                      if k not in non_commands and isinstance(v, types.FunctionType) and v.__module__ == "__main__")
+    commands = sorted(k for k, v in globals().items() if k not in non_commands
+                      and isinstance(v, types.FunctionType) and v.__module__ == "__main__")
 
     def add_pquery_arguments(parser):
-        pquery_option_groups = (("Repository matching options", ({
+        pquery_option_groups = ((
+            "Repository matching options", ({
+                "longopt":
+                "--no-filters",
+                "action":
+                "store_true",
+                "help":
+                "no visibility filters (ACCEPT_KEYWORDS, package masking, etc)",
+            }, {
+                "longopt":
+                "--repo",
+                "help":
+                "repository to use (all repositories are used by default)",
+            },
+                                            ),
+        ), ("Package matching options", ({
             "longopt":
-            "--no-filters",
+            "--maintainer-email",
+            "action":
+            "append",
+            "help":
+            "comma-separated list of maintainer email regexes to search for",
+        }, {
+            "longopt":
+            "--no-regex",
             "action":
             "store_true",
             "help":
-            "no visibility filters (ACCEPT_KEYWORDS, package masking, etc)",
+            "Use exact matching instead of regex matching for --maintainer-email",
         }, {
-            "longopt":
-            "--repo",
-            "help":
-            "repository to use (all repositories are used by default)",
+            "longopt": "--orphaned",
+            "action": "store_true",
+            "help": "match only orphaned (maintainer-needed) packages",
         },
-                                                                 ),
-                                 ), ("Package matching options", ({
-                                     "longopt":
-                                     "--maintainer-email",
-                                     "action":
-                                     "append",
-                                     "help":
-                                     "comma-separated list of maintainer email regexes to search for",
-                                 }, {
-                                     "longopt":
-                                     "--no-regex",
-                                     "action":
-                                     "store_true",
-                                     "help":
-                                     "Use exact matching instead of regex matching for --maintainer-email",
-                                 }, {
-                                     "longopt":
-                                     "--orphaned",
-                                     "action":
-                                     "store_true",
-                                     "help":
-                                     "match only orphaned (maintainer-needed) packages",
-                                 },
-                                                                  ),
-                                     ), ("Output formatting", ({
-                                         "shortopt": "-n",
-                                         "longopt": "--no-version",
-                                         "action": "store_true",
-                                         "help": "collapse multiple matching versions together",
-                                     }, ),
                                          ),
+            ), ("Output formatting", ({
+                "shortopt": "-n",
+                "longopt": "--no-version",
+                "action": "store_true",
+                "help": "collapse multiple matching versions together",
+            }, ),
+                ),
                                 )
 
         for group_title, opt_data in pquery_option_groups:
@@ -1294,7 +1300,8 @@ try:
         print()
         print("Pkgcore pquery compatible options:")
         print()
-        parser = argparse.ArgumentParser(add_help=False, usage="portageq pquery [options] [atom ...]")
+        parser = argparse.ArgumentParser(add_help=False,
+                                         usage="portageq pquery [options] [atom ...]")
         add_pquery_arguments(parser)
         parser.print_help()
 
@@ -1419,7 +1426,9 @@ try:
             # Multiple matches thrown from cpv_expand
             pkgs = e.args[0]
             # An error has occurred so we writemsg to stderr and exit nonzero.
-            portage.writemsg("You specified an unqualified atom that matched multiple packages:\n", noiselevel=-1, )
+            portage.writemsg("You specified an unqualified atom that matched multiple packages:\n",
+                             noiselevel=-1,
+                             )
             for pkg in pkgs:
                 portage.writemsg(f"* {pkg}\n", noiselevel=-1)
             portage.writemsg("\nPlease use a more specific atom.\n", noiselevel=-1)

@@ -82,7 +82,8 @@ class EbuildBuildDir(SlotObject):
             try:
                 self._assert_lock(builddir_lock)
             except AssertionError as e:
-                catdir_lock.async_unlock.add_done_callback(functools.partial(catdir_unlocked, exception=e))
+                catdir_lock.async_unlock.add_done_callback(
+                    functools.partial(catdir_unlocked, exception=e))
                 return
 
             self._lock_obj = builddir_lock
@@ -97,7 +98,10 @@ class EbuildBuildDir(SlotObject):
                 result.set_result(None)
 
         try:
-            portage.util.ensure_dirs(os.path.dirname(catdir), gid=portage.portage_gid, mode=0o70, mask=0)
+            portage.util.ensure_dirs(os.path.dirname(catdir),
+                                     gid=portage.portage_gid,
+                                     mode=0o70,
+                                     mask=0)
         except PortageException:
             if not os.path.isdir(os.path.dirname(catdir)):
                 raise

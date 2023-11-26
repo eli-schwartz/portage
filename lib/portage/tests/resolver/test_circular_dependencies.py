@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class CircularDependencyTestCase(TestCase):
@@ -69,46 +71,61 @@ class CircularDependencyTestCase(TestCase):
 
         test_cases = (
             # Simple tests
-            ResolverPlaygroundTestCase(["=dev-libs/Z-1"],
+            ResolverPlaygroundTestCase(
+                ["=dev-libs/Z-1"],
+                circular_dependency_solutions={
+                    "dev-libs/Y-1":
+                    frozenset([frozenset([("foo", False)]),
+                               frozenset([("bar", True)])])
+                },
+                success=False,
+            ),
+            ResolverPlaygroundTestCase(["=dev-libs/Z-2"],
                                        circular_dependency_solutions={
                                            "dev-libs/Y-1":
-                                           frozenset([frozenset([("foo", False)]),
-                                                      frozenset([("bar", True)])])
+                                           frozenset([frozenset([("foo", False), ("bar", True)])])
                                        },
                                        success=False,
                                        ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/Z-2"],
-                circular_dependency_solutions={"dev-libs/Y-1": frozenset([frozenset([("foo", False), ("bar", True)])])},
-                success=False,
-            ),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/Z-3"],
-                circular_dependency_solutions={"dev-libs/Y-1": frozenset([frozenset([("foo", False), ("bar", True)])])},
-                success=False,
-            ),
+            ResolverPlaygroundTestCase(["=dev-libs/Z-3"],
+                                       circular_dependency_solutions={
+                                           "dev-libs/Y-1":
+                                           frozenset([frozenset([("foo", False), ("bar", True)])])
+                                       },
+                                       success=False,
+                                       ),
             # Conflict on parent
-            ResolverPlaygroundTestCase(["=dev-libs/W-1"], circular_dependency_solutions={}, success=False),
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/W-2"],
-                circular_dependency_solutions={"dev-libs/Y-1": frozenset([frozenset([("foo", False), ("bar", True)])])},
-                success=False,
-            ),
+            ResolverPlaygroundTestCase(["=dev-libs/W-1"],
+                                       circular_dependency_solutions={},
+                                       success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/W-2"],
+                                       circular_dependency_solutions={
+                                           "dev-libs/Y-1":
+                                           frozenset([frozenset([("foo", False), ("bar", True)])])
+                                       },
+                                       success=False,
+                                       ),
             # Conflict with autounmask
-            ResolverPlaygroundTestCase(
-                ["=dev-libs/W-3"],
-                circular_dependency_solutions={"dev-libs/Y-1": frozenset([frozenset([("foo", False)])])},
-                use_changes={"dev-libs/Z-3": {
-                    "bar": True
-                }},
-                success=False,
-            ),
+            ResolverPlaygroundTestCase(["=dev-libs/W-3"],
+                                       circular_dependency_solutions={
+                                           "dev-libs/Y-1": frozenset([frozenset([("foo", False)])])
+                                       },
+                                       use_changes={"dev-libs/Z-3": {
+                                           "bar": True
+                                       }},
+                                       success=False,
+                                       ),
             # Conflict with REQUIRED_USE
-            ResolverPlaygroundTestCase(
-                ["=app-misc/B-1"],
-                circular_dependency_solutions={"app-misc/B-1": frozenset([frozenset([("foo", False), ("bar", True)])])},
-                success=False,
-            ), ResolverPlaygroundTestCase(["=app-misc/B-2"], circular_dependency_solutions={}, success=False),
+            ResolverPlaygroundTestCase(["=app-misc/B-1"],
+                                       circular_dependency_solutions={
+                                           "app-misc/B-1":
+                                           frozenset([frozenset([("foo", False), ("bar", True)])])
+                                       },
+                                       success=False,
+                                       ),
+            ResolverPlaygroundTestCase(["=app-misc/B-2"],
+                                       circular_dependency_solutions={},
+                                       success=False),
         )
 
         playground = ResolverPlayground(ebuilds=ebuilds)

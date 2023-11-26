@@ -265,7 +265,8 @@ class search:
             match_category = 1
         fuzzy = False
 
-        if self.regex_auto and not regexsearch and re.search(r"[\^\$\*\[\]\{\}\|\?]|\.\+", self.searchkey) is not None:
+        if self.regex_auto and not regexsearch and re.search(r"[\^\$\*\[\]\{\}\|\?]|\.\+",
+                                                             self.searchkey) is not None:
             try:
                 re.compile(self.searchkey, re.I)
             except Exception:
@@ -439,7 +440,8 @@ class search:
                                   type_name="ebuild",
                                   )
                     pkgdir = os.path.dirname(myebuild)
-                    mf = self.settings.repositories.get_repo_for_location(os.path.dirname(os.path.dirname(pkgdir)))
+                    mf = self.settings.repositories.get_repo_for_location(
+                        os.path.dirname(os.path.dirname(pkgdir)))
                     mf = mf.load_manifest(pkgdir, self.settings["DISTDIR"])
                     try:
                         uri_map = _parse_uri_map(mycpv, metadata, use=pkg.use.enabled)

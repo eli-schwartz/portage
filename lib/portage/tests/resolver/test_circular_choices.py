@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class CircularJsoncppCmakeBootstrapTestCase(TestCase):
@@ -38,8 +40,8 @@ class CircularJsoncppCmakeBootstrapTestCase(TestCase):
             # Demonstrate that backtracking adjusts || preferences in order to solve bug 703440.
             ResolverPlaygroundTestCase(["dev-util/cmake"],
                                        mergelist=[
-                                           "dev-util/cmake-bootstrap-3.16.2", "dev-libs/jsoncpp-1.9.2",
-                                           "dev-util/cmake-3.16.2",
+                                           "dev-util/cmake-bootstrap-3.16.2",
+                                           "dev-libs/jsoncpp-1.9.2", "dev-util/cmake-3.16.2",
                                        ],
                                        success=True,
                                        ),
@@ -61,7 +63,9 @@ class CircularJsoncppCmakeBootstrapTestCase(TestCase):
                                        cleanlist=["dev-util/cmake-bootstrap-3.16.2"],
                                        ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=ebuilds, world=["dev-util/cmake"])
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=ebuilds,
+                                        world=["dev-util/cmake"])
         try:
             for test_case in test_cases:
                 playground.run_TestCase(test_case)
@@ -121,7 +125,10 @@ class CircularChoicesTestCase(TestCase):
         test_cases = (
             # Automatically pull in gwydion-dylan-bin to solve a circular dep
             ResolverPlaygroundTestCase(["dev-lang/gwydion-dylan"],
-                                       mergelist=["dev-lang/gwydion-dylan-bin-2.4.0", "dev-lang/gwydion-dylan-2.4.0", ],
+                                       mergelist=[
+                                           "dev-lang/gwydion-dylan-bin-2.4.0",
+                                           "dev-lang/gwydion-dylan-2.4.0",
+                                       ],
                                        success=True,
                                        ), )
 
@@ -193,10 +200,11 @@ class CircularPypyExeTestCase(TestCase):
             # Demonstrate bug 705986, where a USE change suggestion was given
             # even though an || preference adjustment would solve the problem
             # by pulling in pypy-exe-bin instead of pypy-exe.
-            ResolverPlaygroundTestCase(["dev-python/pypy"],
-                                       mergelist=["dev-python/pypy-exe-bin-7.3.0", "dev-python/pypy-7.3.0"],
-                                       success=True,
-                                       ), )
+            ResolverPlaygroundTestCase(
+                ["dev-python/pypy"],
+                mergelist=["dev-python/pypy-exe-bin-7.3.0", "dev-python/pypy-7.3.0"],
+                success=True,
+            ), )
 
         playground = ResolverPlayground(ebuilds=ebuilds, debug=False)
         try:

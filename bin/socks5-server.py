@@ -155,7 +155,8 @@ class Socks5Server:
 
             # otherwise, start two loops:
             # remote -> local...
-            t = asyncio_ensure_future(self.handle_proxied_conn(proxied_reader, writer, current_task()))
+            t = asyncio_ensure_future(
+                self.handle_proxied_conn(proxied_reader, writer, current_task()))
 
             # and local -> remote...
             try:

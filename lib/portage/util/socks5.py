@@ -46,8 +46,14 @@ class ProxyManager:
         spawn_kwargs = {}
         # The portage_uid check solves EPERM failures in Travis CI.
         if portage.data.secpass > 1 and os.geteuid() != portage_uid:
-            spawn_kwargs.update(uid=portage_uid, gid=portage_gid, groups=userpriv_groups, umask=0o077)
-        self._pids = spawn([_python_interpreter, server_bin, self.socket_path], returnpid=True, **spawn_kwargs, )
+            spawn_kwargs.update(uid=portage_uid,
+                                gid=portage_gid,
+                                groups=userpriv_groups,
+                                umask=0o077)
+        self._pids = spawn([_python_interpreter, server_bin, self.socket_path],
+                           returnpid=True,
+                           **spawn_kwargs,
+                           )
 
     def stop(self):
         """

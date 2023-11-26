@@ -16,7 +16,8 @@ from _emerge.PackagePhase import PackagePhase
 from _emerge.TaskSequence import TaskSequence
 from portage.package.ebuild._ipc.QueryCommand import QueryCommand
 from portage.util._dyn_libs.soname_deps_qa import (_get_all_provides, _get_unresolved_soname_deps, )
-from portage.package.ebuild.prepare_build_dirs import (_prepare_workdir, _prepare_fake_distdir, _prepare_fake_filesdir,
+from portage.package.ebuild.prepare_build_dirs import (_prepare_workdir, _prepare_fake_distdir,
+                                                       _prepare_fake_filesdir,
                                                        )
 from portage.util import writemsg, ensure_dirs
 from portage.util._async.AsyncTaskFuture import AsyncTaskFuture
@@ -39,9 +40,10 @@ import portage
 
 portage.proxy.lazyimport.lazyimport(
     globals(), "portage.elog:messages@elog_messages",
-    "portage.package.ebuild.doebuild:_check_build_log," + "_post_phase_cmds,_post_phase_userpriv_perms," +
-    "_post_phase_emptydir_cleanup," + "_post_src_install_soname_symlinks," +
-    "_post_src_install_uid_fix,_postinst_bsdflags," + "_post_src_install_write_metadata," + "_preinst_bsdflags",
+    "portage.package.ebuild.doebuild:_check_build_log," +
+    "_post_phase_cmds,_post_phase_userpriv_perms," + "_post_phase_emptydir_cleanup," +
+    "_post_src_install_soname_symlinks," + "_post_src_install_uid_fix,_postinst_bsdflags," +
+    "_post_src_install_write_metadata," + "_preinst_bsdflags",
     "portage.util.futures.unix_events:_set_nonblocking",
 )
 from portage import os
@@ -53,9 +55,10 @@ class EbuildPhase(CompositeTask):
     __slots__ = ("actionmap", "fd_pipes", "phase", "settings") + ("_ebuild_lock", )
 
     # FEATURES displayed prior to setup phase
-    _features_display = ("ccache", "compressdebug", "distcc", "fakeroot", "installsources", "keeptemp", "keepwork",
-                         "network-sandbox", "network-sandbox-proxy", "nostrip", "preserve-libs", "sandbox", "selinux",
-                         "sesandbox", "splitdebug", "suidctl", "test", "userpriv", "usersandbox",
+    _features_display = ("ccache", "compressdebug", "distcc", "fakeroot", "installsources",
+                         "keeptemp", "keepwork", "network-sandbox", "network-sandbox-proxy",
+                         "nostrip", "preserve-libs", "sandbox", "selinux", "sesandbox",
+                         "splitdebug", "suidctl", "test", "userpriv", "usersandbox",
                          )
 
     # Locked phases
@@ -69,7 +72,8 @@ class EbuildPhase(CompositeTask):
         need_builddir = self.phase not in EbuildProcess._phases_without_builddir
 
         if need_builddir:
-            phase_completed_file = os.path.join(self.settings["PORTAGE_BUILDDIR"], f".{self.phase.rstrip('e')}ed")
+            phase_completed_file = os.path.join(self.settings["PORTAGE_BUILDDIR"],
+                                                f".{self.phase.rstrip('e')}ed")
             if not os.path.exists(phase_completed_file):
                 # If the phase is really going to run then we want
                 # to eliminate any stale elog messages that may
@@ -87,7 +91,8 @@ class EbuildPhase(CompositeTask):
 
             maint_str = ""
             upstr_str = ""
-            metadata_xml_path = os.path.join(os.path.dirname(self.settings["EBUILD"]), "metadata.xml")
+            metadata_xml_path = os.path.join(os.path.dirname(self.settings["EBUILD"]),
+                                             "metadata.xml")
             if MetaDataXML is not None and os.path.isfile(metadata_xml_path):
                 herds_path = os.path.join(self.settings["PORTDIR"], "metadata/herds.xml")
                 try:
@@ -122,17 +127,18 @@ class EbuildPhase(CompositeTask):
 
         if self.phase == "package":
             if "PORTAGE_BINPKG_TMPFILE" not in self.settings:
-                binpkg_format = self.settings.get("BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0])
+                binpkg_format = self.settings.get("BINPKG_FORMAT",
+                                                  SUPPORTED_GENTOO_BINPKG_FORMATS[0])
                 if binpkg_format == "xpak":
                     self.settings["BINPKG_FORMAT"] = "xpak"
-                    self.settings["PORTAGE_BINPKG_TMPFILE"] = (
-                        os.path.join(self.settings["PKGDIR"], self.settings["CATEGORY"], self.settings["PF"],
-                                     ) + ".tbz2")
+                    self.settings["PORTAGE_BINPKG_TMPFILE"] = (os.path.join(
+                        self.settings["PKGDIR"], self.settings["CATEGORY"], self.settings["PF"],
+                    ) + ".tbz2")
                 elif binpkg_format == "gpkg":
                     self.settings["BINPKG_FORMAT"] = "gpkg"
-                    self.settings["PORTAGE_BINPKG_TMPFILE"] = (
-                        os.path.join(self.settings["PKGDIR"], self.settings["CATEGORY"], self.settings["PF"],
-                                     ) + ".gpkg.tar")
+                    self.settings["PORTAGE_BINPKG_TMPFILE"] = (os.path.join(
+                        self.settings["PKGDIR"], self.settings["CATEGORY"], self.settings["PF"],
+                    ) + ".gpkg.tar")
                 else:
                     raise InvalidBinaryPackageFormat(binpkg_format)
 
@@ -184,7 +190,8 @@ class EbuildPhase(CompositeTask):
         # open file can result in an nfs lock on $T/build.log which
         # prevents the clean phase from removing $T.
         logfile = None
-        if self.phase not in ("clean", "cleanrm") and self.settings.get("PORTAGE_BACKGROUND") != "subprocess":
+        if self.phase not in (
+                "clean", "cleanrm") and self.settings.get("PORTAGE_BACKGROUND") != "subprocess":
             logfile = self.settings.get("PORTAGE_LOG_FILE")
         return logfile
 
@@ -349,7 +356,8 @@ class EbuildPhase(CompositeTask):
         return
 
     def _append_temp_log(self, temp_log, log_path):
-        temp_file = open(_unicode_encode(temp_log, encoding=_encodings["fs"], errors="strict"), "rb")
+        temp_file = open(_unicode_encode(temp_log, encoding=_encodings["fs"], errors="strict"),
+                         "rb")
 
         log_file, log_file_real = self._open_log(log_path)
 
@@ -418,7 +426,8 @@ class EbuildPhase(CompositeTask):
         elog_func = getattr(elog_messages, elog_funcname)
         global_havecolor = portage.output.havecolor
         try:
-            portage.output.havecolor = self.settings.get("NOCOLOR", "false").lower() in ("no", "false")
+            portage.output.havecolor = self.settings.get("NOCOLOR",
+                                                         "false").lower() in ("no", "false")
             for line in lines:
                 elog_func(line, phase=phase, key=self.settings.mycpv, out=out)
         finally:
@@ -432,11 +441,12 @@ class EbuildPhase(CompositeTask):
                 if self.settings.get("PORTAGE_BACKGROUND") != "subprocess":
                     log_path = self.settings.get("PORTAGE_LOG_FILE")
                 if log_path:
-                    build_logger = BuildLogger(env=self.settings.environ(),
-                                               log_path=log_path,
-                                               log_filter_file=self.settings.get("PORTAGE_LOG_FILTER_FILE_CMD"),
-                                               scheduler=self.scheduler,
-                                               )
+                    build_logger = BuildLogger(
+                        env=self.settings.environ(),
+                        log_path=log_path,
+                        log_filter_file=self.settings.get("PORTAGE_LOG_FILTER_FILE_CMD"),
+                        scheduler=self.scheduler,
+                    )
                     build_logger.start()
                     _set_nonblocking(build_logger.stdin.fileno())
                     log_file = build_logger.stdin
@@ -462,7 +472,8 @@ class _PostPhaseCommands(CompositeTask):
             cmds = list(self.commands)
 
         if "selinux" not in self.settings.features:
-            cmds = [(kwargs, commands) for kwargs, commands in cmds if not kwargs.get("selinux_only")]
+            cmds = [(kwargs, commands) for kwargs, commands in cmds
+                    if not kwargs.get("selinux_only")]
 
         tasks = TaskSequence()
         for kwargs, commands in cmds:
@@ -507,15 +518,17 @@ class _PostPhaseCommands(CompositeTask):
     async def _soname_deps_qa(self):
         vardb = QueryCommand.get_db()[self.settings["EROOT"]]["vartree"].dbapi
 
-        all_provides = await self.scheduler.run_in_executor(ForkExecutor(loop=self.scheduler), _get_all_provides, vardb)
+        all_provides = await self.scheduler.run_in_executor(ForkExecutor(loop=self.scheduler),
+                                                            _get_all_provides, vardb)
 
-        unresolved = _get_unresolved_soname_deps(os.path.join(self.settings["PORTAGE_BUILDDIR"], "build-info"),
-                                                 all_provides)
+        unresolved = _get_unresolved_soname_deps(
+            os.path.join(self.settings["PORTAGE_BUILDDIR"], "build-info"), all_provides)
 
         if unresolved:
             unresolved.sort()
             qa_msg = ["QA Notice: Unresolved soname dependencies:"]
             qa_msg.append("")
-            qa_msg.extend(f"\t{filename}: {' '.join(sorted(soname_deps))}" for filename, soname_deps in unresolved)
+            qa_msg.extend(f"\t{filename}: {' '.join(sorted(soname_deps))}"
+                          for filename, soname_deps in unresolved)
             qa_msg.append("")
             await self.elog("eqawarn", qa_msg)

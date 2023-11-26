@@ -88,7 +88,8 @@ class LicenseManager:
         license_group = self._license_groups.get(group_name)
         if group_name in traversed_groups:
             writemsg(_("Circular license group reference"
-                       " detected in '%s'\n") % group_name, noiselevel=-1,
+                       " detected in '%s'\n") % group_name,
+                     noiselevel=-1,
                      )
             rValue.append("@" + group_name)
         elif license_group:

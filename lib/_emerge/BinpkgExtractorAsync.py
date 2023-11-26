@@ -32,7 +32,9 @@ class BinpkgExtractorAsync(SpawnProcess):
     def _xpak_start(self):
         tar_options = ""
         if "xattr" in self.features:
-            process = subprocess.Popen(["tar", "--help"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            process = subprocess.Popen(["tar", "--help"],
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE)
             output = process.communicate()[0]
             if b"--xattrs" in output:
                 tar_options = ["--xattrs", "--xattrs-include='*'"]
@@ -43,9 +45,12 @@ class BinpkgExtractorAsync(SpawnProcess):
         decomp = _compressors.get(compression_probe(self.pkg_path))
         if decomp is not None:
             decomp_cmd = decomp.get("decompress")
-            decomp_cmd = decomp_cmd.replace("{JOBS}", str(makeopts_to_job_count(self.env.get("MAKEOPTS", "1"))))
+            decomp_cmd = decomp_cmd.replace(
+                "{JOBS}", str(makeopts_to_job_count(self.env.get("MAKEOPTS", "1"))))
         elif tarfile.is_tarfile(
-                portage._unicode_encode(self.pkg_path, encoding=portage._encodings["fs"], errors="strict")):
+                portage._unicode_encode(self.pkg_path,
+                                        encoding=portage._encodings["fs"],
+                                        errors="strict")):
             decomp_cmd = "cat"
             decomp = {"compress": "cat", "package": "sys-apps/coreutils", }
         else:

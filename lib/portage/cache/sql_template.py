@@ -23,11 +23,13 @@ class SQLDatabase(template.database):
 
     SCHEMA_PACKAGE_NAME = "package_cache"
     SCHEMA_PACKAGE_CREATE = ("CREATE TABLE %s (\
-		pkgid INTEGER PRIMARY KEY, label VARCHAR(255), cpv VARCHAR(255), UNIQUE(label, cpv))" % SCHEMA_PACKAGE_NAME)
+		pkgid INTEGER PRIMARY KEY, label VARCHAR(255), cpv VARCHAR(255), UNIQUE(label, cpv))" %
+                             SCHEMA_PACKAGE_NAME)
     SCHEMA_PACKAGE_DROP = f"DROP TABLE {SCHEMA_PACKAGE_NAME}"
 
     SCHEMA_VALUES_NAME = "values_cache"
-    SCHEMA_VALUES_CREATE = ("CREATE TABLE %s ( pkgid integer references %s (pkgid) on delete cascade, \
+    SCHEMA_VALUES_CREATE = (
+        "CREATE TABLE %s ( pkgid integer references %s (pkgid) on delete cascade, \
 		key varchar(255), value text, UNIQUE(pkgid, key))" % (SCHEMA_VALUES_NAME, SCHEMA_PACKAGE_NAME))
     SCHEMA_VALUES_DROP = f"DROP TABLE {SCHEMA_VALUES_NAME}"
     SCHEMA_INSERT_CPV_INTO_PACKAGE = "INSERT INTO %s (label, cpv) VALUES(%%s, %%s)" % SCHEMA_PACKAGE_NAME
@@ -67,7 +69,8 @@ class SQLDatabase(template.database):
         self._dbconnect(config)
         if not self._table_exists(self.SCHEMA_PACKAGE_NAME):
             if self.readonly:
-                raise cache_errors.ReadOnlyRestriction(f"table {self.SCHEMA_PACKAGE_NAME} doesn't exist")
+                raise cache_errors.ReadOnlyRestriction(
+                    f"table {self.SCHEMA_PACKAGE_NAME} doesn't exist")
             try:
                 self.con.execute(self.SCHEMA_PACKAGE_CREATE)
             except self._BaseError as e:
@@ -75,7 +78,8 @@ class SQLDatabase(template.database):
 
         if not self._table_exists(self.SCHEMA_VALUES_NAME):
             if self.readonly:
-                raise cache_errors.ReadOnlyRestriction(f"table {self.SCHEMA_VALUES_NAME} doesn't exist")
+                raise cache_errors.ReadOnlyRestriction(
+                    f"table {self.SCHEMA_VALUES_NAME} doesn't exist")
             try:
                 self.con.execute(self.SCHEMA_VALUES_CREATE)
             except self._BaseError as e:
@@ -92,10 +96,11 @@ class SQLDatabase(template.database):
 
     def _getitem(self, cpv):
         try:
-            self.con.execute("SELECT key, value FROM %s NATURAL JOIN %s "
-                             "WHERE label=%s AND cpv=%s" %
-                             (self.SCHEMA_PACKAGE_NAME, self.SCHEMA_VALUES_NAME, self.label, self._sfilter(cpv),
-                              ))
+            self.con.execute(
+                "SELECT key, value FROM %s NATURAL JOIN %s "
+                "WHERE label=%s AND cpv=%s" %
+                (self.SCHEMA_PACKAGE_NAME, self.SCHEMA_VALUES_NAME, self.label, self._sfilter(cpv),
+                 ))
         except self._BaseError as e:
             raise cache_errors.CacheCorruption(self, cpv, e)
 
@@ -193,7 +198,8 @@ class SQLDatabase(template.database):
         except self._BaseError:
             self.db.rollback()
             raise
-        self.con.execute("SELECT pkgid FROM %s WHERE label=%s AND cpv=%s" % (self.SCHEMA_PACKAGE_NAME, self.label, cpv))
+        self.con.execute("SELECT pkgid FROM %s WHERE label=%s AND cpv=%s" %
+                         (self.SCHEMA_PACKAGE_NAME, self.label, cpv))
 
         if self.con.rowcount != 1:
             raise cache_error.CacheCorruption(
@@ -234,7 +240,8 @@ class SQLDatabase(template.database):
     def iteritems(self):
         try:
             self.con.execute("SELECT cpv, key, value FROM %s NATURAL JOIN %s "
-                             "WHERE label=%s" % (self.SCHEMA_PACKAGE_NAME, self.SCHEMA_VALUES_NAME, self.label))
+                             "WHERE label=%s" %
+                             (self.SCHEMA_PACKAGE_NAME, self.SCHEMA_VALUES_NAME, self.label))
         except self._BaseError as e:
             raise cache_errors.CacheCorruption(self, cpv, e)
 
@@ -267,7 +274,8 @@ class SQLDatabase(template.database):
         query_list = []
         for k, v in match_dict.items():
             if k not in self._known_keys:
-                raise cache_errors.InvalidRestriction(k, v, "key isn't known to this cache instance")
+                raise cache_errors.InvalidRestriction(k, v,
+                                                      "key isn't known to this cache instance")
             v = v.replace("%", "\\%")
             v = v.replace(".*", "%")
             query_list.append(f"(key={self._sfilter(k)} AND value LIKE {self._sfilter(v)})")
@@ -277,10 +285,12 @@ class SQLDatabase(template.database):
         else:
             query = ""
 
-        print("query = SELECT cpv from package_cache natural join values_cache WHERE label=%s %s" % (self.label, query))
+        print("query = SELECT cpv from package_cache natural join values_cache WHERE label=%s %s" %
+              (self.label, query))
         try:
-            self.con.execute("SELECT cpv from package_cache natural join values_cache WHERE label=%s %s" %
-                             (self.label, query))
+            self.con.execute(
+                "SELECT cpv from package_cache natural join values_cache WHERE label=%s %s" %
+                (self.label, query))
         except self._BaseError as e:
             raise cache_errors.GeneralCacheCorruption(e)
 

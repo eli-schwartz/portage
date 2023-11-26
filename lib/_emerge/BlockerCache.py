@@ -31,7 +31,8 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
     def __init__(self, myroot, vardb):
         """myroot is ignored in favour of EROOT"""
         self._vardb = vardb
-        self._cache_filename = os.path.join(vardb.settings["EROOT"], portage.CACHE_PATH, "vdb_blockers.pickle")
+        self._cache_filename = os.path.join(vardb.settings["EROOT"], portage.CACHE_PATH,
+                                            "vdb_blockers.pickle")
         self._cache_version = "1"
         self._cache_data = None
         self._modified = set()
@@ -52,14 +53,17 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
         except (SystemExit, KeyboardInterrupt):
             raise
         except Exception as e:
-            if isinstance(e, EnvironmentError) and getattr(e, "errno", None) in (errno.ENOENT, errno.EACCES, ):
+            if isinstance(e, EnvironmentError) and getattr(e, "errno",
+                                                           None) in (errno.ENOENT, errno.EACCES,
+                                                                     ):
                 pass
             else:
                 writemsg(f"!!! Error loading '{self._cache_filename}': {str(e)}\n", noiselevel=-1, )
             del e
 
         cache_valid = self._cache_data and isinstance(
-            self._cache_data, dict) and self._cache_data.get("version") == self._cache_version and isinstance(
+            self._cache_data,
+            dict) and self._cache_data.get("version") == self._cache_version and isinstance(
                 self._cache_data.get("blockers"), dict)
         if cache_valid:
             # Validate all the atoms and counters so that
@@ -128,7 +132,9 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
                 with portage.util.atomic_ofstream(self._cache_filename, mode="wb") as f:
                     pickle.dump(self._cache_data, f, protocol=2)
 
-                portage.util.apply_secpass_permissions(self._cache_filename, gid=portage.portage_gid, mode=0o644)
+                portage.util.apply_secpass_permissions(self._cache_filename,
+                                                       gid=portage.portage_gid,
+                                                       mode=0o644)
             except OSError:
                 pass
             self._modified.clear()
@@ -143,7 +149,9 @@ class BlockerCache(portage.cache.mappings.MutableMapping):
         @param blocker_data: An object with counter and atoms attributes.
         @type blocker_data: BlockerData
         """
-        self._cache_data["blockers"][str(cpv)] = (blocker_data.counter, tuple(str(x) for x in blocker_data.atoms), )
+        self._cache_data["blockers"][str(cpv)] = (blocker_data.counter,
+                                                  tuple(str(x) for x in blocker_data.atoms),
+                                                  )
         self._modified.add(cpv)
 
     def __iter__(self):

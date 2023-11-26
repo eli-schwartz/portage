@@ -26,8 +26,8 @@ from portage.util.path import first_existing
 
 
 class EbuildBuild(CompositeTask):
-    __slots__ = ("args_set", "config_pool", "find_blockers", "ldpath_mtimes", "logger", "opts", "pkg", "pkg_count",
-                 "prefetcher", "settings", "world_atom",
+    __slots__ = ("args_set", "config_pool", "find_blockers", "ldpath_mtimes", "logger", "opts",
+                 "pkg", "pkg_count", "prefetcher", "settings", "world_atom",
                  ) + ("_build_dir", "_buildpkg", "_ebuild_path", "_issyspkg", "_tree")
 
     def _start(self):
@@ -43,7 +43,8 @@ class EbuildBuild(CompositeTask):
         # because some packages have an extremely large SRC_URI value).
         self._start_task(
             AsyncTaskFuture(future=self.pkg.root_config.trees["porttree"].dbapi.async_aux_get(
-                self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler)), self._start_with_metadata,
+                self.pkg.cpv, ["SRC_URI"], myrepo=self.pkg.repo, loop=self.scheduler)),
+            self._start_with_metadata,
         )
 
     def _start_with_metadata(self, aux_get_task):
@@ -85,8 +86,8 @@ class EbuildBuild(CompositeTask):
         elif prefetcher.isAlive() and prefetcher.poll() is None:
             if not self.background:
                 fetch_log = os.path.join(_emerge.emergelog._emerge_log_dir, "emerge-fetch.log")
-                msg = ("Fetching files in the background.", "To view fetch progress, run in another terminal:",
-                       f"tail -f {fetch_log}",
+                msg = ("Fetching files in the background.",
+                       "To view fetch progress, run in another terminal:", f"tail -f {fetch_log}",
                        )
                 out = portage.output.EOutput()
                 for l in msg:
@@ -141,12 +142,13 @@ class EbuildBuild(CompositeTask):
                     # For pretend mode, the convention it to execute
                     # pkg_nofetch and return a successful exitcode.
                     self._start_task(
-                        SpawnNofetchWithoutBuilddir(background=self.background,
-                                                    portdb=self.pkg.root_config.trees[self._tree].dbapi,
-                                                    ebuild_path=self._ebuild_path,
-                                                    scheduler=self.scheduler,
-                                                    settings=self.settings,
-                                                    ), self._default_final_exit,
+                        SpawnNofetchWithoutBuilddir(
+                            background=self.background,
+                            portdb=self.pkg.root_config.trees[self._tree].dbapi,
+                            ebuild_path=self._ebuild_path,
+                            scheduler=self.scheduler,
+                            settings=self.settings,
+                        ), self._default_final_exit,
                     )
                 return
 
@@ -176,7 +178,8 @@ class EbuildBuild(CompositeTask):
             return
 
         self._build_dir = EbuildBuildDir(scheduler=self.scheduler, settings=settings)
-        self._start_task(AsyncTaskFuture(future=self._build_dir.async_lock()), self._start_pre_clean)
+        self._start_task(AsyncTaskFuture(future=self._build_dir.async_lock()),
+                         self._start_pre_clean)
 
     def _start_pre_clean(self, lock_task):
         self._assert_current(lock_task)
@@ -187,10 +190,13 @@ class EbuildBuild(CompositeTask):
         lock_task.future.result()
         # Cleaning needs to happen before fetch, since the build dir
         # is used for log handling.
-        msg = " === ({} of {}) Cleaning ({}::{})".format(self.pkg_count.curval, self.pkg_count.maxval, self.pkg.cpv,
+        msg = " === ({} of {}) Cleaning ({}::{})".format(self.pkg_count.curval,
+                                                         self.pkg_count.maxval, self.pkg.cpv,
                                                          self._ebuild_path,
                                                          )
-        short_msg = "emerge: ({} of {}) {} Clean".format(self.pkg_count.curval, self.pkg_count.maxval, self.pkg.cpv, )
+        short_msg = "emerge: ({} of {}) {} Clean".format(self.pkg_count.curval,
+                                                         self.pkg_count.maxval, self.pkg.cpv,
+                                                         )
         self.logger.log(msg, short_msg=short_msg)
 
         pre_clean_phase = EbuildPhase(background=self.background,
@@ -307,24 +313,33 @@ class EbuildBuild(CompositeTask):
         live_ebuild = "live" in self.settings.get("PROPERTIES", "").split()
         buildpkg_live_disabled = live_ebuild and not buildpkg_live
 
-        if ("buildpkg" in features or self._issyspkg
-            ) and not buildpkg_live_disabled and not self.opts.buildpkg_exclude.findAtomForPackage(pkg):
+        if (
+                "buildpkg" in features or self._issyspkg
+        ) and not buildpkg_live_disabled and not self.opts.buildpkg_exclude.findAtomForPackage(pkg):
             self._buildpkg = True
 
-            msg = " === ({} of {}) Compiling/Packaging ({}::{})".format(pkg_count.curval, pkg_count.maxval, pkg.cpv,
-                                                                        ebuild_path,
-                                                                        )
-            short_msg = "emerge: ({} of {}) {} Compile".format(pkg_count.curval, pkg_count.maxval, pkg.cpv, )
+            msg = " === ({} of {}) Compiling/Packaging ({}::{})".format(
+                pkg_count.curval, pkg_count.maxval, pkg.cpv, ebuild_path,
+            )
+            short_msg = "emerge: ({} of {}) {} Compile".format(pkg_count.curval, pkg_count.maxval,
+                                                               pkg.cpv,
+                                                               )
             logger.log(msg, short_msg=short_msg)
 
         else:
-            msg = " === ({} of {}) Compiling/Merging ({}::{})".format(pkg_count.curval, pkg_count.maxval, pkg.cpv,
+            msg = " === ({} of {}) Compiling/Merging ({}::{})".format(pkg_count.curval,
+                                                                      pkg_count.maxval, pkg.cpv,
                                                                       ebuild_path,
                                                                       )
-            short_msg = "emerge: ({} of {}) {} Compile".format(pkg_count.curval, pkg_count.maxval, pkg.cpv, )
+            short_msg = "emerge: ({} of {}) {} Compile".format(pkg_count.curval, pkg_count.maxval,
+                                                               pkg.cpv,
+                                                               )
             logger.log(msg, short_msg=short_msg)
 
-        build = EbuildExecuter(background=self.background, pkg=pkg, scheduler=scheduler, settings=settings)
+        build = EbuildExecuter(background=self.background,
+                               pkg=pkg,
+                               scheduler=scheduler,
+                               settings=settings)
         self._start_task(build, self._build_exit)
 
     def _fetch_failed(self):
@@ -476,7 +491,9 @@ class EbuildBuild(CompositeTask):
         if pkg.build_id is not None:
             info["BUILD_ID"] = f"{pkg.build_id}\n"
         for k, v in info.items():
-            with open(_unicode_encode(os.path.join(infoloc, k), encoding=_encodings["fs"], errors="strict"),
+            with open(_unicode_encode(os.path.join(infoloc, k),
+                                      encoding=_encodings["fs"],
+                                      errors="strict"),
                       mode="w",
                       encoding=_encodings["repo.content"],
                       errors="strict",
@@ -531,8 +548,12 @@ class EbuildBuild(CompositeTask):
                            world_atom=world_atom,
                            )
 
-        msg = " === ({} of {}) Merging ({}::{})".format(pkg_count.curval, pkg_count.maxval, pkg.cpv, ebuild_path, )
-        short_msg = "emerge: ({} of {}) {} Merge".format(pkg_count.curval, pkg_count.maxval, pkg.cpv, )
+        msg = " === ({} of {}) Merging ({}::{})".format(pkg_count.curval, pkg_count.maxval, pkg.cpv,
+                                                        ebuild_path,
+                                                        )
+        short_msg = "emerge: ({} of {}) {} Merge".format(pkg_count.curval, pkg_count.maxval,
+                                                         pkg.cpv,
+                                                         )
         logger.log(msg, short_msg=short_msg)
 
         return task

@@ -14,9 +14,9 @@ from ..SlotObject import SlotObject
 class SchedulerInterface(SlotObject):
     _event_loop_attrs = (
         "add_reader", "add_writer", "call_at", "call_exception_handler", "call_later", "call_soon",
-        "call_soon_threadsafe", "close", "create_future", "default_exception_handler", "get_debug", "is_closed",
-        "is_running", "remove_reader", "remove_writer", "run_in_executor", "run_until_complete", "set_debug", "time",
-        "_asyncio_child_watcher",
+        "call_soon_threadsafe", "close", "create_future", "default_exception_handler", "get_debug",
+        "is_closed", "is_running", "remove_reader", "remove_writer", "run_in_executor",
+        "run_until_complete", "set_debug", "time", "_asyncio_child_watcher",
         # This attribute it used by _wrap_loop to detect if the
         # loop already has a suitable wrapper.
         "_asyncio_wrapper",
@@ -86,7 +86,9 @@ class SchedulerInterface(SlotObject):
 
         if log_path is not None:
             try:
-                f = open(_unicode_encode(log_path, encoding=_encodings["fs"], errors="strict"), mode="ab", )
+                f = open(_unicode_encode(log_path, encoding=_encodings["fs"], errors="strict"),
+                         mode="ab",
+                         )
                 f_real = f
             except OSError as e:
                 if e.errno not in (errno.ENOENT, errno.ESTALE):

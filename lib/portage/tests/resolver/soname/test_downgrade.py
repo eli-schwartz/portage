@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -50,37 +52,40 @@ class SonameDowngradeTestCase(TestCase):
         world = ["dev-libs/libxml2"]
 
         test_cases = (
-            ResolverPlaygroundTestCase(["dev-libs/icu"],
-                                       options={
-                                           "--autounmask": "n",
-                                           "--ignore-soname-deps": "n",
-                                           "--oneshot": True,
-                                           "--usepkgonly": True,
-                                       },
-                                       success=True,
-                                       mergelist=["[binary]dev-libs/icu-4.8", "[binary]dev-libs/libxml2-2.7.8", ],
-                                       ),
-            ResolverPlaygroundTestCase(["dev-libs/icu"],
-                                       options={
-                                           "--autounmask": "n",
-                                           "--ignore-soname-deps": "y",
-                                           "--oneshot": True,
-                                           "--usepkgonly": True,
-                                       },
-                                       success=True,
-                                       mergelist=["[binary]dev-libs/icu-4.8", ],
-                                       ),
-            ResolverPlaygroundTestCase(["@world"],
-                                       options={
-                                           "--autounmask": "n",
-                                           "--deep": True,
-                                           "--ignore-soname-deps": "n",
-                                           "--update": True,
-                                           "--usepkgonly": True,
-                                       },
-                                       success=True,
-                                       mergelist=["[binary]dev-libs/icu-4.8", "[binary]dev-libs/libxml2-2.7.8", ],
-                                       ),
+            ResolverPlaygroundTestCase(
+                ["dev-libs/icu"],
+                options={
+                    "--autounmask": "n",
+                    "--ignore-soname-deps": "n",
+                    "--oneshot": True,
+                    "--usepkgonly": True,
+                },
+                success=True,
+                mergelist=["[binary]dev-libs/icu-4.8", "[binary]dev-libs/libxml2-2.7.8", ],
+            ),
+            ResolverPlaygroundTestCase(
+                ["dev-libs/icu"],
+                options={
+                    "--autounmask": "n",
+                    "--ignore-soname-deps": "y",
+                    "--oneshot": True,
+                    "--usepkgonly": True,
+                },
+                success=True,
+                mergelist=["[binary]dev-libs/icu-4.8", ],
+            ),
+            ResolverPlaygroundTestCase(
+                ["@world"],
+                options={
+                    "--autounmask": "n",
+                    "--deep": True,
+                    "--ignore-soname-deps": "n",
+                    "--update": True,
+                    "--usepkgonly": True,
+                },
+                success=True,
+                mergelist=["[binary]dev-libs/icu-4.8", "[binary]dev-libs/libxml2-2.7.8", ],
+            ),
             # In this case, soname dependencies are not respected,
             # because --usepkgonly is not enabled. This could be
             # handled differently, by respecting soname dependencies

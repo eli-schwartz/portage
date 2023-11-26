@@ -67,7 +67,8 @@ class BinpkgVerifier(CompositeTask):
 
         for hash_name in digester.hash_names:
             if digester.digests[hash_name] != self._digests[hash_name]:
-                self._digest_exception(hash_name, digester.digests[hash_name], self._digests[hash_name])
+                self._digest_exception(hash_name, digester.digests[hash_name],
+                                       self._digests[hash_name])
                 self.returncode = 1
                 self.wait()
                 return

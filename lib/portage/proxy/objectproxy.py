@@ -32,7 +32,8 @@ class ObjectProxy:
         return object.__getattribute__(self, "_get_target")().__enter__()
 
     def __exit__(self, exc_type, exc_value, traceback):
-        return object.__getattribute__(self, "_get_target")().__exit__(exc_type, exc_value, traceback)
+        return object.__getattribute__(self,
+                                       "_get_target")().__exit__(exc_type, exc_value, traceback)
 
     def __setitem__(self, key, value):
         object.__getattribute__(self, "_get_target")()[key] = value

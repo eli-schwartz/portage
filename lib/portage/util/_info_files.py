@@ -19,7 +19,9 @@ def chk_updated_info_files(root, infodirs, prev_mtimes):
             if z == "":
                 continue
             inforoot = portage.util.normalize_path(root + z)
-            if os.path.isdir(inforoot) and not [x for x in os.listdir(inforoot) if x.startswith(".keepinfodir")]:
+            if os.path.isdir(inforoot) and not [
+                    x for x in os.listdir(inforoot) if x.startswith(".keepinfodir")
+            ]:
                 infomtime = os.stat(inforoot)[stat.ST_MTIME]
                 if inforoot not in prev_mtimes or prev_mtimes[inforoot] != infomtime:
                     regen_infodirs.append(inforoot)

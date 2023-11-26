@@ -5,14 +5,22 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
 class ChangedDepsTestCase(TestCase):
 
     def testChangedDeps(self):
-        ebuilds = {"app-misc/A-0": {"DEPEND": "app-misc/B", "RDEPEND": "app-misc/B", }, "app-misc/B-0": {}, }
+        ebuilds = {
+            "app-misc/A-0": {
+                "DEPEND": "app-misc/B",
+                "RDEPEND": "app-misc/B",
+            },
+            "app-misc/B-0": {},
+        }
 
         binpkgs = {"app-misc/A-0": {}, }
 
@@ -97,7 +105,8 @@ class ChangedDepsTestCase(TestCase):
                                                 installed=installed,
                                                 world=world,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
 

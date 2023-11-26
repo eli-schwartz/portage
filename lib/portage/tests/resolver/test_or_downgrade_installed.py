@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class OrDowngradeInstalledTestCase(TestCase):
@@ -38,7 +40,10 @@ class OrDowngradeInstalledTestCase(TestCase):
                                        mergelist=["net-libs/libtirpc-1", "net-misc/foo-1", ],
                                        ), )
 
-        playground = ResolverPlayground(debug=False, ebuilds=ebuilds, installed=installed, world=world)
+        playground = ResolverPlayground(debug=False,
+                                        ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world)
 
         try:
             for test_case in test_cases:
@@ -56,7 +61,9 @@ class OrDowngradeInstalledTestCase(TestCase):
 
         test_cases = (ResolverPlaygroundTestCase(["net-misc/foo"],
                                                  success=True,
-                                                 mergelist=["sys-libs/glibc-2.24", "net-misc/foo-1", ],
+                                                 mergelist=[
+                                                     "sys-libs/glibc-2.24", "net-misc/foo-1",
+                                                 ],
                                                  ), )
 
         playground = ResolverPlayground(debug=False,

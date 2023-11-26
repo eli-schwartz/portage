@@ -52,7 +52,8 @@ class MoveEntTestCase(TestCase):
                                                 installed=installed,
                                                 user_config={
                                                     "make.conf":
-                                                    (f'BINPKG_FORMAT="{binpkg_format}"', 'FEATURES="-binpkg-signing"',
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"',
+                                                     'FEATURES="-binpkg-signing"',
                                                      ),
                                                 },
                                                 )
@@ -74,7 +75,10 @@ class MoveEntTestCase(TestCase):
 
                     # Create an empty updates directory, so that this
                     # repo doesn't inherit updates from the main repo.
-                    ensure_dirs(os.path.join(portdb.getRepositoryPath("dont_apply_updates"), "profiles", "updates", ))
+                    ensure_dirs(
+                        os.path.join(portdb.getRepositoryPath("dont_apply_updates"), "profiles",
+                                     "updates",
+                                     ))
 
                     global_noiselimit = portage.util.noiselimit
                     portage.util.noiselimit = -2

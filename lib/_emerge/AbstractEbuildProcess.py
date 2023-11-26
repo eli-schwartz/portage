@@ -17,12 +17,13 @@ from portage import os
 from portage.util.futures import asyncio
 from portage.util import apply_secpass_permissions, no_color
 
-portage.proxy.lazyimport.lazyimport(globals(), "portage.package.ebuild.doebuild:_global_pid_phases", )
+portage.proxy.lazyimport.lazyimport(globals(), "portage.package.ebuild.doebuild:_global_pid_phases",
+                                    )
 
 
 class AbstractEbuildProcess(SpawnProcess):
-    __slots__ = ("phase", "settings", "_build_dir", "_build_dir_unlock", "_ipc_daemon", "_exit_command",
-                 "_exit_timeout_id", "_start_future",
+    __slots__ = ("phase", "settings", "_build_dir", "_build_dir_unlock", "_ipc_daemon",
+                 "_exit_command", "_exit_timeout_id", "_start_future",
                  )
 
     _phases_without_builddir = ("clean", "cleanrm", "depend", "help", )
@@ -72,10 +73,12 @@ class AbstractEbuildProcess(SpawnProcess):
             if self.phase not in self._phases_without_builddir:
                 start_ipc_daemon = True
                 if "PORTAGE_BUILDDIR_LOCKED" not in self.settings:
-                    self._build_dir = EbuildBuildDir(scheduler=self.scheduler, settings=self.settings)
+                    self._build_dir = EbuildBuildDir(scheduler=self.scheduler,
+                                                     settings=self.settings)
                     self._start_future = self._build_dir.async_lock()
                     self._start_future.add_done_callback(
-                        functools.partial(self._start_post_builddir_lock, start_ipc_daemon=start_ipc_daemon,
+                        functools.partial(self._start_post_builddir_lock,
+                                          start_ipc_daemon=start_ipc_daemon,
                                           ))
                     return
             else:
@@ -150,7 +153,12 @@ class AbstractEbuildProcess(SpawnProcess):
                         pass
                     os.mkfifo(p)
 
-            apply_secpass_permissions(p, uid=os.getuid(), gid=portage.data.portage_gid, mode=0o770, stat_cached=st, )
+            apply_secpass_permissions(p,
+                                      uid=os.getuid(),
+                                      gid=portage.data.portage_gid,
+                                      mode=0o770,
+                                      stat_cached=st,
+                                      )
 
         return (input_fifo, output_fifo)
 
@@ -179,7 +187,8 @@ class AbstractEbuildProcess(SpawnProcess):
     def _exit_command_callback(self):
         if self._registered:
             # Let the process exit naturally, if possible.
-            self._exit_timeout_id = self.scheduler.call_later(self._exit_timeout, self._exit_command_timeout_cb)
+            self._exit_timeout_id = self.scheduler.call_later(self._exit_timeout,
+                                                              self._exit_command_timeout_cb)
 
     def _exit_command_timeout_cb(self):
         if self._registered:
@@ -188,7 +197,8 @@ class AbstractEbuildProcess(SpawnProcess):
             # this when possible since it makes sandbox complain about
             # being killed by a signal.
             self.cancel()
-            self._exit_timeout_id = self.scheduler.call_later(self._cancel_timeout, self._cancel_timeout_cb)
+            self._exit_timeout_id = self.scheduler.call_later(self._cancel_timeout,
+                                                              self._cancel_timeout_cb)
         else:
             self._exit_timeout_id = None
 
@@ -210,7 +220,8 @@ class AbstractEbuildProcess(SpawnProcess):
         # TODO: Add support for logging via named pipe (fifo) with
         # sesandbox, since EbuildIpcDaemon uses a fifo and it's known
         # to be compatible with sesandbox.
-        return not ("sesandbox" in self.settings.features and self.settings.selinux_enabled()) or os.isatty(slave_fd)
+        return not ("sesandbox" in self.settings.features
+                    and self.settings.selinux_enabled()) or os.isatty(slave_fd)
 
     def _killed_by_signal(self, signum):
         msg = f"The ebuild phase '{self.phase}' has been killed by signal {signum}."
@@ -322,7 +333,8 @@ class AbstractEbuildProcess(SpawnProcess):
         self._build_dir_unlock = self._build_dir.async_unlock()
         # Unlock only once.
         self._build_dir = None
-        self._build_dir_unlock.add_done_callback(functools.partial(self._unlock_builddir_exit, returncode=returncode))
+        self._build_dir_unlock.add_done_callback(
+            functools.partial(self._unlock_builddir_exit, returncode=returncode))
 
     def _unlock_builddir_exit(self, unlock_future, returncode=None):
         # Normally, async_unlock should not raise an exception here.

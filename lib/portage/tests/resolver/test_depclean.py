@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class SimpleDepcleanTestCase(TestCase):
@@ -70,7 +72,8 @@ class DepcleanWithDepsTestCase(TestCase):
                                                  options={"--depclean": True},
                                                  success=True,
                                                  cleanlist=[
-                                                     "dev-libs/B-1", "dev-libs/D-1", "dev-libs/E-1", "dev-libs/F-1",
+                                                     "dev-libs/B-1", "dev-libs/D-1", "dev-libs/E-1",
+                                                     "dev-libs/F-1",
                                                  ],
                                                  ), )
 
@@ -202,7 +205,10 @@ class DepcleanWithExcludeTestCase(TestCase):
                                        success=True,
                                        cleanlist=["dev-libs/B-1", "dev-libs/A-1"],
                                        ),
-            ResolverPlaygroundTestCase(["dev-libs/A"], options={"--depclean": True}, success=True, cleanlist=[]),
+            ResolverPlaygroundTestCase(["dev-libs/A"],
+                                       options={"--depclean": True},
+                                       success=True,
+                                       cleanlist=[]),
             ResolverPlaygroundTestCase(["dev-libs/B"],
                                        options={"--depclean": True},
                                        success=True,
@@ -315,7 +321,10 @@ class DepcleanAndWildcardsTestCase(TestCase):
                                                  success=True,
                                                  cleanlist=["dev-libs/A-1"],
                                                  ),
-                      ResolverPlaygroundTestCase(["*/B"], options={"--depclean": True}, success=True, cleanlist=[]),
+                      ResolverPlaygroundTestCase(["*/B"],
+                                                 options={"--depclean": True},
+                                                 success=True,
+                                                 cleanlist=[]),
                       )
 
         playground = ResolverPlayground(installed=installed, world=world)

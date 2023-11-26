@@ -6,7 +6,9 @@ import os
 
 import portage
 
-portage.proxy.lazyimport.lazyimport(globals(), "_emerge.PipeReader:PipeReader", "portage.util.futures:asyncio", )
+portage.proxy.lazyimport.lazyimport(globals(), "_emerge.PipeReader:PipeReader",
+                                    "portage.util.futures:asyncio",
+                                    )
 
 
 def _reader(input_file, loop=None):

@@ -15,8 +15,8 @@
 # '+' means concatenate the fields ===> All chunks are strings
 
 __all__ = [
-    "addtolist", "decodeint", "encodeint", "getboth", "getindex", "getindex_mem", "getitem", "listindex", "searchindex",
-    "tbz2", "xpak_mem", "xpak", "xpand", "xsplit", "xsplit_mem",
+    "addtolist", "decodeint", "encodeint", "getboth", "getindex", "getindex_mem", "getitem",
+    "listindex", "searchindex", "tbz2", "xpak_mem", "xpak", "xpand", "xsplit", "xsplit_mem",
 ]
 
 import array
@@ -136,7 +136,8 @@ def xpak_mem(mydata):
         indexpos = indexpos + 4 + len(x) + 4 + 4
         dataglob = dataglob + newglob
         datapos = datapos + mydatasize
-    return b"XPAKPACK" + encodeint(len(indexglob)) + encodeint(len(dataglob)) + indexglob + dataglob + b"XPAKSTOP"
+    return b"XPAKPACK" + encodeint(len(indexglob)) + encodeint(
+        len(dataglob)) + indexglob + dataglob + b"XPAKSTOP"
 
 
 def xsplit(infile):
@@ -152,10 +153,14 @@ def xsplit(infile):
     if not splits:
         return False
 
-    myfile = open(_unicode_encode(infile + ".index", encoding=_encodings["fs"], errors="strict"), "wb", )
+    myfile = open(_unicode_encode(infile + ".index", encoding=_encodings["fs"], errors="strict"),
+                  "wb",
+                  )
     myfile.write(splits[0])
     myfile.close()
-    myfile = open(_unicode_encode(infile + ".dat", encoding=_encodings["fs"], errors="strict"), "wb", )
+    myfile = open(_unicode_encode(infile + ".dat", encoding=_encodings["fs"], errors="strict"),
+                  "wb",
+                  )
     myfile.write(splits[1])
     myfile.close()
     return True
@@ -333,7 +338,8 @@ class tbz2:
                 pass
             os.rename(tmp_fname, self.file)
 
-        myfile = open(_unicode_encode(self.file, encoding=_encodings["fs"], errors="strict"), "ab+", )
+        myfile = open(_unicode_encode(self.file, encoding=_encodings["fs"], errors="strict"), "ab+",
+                      )
         if not myfile:
             raise OSError
         myfile.seek(-self.xpaksize, 2)  # 0,2 or -0,2 just mean EOF.
@@ -464,7 +470,9 @@ class tbz2:
             if dirname:
                 if not os.path.exists(dirname):
                     os.makedirs(dirname)
-            mydat = open(_unicode_encode(filename, encoding=_encodings["fs"], errors="strict"), "wb", )
+            mydat = open(_unicode_encode(filename, encoding=_encodings["fs"], errors="strict"),
+                         "wb",
+                         )
             a.seek(self.datapos + datapos)
             mydat.write(a.read(datalen))
             mydat.close()

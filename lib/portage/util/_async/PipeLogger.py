@@ -22,8 +22,8 @@ class PipeLogger(AbstractPollTask):
     '.gz' then the log file is written with compression.
     """
 
-    __slots__ = ("input_fd", "log_file_path", "stdout_fd") + ("_io_loop_task", "_log_file", "_log_file_nb",
-                                                              "_log_file_real",
+    __slots__ = ("input_fd", "log_file_path", "stdout_fd") + ("_io_loop_task", "_log_file",
+                                                              "_log_file_nb", "_log_file_real",
                                                               )
 
     def _start(self):
@@ -34,7 +34,9 @@ class PipeLogger(AbstractPollTask):
             _set_nonblocking(self._log_file.fileno())
         elif log_file_path is not None:
             try:
-                self._log_file = open(_unicode_encode(log_file_path, encoding=_encodings["fs"], errors="strict"),
+                self._log_file = open(_unicode_encode(log_file_path,
+                                                      encoding=_encodings["fs"],
+                                                      errors="strict"),
                                       mode="ab",
                                       )
 
@@ -60,7 +62,8 @@ class PipeLogger(AbstractPollTask):
 
         fcntl.fcntl(fd, fcntl.F_SETFL, fcntl.fcntl(fd, fcntl.F_GETFL) | os.O_NONBLOCK)
 
-        self._io_loop_task = asyncio.ensure_future(self._io_loop(self.input_fd), loop=self.scheduler)
+        self._io_loop_task = asyncio.ensure_future(self._io_loop(self.input_fd),
+                                                   loop=self.scheduler)
         self._io_loop_task.add_done_callback(self._io_loop_done)
         self._registered = True
 
@@ -127,7 +130,9 @@ class PipeLogger(AbstractPollTask):
                         # inherit stdio file descriptors from portage
                         # (maybe it can't be avoided with
                         # PROPERTIES=interactive).
-                        fcntl.fcntl(stdout_fd, fcntl.F_SETFL, fcntl.fcntl(stdout_fd, fcntl.F_GETFL) ^ os.O_NONBLOCK, )
+                        fcntl.fcntl(stdout_fd, fcntl.F_SETFL,
+                                    fcntl.fcntl(stdout_fd, fcntl.F_GETFL) ^ os.O_NONBLOCK,
+                                    )
 
             if log_file is not None:
                 if self._log_file_nb:

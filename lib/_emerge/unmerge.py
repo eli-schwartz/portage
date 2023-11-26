@@ -100,7 +100,9 @@ def _unmerge_display(root_config,
         if not unmerge_files:
             if unmerge_action in ["rage-clean", "unmerge"]:
                 print()
-                print(bold(f"emerge {unmerge_action}") + " can only be used with specific package names")
+                print(
+                    bold(f"emerge {unmerge_action}") +
+                    " can only be used with specific package names")
                 print()
                 return 1, {}
 
@@ -122,7 +124,8 @@ def _unmerge_display(root_config,
                     # possible cat/pkg or dep; treat as such
                     candidate_catpkgs.append(x)
                 elif unmerge_action in ["prune", "clean"]:
-                    print("\n!!! Prune and clean do not accept individual" + " ebuilds as arguments;\n    skipping.\n")
+                    print("\n!!! Prune and clean do not accept individual" +
+                          " ebuilds as arguments;\n    skipping.\n")
                     continue
                 else:
                     # it appears that the user is specifying an installed
@@ -169,10 +172,12 @@ def _unmerge_display(root_config,
         if not quiet:
             newline = "\n"
         if settings["ROOT"] != "/":
-            writemsg_level(darkgreen(newline + f">>> Using system located in ROOT tree {settings['ROOT']}\n"))
+            writemsg_level(
+                darkgreen(newline + f">>> Using system located in ROOT tree {settings['ROOT']}\n"))
 
         if ("--pretend" in myopts or "--ask" in myopts) and not quiet:
-            writemsg_level(darkgreen(newline + ">>> These are the packages that would be unmerged:\n"))
+            writemsg_level(
+                darkgreen(newline + ">>> These are the packages that would be unmerged:\n"))
 
         # Preservation of order is required for --depclean and --prune so
         # that dependencies are respected. Use all_selected to eliminate
@@ -196,9 +201,10 @@ def _unmerge_display(root_config,
             if not mymatch and x[0] not in "<>=~":
                 mymatch = vartree.dep_match(x)
             if not mymatch:
-                portage.writemsg(f"\n--- Couldn't find '{x.replace('null/', '')}' to {unmerge_action}.\n",
-                                 noiselevel=-1,
-                                 )
+                portage.writemsg(
+                    f"\n--- Couldn't find '{x.replace('null/', '')}' to {unmerge_action}.\n",
+                    noiselevel=-1,
+                )
                 continue
 
             pkgmap.append({"protected": set(), "selected": set(), "omitted": set()})
@@ -229,8 +235,9 @@ def _unmerge_display(root_config,
                         best_slot = myslot
                         best_counter = mycounter
                 pkgmap[mykey]["protected"].add(best_version)
-                pkgmap[mykey]["selected"].update(mypkg for mypkg in mymatch
-                                                 if mypkg != best_version and mypkg not in all_selected)
+                pkgmap[mykey]["selected"].update(
+                    mypkg for mypkg in mymatch
+                    if mypkg != best_version and mypkg not in all_selected)
                 all_selected.update(pkgmap[mykey]["selected"])
             else:
                 # unmerge_action == "clean"
@@ -280,7 +287,8 @@ def _unmerge_display(root_config,
             return 1, {}
 
         if not numselected:
-            portage.writemsg_stdout("\n>>> No packages selected for removal by " + unmerge_action + "\n")
+            portage.writemsg_stdout("\n>>> No packages selected for removal by " + unmerge_action +
+                                    "\n")
             return 1, {}
     finally:
         if vdb_lock:
@@ -298,7 +306,9 @@ def _unmerge_display(root_config,
         for s in installed_sets[pos - 1:]:
             if s not in sets:
                 continue
-            candidates = [x[len(SETPREFIX):] for x in sets[s].getNonAtoms() if x.startswith(SETPREFIX)]
+            candidates = [
+                x[len(SETPREFIX):] for x in sets[s].getNonAtoms() if x.startswith(SETPREFIX)
+            ]
             if candidates:
                 stop = False
                 installed_sets += candidates
@@ -427,8 +437,8 @@ def _unmerge_display(root_config,
             mylist.difference_update(all_selected)
         cp = portage.cpv_getkey(next(iter(selected)))
         for y in vartree.dep_match(cp):
-            if y not in pkgmap[x]["omitted"] and y not in pkgmap[x]["selected"] and y not in pkgmap[x][
-                    "protected"] and y not in all_selected:
+            if y not in pkgmap[x]["omitted"] and y not in pkgmap[x]["selected"] and y not in pkgmap[
+                    x]["protected"] and y not in all_selected:
                 pkgmap[x]["omitted"].add(y)
         if global_unmerge and not pkgmap[x]["selected"]:
             # avoid cluttering the preview printout with stuff that isn't getting unmerged
@@ -439,12 +449,14 @@ def _unmerge_display(root_config,
                 cp_info = f"'{cp}'"
             else:
                 cp_info = f"'{cp}' ({virt_cp})"
-            writemsg_level(colorize("BAD", "\n\n!!! " + f"{cp_info} is part of your system profile.\n",
+            writemsg_level(colorize("BAD",
+                                    "\n\n!!! " + f"{cp_info} is part of your system profile.\n",
                                     ),
                            level=logging.WARNING,
                            noiselevel=-1,
                            )
-            writemsg_level(colorize("WARN", "!!! Unmerging it may " + "be damaging to your system.\n\n"),
+            writemsg_level(colorize("WARN",
+                                    "!!! Unmerging it may " + "be damaging to your system.\n\n"),
                            level=logging.WARNING,
                            noiselevel=-1,
                            )
@@ -475,11 +487,14 @@ def _unmerge_display(root_config,
         if quiet:
             writemsg_level("\n", noiselevel=-1)
 
-    writemsg_level(f"\nAll selected packages: {' '.join(f'={x}' for x in all_selected)}\n", noiselevel=-1, )
+    writemsg_level(f"\nAll selected packages: {' '.join(f'={x}' for x in all_selected)}\n",
+                   noiselevel=-1,
+                   )
 
-    writemsg_level("\n>>> " + colorize("UNMERGE_WARN", "'Selected'") + " packages are slated for removal.\n")
-    writemsg_level(">>> " + colorize("GOOD", "'Protected'") + " and " + colorize("GOOD", "'omitted'") +
-                   " packages will not be removed.\n\n")
+    writemsg_level("\n>>> " + colorize("UNMERGE_WARN", "'Selected'") +
+                   " packages are slated for removal.\n")
+    writemsg_level(">>> " + colorize("GOOD", "'Protected'") + " and " +
+                   colorize("GOOD", "'omitted'") + " packages will not be removed.\n\n")
 
     return os.EX_OK, pkgmap
 
@@ -538,7 +553,10 @@ def unmerge(root_config,
             return 128 + signal.SIGINT
 
     if not vartree.dbapi.writable:
-        writemsg_level(f"!!! Read-only file system: {vartree.dbapi._dbroot}\n", level=logging.ERROR, noiselevel=-1, )
+        writemsg_level(f"!!! Read-only file system: {vartree.dbapi._dbroot}\n",
+                       level=logging.ERROR,
+                       noiselevel=-1,
+                       )
         return 1
 
     # the real unmerging begins, after a short delay unless we're raging....
@@ -555,9 +573,10 @@ def unmerge(root_config,
     for x in range(len(pkgmap)):
         for y in pkgmap[x]["selected"]:
             emergelog(xterm_titles, "=== Unmerging... (" + y + ")")
-            message = ">>> Unmerging ({} of {}) {}...\n".format(colorize("MERGE_LIST_PROGRESS", str(curval)),
-                                                                colorize("MERGE_LIST_PROGRESS", str(maxval)), y,
-                                                                )
+            message = ">>> Unmerging ({} of {}) {}...\n".format(
+                colorize("MERGE_LIST_PROGRESS", str(curval)),
+                colorize("MERGE_LIST_PROGRESS", str(maxval)), y,
+            )
             writemsg_level(message, noiselevel=-1)
             curval += 1
 
@@ -577,7 +596,8 @@ def unmerge(root_config,
                     raise UninstallFailure(retval)
                 sys.exit(retval)
             else:
-                if clean_world and hasattr(sets["selected"], "cleanPackage") and hasattr(sets["selected"], "lock"):
+                if clean_world and hasattr(sets["selected"], "cleanPackage") and hasattr(
+                        sets["selected"], "lock"):
                     sets["selected"].lock()
                     if hasattr(sets["selected"], "load"):
                         sets["selected"].load()

@@ -27,7 +27,9 @@ class AsynchronousLock(AsynchronousTask):
     signals to the main thread).
     """
 
-    __slots__ = ("path", ) + ("_imp", "_force_async", "_force_process", "_force_thread", "_unlock_future", )
+    __slots__ = ("path", ) + ("_imp", "_force_async", "_force_process", "_force_thread",
+                              "_unlock_future",
+                              )
 
     _use_process_by_default = True
 

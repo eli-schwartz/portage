@@ -10,8 +10,8 @@ class StackListsTestCase(TestCase):
 
     def testStackLists(self):
         tests = [([["a", "b", "c"], ["d", "e", "f"]], ["a", "c", "b", "e", "d", "f"], False),
-                 ([["a", "x"], ["b", "x"]], ["a", "x", "b"], False), ([["a", "b", "c"], ["-*"]], [], True),
-                 ([["a"], ["-a"]], [], True), ]
+                 ([["a", "x"], ["b", "x"]], ["a", "x", "b"], False),
+                 ([["a", "b", "c"], ["-*"]], [], True), ([["a"], ["-a"]], [], True), ]
 
         for test in tests:
             result = stack_lists(test[0], test[2])

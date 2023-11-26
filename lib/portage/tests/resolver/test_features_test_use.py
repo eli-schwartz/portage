@@ -2,11 +2,19 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class TestDepend(TestCase):
-    ebuilds = {"dev-libs/A-1": {"IUSE": "test", "DEPEND": "test? ( dev-libs/B )", }, "dev-libs/B-1": {}, }
+    ebuilds = {
+        "dev-libs/A-1": {
+            "IUSE": "test",
+            "DEPEND": "test? ( dev-libs/B )",
+        },
+        "dev-libs/B-1": {},
+    }
 
     installed = {"dev-libs/A-1": {"USE": "", "IUSE": "test", "DEPEND": "test? ( dev-libs/B )", }, }
 
@@ -33,7 +41,10 @@ class TestDepend(TestCase):
         Test that FEATURES=test no longer forces USE=test.
         """
         user_config = {"make.conf": ("FEATURES=test", 'USE="-test"')}
-        test_case = ResolverPlaygroundTestCase(["dev-libs/A"], options={}, success=True, mergelist=["dev-libs/A-1"])
+        test_case = ResolverPlaygroundTestCase(["dev-libs/A"],
+                                               options={},
+                                               success=True,
+                                               mergelist=["dev-libs/A-1"])
 
         playground = ResolverPlayground(ebuilds=self.ebuilds, user_config=user_config, debug=False)
         try:

@@ -10,8 +10,8 @@ from portage.util._async.AsyncTaskFuture import AsyncTaskFuture
 
 
 class EbuildMerge(CompositeTask):
-    __slots__ = ("exit_hook", "find_blockers", "logger", "ldpath_mtimes", "pkg", "pkg_count", "pkg_path",
-                 "postinst_failure", "pretend", "settings", "tree", "world_atom",
+    __slots__ = ("exit_hook", "find_blockers", "logger", "ldpath_mtimes", "pkg", "pkg_count",
+                 "pkg_path", "postinst_failure", "pretend", "settings", "tree", "world_atom",
                  )
 
     def _start(self):
@@ -57,7 +57,9 @@ class EbuildMerge(CompositeTask):
         pkg_path = self.pkg_path
         logger = self.logger
         if "noclean" not in self.settings.features:
-            short_msg = "emerge: ({} of {}) {} Clean Post".format(pkg_count.curval, pkg_count.maxval, pkg.cpv, )
+            short_msg = "emerge: ({} of {}) {} Clean Post".format(pkg_count.curval,
+                                                                  pkg_count.maxval, pkg.cpv,
+                                                                  )
             logger.log(
                 f" === ({pkg_count.curval} of {pkg_count.maxval}) "
                 f"Post-Build Cleaning ({pkg.cpv}::{pkg_path})",

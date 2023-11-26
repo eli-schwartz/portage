@@ -17,10 +17,11 @@ from portage.exception import (InvalidBinaryPackageFormat, DigestException, Miss
 class test_gpkg_checksum_case(TestCase):
 
     def test_gpkg_missing_header(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
-                          '-binpkg-request-signature -gpg-keepalive"', ),
-        })
+        playground = ResolverPlayground(
+            user_config={
+                "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                              '-binpkg-request-signature -gpg-keepalive"', ),
+            })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -43,16 +44,19 @@ class test_gpkg_checksum_case(TestCase):
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(InvalidBinaryPackageFormat, binpkg_2.decompress, os.path.join(tmpdir, "test"), )
+            self.assertRaises(InvalidBinaryPackageFormat, binpkg_2.decompress,
+                              os.path.join(tmpdir, "test"),
+                              )
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_missing_manifest(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
-                          '-binpkg-request-signature -gpg-keepalive"', ),
-        })
+        playground = ResolverPlayground(
+            user_config={
+                "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                              '-binpkg-request-signature -gpg-keepalive"', ),
+            })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -81,10 +85,11 @@ class test_gpkg_checksum_case(TestCase):
             playground.cleanup()
 
     def test_gpkg_missing_files(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
-                          '-binpkg-request-signature -gpg-keepalive"', ),
-        })
+        playground = ResolverPlayground(
+            user_config={
+                "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                              '-binpkg-request-signature -gpg-keepalive"', ),
+            })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -117,10 +122,11 @@ class test_gpkg_checksum_case(TestCase):
             playground.cleanup()
 
     def test_gpkg_extra_files(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
-                          '-binpkg-request-signature -gpg-keepalive"', ),
-        })
+        playground = ResolverPlayground(
+            user_config={
+                "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                              '-binpkg-request-signature -gpg-keepalive"', ),
+            })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -153,10 +159,11 @@ class test_gpkg_checksum_case(TestCase):
             playground.cleanup()
 
     def test_gpkg_incorrect_checksum(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
-                          '-binpkg-request-signature -gpg-keepalive"', ),
-        })
+        playground = ResolverPlayground(
+            user_config={
+                "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                              '-binpkg-request-signature -gpg-keepalive"', ),
+            })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -192,10 +199,11 @@ class test_gpkg_checksum_case(TestCase):
             playground.cleanup()
 
     def test_gpkg_duplicate_files(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
-                          '-binpkg-request-signature -gpg-keepalive"', ),
-        })
+        playground = ResolverPlayground(
+            user_config={
+                "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                              '-binpkg-request-signature -gpg-keepalive"', ),
+            })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -218,16 +226,19 @@ class test_gpkg_checksum_case(TestCase):
 
             binpkg_2 = gpkg(settings, "test", os.path.join(tmpdir, "test-2.gpkg.tar"))
 
-            self.assertRaises(InvalidBinaryPackageFormat, binpkg_2.decompress, os.path.join(tmpdir, "test"), )
+            self.assertRaises(InvalidBinaryPackageFormat, binpkg_2.decompress,
+                              os.path.join(tmpdir, "test"),
+                              )
         finally:
             shutil.rmtree(tmpdir)
             playground.cleanup()
 
     def test_gpkg_manifest_duplicate_files(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
-                          '-binpkg-request-signature -gpg-keepalive"', ),
-        })
+        playground = ResolverPlayground(
+            user_config={
+                "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                              '-binpkg-request-signature -gpg-keepalive"', ),
+            })
         tmpdir = tempfile.mkdtemp()
 
         try:
@@ -266,10 +277,11 @@ class test_gpkg_checksum_case(TestCase):
             playground.cleanup()
 
     def test_gpkg_different_size_file(self):
-        playground = ResolverPlayground(user_config={
-            "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
-                          '-binpkg-request-signature -gpg-keepalive"', ),
-        })
+        playground = ResolverPlayground(
+            user_config={
+                "make.conf": ('FEATURES="${FEATURES} -binpkg-signing '
+                              '-binpkg-request-signature -gpg-keepalive"', ),
+            })
         tmpdir = tempfile.mkdtemp()
 
         try:

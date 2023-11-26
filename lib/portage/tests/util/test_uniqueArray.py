@@ -14,10 +14,13 @@ class UniqueArrayTestCase(TestCase):
         test portage.util.uniqueArray()
         """
 
-        tests = [(["a", "a", "a", os, os, [], [], []], ["a", os, []]), ([1, 1, 1, 2, 3, 4, 4], [1, 2, 3, 4]), ]
+        tests = [(["a", "a", "a", os, os, [], [], []], ["a", os, []]),
+                 ([1, 1, 1, 2, 3, 4, 4], [1, 2, 3, 4]), ]
 
         for test in tests:
             result = unique_array(test[0])
             for item in test[1]:
                 number = result.count(item)
-                self.assertFalse(number != 1, msg=f"{result} contains {number} of {item}, should be only 1", )
+                self.assertFalse(number != 1,
+                                 msg=f"{result} contains {number} of {item}, should be only 1",
+                                 )

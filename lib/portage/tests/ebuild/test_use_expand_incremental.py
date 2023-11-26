@@ -15,10 +15,11 @@ class UseExpandIncrementalTestCase(TestCase):
         profiles = (("base", {
             "eapi": ("5", ),
             "parent": ("..", ),
-            "make.defaults": ('INPUT_DEVICES="keyboard mouse"', 'PYTHON_TARGETS="python2_7 python3_3"',
-                              ('USE_EXPAND="INPUT_DEVICES PYTHON_TARGETS '
-                               'VIDEO_CARDS"'),
-                              ),
+            "make.defaults":
+            ('INPUT_DEVICES="keyboard mouse"', 'PYTHON_TARGETS="python2_7 python3_3"',
+             ('USE_EXPAND="INPUT_DEVICES PYTHON_TARGETS '
+              'VIDEO_CARDS"'),
+             ),
         },
                      ), ("default/linux", {
                          "eapi": ("5", ),
@@ -54,15 +55,17 @@ class UseExpandIncrementalTestCase(TestCase):
                          "video_cards_v4l video_cards_intel"),
             },
             "sys-apps/portage-2.2.14": {
-                "EAPI": "5",
+                "EAPI":
+                "5",
                 "IUSE": ("python_targets_python2_7 "
                          "python_targets_python3_3 python_targets_python3_4"),
             },
         }
 
-        package_expected_use = (("x11-base/xorg-drivers-1.15", ("input_devices_keyboard", "input_devices_mouse",
-                                                                "video_cards_intel",
-                                                                ),
+        package_expected_use = (("x11-base/xorg-drivers-1.15",
+                                 ("input_devices_keyboard", "input_devices_mouse",
+                                  "video_cards_intel",
+                                  ),
                                  ), ("sys-apps/portage-2.2.14", ("python_targets_python2_7",
                                                                  "python_targets_python3_4"),
                                      ),
@@ -77,7 +80,10 @@ class UseExpandIncrementalTestCase(TestCase):
                 prof_path = os.path.join(profile_root, p)
                 ensure_dirs(prof_path)
                 for k, v in data.items():
-                    with open(os.path.join(prof_path, k), mode="w", encoding=_encodings["repo.content"], ) as f:
+                    with open(os.path.join(prof_path, k),
+                              mode="w",
+                              encoding=_encodings["repo.content"],
+                              ) as f:
                         for line in v:
                             f.write(f"{line}\n")
 

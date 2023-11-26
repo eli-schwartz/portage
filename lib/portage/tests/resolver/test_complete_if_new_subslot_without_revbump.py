@@ -5,7 +5,9 @@ import sys
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -49,16 +51,17 @@ class CompeteIfNewSubSlotWithoutRevBumpTestCase(TestCase):
         test_cases = (
             # Test that --complete-graph-if-new-ver=y triggers rebuild
             # when the sub-slot changes without a revbump.
-            ResolverPlaygroundTestCase(["media-libs/libpng"],
-                                       options={
-                                           "--oneshot": True,
-                                           "--complete-graph-if-new-ver": "y",
-                                           "--rebuild-if-new-slot": "n",
-                                           "--usepkg": True,
-                                       },
-                                       success=True,
-                                       mergelist=["media-libs/libpng-1.5.14", "x11-libs/gdk-pixbuf-2.26.5"],
-                                       ), )
+            ResolverPlaygroundTestCase(
+                ["media-libs/libpng"],
+                options={
+                    "--oneshot": True,
+                    "--complete-graph-if-new-ver": "y",
+                    "--rebuild-if-new-slot": "n",
+                    "--usepkg": True,
+                },
+                success=True,
+                mergelist=["media-libs/libpng-1.5.14", "x11-libs/gdk-pixbuf-2.26.5"],
+            ), )
 
         for binpkg_format in SUPPORTED_GENTOO_BINPKG_FORMATS:
             with self.subTest(binpkg_format=binpkg_format):
@@ -70,7 +73,8 @@ class CompeteIfNewSubSlotWithoutRevBumpTestCase(TestCase):
                                                 world=world,
                                                 debug=False,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:

@@ -62,7 +62,8 @@ def eqawarn(lines):
 skipped_directories = []
 skipped_files = []
 warn_on_skipped_files = os.environ.get("PORTAGE_DOHTML_WARN_ON_SKIPPED_FILES") is not None
-unwarned_skipped_extensions = os.environ.get("PORTAGE_DOHTML_UNWARNED_SKIPPED_EXTENSIONS", "").split()
+unwarned_skipped_extensions = os.environ.get("PORTAGE_DOHTML_UNWARNED_SKIPPED_EXTENSIONS",
+                                             "").split()
 unwarned_skipped_files = os.environ.get("PORTAGE_DOHTML_UNWARNED_SKIPPED_FILES", "").split()
 
 
@@ -78,8 +79,8 @@ def install(basename, dirname, options, prefix=""):
     else:
         desttree = "html"
 
-    destdir = os.path.join(options.ED, "usr", "share", "doc", options.PF.lstrip(os.sep), desttree.lstrip(os.sep),
-                           options.doc_prefix.lstrip(os.sep), prefix,
+    destdir = os.path.join(options.ED, "usr", "share", "doc", options.PF.lstrip(os.sep),
+                           desttree.lstrip(os.sep), options.doc_prefix.lstrip(os.sep), prefix,
                            ).rstrip(os.sep)
 
     if not os.path.exists(fullpath):
@@ -97,7 +98,9 @@ def install(basename, dirname, options, prefix=""):
             try:
                 i = _unicode_decode(i, errors="strict")
             except UnicodeDecodeError:
-                writemsg(f"dohtml: argument is not encoded as UTF-8: {_unicode_decode(i)}\n", noiselevel=-1, )
+                writemsg(f"dohtml: argument is not encoded as UTF-8: {_unicode_decode(i)}\n",
+                         noiselevel=-1,
+                         )
                 sys.exit(1)
             pfx = basename
             if prefix:
@@ -173,7 +176,9 @@ def parse_args():
         try:
             argv[x] = _unicode_decode(arg, errors="strict")
         except UnicodeDecodeError:
-            writemsg(f"dohtml: argument is not encoded as UTF-8: {_unicode_decode(arg)}\n", noiselevel=-1, )
+            writemsg(f"dohtml: argument is not encoded as UTF-8: {_unicode_decode(arg)}\n",
+                     noiselevel=-1,
+                     )
             sys.exit(1)
 
     options = OptionsClass()

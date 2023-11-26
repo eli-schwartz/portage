@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 
 class EAPITestCase(TestCase):
@@ -165,10 +167,18 @@ class EAPITestCase(TestCase):
 
         test_cases = (
             ResolverPlaygroundTestCase(["=dev-libs/A-1.0"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/A-1.1"], success=True, mergelist=["dev-libs/A-1.1"]),
-            ResolverPlaygroundTestCase(["=dev-libs/A-1.2"], success=True, mergelist=["dev-libs/A-1.2"]),
-            ResolverPlaygroundTestCase(["=dev-libs/A-1.3"], success=True, mergelist=["dev-libs/A-1.3"]),
-            ResolverPlaygroundTestCase(["=dev-libs/A-1.4"], success=True, mergelist=["dev-libs/A-1.4"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1.1"],
+                                       success=True,
+                                       mergelist=["dev-libs/A-1.1"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1.2"],
+                                       success=True,
+                                       mergelist=["dev-libs/A-1.2"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1.3"],
+                                       success=True,
+                                       mergelist=["dev-libs/A-1.3"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-1.4"],
+                                       success=True,
+                                       mergelist=["dev-libs/A-1.4"]),
             ResolverPlaygroundTestCase(["=dev-libs/A-2.0"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-2.1"],
                                        success=True,
@@ -185,7 +195,8 @@ class EAPITestCase(TestCase):
             ResolverPlaygroundTestCase(["=dev-libs/A-2.4"],
                                        success=True,
                                        mergelist=["dev-libs/B-1", "dev-libs/A-2.4"],
-                                       ), ResolverPlaygroundTestCase(["=dev-libs/A-3.0"], success=False),
+                                       ),
+            ResolverPlaygroundTestCase(["=dev-libs/A-3.0"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-3.1"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-3.2"],
                                        success=True,
@@ -198,29 +209,39 @@ class EAPITestCase(TestCase):
             ResolverPlaygroundTestCase(["=dev-libs/A-3.4"],
                                        success=True,
                                        mergelist=["dev-libs/B-1", "dev-libs/A-3.4"],
-                                       ), ResolverPlaygroundTestCase(["=dev-libs/A-4.0"], success=False),
+                                       ),
+            ResolverPlaygroundTestCase(["=dev-libs/A-4.0"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-4.1"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/A-4.2"], success=True, mergelist=["dev-libs/A-4.2"]),
-            ResolverPlaygroundTestCase(["=dev-libs/A-4.3"], success=True, mergelist=["dev-libs/A-4.3"]),
-            ResolverPlaygroundTestCase(["=dev-libs/A-4.4"], success=True, mergelist=["dev-libs/A-4.4"]),
-            ResolverPlaygroundTestCase(["=dev-libs/A-5.0"],
-                                       success=False), ResolverPlaygroundTestCase(["=dev-libs/A-5.1"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/A-5.2"],
-                                       success=False), ResolverPlaygroundTestCase(["=dev-libs/A-5.3"], success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-4.2"],
+                                       success=True,
+                                       mergelist=["dev-libs/A-4.2"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-4.3"],
+                                       success=True,
+                                       mergelist=["dev-libs/A-4.3"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-4.4"],
+                                       success=True,
+                                       mergelist=["dev-libs/A-4.4"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-5.0"], success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-5.1"], success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-5.2"], success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-5.3"], success=False),
             # not implemented: EAPI-4: slot operator deps
             # ~ ResolverPlaygroundTestCase(["=dev-libs/A-5.4"], success = True, mergelist = ["dev-libs/B-1", "dev-libs/A-5.4"]),
-            ResolverPlaygroundTestCase(["=dev-libs/A-6.0"],
-                                       success=False), ResolverPlaygroundTestCase(["=dev-libs/A-6.1"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/A-6.2"],
-                                       success=False), ResolverPlaygroundTestCase(["=dev-libs/A-6.3"], success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-6.0"], success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-6.1"], success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-6.2"], success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-6.3"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-6.4"],
                                        success=True,
                                        mergelist=["dev-libs/B-1", "dev-libs/A-6.4"],
-                                       ), ResolverPlaygroundTestCase(["=dev-libs/A-7.0"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/A-7.1"],
-                                       success=False), ResolverPlaygroundTestCase(["=dev-libs/A-7.2"], success=False),
+                                       ),
+            ResolverPlaygroundTestCase(["=dev-libs/A-7.0"], success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-7.1"], success=False),
+            ResolverPlaygroundTestCase(["=dev-libs/A-7.2"], success=False),
             ResolverPlaygroundTestCase(["=dev-libs/A-7.3"], success=False),
-            ResolverPlaygroundTestCase(["=dev-libs/A-7.4"], success=True, mergelist=["dev-libs/A-7.4"]),
+            ResolverPlaygroundTestCase(["=dev-libs/A-7.4"],
+                                       success=True,
+                                       mergelist=["dev-libs/A-7.4"]),
             ResolverPlaygroundTestCase(["=dev-libs/C-1"], success=True, mergelist=["dev-libs/C-1"]),
             ResolverPlaygroundTestCase(["=dev-libs/C-2"], success=False),
         )
@@ -234,7 +255,15 @@ class EAPITestCase(TestCase):
             playground.cleanup()
 
     def testBdepend(self):
-        ebuilds = {"dev-libs/A-1.0": {"EAPI": 7}, "dev-libs/B-1.0": {"EAPI": 7, "BDEPEND": "dev-libs/A"}, }
+        ebuilds = {
+            "dev-libs/A-1.0": {
+                "EAPI": 7
+            },
+            "dev-libs/B-1.0": {
+                "EAPI": 7,
+                "BDEPEND": "dev-libs/A"
+            },
+        }
 
         # Verify that BDEPEND is considered at all.
         test_case = ResolverPlaygroundTestCase(["=dev-libs/B-1.0"],
@@ -250,7 +279,15 @@ class EAPITestCase(TestCase):
             playground.cleanup()
 
     def testIdepend(self):
-        ebuilds = {"dev-libs/A-1.0": {"EAPI": 8}, "dev-libs/B-1.0": {"EAPI": 8, "IDEPEND": "dev-libs/A"}, }
+        ebuilds = {
+            "dev-libs/A-1.0": {
+                "EAPI": 8
+            },
+            "dev-libs/B-1.0": {
+                "EAPI": 8,
+                "IDEPEND": "dev-libs/A"
+            },
+        }
 
         test_cases = (
             # Verify that IDEPEND is considered at all.

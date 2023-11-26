@@ -24,8 +24,8 @@ class DoebuildFdPipesTestCase(TestCase):
 
         output_fd = 200
         ebuild_body = ["S=${WORKDIR}"]
-        for phase_func in ("pkg_info", "pkg_nofetch", "pkg_pretend", "pkg_setup", "src_unpack", "src_prepare",
-                           "src_configure", "src_compile", "src_test", "src_install",
+        for phase_func in ("pkg_info", "pkg_nofetch", "pkg_pretend", "pkg_setup", "src_unpack",
+                           "src_prepare", "src_configure", "src_compile", "src_test", "src_install",
                            ):
             ebuild_body.append(("%s() { echo ${EBUILD_PHASE}"
                                 " 1>&%s; }") % (phase_func, output_fd))
@@ -50,7 +50,8 @@ class DoebuildFdPipesTestCase(TestCase):
             portdb = root_config.trees["porttree"].dbapi
             settings = portage.config(clone=playground.settings)
             if "__PORTAGE_TEST_HARDLINK_LOCKS" in os.environ:
-                settings["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ["__PORTAGE_TEST_HARDLINK_LOCKS"]
+                settings["__PORTAGE_TEST_HARDLINK_LOCKS"] = os.environ[
+                    "__PORTAGE_TEST_HARDLINK_LOCKS"]
                 settings.backup_changes("__PORTAGE_TEST_HARDLINK_LOCKS")
 
             settings.features.add("noauto")
@@ -81,8 +82,8 @@ class DoebuildFdPipesTestCase(TestCase):
             ebuildpath = portdb.findname(cpv)
             self.assertNotEqual(ebuildpath, None)
 
-            for phase in ("info", "nofetch", "pretend", "setup", "unpack", "prepare", "configure", "compile", "test",
-                          "install", "qmerge", "clean", "merge",
+            for phase in ("info", "nofetch", "pretend", "setup", "unpack", "prepare", "configure",
+                          "compile", "test", "install", "qmerge", "clean", "merge",
                           ):
                 pr, pw = os.pipe()
 

@@ -113,28 +113,33 @@ GIT_PACKAGE_ATOM = "dev-vcs/git"
 HG_PACKAGE_ATOM = "dev-vcs/mercurial"
 RSYNC_PACKAGE_ATOM = "net-misc/rsync"
 
-INCREMENTALS = ("ACCEPT_KEYWORDS", "CONFIG_PROTECT", "CONFIG_PROTECT_MASK", "ENV_UNSET", "FEATURES", "IUSE_IMPLICIT",
-                "PRELINK_PATH", "PRELINK_PATH_MASK", "PROFILE_ONLY_VARIABLES", "USE", "USE_EXPAND", "USE_EXPAND_HIDDEN",
-                "USE_EXPAND_IMPLICIT", "USE_EXPAND_UNPREFIXED",
+INCREMENTALS = ("ACCEPT_KEYWORDS", "CONFIG_PROTECT", "CONFIG_PROTECT_MASK", "ENV_UNSET", "FEATURES",
+                "IUSE_IMPLICIT", "PRELINK_PATH", "PRELINK_PATH_MASK", "PROFILE_ONLY_VARIABLES",
+                "USE", "USE_EXPAND", "USE_EXPAND_HIDDEN", "USE_EXPAND_IMPLICIT",
+                "USE_EXPAND_UNPREFIXED",
                 )
-EBUILD_PHASES = ("pretend", "setup", "unpack", "prepare", "configure", "compile", "test", "install", "package",
-                 "instprep", "preinst", "postinst", "prerm", "postrm", "nofetch", "config", "info", "other",
+EBUILD_PHASES = ("pretend", "setup", "unpack", "prepare", "configure", "compile", "test", "install",
+                 "package", "instprep", "preinst", "postinst", "prerm", "postrm", "nofetch",
+                 "config", "info", "other",
                  )
 SUPPORTED_FEATURES = frozenset(
-    ("assume-digests", "binpkg-docompress", "binpkg-dostrip", "binpkg-ignore-signature", "binpkg-logs",
-     "binpkg-multi-instance", "binpkg-request-signature", "binpkg-signing", "buildpkg", "buildpkg-live", "buildsyspkg",
-     "candy", "case-insensitive-fs", "ccache", "chflags", "clean-logs", "collision-protect", "compress-build-logs",
-     "compressdebug", "compress-index", "config-protect-if-modified", "digest", "distcc", "distlocks",
-     "downgrade-backup", "ebuild-locks", "fail-clean", "fakeroot", "fixlafiles", "force-mirror", "getbinpkg",
-     "gpg-keepalive", "icecream", "installsources", "ipc-sandbox", "keeptemp", "keepwork", "lmirror", "merge-sync",
-     "metadata-transfer", "mirror", "mount-sandbox", "multilib-strict", "network-sandbox", "network-sandbox-proxy",
-     "news", "noauto", "noclean", "nodoc", "noinfo", "noman", "nostrip", "notitles", "parallel-fetch",
-     "parallel-install", "pid-sandbox", "pkgdir-index-trusted", "prelink-checksums", "preserve-libs", "protect-owned",
-     "python-trace", "qa-unresolved-soname-deps", "sandbox", "selinux", "sesandbox", "sfperms", "sign", "skiprocheck",
-     "splitdebug", "split-elog", "split-log", "strict", "strict-keepdir", "stricter", "suidctl", "test",
-     "test-fail-continue", "unknown-features-filter", "unknown-features-warn", "unmerge-backup", "unmerge-logs",
-     "unmerge-orphans", "unprivileged", "userfetch", "userpriv", "usersandbox", "usersync", "warn-on-large-env",
-     "webrsync-gpg", "xattr",
+    ("assume-digests", "binpkg-docompress", "binpkg-dostrip", "binpkg-ignore-signature",
+     "binpkg-logs", "binpkg-multi-instance", "binpkg-request-signature", "binpkg-signing",
+     "buildpkg", "buildpkg-live", "buildsyspkg", "candy", "case-insensitive-fs", "ccache",
+     "chflags", "clean-logs", "collision-protect", "compress-build-logs", "compressdebug",
+     "compress-index", "config-protect-if-modified", "digest", "distcc", "distlocks",
+     "downgrade-backup", "ebuild-locks", "fail-clean", "fakeroot", "fixlafiles", "force-mirror",
+     "getbinpkg", "gpg-keepalive", "icecream", "installsources", "ipc-sandbox", "keeptemp",
+     "keepwork", "lmirror", "merge-sync", "metadata-transfer", "mirror", "mount-sandbox",
+     "multilib-strict", "network-sandbox", "network-sandbox-proxy", "news", "noauto", "noclean",
+     "nodoc", "noinfo", "noman", "nostrip", "notitles", "parallel-fetch", "parallel-install",
+     "pid-sandbox", "pkgdir-index-trusted", "prelink-checksums", "preserve-libs", "protect-owned",
+     "python-trace", "qa-unresolved-soname-deps", "sandbox", "selinux", "sesandbox", "sfperms",
+     "sign", "skiprocheck", "splitdebug", "split-elog", "split-log", "strict", "strict-keepdir",
+     "stricter", "suidctl", "test", "test-fail-continue", "unknown-features-filter",
+     "unknown-features-warn", "unmerge-backup", "unmerge-logs", "unmerge-orphans", "unprivileged",
+     "userfetch", "userpriv", "usersandbox", "usersync", "warn-on-large-env", "webrsync-gpg",
+     "xattr",
      ))
 
 EAPI = 8
@@ -157,7 +162,9 @@ if "PORTAGE_OVERRIDE_EPREFIX" in os.environ:
 VCS_DIRS = ("CVS", "RCS", "SCCS", ".bzr", ".git", ".hg", ".svn")
 
 # List of known live eclasses. Keep it in sync with cnf/sets/portage.conf
-LIVE_ECLASSES = frozenset(("bzr", "cvs", "darcs", "git-2", "git-r3", "golang-vcs", "mercurial", "subversion", ))
+LIVE_ECLASSES = frozenset(
+    ("bzr", "cvs", "darcs", "git-2", "git-r3", "golang-vcs", "mercurial", "subversion",
+     ))
 
 SUPPORTED_BINPKG_FORMATS = ("tar", "rpm")
 

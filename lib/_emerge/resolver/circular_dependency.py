@@ -8,7 +8,9 @@ from _emerge.Package import Package
 
 from itertools import chain, product
 
-from portage.dep import (use_reduce, extract_affecting_use, check_required_use, get_required_use_flags, )
+from portage.dep import (use_reduce, extract_affecting_use, check_required_use,
+                         get_required_use_flags,
+                         )
 from portage.exception import InvalidDependString
 from portage.output import colorize
 from portage.util import writemsg_level
@@ -143,7 +145,8 @@ class circular_dependency_handler:
 
             # If any of the flags we're going to touch is in REQUIRED_USE, add all
             # other flags in REQUIRED_USE to affecting_use, to not lose any solution.
-            required_use_flags = get_required_use_flags(parent._metadata.get("REQUIRED_USE", ""), eapi=parent.eapi)
+            required_use_flags = get_required_use_flags(parent._metadata.get("REQUIRED_USE", ""),
+                                                        eapi=parent.eapi)
 
             if affecting_use.intersection(required_use_flags):
                 # TODO: Find out exactly which REQUIRED_USE flags are
@@ -198,7 +201,11 @@ class circular_dependency_handler:
                     # Make sure it doesn't conflict with REQUIRED_USE.
                     required_use = parent._metadata.get("REQUIRED_USE", "")
 
-                    if check_required_use(required_use, current_use, parent.iuse.is_valid_flag, eapi=parent.eapi, ):
+                    if check_required_use(required_use,
+                                          current_use,
+                                          parent.iuse.is_valid_flag,
+                                          eapi=parent.eapi,
+                                          ):
                         use = self.depgraph._pkg_use_enabled(parent)
                         solution = set()
                         for flag, state in zip(affecting_use, use_state):
@@ -222,7 +229,8 @@ class circular_dependency_handler:
                 # If a requiremnet is hard, ignore the suggestion.
                 # If the requirment is conditional, warn the user that other changes might be needed.
                 followup_change = False
-                parent_parent_atoms = self.depgraph._dynamic_config._parent_atoms.get(changed_parent)
+                parent_parent_atoms = self.depgraph._dynamic_config._parent_atoms.get(
+                    changed_parent)
                 for ppkg, atom in parent_parent_atoms:
                     atom = atom.unevaluated_atom
                     if not atom.use:
@@ -265,7 +273,8 @@ class circular_dependency_handler:
         """
         graph = self.graph.copy()
         while True:
-            root_nodes = graph.root_nodes(ignore_priority=DepPrioritySatisfiedRange.ignore_medium_soft)
+            root_nodes = graph.root_nodes(
+                ignore_priority=DepPrioritySatisfiedRange.ignore_medium_soft)
             if not root_nodes:
                 break
             graph.difference_update(root_nodes)

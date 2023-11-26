@@ -54,7 +54,9 @@ def _get_unresolved_soname_deps(metadata_dir, all_provides):
     @return: list of tuple(filename, tuple(unresolved sonames))
     """
     try:
-        with open(_unicode_encode(os.path.join(metadata_dir, "REQUIRES"), encoding=_encodings["fs"], errors="strict",
+        with open(_unicode_encode(os.path.join(metadata_dir, "REQUIRES"),
+                                  encoding=_encodings["fs"],
+                                  errors="strict",
                                   ),
                   encoding=_encodings["repo.content"],
                   errors="strict",

@@ -4,7 +4,9 @@
 import portage
 from portage import os, _encodings
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 
 from portage.glsa import GlsaFormatException
 
@@ -72,9 +74,23 @@ class SecuritySetTestCase(TestCase):
     def testSecuritySet(self):
         self._must_skip()
 
-        ebuilds = {"cat/A-vulnerable-2.2": {"KEYWORDS": "x86"}, "cat/B-not-vulnerable-4.5": {"KEYWORDS": "x86"}, }
+        ebuilds = {
+            "cat/A-vulnerable-2.2": {
+                "KEYWORDS": "x86"
+            },
+            "cat/B-not-vulnerable-4.5": {
+                "KEYWORDS": "x86"
+            },
+        }
 
-        installed = {"cat/A-vulnerable-2.1": {"KEYWORDS": "x86"}, "cat/B-not-vulnerable-4.4": {"KEYWORDS": "x86"}, }
+        installed = {
+            "cat/A-vulnerable-2.1": {
+                "KEYWORDS": "x86"
+            },
+            "cat/B-not-vulnerable-4.4": {
+                "KEYWORDS": "x86"
+            },
+        }
 
         glsas = ({
             "glsa_id": "201301-01",
@@ -114,7 +130,10 @@ class SecuritySetTestCase(TestCase):
                                                  mergelist=["cat/A-vulnerable-2.2"],
                                                  ), )
 
-        playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=False)
+        playground = ResolverPlayground(ebuilds=ebuilds,
+                                        installed=installed,
+                                        world=world,
+                                        debug=False)
 
         try:
             portdb = playground.trees[playground.eroot]["porttree"].dbapi
@@ -136,9 +155,23 @@ class SecuritySetTestCase(TestCase):
 
         self._must_skip()
 
-        ebuilds = {"cat/A-vulnerable-2.2": {"KEYWORDS": "x86"}, "cat/B-not-vulnerable-4.5": {"KEYWORDS": "x86"}, }
+        ebuilds = {
+            "cat/A-vulnerable-2.2": {
+                "KEYWORDS": "x86"
+            },
+            "cat/B-not-vulnerable-4.5": {
+                "KEYWORDS": "x86"
+            },
+        }
 
-        installed = {"cat/A-vulnerable-2.1": {"KEYWORDS": "x86"}, "cat/B-not-vulnerable-4.4": {"KEYWORDS": "x86"}, }
+        installed = {
+            "cat/A-vulnerable-2.1": {
+                "KEYWORDS": "x86"
+            },
+            "cat/B-not-vulnerable-4.4": {
+                "KEYWORDS": "x86"
+            },
+        }
 
         glsas = ({
             "glsa_id": "201301-04",
@@ -184,15 +217,22 @@ class SecuritySetTestCase(TestCase):
 
         world = ["cat/A"]
 
-        test_cases = (ResolverPlaygroundTestCase(["@security"], success=True, mergelist=["cat/A-vulnerable-2.2"], ), )
+        test_cases = (ResolverPlaygroundTestCase(["@security"],
+                                                 success=True,
+                                                 mergelist=["cat/A-vulnerable-2.2"],
+                                                 ), )
 
         # Give each GLSA a clean slate
         for glsa in glsas:
-            playground = ResolverPlayground(ebuilds=ebuilds, installed=installed, world=world, debug=True)
+            playground = ResolverPlayground(ebuilds=ebuilds,
+                                            installed=installed,
+                                            world=world,
+                                            debug=True)
 
             try:
                 portdb = playground.trees[playground.eroot]["porttree"].dbapi
-                glsa_dir = os.path.join(portdb.repositories["test_repo"].location, "metadata", "glsa")
+                glsa_dir = os.path.join(portdb.repositories["test_repo"].location, "metadata",
+                                        "glsa")
                 portage.util.ensure_dirs(glsa_dir)
 
                 self.write_glsa_test_case(glsa_dir, glsa)

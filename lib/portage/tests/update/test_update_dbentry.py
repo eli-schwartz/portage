@@ -21,31 +21,34 @@ from portage.output import colorize
 class UpdateDbentryTestCase(TestCase):
 
     def testUpdateDbentryTestCase(self):
-        cases = ((("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "1", "  dev-libs/A:0  ", "  dev-libs/B:0  ",
+        cases = ((("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "1", "  dev-libs/A:0  ",
+                  "  dev-libs/B:0  ",
                   ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "1", "  >=dev-libs/A-1:0  ",
                       "  >=dev-libs/B-1:0  ",
-                      ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "2", "  dev-libs/A[foo]  ",
-                          "  dev-libs/B[foo]  ",
-                          ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "5", "  dev-libs/A:0/1=[foo]  ",
-                              "  dev-libs/B:0/1=[foo]  ",
-                              ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "5", "  dev-libs/A:0/1[foo]  ",
-                                  "  dev-libs/B:0/1[foo]  ",
-                                  ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "5", "  dev-libs/A:0/0[foo]  ",
-                                      "  dev-libs/B:0/0[foo]  ",
+                      ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "2",
+                          "  dev-libs/A[foo]  ", "  dev-libs/B[foo]  ",
+                          ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "5",
+                              "  dev-libs/A:0/1=[foo]  ", "  dev-libs/B:0/1=[foo]  ",
+                              ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "5",
+                                  "  dev-libs/A:0/1[foo]  ", "  dev-libs/B:0/1[foo]  ",
+                                  ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "5",
+                                      "  dev-libs/A:0/0[foo]  ", "  dev-libs/B:0/0[foo]  ",
                                       ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), "5",
                                           "  dev-libs/A:0=[foo]  ", "  dev-libs/B:0=[foo]  ",
-                                          ),
-                 (("slotmove", Atom("dev-libs/A"), "0", "1"), "1", "  dev-libs/A:0  ", "  dev-libs/A:1  ",
-                  ), (("slotmove", Atom("dev-libs/A"), "0", "1"), "1", "  >=dev-libs/A-1:0  ", "  >=dev-libs/A-1:1  ",
-                      ), (("slotmove", Atom("dev-libs/A"), "0", "1"), "5", "  dev-libs/A:0/1=[foo]  ",
-                          "  dev-libs/A:1/1=[foo]  ",
-                          ), (("slotmove", Atom("dev-libs/A"), "0", "1"), "5", "  dev-libs/A:0/1[foo]  ",
-                              "  dev-libs/A:1/1[foo]  ",
-                              ), (("slotmove", Atom("dev-libs/A"), "0", "1"), "5", "  dev-libs/A:0/0[foo]  ",
-                                  "  dev-libs/A:1/1[foo]  ",
-                                  ), (("slotmove", Atom("dev-libs/A"), "0", "1"), "5", "  dev-libs/A:0=[foo]  ",
-                                      "  dev-libs/A:1=[foo]  ",
-                                      ),
+                                          ), (("slotmove", Atom("dev-libs/A"), "0", "1"), "1",
+                                              "  dev-libs/A:0  ", "  dev-libs/A:1  ",
+                                              ), (("slotmove", Atom("dev-libs/A"), "0", "1"), "1",
+                                                  "  >=dev-libs/A-1:0  ", "  >=dev-libs/A-1:1  ",
+                                                  ),
+                 (("slotmove", Atom("dev-libs/A"), "0", "1"), "5", "  dev-libs/A:0/1=[foo]  ",
+                  "  dev-libs/A:1/1=[foo]  ",
+                  ), (("slotmove", Atom("dev-libs/A"), "0", "1"), "5", "  dev-libs/A:0/1[foo]  ",
+                      "  dev-libs/A:1/1[foo]  ",
+                      ), (("slotmove", Atom("dev-libs/A"), "0", "1"), "5",
+                          "  dev-libs/A:0/0[foo]  ", "  dev-libs/A:1/1[foo]  ",
+                          ), (("slotmove", Atom("dev-libs/A"), "0", "1"), "5",
+                              "  dev-libs/A:0=[foo]  ", "  dev-libs/A:1=[foo]  ",
+                              ),
                  )
         for update_cmd, eapi, input_str, output_str in cases:
             result = update_dbentry(update_cmd, input_str, eapi=eapi)
@@ -55,27 +58,32 @@ class UpdateDbentryTestCase(TestCase):
         """
         Avoid creating self-blockers for bug #367215.
         """
-        cases = ((("move", Atom("dev-libs/A"), Atom("dev-libs/B")), _pkg_str("dev-libs/B-1", eapi="1", slot="0"),
-                  "  !dev-libs/A  ", "  !dev-libs/A  ",
-                  ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")), _pkg_str("dev-libs/C-1", eapi="1", slot="0"),
-                      "  !dev-libs/A  ", "  !dev-libs/B  ",
+        cases = ((("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
+                  _pkg_str("dev-libs/B-1", eapi="1",
+                           slot="0"), "  !dev-libs/A  ", "  !dev-libs/A  ",
+                  ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
+                      _pkg_str("dev-libs/C-1", eapi="1",
+                               slot="0"), "  !dev-libs/A  ", "  !dev-libs/B  ",
                       ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
-                          _pkg_str("dev-libs/B-1", eapi="1", slot="0"), "  !dev-libs/A:0  ", "  !dev-libs/A:0  ",
+                          _pkg_str("dev-libs/B-1", eapi="1",
+                                   slot="0"), "  !dev-libs/A:0  ", "  !dev-libs/A:0  ",
                           ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
-                              _pkg_str("dev-libs/C-1", eapi="1", slot="0"), "  !dev-libs/A:0  ", "  !dev-libs/B:0  ",
-                              ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
-                                  _pkg_str("dev-libs/C-1", eapi="1",
-                                           slot="0"), "  !>=dev-libs/A-1:0  ", "  !>=dev-libs/B-1:0  ",
-                                  ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
-                                      _pkg_str("dev-libs/B-1", eapi="1",
-                                               slot="0"), "  !>=dev-libs/A-1:0  ", "  !>=dev-libs/A-1:0  ",
-                                      ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
-                                          _pkg_str("dev-libs/C-1", eapi="1",
-                                                   slot="0"), "  !>=dev-libs/A-1  ", "  !>=dev-libs/B-1  ",
-                                          ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
-                                              _pkg_str("dev-libs/B-1", eapi="1",
-                                                       slot="0"), "  !>=dev-libs/A-1  ", "  !>=dev-libs/A-1  ",
-                                              ),
+                              _pkg_str("dev-libs/C-1", eapi="1",
+                                       slot="0"), "  !dev-libs/A:0  ", "  !dev-libs/B:0  ",
+                              ),
+                 (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
+                  _pkg_str("dev-libs/C-1", eapi="1",
+                           slot="0"), "  !>=dev-libs/A-1:0  ", "  !>=dev-libs/B-1:0  ",
+                  ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
+                      _pkg_str("dev-libs/B-1", eapi="1",
+                               slot="0"), "  !>=dev-libs/A-1:0  ", "  !>=dev-libs/A-1:0  ",
+                      ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
+                          _pkg_str("dev-libs/C-1", eapi="1",
+                                   slot="0"), "  !>=dev-libs/A-1  ", "  !>=dev-libs/B-1  ",
+                          ), (("move", Atom("dev-libs/A"), Atom("dev-libs/B")),
+                              _pkg_str("dev-libs/B-1", eapi="1",
+                                       slot="0"), "  !>=dev-libs/A-1  ", "  !>=dev-libs/A-1  ",
+                              ),
                  )
         for update_cmd, parent, input_str, output_str in cases:
             result = update_dbentry(update_cmd, input_str, parent=parent)
@@ -151,7 +159,8 @@ class UpdateDbentryTestCase(TestCase):
                                                 installed=installed,
                                                 world=world,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
 
@@ -174,7 +183,10 @@ class UpdateDbentryTestCase(TestCase):
 
                     # Create an empty updates directory, so that this
                     # repo doesn't inherit updates from the main repo.
-                    ensure_dirs(os.path.join(portdb.getRepositoryPath("dont_apply_updates"), "profiles", "updates", ))
+                    ensure_dirs(
+                        os.path.join(portdb.getRepositoryPath("dont_apply_updates"), "profiles",
+                                     "updates",
+                                     ))
 
                     global_noiselimit = portage.util.noiselimit
                     portage.util.noiselimit = -2

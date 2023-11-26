@@ -3,7 +3,9 @@
 
 from portage.const import SUPPORTED_GENTOO_BINPKG_FORMATS
 from portage.tests import TestCase
-from portage.tests.resolver.ResolverPlayground import (ResolverPlayground, ResolverPlaygroundTestCase, )
+from portage.tests.resolver.ResolverPlayground import (ResolverPlayground,
+                                                       ResolverPlaygroundTestCase,
+                                                       )
 from portage.output import colorize
 
 
@@ -105,7 +107,8 @@ class SlotOperatorBdependTestCase(TestCase):
                                                 world=world,
                                                 debug=False,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:
@@ -186,7 +189,10 @@ class SlotOperatorBdependTestCase(TestCase):
                                            "--deep": True,
                                        },
                                        success=True,
-                                       mergelist=["app-emulation/buildah-1.16.1", "app-emulation/libpod-2.1.0", ],
+                                       mergelist=[
+                                           "app-emulation/buildah-1.16.1",
+                                           "app-emulation/libpod-2.1.0",
+                                       ],
                                        ),
             # Test the above case with --usepkg --with-bdeps=y. It should not use the
             # binary packages because rebuild is needed.
@@ -198,7 +204,10 @@ class SlotOperatorBdependTestCase(TestCase):
                                            "--deep": True,
                                        },
                                        success=True,
-                                       mergelist=["app-emulation/buildah-1.16.1", "app-emulation/libpod-2.1.0", ],
+                                       mergelist=[
+                                           "app-emulation/buildah-1.16.1",
+                                           "app-emulation/libpod-2.1.0",
+                                       ],
                                        ),
         )
 
@@ -211,7 +220,8 @@ class SlotOperatorBdependTestCase(TestCase):
                                                 world=world,
                                                 debug=False,
                                                 user_config={
-                                                    "make.conf": (f'BINPKG_FORMAT="{binpkg_format}"', ),
+                                                    "make.conf":
+                                                    (f'BINPKG_FORMAT="{binpkg_format}"', ),
                                                 },
                                                 )
                 try:

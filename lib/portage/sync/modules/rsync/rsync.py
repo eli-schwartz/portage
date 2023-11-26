@@ -58,19 +58,21 @@ class RsyncSync(NewBase):
         quiet = "--quiet" in opts
         out = portage.output.EOutput(quiet=quiet)
         syncuri = self.repo.sync_uri
-        if self.repo.module_specific_options.get("sync-rsync-vcs-ignore", "false").lower() in ("true", "yes"):
+        if self.repo.module_specific_options.get("sync-rsync-vcs-ignore",
+                                                 "false").lower() in ("true", "yes"):
             vcs_dirs = ()
         else:
             vcs_dirs = frozenset(VCS_DIRS)
             vcs_dirs = vcs_dirs.intersection(os.listdir(self.repo.location))
 
         for vcs_dir in vcs_dirs:
-            writemsg_level(
-                ("!!! %s appears to be under revision " + "control (contains %s).\n!!! Aborting rsync sync "
-                 '(override with "sync-rsync-vcs-ignore = true" in repos.conf).\n') % (self.repo.location, vcs_dir),
-                level=logging.ERROR,
-                noiselevel=-1,
-            )
+            writemsg_level(("!!! %s appears to be under revision " +
+                            "control (contains %s).\n!!! Aborting rsync sync "
+                            '(override with "sync-rsync-vcs-ignore = true" in repos.conf).\n') %
+                           (self.repo.location, vcs_dir),
+                           level=logging.ERROR,
+                           noiselevel=-1,
+                           )
             return (1, False)
         self.timeout = 180
 
@@ -84,7 +86,8 @@ class RsyncSync(NewBase):
         self.extra_rsync_opts = list()
         if self.repo.module_specific_options.get("sync-rsync-extra-opts"):
             self.extra_rsync_opts.extend(
-                portage.util.shlex_split(self.repo.module_specific_options["sync-rsync-extra-opts"]))
+                portage.util.shlex_split(
+                    self.repo.module_specific_options["sync-rsync-extra-opts"]))
 
         exitcode = 0
         verify_failure = False
@@ -92,8 +95,8 @@ class RsyncSync(NewBase):
         # Process GLEP74 verification options.
         # Default verification to 'no'; it's enabled for ::gentoo
         # via default repos.conf though.
-        self.verify_metamanifest = self.repo.module_specific_options.get("sync-rsync-verify-metamanifest",
-                                                                         "no").lower() in ("yes", "true")
+        self.verify_metamanifest = self.repo.module_specific_options.get(
+            "sync-rsync-verify-metamanifest", "no").lower() in ("yes", "true")
         # Support overriding job count.
         self.verify_jobs = self.repo.module_specific_options.get("sync-rsync-verify-jobs", None)
         if self.verify_jobs is not None:
@@ -102,7 +105,8 @@ class RsyncSync(NewBase):
                 if self.verify_jobs < 0:
                     raise ValueError(self.verify_jobs)
             except ValueError:
-                writemsg_level("!!! sync-rsync-verify-jobs not a positive integer: %s\n" % (self.verify_jobs, ),
+                writemsg_level("!!! sync-rsync-verify-jobs not a positive integer: %s\n" %
+                               (self.verify_jobs, ),
                                level=logging.WARNING,
                                noiselevel=-1,
                                )
@@ -120,7 +124,8 @@ class RsyncSync(NewBase):
                 if self.max_age < 0:
                     raise ValueError(self.max_age)
             except ValueError:
-                writemsg_level("!!! sync-rsync-max-age must be a non-negative integer: %s\n" % (self.max_age, ),
+                writemsg_level("!!! sync-rsync-max-age must be a non-negative integer: %s\n" %
+                               (self.max_age, ),
                                level=logging.WARNING,
                                noiselevel=-1,
                                )
@@ -150,10 +155,12 @@ class RsyncSync(NewBase):
                         openpgp_env.import_key(f)
                     self._refresh_keys(openpgp_env)
                 except (GematoException, asyncio.TimeoutError) as e:
-                    writemsg_level("!!! Manifest verification impossible due to keyring problem:\n%s\n" % (e, ),
-                                   level=logging.ERROR,
-                                   noiselevel=-1,
-                                   )
+                    writemsg_level(
+                        "!!! Manifest verification impossible due to keyring problem:\n%s\n" %
+                        (e, ),
+                        level=logging.ERROR,
+                        noiselevel=-1,
+                    )
                     return (1, False)
 
             # Real local timestamp file.
@@ -169,7 +176,8 @@ class RsyncSync(NewBase):
             del content
 
             try:
-                self.rsync_initial_timeout = int(self.settings.get("PORTAGE_RSYNC_INITIAL_TIMEOUT", "15"))
+                self.rsync_initial_timeout = int(
+                    self.settings.get("PORTAGE_RSYNC_INITIAL_TIMEOUT", "15"))
             except ValueError:
                 self.rsync_initial_timeout = 15
 
@@ -183,7 +191,8 @@ class RsyncSync(NewBase):
             if syncuri.startswith("file://"):
                 self.proto = "file"
                 dosyncuri = syncuri[7:]
-                unchanged, is_synced, exitcode, updatecache_flg = self._do_rsync(dosyncuri, timestamp, opts)
+                unchanged, is_synced, exitcode, updatecache_flg = self._do_rsync(
+                    dosyncuri, timestamp, opts)
                 self._process_exitcode(exitcode, dosyncuri, out, 1)
                 if exitcode == 0:
                     if unchanged:
@@ -196,10 +205,15 @@ class RsyncSync(NewBase):
             retries = 0
             try:
                 self.proto, user_name, hostname, port = re.split(
-                    r"(rsync|ssh)://([^:/]+@)?(\[[:\da-fA-F]*\]|[^:/]*)(:[0-9]+)?", syncuri, maxsplit=4,
+                    r"(rsync|ssh)://([^:/]+@)?(\[[:\da-fA-F]*\]|[^:/]*)(:[0-9]+)?",
+                    syncuri,
+                    maxsplit=4,
                 )[1:5]
             except ValueError:
-                writemsg_level(f"!!! sync-uri is invalid: {syncuri}\n", noiselevel=-1, level=logging.ERROR, )
+                writemsg_level(f"!!! sync-uri is invalid: {syncuri}\n",
+                               noiselevel=-1,
+                               level=logging.ERROR,
+                               )
                 return (1, False)
 
             self.ssh_opts = self.settings.get("PORTAGE_SSH_OPTS")
@@ -231,7 +245,8 @@ class RsyncSync(NewBase):
                     addrinfos = getaddrinfo_validate(
                         socket.getaddrinfo(getaddrinfo_host, None, family, socket.SOCK_STREAM))
                 except OSError as e:
-                    writemsg_level("!!! getaddrinfo failed for '%s': %s\n" % (_unicode_decode(hostname), str(e)),
+                    writemsg_level("!!! getaddrinfo failed for '%s': %s\n" %
+                                   (_unicode_decode(hostname), str(e)),
                                    noiselevel=-1,
                                    level=logging.ERROR,
                                    )
@@ -264,7 +279,8 @@ class RsyncSync(NewBase):
 
                 for ip in ips:
                     uris.append(
-                        syncuri.replace("//" + user_name + hostname + port + "/", "//" + user_name + ip + port + "/", 1,
+                        syncuri.replace("//" + user_name + hostname + port + "/",
+                                        "//" + user_name + ip + port + "/", 1,
                                         ))
 
             if not uris:
@@ -292,7 +308,9 @@ class RsyncSync(NewBase):
                 if uris:
                     dosyncuri = uris.pop()
                 elif maxretries < 0 or retries > maxretries:
-                    writemsg(f"!!! Exhausted addresses for {_unicode_decode(hostname)}\n", noiselevel=-1, )
+                    writemsg(f"!!! Exhausted addresses for {_unicode_decode(hostname)}\n",
+                             noiselevel=-1,
+                             )
                     return (1, False)
                 else:
                     uris.extend(uris_orig)
@@ -302,8 +320,8 @@ class RsyncSync(NewBase):
                     if "--ask" in opts:
                         uq = UserQuery(opts)
                         if (uq.query(
-                                "Do you want to sync your ebuild repository " + "with the mirror at\n" +
-                                blue(dosyncuri) + bold("?"), enter_invalid,
+                                "Do you want to sync your ebuild repository " +
+                                "with the mirror at\n" + blue(dosyncuri) + bold("?"), enter_invalid,
                         ) == "No"):
                             print()
                             print("Quitting.")
@@ -313,9 +331,10 @@ class RsyncSync(NewBase):
                     if "--quiet" not in opts:
                         print(">>> Starting rsync with " + dosyncuri + "...")
                 else:
-                    self.logger(self.xterm_titles,
-                                ">>> Starting retry %d of %d with %s" % (retries, effective_maxretries, dosyncuri),
-                                )
+                    self.logger(
+                        self.xterm_titles, ">>> Starting retry %d of %d with %s" %
+                        (retries, effective_maxretries, dosyncuri),
+                    )
                     writemsg_stdout("\n\n>>> Starting retry %d of %d with %s\n" %
                                     (retries, effective_maxretries, dosyncuri),
                                     noiselevel=-1,
@@ -324,7 +343,8 @@ class RsyncSync(NewBase):
                 if dosyncuri.startswith("ssh://"):
                     dosyncuri = dosyncuri[6:].replace("/", ":/", 1)
 
-                unchanged, is_synced, exitcode, updatecache_flg = self._do_rsync(dosyncuri, timestamp, opts)
+                unchanged, is_synced, exitcode, updatecache_flg = self._do_rsync(
+                    dosyncuri, timestamp, opts)
                 if not unchanged:
                     local_state_unchanged = False
                 if is_synced:
@@ -362,28 +382,34 @@ class RsyncSync(NewBase):
                     try:
                         # we always verify the Manifest signature, in case
                         # we had to deal with key revocation case
-                        m = gemato.recursiveloader.ManifestRecursiveLoader(os.path.join(download_dir, "Manifest"),
-                                                                           verify_openpgp=True,
-                                                                           openpgp_env=openpgp_env,
-                                                                           max_jobs=self.verify_jobs,
-                                                                           )
+                        m = gemato.recursiveloader.ManifestRecursiveLoader(
+                            os.path.join(download_dir, "Manifest"),
+                            verify_openpgp=True,
+                            openpgp_env=openpgp_env,
+                            max_jobs=self.verify_jobs,
+                        )
                         if not m.openpgp_signed:
                             raise RuntimeError("OpenPGP signature not found on Manifest")
 
                         ts = m.find_timestamp()
                         if ts is None:
                             raise RuntimeError("Timestamp not found in Manifest")
-                        if self.max_age != 0 and (datetime.datetime.utcnow() - ts.ts).days > self.max_age:
+                        if self.max_age != 0 and (datetime.datetime.utcnow() -
+                                                  ts.ts).days > self.max_age:
                             out.quiet = False
-                            out.ewarn("Manifest is over %d days old, this is suspicious!" % (self.max_age, ))
-                            out.ewarn("You may want to try using another mirror and/or reporting this one:")
+                            out.ewarn("Manifest is over %d days old, this is suspicious!" %
+                                      (self.max_age, ))
+                            out.ewarn(
+                                "You may want to try using another mirror and/or reporting this one:"
+                            )
                             out.ewarn(f"  {dosyncuri}")
                             out.ewarn("")
                             out.quiet = quiet
 
                         out.einfo(f"Manifest timestamp: {ts.ts} UTC")
                         out.einfo("Valid OpenPGP signature found:")
-                        out.einfo("- primary key: %s" % (m.openpgp_signature.primary_key_fingerprint))
+                        out.einfo("- primary key: %s" %
+                                  (m.openpgp_signature.primary_key_fingerprint))
                         out.einfo(f"- subkey: {m.openpgp_signature.fingerprint}")
                         out.einfo(f"- timestamp: {m.openpgp_signature.timestamp} UTC")
 
@@ -428,12 +454,14 @@ class RsyncSync(NewBase):
             msg = []
             if exitcode == 1:
                 msg.append("Rsync has reported that there is a syntax error. Please ensure")
-                msg.append("that sync-uri attribute for repository '%s' is proper." % self.repo.name)
+                msg.append("that sync-uri attribute for repository '%s' is proper." %
+                           self.repo.name)
                 msg.append(f"sync-uri: '{self.repo.sync_uri}'")
             elif exitcode == 11:
                 msg.append("Rsync has reported that there is a File IO error. Normally")
                 msg.append("this means your disk is full, but can be caused by corruption")
-                msg.append("on the filesystem that contains repository '%s'. Please investigate" % self.repo.name)
+                msg.append("on the filesystem that contains repository '%s'. Please investigate" %
+                           self.repo.name)
                 msg.append("and try again after the problem has been fixed.")
                 msg.append(f"Location of repository: '{self.repo.location}'")
             elif exitcode == 20:
@@ -453,7 +481,8 @@ class RsyncSync(NewBase):
         try:
             if not os.path.exists(self.repo.location):
                 os.makedirs(self.repo.location)
-                self.logger(self.self.xterm_titles, f"Created New Directory {self.repo.location} ", )
+                self.logger(self.self.xterm_titles, f"Created New Directory {self.repo.location} ",
+                            )
         except OSError:
             return (1, False)
         return self.update()
@@ -462,7 +491,8 @@ class RsyncSync(NewBase):
         """Get information about the head commit"""
         if kwargs:
             self._kwargs(kwargs)
-        last_sync = portage.grabfile(os.path.join(self.repo.location, "metadata", "timestamp.commit"))
+        last_sync = portage.grabfile(
+            os.path.join(self.repo.location, "metadata", "timestamp.commit"))
         ret = (1, False)
         if last_sync:
             try:
@@ -484,7 +514,8 @@ class RsyncSync(NewBase):
             "--whole-file",  # Don't do block transfers, only entire files
             "--delete",  # Delete files that aren't in the master tree
             "--stats",  # Show final statistics about what was transfered
-            "--human-readable", "--timeout=" + str(self.timeout),  # IO timeout if not done in X seconds
+            "--human-readable",
+            "--timeout=" + str(self.timeout),  # IO timeout if not done in X seconds
             "--exclude=/distfiles",  # Exclude distfiles from consideration
             "--exclude=/local",  # Exclude local     from consideration
             "--exclude=/packages",  # Exclude packages  from consideration
@@ -500,7 +531,8 @@ class RsyncSync(NewBase):
         for opt in ("--recursive", "--times"):
             if opt not in rsync_opts:
                 portage.writemsg(
-                    yellow("WARNING:") + " adding required option " + f"{opt} not included in PORTAGE_RSYNC_OPTS\n")
+                    yellow("WARNING:") + " adding required option " +
+                    f"{opt} not included in PORTAGE_RSYNC_OPTS\n")
                 rsync_opts.append(opt)
 
         for exclude in ("distfiles", "local", "packages"):
@@ -525,7 +557,8 @@ class RsyncSync(NewBase):
             for opt in ("--compress", "--whole-file"):
                 if opt not in rsync_opts:
                     portage.writemsg(
-                        yellow("WARNING:") + " adding required option " + f"{opt} not included in PORTAGE_RSYNC_OPTS\n")
+                        yellow("WARNING:") + " adding required option " +
+                        f"{opt} not included in PORTAGE_RSYNC_OPTS\n")
                     rsync_opts.append(opt)
         return rsync_opts
 

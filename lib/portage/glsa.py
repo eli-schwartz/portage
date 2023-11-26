@@ -153,7 +153,10 @@ def getListElements(listnode):
     """
     if not listnode.nodeName in ("ul", "ol"):
         raise GlsaFormatException("Invalid function call: listnode is not <ul> or <ol>")
-    rValue = [getText(li, format="strip") for li in listnode.childNodes if li.nodeType == xml.dom.Node.ELEMENT_NODE]
+    rValue = [
+        getText(li, format="strip") for li in listnode.childNodes
+        if li.nodeType == xml.dom.Node.ELEMENT_NODE
+    ]
     return rValue
 
 
@@ -352,7 +355,8 @@ def revisionMatch(revisionAtom, dbapi, match_type="default"):
             mylist = dbapi.match(re.sub("-r[0-9]+$", "", revisionAtom[2:]))
     else:
         if ":" in revisionAtom:
-            mylist = dbapi.xmatch(match_type, re.sub(r"-r[0-9]+(:[^ ]+)?$", r"\1", revisionAtom[2:]))
+            mylist = dbapi.xmatch(match_type, re.sub(r"-r[0-9]+(:[^ ]+)?$", r"\1",
+                                                     revisionAtom[2:]))
         else:
             mylist = dbapi.xmatch(match_type, re.sub("-r[0-9]+$", "", revisionAtom[2:]))
     rValue = []
@@ -414,11 +418,10 @@ def getMinUpgrade(vulnerableList, unaffectedList, portdbapi, vardbapi, minimize=
         update = ""
         for c in avail_updates:
             c_pv = portage.catpkgsplit(c)
-            if vercmp(
-                    c.version, vuln.version) > 0 and (update == "" or
-                                                      (minimize ^
-                                                       (vercmp(c.version, update.version) > 0))) and portdbapi._pkg_str(
-                                                           c, None).slot == vardbapi._pkg_str(vuln, None).slot:
+            if vercmp(c.version, vuln.version) > 0 and (
+                    update == "" or
+                (minimize ^ (vercmp(c.version, update.version) > 0))) and portdbapi._pkg_str(
+                    c, None).slot == vardbapi._pkg_str(vuln, None).slot:
                 update = f"{c_pv[0]}/{c_pv[1]}-{c_pv[2]}"
                 if c_pv[3] != "r0":  # we don't like -r0 for display
                     update = f"{update}-{c_pv[3]}"
@@ -454,7 +457,9 @@ def format_date(datestr):
         return datestr
 
     # TODO We could format to local date format '%x' here?
-    return _unicode_decode(d.strftime("%B %d, %Y"), encoding=_encodings["content"], errors="replace")
+    return _unicode_decode(d.strftime("%B %d, %Y"),
+                           encoding=_encodings["content"],
+                           errors="replace")
 
 
 # simple Exception classes to catch specific errors
@@ -558,12 +563,14 @@ class Glsa:
         myroot = self.DOM.getElementsByTagName("glsa")[0]
         if self.type == "id" and myroot.getAttribute("id") != self.nr:
             raise GlsaFormatException(
-                _(f"filename and internal id don't match: {myroot.getAttribute('id')} != {self.nr}"))
+                _(f"filename and internal id don't match: {myroot.getAttribute('id')} != {self.nr}")
+            )
 
         # the simple (single, required, top-level, #PCDATA) tags first
         self.title = getText(myroot.getElementsByTagName("title")[0], format="strip")
         self.synopsis = getText(myroot.getElementsByTagName("synopsis")[0], format="strip")
-        self.announced = format_date(getText(myroot.getElementsByTagName("announced")[0], format="strip"))
+        self.announced = format_date(
+            getText(myroot.getElementsByTagName("announced")[0], format="strip"))
 
         # Support only format defined in GLSA DTD
         # <revised count="2">2007-12-30</revised>
@@ -571,12 +578,14 @@ class Glsa:
         self.revised = getText(revisedEl, format="strip")
         count = revisedEl.getAttribute("count")
         if not count:
-            raise GlsaFormatException(f"Count attribute is missing or blank in GLSA: {myroot.getAttribute('id')}")
+            raise GlsaFormatException(
+                f"Count attribute is missing or blank in GLSA: {myroot.getAttribute('id')}")
 
         try:
             self.count = int(count)
         except ValueError:
-            raise GlsaFormatException(f"Revision attribute in GLSA: {myroot.getAttribute('id')} is not an integer")
+            raise GlsaFormatException(
+                f"Revision attribute in GLSA: {myroot.getAttribute('id')} is not an integer")
 
         self.revised = format_date(self.revised)
 
@@ -586,7 +595,9 @@ class Glsa:
         except IndexError:
             self.access = ""
         self.bugs = getMultiTagsText(myroot, "bug", format="strip")
-        self.references = getMultiTagsText(myroot.getElementsByTagName("references")[0], "uri", format="keep")
+        self.references = getMultiTagsText(myroot.getElementsByTagName("references")[0],
+                                           "uri",
+                                           format="keep")
 
         # and now the formatted text elements
         self.description = getText(myroot.getElementsByTagName("description")[0], format="xml")
@@ -639,11 +650,12 @@ class Glsa:
         outstream = getattr(outstream, "buffer", outstream)
         outstream = codecs.getwriter(encoding)(outstream)
         width = 76
-        buffer = "\n".join((f"GLSA {self.nr}: ", f"{self.title}".center(width), "=" * width,
-                            wrap(self.synopsis, width,
-                                 caption=_("Synopsis:         ")), _(f"Announced on:      {self.announced}"),
-                            _(f"Last revised on:   {self.revised} : %{self.count}\n"),
-                            ))
+        buffer = "\n".join(
+            (f"GLSA {self.nr}: ", f"{self.title}".center(width), "=" * width,
+             wrap(self.synopsis, width,
+                  caption=_("Synopsis:         ")), _(f"Announced on:      {self.announced}"),
+             _(f"Last revised on:   {self.revised} : %{self.count}\n"),
+             ))
         outstream.write(buffer)
         if self.glsatype == "ebuild":
             for k in self.packages:
@@ -666,14 +678,14 @@ class Glsa:
         if self.background:
             bg = wrap(self.background, width, caption=_("Background:       "))
             outstream.write(f"\n{bg}")
-        myreferences = " ".join(r.replace(" ", SPACE_ESCAPE) + NEWLINE_ESCAPE for r in self.references)
-        buffer = "\n".join(
-            (wrap(self.description, width,
-                  caption=_("Description:      ")), wrap(self.impact_text, width, caption=_("Impact:           ")),
-             wrap(self.workaround, width,
-                  caption=_("Workaround:       ")), wrap(self.resolution, width, caption=_("Resolution:       ")),
-             wrap(myreferences, width, caption=_("References:       ")),
-             ))
+        myreferences = " ".join(
+            r.replace(" ", SPACE_ESCAPE) + NEWLINE_ESCAPE for r in self.references)
+        buffer = "\n".join((wrap(self.description, width, caption=_("Description:      ")),
+                            wrap(self.impact_text, width, caption=_("Impact:           ")),
+                            wrap(self.workaround, width, caption=_("Workaround:       ")),
+                            wrap(self.resolution, width, caption=_("Resolution:       ")),
+                            wrap(myreferences, width, caption=_("References:       ")),
+                            ))
         outstream.write(f"\n{buffer}\n")
 
     def isVulnerable(self):
@@ -690,14 +702,16 @@ class Glsa:
             pkg = self.packages[k]
             for path in pkg:
                 if not ARCH_REGEX.match(path["arch"]):
-                    raise GlsaFormatException(f"Unrecognized arch list in {self.nr} (wrong delimiter?): {path['arch']}")
+                    raise GlsaFormatException(
+                        f"Unrecognized arch list in {self.nr} (wrong delimiter?): {path['arch']}")
 
                 arches = path["arch"].split()
                 if path["arch"] == "*" or self.config["ARCH"] in arches:
                     for v in path["vul_atoms"]:
-                        rValue = rValue or (len(match(v, self.vardbapi)) > 0 and None != getMinUpgrade(
-                            path["vul_atoms"], path["unaff_atoms"], self.portdbapi, self.vardbapi,
-                        ))
+                        rValue = rValue or (len(match(v, self.vardbapi)) > 0 and None
+                                            != getMinUpgrade(path["vul_atoms"], path["unaff_atoms"],
+                                                             self.portdbapi, self.vardbapi,
+                                                             ))
         return rValue
 
     def isInjected(self):
@@ -708,7 +722,8 @@ class Glsa:
         @rtype:		Boolean
         @returns:	True if the GLSA is in the inject file, False if not
         """
-        if not os.access(os.path.join(self.config["EROOT"], PRIVATE_PATH, "glsa_injected"), os.R_OK):
+        if not os.access(os.path.join(self.config["EROOT"], PRIVATE_PATH, "glsa_injected"),
+                         os.R_OK):
             return False
         return self.nr in get_applied_glsas(self.config)
 
@@ -722,7 +737,8 @@ class Glsa:
         @return:	None
         """
         if not self.isInjected():
-            checkfile = open(_unicode_encode(os.path.join(self.config["EROOT"], PRIVATE_PATH, "glsa_injected"),
+            checkfile = open(_unicode_encode(os.path.join(self.config["EROOT"], PRIVATE_PATH,
+                                                          "glsa_injected"),
                                              encoding=_encodings["fs"],
                                              errors="strict",
                                              ),
