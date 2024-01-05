@@ -2567,6 +2567,8 @@ def _check_build_log(mysettings, out=None):
     configure_opts_warn_re = re.compile(
         r"^configure: WARNING: [Uu]nrecognized options: (.*)"
     )
+    configure_bad_syntax = []
+    configure_bad_syntax_re = re.compile(r'^./configure: (line)? \d+: .*')
 
     qa_configure_opts = ""
     try:
@@ -2683,6 +2685,12 @@ def _check_build_log(mysettings, out=None):
                 else:
                     setuptools_warn.add(warn_text)
 
+            # This *must* be in an elif that does not get run on lines that
+            # already reported a bash/dash warning, or we will get two warnings
+            # for the same issue.
+            elif configure_bad_syntax_re.match(line):
+                configure_bad_syntax.append(line)
+
     except (EOFError, zlib.error) as e:
         _eerror(
             [
@@ -2750,6 +2758,12 @@ def _check_build_log(mysettings, out=None):
         msg = [_("QA Notice: setuptools warnings detected:")]
         msg.append("")
         msg.extend("\t" + line for line in sorted(setuptools_warn))
+        _eqawarn(msg)
+
+    if configure_bad_syntax:
+        msg = [_("QA Notice: Broken syntax in configure script")]
+        msg.append("")
+        msg.extend(f"\t{x}" for x in configure_bad_syntax)
         _eqawarn(msg)
 
     f.close()
