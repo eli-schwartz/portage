@@ -2656,26 +2656,26 @@ def _check_build_log(mysettings, out=None):
             ):
                 am_maintainer_mode.append(line.rstrip("\n"))
 
-            if bash_command_not_found_re.match(line) is not None:
+            elif bash_command_not_found_re.match(line) is not None:
                 command_not_found.append(line.rstrip("\n"))
 
-            if dash_command_not_found_re.match(line) is not None:
+            elif dash_command_not_found_re.match(line) is not None:
                 command_not_found.append(line.rstrip("\n"))
 
-            if helper_missing_file_re.match(line) is not None:
+            elif helper_missing_file_re.match(line) is not None:
                 helper_missing_file.append(line.rstrip("\n"))
 
-            m = configure_opts_warn_re.match(line)
-            if m is not None:
+            elif configure_opts_warn_re.match(line):
+                m = configure_opts_warn_re.match(line)
                 for x in m.group(1).split(", "):
                     if not qa_configure_opts or qa_configure_opts.match(x) is None:
                         configure_opts_warn.append(x)
 
-            if make_jobserver_re.match(line) is not None:
+            elif make_jobserver_re.match(line) is not None:
                 make_jobserver.append(line.rstrip("\n"))
 
-            m = setuptools_warn_re.match(line)
-            if m is not None:
+            elif setuptools_warn_re.match(line):
+                m = setuptools_warn_re.match(line)
                 warn_text = m.group(1)
                 for ign in setuptools_warn_ignore_re:
                     if ign.match(warn_text):
