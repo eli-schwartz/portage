@@ -3,6 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 import os
+import shlex
 import signal
 
 # For compatibility with Python < 3.8
@@ -1114,9 +1115,7 @@ try:
 
         default_opts = None
         if not options.ignore_default_opts:
-            default_opts = portage.util.shlex_split(
-                settings.get("EGENCACHE_DEFAULT_OPTS", "")
-            )
+            default_opts = shlex.split(settings.get("EGENCACHE_DEFAULT_OPTS", ""))
 
         if default_opts:
             parser, options, args = parse_args(default_opts + args)

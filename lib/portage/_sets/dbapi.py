@@ -2,6 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 import glob
+import shlex
 import time
 
 from portage import os
@@ -133,11 +134,11 @@ class OwnerSet(PackageSet):
 
         exclude_files = options.get("exclude-files")
         if exclude_files is not None:
-            exclude_files = frozenset(portage.util.shlex_split(exclude_files))
+            exclude_files = frozenset(shlex.split(exclude_files))
         return cls(
             vardb=trees["vartree"].dbapi,
             exclude_files=exclude_files,
-            files=frozenset(portage.util.shlex_split(options["files"])),
+            files=frozenset(shlex.split(options["files"])),
         )
 
     singleBuilder = classmethod(singleBuilder)

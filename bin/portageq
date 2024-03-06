@@ -3,6 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 import os
+import shlex
 import signal
 
 # For compatibility with Python < 3.8
@@ -410,8 +411,8 @@ try:
         from portage.util import ConfigProtect
 
         settings = portage.settings
-        protect = portage.util.shlex_split(settings.get("CONFIG_PROTECT", ""))
-        protect_mask = portage.util.shlex_split(settings.get("CONFIG_PROTECT_MASK", ""))
+        protect = shlex.split(settings.get("CONFIG_PROTECT", ""))
+        protect_mask = shlex.split(settings.get("CONFIG_PROTECT_MASK", ""))
         protect_obj = ConfigProtect(
             root,
             protect,
@@ -449,8 +450,8 @@ try:
         from portage.util import ConfigProtect
 
         settings = portage.settings
-        protect = portage.util.shlex_split(settings.get("CONFIG_PROTECT", ""))
-        protect_mask = portage.util.shlex_split(settings.get("CONFIG_PROTECT_MASK", ""))
+        protect = shlex.split(settings.get("CONFIG_PROTECT", ""))
+        protect_mask = shlex.split(settings.get("CONFIG_PROTECT_MASK", ""))
         protect_obj = ConfigProtect(
             root,
             protect,

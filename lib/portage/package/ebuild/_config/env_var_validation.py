@@ -1,9 +1,10 @@
 # Copyright 2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
+import shlex
+
 from portage import os
 from portage.process import find_binary
-from portage.util import shlex_split
 
 
 def validate_cmd_var(v):
@@ -14,7 +15,7 @@ def validate_cmd_var(v):
     is the (possibly empty) list of tokens split by shlex.
     """
     invalid = False
-    v_split = shlex_split(v)
+    v_split = shlex.split(v)
     if not v_split:
         invalid = True
     elif os.path.isabs(v_split[0]):
