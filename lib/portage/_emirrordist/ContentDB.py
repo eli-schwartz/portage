@@ -4,7 +4,7 @@
 import logging
 import operator
 import shelve
-import typing
+import typing as T
 
 from portage.package.ebuild.fetch import DistfileName
 
@@ -122,8 +122,8 @@ class ContentDB:
                     pass
 
     def get_filenames_translate(
-        self, filename: typing.Union[str, DistfileName]
-    ) -> typing.Generator[DistfileName, None, None]:
+        self, filename: T.Union[str, DistfileName]
+    ) -> T.Generator[DistfileName, None, None]:
         """
         Translate distfiles content digests to zero or more distfile names.
         If filename is already a distfile name, then it will pass

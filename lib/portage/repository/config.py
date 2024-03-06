@@ -7,7 +7,7 @@ import logging
 import os
 import re
 import shlex
-import typing
+import typing as T
 import warnings
 from pathlib import Path
 
@@ -1475,7 +1475,7 @@ class RepoConfigLoader:
 
 
 def allow_profile_repo_deps(
-    repo: typing.Union[RepoConfig, _profile_node],
+    repo: T.Union[RepoConfig, _profile_node],
 ) -> bool:
     if eapi_has_repo_deps(repo.eapi):
         return True

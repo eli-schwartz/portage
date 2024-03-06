@@ -25,8 +25,8 @@ import os
 import sys
 import tempfile
 import time
-import typing
 import warnings
+import typing as T
 
 import portage
 from portage.exception import (
@@ -105,9 +105,8 @@ def _get_lock_fn():
     return _lock_fn
 
 
-def _test_lock_fn(
-    lock_fn: typing.Callable[[str, int, int], typing.Callable[[], None]],
-) -> bool:
+def _test_lock_fn(lock_fn: T.Callable[[str, int, int], T.Callable[[], None]]) -> bool:
+def _test_lock_fn(lock_fn: T.Callable[[str, int, int], T.Callable[[], None]]) -> bool:
     fd, lock_path = tempfile.mkstemp()
     unlock_fn = None
     try:

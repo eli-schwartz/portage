@@ -1,6 +1,7 @@
 # versions.py -- core Portage functionality
 # Copyright 1998-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
+from __future__ import annotations
 
 __all__ = [
     "best",
