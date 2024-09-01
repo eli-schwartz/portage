@@ -17,9 +17,9 @@ xdg_desktop_database_check() {
 		:
 	elif ! contains_word xdg-utils "${INHERITED}"; then
 		missing='xdg-utils was not inherited'
-	elif ! declare -f pkg_postinst | grep -q -E '(xdg_desktop_database_update|(ecm|gnome|java-vm-2|xdg)_pkg_postinst)'; then
+	elif ! declare -f pkg_postinst | grep -q -E '(xdg_desktop_database_update|(ecm|gnome2|mate|java-vm-2|xdg)_pkg_postinst)'; then
 		missing='xdg-utils was not used'
-	elif ! declare -f pkg_postrm | grep -q -E '(xdg_desktop_database_update|(ecm|gnome|java-vm-2|xdg)_pkg_postrm)'; then
+	elif ! declare -f pkg_postrm | grep -q -E '(xdg_desktop_database_update|(ecm|gnome2|mate|java-vm-2|xdg)_pkg_postrm)'; then
 		missing='xdg-utils was not used'
 	fi
 
@@ -54,9 +54,9 @@ xdg_icon_cache_check() {
 		:
 	elif ! contains_word xdg-utils "${INHERITED}"; then
 		missing='xdg-utils was not inherited'
-	elif ! declare -f pkg_postinst | grep -q -E '(xdg_icon_cache_update|(ecm|gnome|xdg)_pkg_postinst)'; then
+	elif ! declare -f pkg_postinst | grep -q -E '(xdg_icon_cache_update|(ecm|gnome2|mate|xdg)_pkg_postinst)'; then
 		missing='xdg-utils was not used'
-	elif ! declare -f pkg_postrm | grep -q -E '(xdg_icon_cache_update|(ecm|gnome|xdg)_pkg_postrm)'; then
+	elif ! declare -f pkg_postrm | grep -q -E '(xdg_icon_cache_update|(ecm|gnome2|mate|xdg)_pkg_postrm)'; then
 		missing='xdg-utils was not used'
 	fi
 
@@ -82,9 +82,9 @@ xdg_mimeinfo_database_check() {
 		:
 	elif ! contains_word xdg-utils "${INHERITED}"; then
 		missing='xdg-utils was not inherited'
-	elif ! declare -f pkg_postinst | grep -q -E '(xdg_mimeinfo_database_update|(ecm|gnome|xdg)_pkg_postinst)'; then
+	elif ! declare -f pkg_postinst | grep -q -E '(xdg_mimeinfo_database_update|(ecm|gnome2|mate|xdg)_pkg_postinst)'; then
 		missing='xdg-utils was not used'
-	elif ! declare -f pkg_postrm | grep -q -E '(xdg_mimeinfo_database_update|(ecm|gnome|xdg)_pkg_postrm)'; then
+	elif ! declare -f pkg_postrm | grep -q -E '(xdg_mimeinfo_database_update|(ecm|gnome2|mate|xdg)_pkg_postrm)'; then
 		missing='xdg-utils was not used'
 	fi
 
