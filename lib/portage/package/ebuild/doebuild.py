@@ -2638,6 +2638,7 @@ def _check_build_log(mysettings, out=None):
     setuptools_warn_ignore_re = [
         re.compile(r"Normalizing .*"),
         re.compile(r"setup.py install is deprecated"),
+        re.compile(r"License classifiers are deprecated"),
     ]
 
     def _eerror(lines):
