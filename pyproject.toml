@@ -40,3 +40,54 @@ markers = [
     "stress: stress tests (select: '-m stress'; deselect with '-m \"not stress\"')",
     "unit: unit tests (select: '-m unit'; deselect with '-m \"not unit\"')",
 ]
+
+[tool.towncrier]
+name = "portage"
+filename = "NEWS"
+directory = "NEWS.d"
+template = "NEWS.d/template.j2"
+# Insert new releases below the "Releases" heading.
+start_string = "--------\nReleases\n--------\n"
+issue_format = "bug #{issue}"
+# Fragments are named after a Gentoo bug number or start with '+'.
+issue_pattern = "\\d+"
+underlines = ["-"]
+all_bullets = false
+
+# Categories are listed in the order they appear in NEWS.
+
+[[tool.towncrier.type]]
+directory = "summary"
+name = "Summary"
+showcontent = true
+check = false
+
+[[tool.towncrier.type]]
+directory = "breaking"
+name = "Breaking changes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "feature"
+name = "Features"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "bugfix"
+name = "Bug fixes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "performance"
+name = "Performance"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "cleanup"
+name = "Cleanups"
+showcontent = true
